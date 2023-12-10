@@ -163,11 +163,11 @@ void P_AddSkin(skin_t *newskin)
 
 skin_t *newskin;
 
-void P_AddSpriteLumps(char *named)
+void P_AddSpriteLumps(int lumpnum, char *named)
 {
         int i, n=strlen(named);
 
-        for(i=0;i<numlumps;i++)
+        for(i=lumpnum;i<numlumps;i++)
         {
                 if(!strncasecmp(lumpinfo[i]->name, named, n))
                 {
@@ -269,7 +269,7 @@ void P_ParseSkin(int lumpnum)
         Z_Free(lump);
 
         P_AddSkin(newskin);
-        P_AddSpriteLumps(newskin->spritename);
+        P_AddSpriteLumps(lumpnum, newskin->spritename);
 }
 
 void P_CacheFaces(skin_t *skin)
