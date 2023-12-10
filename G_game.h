@@ -124,6 +124,7 @@ extern boolean demorecording;  // killough 12/98
 
 extern int  bodyquesize, default_bodyquesize; // killough 2/8/98, 10/98
 extern int  animscreenshot;       // animated screenshots
+extern int  singlescreenshot;  
 
 // killough 5/2/98: moved from d_deh.c:
 // Par times (new item with BOOM) - from g_game.c

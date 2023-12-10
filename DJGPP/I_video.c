@@ -394,7 +394,7 @@ void I_FinishUpdate(void)
           if (clearscreen)
           {
               clearscreen = 0;
-              if(blackband) vesa_clear_pages_banked(2, 0x08);      
+              if(blackband) vesa_clear_pages_banked(2, BG_COLOR);      
           }
           vesa_blitscreen_banked(screens[0], size, scroll_offset); // VESA Banked (slower)
       }
@@ -414,10 +414,10 @@ void I_FinishUpdate(void)
                    char * dst = (byte *) screen_base_addr + screen_h * i * mode_BPS;
                    if(effective_band)
                    {
-                     memset(dst, 0, band_bytes);
-                     memset(dst + size + band_bytes, 0, band_bytes);
+                     memset(dst, BG_COLOR, band_bytes);
+                     memset(dst + size + band_bytes, BG_COLOR, band_bytes);
                    }
-                   else memset(dst + size, 0, screen_h * mode_BPS - size);
+                   else memset(dst + size, BG_COLOR, screen_h * mode_BPS - size);
                    if(!in_page_flip) break;
                }
           }
@@ -880,8 +880,8 @@ static void I_InitGraphicsMode(void)
 	 // Setup LFB access if available:
 	 if (safeparm || nolfbparm || vesa_version<2) linear=false; else linear=mode_LFB; // LFB wanted? and supported?
  	 if (linear) {if (vesa_get_screen_base_addr(0)==1) linear=false;} // Get LFB base address, should be available
-     if (blackband &&  linear) vesa_clear_pages_LFB   (2, 0x08);      // may be garbage left in video memory, 
-     if (blackband && !linear) vesa_clear_pages_banked(2, 0x08);      // which will otherwise be visible in the bars.
+     if (blackband &&  linear) vesa_clear_pages_LFB   (2, BG_COLOR);       // may be garbage left in video memory, 
+     if (blackband && !linear) vesa_clear_pages_banked(2, BG_COLOR);      // which will otherwise be visible in the bars.
   }
 
   // CONTINUE TO PREPARE GENERAL STUFF

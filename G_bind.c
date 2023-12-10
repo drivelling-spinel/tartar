@@ -469,17 +469,17 @@ boolean G_KeyNonCmdResponder(event_t *ev)
 		{
 		  case at_variable:
 		    (*keybindings[key].binding->value.variable)++;
-		    break;
+		    return true;
 
 		  case at_function:
 		    keybindings[key].binding->value.Handler();
-		    break;
+		    return true;
 		    
 		  default:
 		    break;
 		}
 	    }
-	}
+	} 
     }
 
   if(ev->type == ev_keyup)
@@ -495,7 +495,7 @@ boolean G_KeyNonCmdResponder(event_t *ev)
 	      case at_variable:
 		if(*keybindings[key].binding->value.variable > 0)
 		  (*keybindings[key].binding->value.variable)--;
-		break;
+		return true;
 		
 	      default:
 		break;
@@ -503,7 +503,7 @@ boolean G_KeyNonCmdResponder(event_t *ev)
 	}
     }
 
-  return true;
+  return false;
 }
 
 //===========================================================================

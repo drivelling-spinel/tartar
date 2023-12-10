@@ -223,14 +223,21 @@ void D_ProcessEvents (void)
       if(menuactive) 
       {
         if (!MN_Responder(events+eventtail))
-          if(!C_Responder(events+eventtail))
-            if(!ST_Responder(events+eventtail))
+          if (!C_Responder(events+eventtail))
+            if (!ST_Responder(events+eventtail))
               G_Responder(events+eventtail);
-      }
-      else
+      } 
+      else if(automapactive)
       {
-        if(!C_Responder(events+eventtail))
-          if(!ST_Responder(events+eventtail))
+        if (!G_Responder(events+eventtail))
+          if (!MN_Responder(events+eventtail))
+            if (!C_Responder(events+eventtail))
+              ST_Responder(events+eventtail);
+      } 
+      else 
+      {
+        if (!C_Responder(events+eventtail))
+          if (!ST_Responder(events+eventtail))
             if (!MN_Responder(events+eventtail))
               G_Responder(events+eventtail);
       }
@@ -257,7 +264,6 @@ void D_Display (void)
 {
   if (nodrawers)                    // for comparative timing / profiling
     return;
-
   R_ReInitIfNeeded();
 
   if (setsizeneeded)                // change the view size if needed
@@ -386,7 +392,7 @@ void D_640PageDrawer(char *key);
 
 void D_PageDrawer(void)
 {
-  V_FillScreen(0, FG);
+  V_FillScreen(BG_COLOR, FG);
   if (pagename)
     {
       int l = W_CheckNumForName(pagename);

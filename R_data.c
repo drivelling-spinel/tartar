@@ -136,6 +136,7 @@ int       *texturetranslation;
 // needed for pre-rendering
 fixed_t   *spritewidth, *spriteoffset, *spritetopoffset;
 
+
 //
 // MAPTEXTURE_T CACHING
 // When a texture is first needed,
@@ -596,12 +597,16 @@ void R_InitTextures (void)
           patch->originx = SHORT(mpatch->originx);
           patch->originy = SHORT(mpatch->originy);
           patch->patch = patchlookup[SHORT(mpatch->patch)];
+          
           if (patch->patch == -1)
             {	      // killough 8/8/98
                 // sf: error_printf
               error_printf("\nR_InitTextures: Missing patch %d in texture %.8s",
                      SHORT(mpatch->patch), texture->name); // killough 4/17/98
               ++errors;
+              texture->patchcount -= 1;
+              j--;
+              patch--;
             }
         }
 
@@ -628,7 +633,7 @@ void R_InitTextures (void)
   // Precalculate whatever possible.
   for (i=0 ; i<numtextures ; i++)
     R_GenerateLookup(i, &errors);
-
+  
   if (errors)
     {
       usermsg("\n\n%d errors.\nerrors dumped to %s\n", errors, error_filename);
@@ -1386,6 +1391,7 @@ static int R_Doom1Texture(const char *name)
 
 static void error_printf(char *s, ...)
 {
+  static int ecount = 0;
   static char tmp[1024];
   va_list v;
   va_start(v,s);
@@ -1403,7 +1409,8 @@ static void error_printf(char *s, ...)
   }
 
   fprintf(error_file, tmp);
-  if(devparm) usermsg(tmp);
+  if(devparm || !(ecount%5000)) usermsg(tmp);
+  ecount += 1;
 }
 
 //-----------------------------------------------------------------------------

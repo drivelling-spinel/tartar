@@ -2239,11 +2239,11 @@ boolean WriteBMPfile(char *filename, byte *data, int width,
 
       for (i = 0 ; i < width * band ; i++)
         SafeWrite(&zero, sizeof(char), 1, st);
+      for (i = (width * (2 * band + height)) ; i < bmih.biWidth * bmih.biHeight ; i++)
+        SafeWrite(&zero, sizeof(char), 1, st);
       for (i = 0 ; i < height ; i++)
       	SafeWrite(data+(height-1-i)*width,sizeof(byte),wid,st);
       for (i = 0 ; i < width * band ; i++)
-        SafeWrite(&zero, sizeof(char), 1, st);
-      for (i = width * (band * 2 + height) ; i < bmih.biWidth * bmih.biHeight ; i++)
         SafeWrite(&zero, sizeof(char), 1, st);
         
       fclose(st);

@@ -780,7 +780,6 @@ void A_TakeSelfie(player_t *player, pspdef_t *psp)
 {
   A_FireSomething(player, P_Random(pr_plasma) & 1);
   P_SpawnPlayerMissile(player->mo, MT_SELFFLASH);
-  C_RunTextCmd("screenshot");
   C_RunTextCmd("animshot 3");
 }
 

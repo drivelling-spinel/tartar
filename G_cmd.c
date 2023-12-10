@@ -127,7 +127,7 @@ CONSOLE_COMMAND(quit, 0)
 
 CONSOLE_COMMAND(screenshot, 0)
 {
-  M_ScreenShot();
+  singlescreenshot = 1;
 }
 
 CONSOLE_COMMAND(animshot, 0)

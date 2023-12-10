@@ -44,6 +44,7 @@
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
 #define FG 0
+#define BG_COLOR 0
 
 //jff 2/16/98 palette color ranges for translation
 //jff 2/18/98 conversion to palette lookups for speed

@@ -138,6 +138,7 @@ int             mouseSensitivity_horiz; // has default   //  killough
 int             mouseSensitivity_vert;  // has default
 int             invert_mouse = true;
 int             animscreenshot = 0;       // animated screenshots
+int             singlescreenshot = 0;
 
 //
 // controls (have defaults)
@@ -825,15 +826,15 @@ boolean G_Responder(event_t* ev)
       if(ev->data1 == key_pause) // phares
       {
 	 C_RunTextCmd("pause");
+	 return true;
       }
       else
       {
 	 if(ev->data1 < NUMKEYS)
 	    gamekeydown[ev->data1] = true;
 	 
-         G_KeyNonCmdResponder(ev); // haleyjd
+         return G_KeyNonCmdResponder(ev); // haleyjd
       }
-      return true;    // eat key down events
       
    case ev_keyup:
       if(ev->data1 < NUMKEYS)
@@ -1818,9 +1819,14 @@ void G_Ticker(void)
    {
       if(gametic % 16 == 0)
       {
-	 animscreenshot--;
-	 M_ScreenShot();
+         animscreenshot--;
+         M_ScreenShot();
       }
+   }
+   if(singlescreenshot)
+   {
+      singlescreenshot = 0;
+      M_ScreenShot();
    }
 
    // killough 10/6/98: allow games to be saved during demo
@@ -2211,7 +2217,7 @@ void G_DoReborn(int playernum)
 
 void G_ScreenShot(void)
 {
-   gameaction = ga_screenshot;
+   singlescreenshot = 1;
 }
 
 // DOOM Par Times

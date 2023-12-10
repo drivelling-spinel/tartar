@@ -1792,7 +1792,7 @@ void deh_procBexCodePointers(DEHFILE *fpin, FILE* fpout, char *line, extra_file_
                                  deh_bexptrs[i].cptr,i,indexnum);
               found = TRUE;
             }
-        } while (!found && (deh_bexptrs[i].lookup != NULL));
+        } while (!found && (deh_bexptrs[i].cptr != NULL));
 
       if (!found)
         if (fpout) fprintf(fpout,
