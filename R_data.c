@@ -160,10 +160,18 @@ fixed_t   *spritewidth, *spriteoffset, *spritetopoffset;
 static void R_DrawColumnInCache(const column_t *patch, byte *cache,
 				int originy, int cacheheight, byte *marks)
 {
+  int tall = 0;
   while (patch->topdelta != 0xff)
     {
-      int count = patch->length;
-      int position = originy + patch->topdelta;
+      int count, position;
+
+      if(patch->topdelta < tall)
+        tall += patch->topdelta;
+      else
+        tall = patch->topdelta;
+      position = originy + tall;
+      count = patch->length;
+      tall += patch->length;
 
       if (position < 0)
         {
@@ -225,7 +233,7 @@ static void R_GenerateComposite(int texnum)
           // killough 1/25/98, 4/9/98: Fix medusa bug.
           R_DrawColumnInCache((column_t*)((byte*) realpatch + LONG(cofs[x])),
                               block + colofs[x], patch->originy,
-			      texture->height, marks + x*texture->height);
+			                        texture->height, marks + x*texture->height);
     }
 
   // killough 4/9/98: Next, convert multipatched columns into true columns,
@@ -237,16 +245,17 @@ static void R_GenerateComposite(int texnum)
       {
         column_t *col = (column_t *)(block + colofs[i] - 3);  // cached column
         const byte *mark = marks + i * texture->height;
-        int j = 0;
+        int j = 0, tall = 0;
 
         // save column in temporary so we can shuffle it around
         memcpy(source, (byte *) col + 3, texture->height);
-
-        for (;;)  // reconstruct the column by scanning transparency marks
+  
+        // peridot: plain Doom patch post offset is up to 255 
+        for (;j < 256;)  // reconstruct the column by scanning transparency marks
           {
-	    unsigned len;        // killough 12/98
+	          unsigned len = 0;        // killough 12/98
 
-            while (j < texture->height && !mark[j]) // skip transparent cells
+            while (j < texture->height && j < 254 && !mark[j]) // skip transparent cells
               j++;
 
             if (j >= texture->height)           // if at end of column
@@ -254,21 +263,69 @@ static void R_GenerateComposite(int texnum)
                 col->topdelta = -1;             // end-of-column marker
                 break;
               }
+              
+            if (j == 254)
+              {
+                col->topdelta = j;
+                col->length = 0;
+                col = (column_t *)((byte *) col + len + 4); // next post
+                break;                
+              }
 
             col->topdelta = j;                  // starting offset of post
 
-	    // killough 12/98:
-	    // Use 32-bit len counter, to support tall 1s multipatched textures
+	          // killough 12/98:
+	          // Use 32-bit len counter, to support tall 1s multipatched textures
 
-	    for (len = 0; j < texture->height && mark[j]; j++)
+	          for (len = 0; j < texture->height && len <= 255 && mark[j]; j++)
               len++;                    // count opaque cells
 
-	    col->length = len; // killough 12/98: intentionally truncate length
+	          col->length = len; // killough 12/98: intentionally truncate length
 
             // copy opaque cells from the temporary back into the column
             memcpy((byte *) col + 3, source + col->topdelta, len);
             col = (column_t *)((byte *) col + len + 4); // next post
           }
+         
+        // peridot: tall patch can go on forever in chunks of 255 
+        for (;j < texture->height;)  // now the tall part
+          {
+	          unsigned len = 0, tran = 0;        // killough 12/98
+
+            while (j < texture->height && tran < 254 && !mark[j]) // skip transparent cells
+              j++, tran++;
+
+            if (j >= texture->height)           // if at end of column
+              {
+                col->topdelta = -1;             // end-of-column marker
+                break;
+              }
+            
+            if (tran == 254)
+              {
+                col->topdelta = tran;
+                col->length = 0;
+                col = (column_t *)((byte *) col + len + 4); // next post
+                tall = j;
+                continue;
+              }
+            
+              
+            col->topdelta = tran;           // starting offset of post
+            tall = j;
+
+	          // killough 12/98:
+	          // Use 32-bit len counter, to support tall 1s multipatched textures
+
+	          for (len = 0; j < texture->height && len <= 255 && mark[j]; j++)
+              len++;                    // count opaque cells
+
+	          col->length = len; // killough 12/98: intentionally truncate length
+
+            // copy opaque cells from the temporary back into the column
+            memcpy((byte *) col + 3, source + tall, len);
+            col = (column_t *)((byte *) col + len + 4); // next post
+          }          
       }
   free(source);         // free temporary column
   free(marks);          // free transparency marks
@@ -413,8 +470,9 @@ static void R_GenerateLookup(int texnum, int *const errors)
             collump[x] = -1;              // mark lump as multipatched
             colofs[x] = csize + 3;        // three header bytes in a column
 	    // killough 12/98: add room for one extra post
-            csize += 4*count[x].posts+5;  // 1 stop byte plus 4 bytes per post
-            csize += height;              // height bytes of texture data
+	    // peridot: add couple more post for tall patches, just in case
+            csize += 4*count[x].posts+5+5+5;// 1 stop byte plus 4 bytes per post
+            csize += height;                // height bytes of texture data
           }
       }
 
@@ -1413,19 +1471,7 @@ static void error_printf(char *s, ...)
   ecount += 1;
 }
 
-int R_CheckTextures(const char * msg)
-{
-  int i, x;
-
-  for(i = 0 ; i < numtextures ; i += 1)
-  {
-    for(x = 0 ; x < texturewidthmask[i] ; x += 1)
-    {
-      if(texturecolumnofs[i][x] > 0xfffffu) I_Error(msg);
-    }
-  }
-}
-
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //
 // $Log: r_data.c,v $

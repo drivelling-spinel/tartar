@@ -141,6 +141,7 @@ enum {
   comp_mushroom,
   comp_everyline,
   comp_clighting,
+  comp_talltex,
   COMP_TOTAL=32  // Some extra room for additional variables
 };
 

@@ -523,14 +523,15 @@ const char *comp_strings[] =
   "scratch",    //          02/15/02: melee z check
   "mushroom",
   "everyline",
-  "clighting"
+  "clighting",
+  "talltex"
 };
 
 void G_AddCompat()
 {
   int i;
 
-  for(i=0; i<=comp_clighting; i++)   // haleyjd: update this regularly
+  for(i=0; i<=comp_talltex; i++)   // haleyjd: update this regularly
     {
       variable_t *variable;
       command_t *command;

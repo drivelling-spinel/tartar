@@ -1607,7 +1607,14 @@ default_t defaults[] = {
     "comp_clighting",
     &default_comp[comp_clighting], &comp[comp_clighting],
     1, {0,1}, dt_number, ss_comp, wad_yes,
-    "Switch SMMU coloured lighting on or off (try off for less rendering glitches in PWADs"
+    "Switch SMMU coloured lighting on or off"
+  },
+
+  {
+    "comp_talltex",
+    &default_comp[comp_talltex], &comp[comp_talltex],
+    0, {0,1}, dt_number, ss_comp, wad_yes,
+    "Workaround for rendering single patch textures more than 255 pixels high"
   },
 
 
