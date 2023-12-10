@@ -29,9 +29,9 @@ machines for retro gaming.
 - Vanilla Doom 2, TNT Evilution and Plutonia Experiment   
   (with animated intermission screens a-la Doom 1 courtesy of 
   Doomworld user \@oliacym)
-- No Rest for the Living (aka NERVE.WAD) with proper map names,
-  music tracks assignment, levels and secrets progression and 
-  intermission backdrops courtesy of \@oliacym 
+- No Rest for the Living (aka NERVE.WAD), Sigil and Sigil II   
+  with proper map names, music tracks assignment, levels and secrets   
+  progression and (for NERVE) intermission backdrops courtesy of \@oliacym 
   with helper WAD included in the distribution
 - Chex Quest without Doom IWAD - and it will end after level 5!   
   (also green slime splashes can be activated by switching on particles)
@@ -56,7 +56,7 @@ machines for retro gaming.
 - ??? and maps with non-Unix line endings in DeHackEd patches, 
   or other DeHackEd patches sheninegans like references to non-existant code pointers
   (e.g. Rush)
-- HACX commercial release without Doom II IWAD  
+- HACX 1.1 without Doom II IWAD  
   (but make sure Tartar is given a PLAYPAL, e.g. by putting one of InstaDoom
   filter WAD-s into FILTERS directory AND that text mode startup is on!)
 - Also - only if you are desperate enough - The People's Doom as IWAD
@@ -64,6 +64,8 @@ machines for retro gaming.
 
 ## Also...
 ... for some traits "less common among source ports":
+- Best effort at loading GENMIDI lump for more accurate music playback   
+  with FM sound cards
 - Arcade play mode where player is resurrected on the spot without
   level restarting 
 - Next/prev music track bindable hotkeys and music tracks randomizer
@@ -154,15 +156,16 @@ EXTRAS document above describes the contents of GOODIES directories.
 4. Run SETUP.EXE from the COD directory and follow
    on screen instructions to configure sound and music card.
 
-5. Run TARTAR.EXE -file COD.WAD CODLEV.WAD to play
+5. Run TARTAR.EXE -file COD CODLEV to play
 
 ### Installing popular fix packs with Tartar
 
 Tartar's WAD autoloading makes it easy to add fix packs
 to the installation. Suggested WAD-s to try out include:
-  - Doom Sound Bulb by \@SeanTheBermanator
-  - Hi Res Doom Sound Effects Pack by \@perkristian
-  - Doom 2 Minor Sprite Fixing Project by \@revenant100
+  - [Doom Sound Bulb](https://www.doomworld.com/forum/topic/110822) by \@SeanTheBermanator
+  - [Hi Res Doom Sound Effects Pack](https://www.perkristian.net/game_doom-sfx.shtml) by \@perkristian
+  - [Doom 2 Minor Sprite Fixing Project](https://www.doomworld.com/forum/topic/62403) by \@revenant100
+  - [DMXOPL](https://github.com/sneakernets/DMXOPL/releases/tag/v1.11-Final) by \@sneakernets
 
 Follow the below steps to have them installed with Tartar
 
@@ -179,6 +182,7 @@ Follow the below steps to have them installed with Tartar
   ...   
   C:\GAMES\TARTAR\FIXES\   
   C:\GAMES\TARTAR\FIXES\Doom_Sound_Bulb.wad   
+  C:\GMAES\TARTAR\FIXES\DMXOPL.WAD   
   C:\GAMES\TARTAR\FIXES\DOOM\   
   C:\GAMES\TARTAR\FIXES\DOOM\D1SPFX20.WAD   
   C:\GAMES\TARTAR\FIXES\DOOM2\   
@@ -189,11 +193,157 @@ Follow the below steps to have them installed with Tartar
 5. Should you want to play a certain PWAD without any of the fix packs loaded
    start Tartar with a command similar to the below one:
       
-   TARTAR.EXE -noload -file NUTS.WAD
+   TARTAR.EXE -noload -file NUTS
+
+### Playing No Rest for the Living with Tartar
+
+1. Install Tartar with DOOM2.WAD IWAD
+
+2. Drop NERVE.WAD (e.g. from Doom 3 BFG Edition) into the same directory
+
+3. Drop NERVE.WAD (yes, the same name!) from GOODIES\SHIMS directory in the   
+   distribution into SHIMS directory where TARTAR is found. 
+   
+4. Drop INTMAPNR.WAD (required step!) found in GOODIES\OLIACYM directory   
+   of the distribution and place itnto the same same directory as TARTAR.EXE.   
+   For example:
+   
+   C:\GAMES\TARTAR\   
+   C:\GAMES\TARTAR\TARTAR.EXE   
+   C:\GAMES\TARTAR\DOOM2.WAD   
+   C:\GAMES\TARTAR\NERVE.WAD   
+   C:\GAMES\TARTAR\INTMAPNR.WAD   
+   ...   
+   C:\GAMES\TARTAR\SHIMS\   
+   C:\GAMES\TARTAR\SHIMS\NERVE.WAD   
+
+5. Run TARTAR.EXE -file NERVE to play
+
+### Playing Sigil and Sigil II with Tartar
+
+1. Install Tartar with DOOM.WAD IWAD
+
+2. Drop Sigial and/or Sigil II WAD-s into the same directory
+
+3. Drop SIGIAL.WAD and SIGIL2.WAD from GOODIES\SHIMS directory in the
+   distribution into SHIMS directory where TARTAR is found. For example:
+   
+   C:\GAMES\TARTAR\   
+   C:\GAMES\TARTAR\TARTAR.EXE   
+   C:\GAMES\TARTAR\DOOM.WAD   
+   C:\GAMES\TARTAR\SIGIL_v1_21.WAD   
+   C:\GAMES\TARTAR\SIGIL2.WAD   
+   ...   
+   C:\GAMES\TARTAR\SHIMS\   
+   C:\GAMES\TARTAR\SHIMS\SIGIL.WAD   
+   C:\GAMES\TARTAR\SHIMS\SIGIL2.WAD   
+
+4. Run TARTAR.EXE -file SIGIL2 to play both,   
+   or TARTAR.EXE -file SIGIL_~1 to only play the first part
+
+### Playing classic Wolfendoom with Tartar
+
+1. Install Tartar with DOOM2.WAD 
+
+2. Obtain classic Wolfendoom PWAD-s. The recommended way is by downloading   
+   [WolfenDOOM Collection](https://www.macintoshrepository.org/9074-wolfendoom-collection)   
+   for Mac (yes, Mac - WolfenDOOM was deveoped on Mac in the first place!)
+
+3. _Optionally_ get [Operation Arctic Wolf SE](https://www.doomworld.com/idgames/themes/wolf3d/arcticse)   
+   and [Aftermath](https://www.doomworld.com/idgames/themes/wolf3d/aftermth) and its   
+   [prerequisites](https://www.doomworld.com/idgames/themes/wolf3d/wolfdoom).   
+   For playing classic Artctic Wolf the following updates may also be of interest:   
+   [arc_fix.zip](https://doomworld.com/3ddownloads/wolfendoom/arc_fix.zip)   
+   [Lrbjskin.zip](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip)   
+
+4. Drop _shim_ WAD with the same name as the PWAD to be player from GOODIES\SHIMS directory   
+   in the ditribution to SHIMS directory where TARTAR is found. For example:
+
+   C:\GAMES\TARTAR\   
+   C:\GAMES\TARTAR\TARTAR.EXE   
+   C:\GAMES\TARTAR\DOOM.WAD2   
+   ...   
+   C:\GAMES\TARTAR\SHIMS\   
+   C:\GAMES\TARTAR\SHIMS\SOD.WAD   
+   C:\GAMES\TARTAR\SHIMS\ESCAPE.WAD   
+   C:\GAMES\TARTAR\SHIMS\FAUST.WAD   
+   C:\GAMES\TARTAR\SHIMS\FUHRER.WAD   
+   C:\GAMES\TARTAR\SHIMS\CONFRONT.WAD   
+   C:\GAMES\TARTAR\SHIMS\SECRET.WAD   
+   C:\GAMES\TARTAR\SHIMS\TRAIL.WAD   
+
+5. Run TARTAR to play with _both_ PWAD and DEH patch provided via -file   
+   command line argument. For example, if the PWAD-s are in the same directory   
+   as TARTAR.EXE:   
+   
+   TARTAR -FILE SOD SOD.DEH   
+   TARTAR -FILE CONFRONT NOCT.DEH   
+   TARTAR -FILE ESCAPE ORIGINAL.DEH   
+   TARTAR -FILE 2ND_ENC 2ND_ENC.DEH   
+   TARTAR -FILE AFTERMTH   
+
+   _Note_ that Tartar will pull the other required WAD-s from the   
+   directory where the specified PWAD-s sit, so there's no need to   
+   type all of them, as long as they have been copied there.
+
+   For _original_ Operation Arctic Wolf:
+   TARTAR -FILE GFX1 ARCTIC1.DEH
+
+   For Operation Arctic Wolf Special Edition:
+   TARTAR -FILE ARCTGFX1 ARCTIC1.DEH
+
+   _Note_ that for Arctic Wolf there is no need to quit and change the way   
+   the game is launched midway though. Tartar will automatically reload   
+   the required PWAD/DEH combination based on the level being played.
+
+6. _Optionally_ add WOLFMIDI.WAD to play with original Wolfenstein music.   
+   The music tracks (courtesy of [VGMPF](https://www.vgmpf.com/Wiki/index.php?title=Wolfenstein_3D_(DOS))   
+   cand be found in GOODIES\WOLFMIDI directory of the distribution.
+
+   TARTAR -FILE HALTEN WOLFMIDI
+   
+7. _Optionally_ Tartar will automatically load B J Blazkowicz skin   
+   with Wolfendoom if it is placed in SKINS directory where TARTAR is found.   
+   Obtain it [here](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip).   
+   For example:
+   
+   C:\GAMES\TARTAR\   
+   C:\GAMES\TARTAR\TARTAR.EXE   
+   C:\GAMES\TARTAR\DOOM.WAD2   
+   ...   
+   C:\GAMES\TARTAR\SHIMS\   
+   C:\GAMES\TARTAR\SHIMS\2ND_ENC.WAD   
+   ...
+   C:\GAMES\TARTAR\SKINS\   
+   C:\GAMES\TARTAR\SKINS\BJ.WAD   
+   
+   TARTAR -FILE 2ND_ENC 2ND_ENC.DEH
+
+### Want more? Try extras!
+
+Tartar offers first class support for some of the excellent mods by Doom community.   
+Here's how to enable Doom 2 intermission screen maps created by \@olyacim.
+
+1. Install Tartar.
+
+2. Drop INTMAPD2.WAD found in GOODIES\OLIACYM directory of the distribution   
+   and place itnto the same same directory as TARTAR.EXE. For example:
+
+   C:\GAMES\TARTAR\   
+   C:\GAMES\TARTAR\TARTAR.EXE   
+   C:\GAMES\TARTAR\DOOM2.WAD   
+   C:\GAMES\TARTAR\INTMAPD2.WAD   
+
+3. _Optional_ place INTMAPPL.WAD (for PLUTONIA.WAD), INTMAPEV.WAD (for TNT.WAD)   
+   in the same directory as TARTAR.EXE.
+
+4. Run TARTAR.EXE. When running without PWAD-s no additional arguments   
+   are required. _When running with PWADS, enable the intermission_   
+   _maps by adding -wimaps command line argument._
+
+Check out more guides and examples found in [EXTRAS](doc/extras.md).
 
 ## On the name of the port
 
-Tartar continues a glorious tradition of giving Doom 
-source ports gastronomic names and bears the name of the white sauce, 
-traditionally served with potato fries and fried fish (usually COD). 
+The sauce, _nuff said._
 
