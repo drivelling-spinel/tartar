@@ -185,21 +185,29 @@ static int S_AdjustSoundParams(camera_t *listener, const mobj_t *source,
   // angle of source to listener
   // sf: use listenx, listeny
 
-  angle = R_PointToAngle2(listener->x, listener->y, source->x, source->y);
-
-  if (angle <= listener->angle)
-    angle += 0xffffffff;
-  angle -= listener->angle;
-  angle = -angle;       // sf: stereo fix
-  angle >>= ANGLETOFINESHIFT;
-
-  // stereo separation
-  *sep = NORM_SEP - FixedMul(S_STEREO_SWING>>FRACBITS,finesine[angle]);
-
   // volume calculation
   *vol = dist < S_CLOSE_DIST >> FRACBITS ? snd_SfxVolume :
     snd_SfxVolume * ((S_CLIPPING_DIST>>FRACBITS)-dist) /
     S_ATTENUATOR;
+
+  angle = R_PointToAngle2(listener->x, listener->y, source->x, source->y);
+
+  angle -= viewangle;
+  if(angle > ANG90 && angle < ANG270)
+    {
+       *vol -= *vol >> 1;
+    }
+
+  angle >>= 24;
+  *sep = angle*2-128;
+  if(*sep < 64)
+    {
+       *sep = -*sep;
+    }
+  if(*sep > 192) 
+    {
+      *sep = 512-*sep;
+    }
 
   return *vol > 0;
 }
