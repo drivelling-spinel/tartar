@@ -75,6 +75,7 @@ rcsid[] = "$Id: g_game.c,v 1.59 1998/06/03 20:23:10 killough Exp $";
 #include "g_bind.h"
 #include "hu_fspic.h"
 #include "d_dialog.h"
+#include "ex_stuff.h"
 
 #define SAVEGAMESIZE  0x20000
 #define SAVESTRINGSIZE  24
@@ -627,6 +628,16 @@ void G_SetGameMap()
       gamemap = 0;
    if(gamemap > 9 && gamemode != commercial)
       gamemap = 9;
+}
+
+static void G_DoHubReborn(void)
+{
+   gameaction = ga_nothing;
+   if(!netgame)
+     {
+       players[consoleplayer].playerstate = PST_REBORN;
+       P_HubReborn();
+     }
 }
 
 //
@@ -1829,7 +1840,10 @@ void G_Ticker(void)
 	 break;
       case ga_worlddone:
 	 G_DoWorldDone();
-	 break;
+         break;
+      case ga_reborn:
+         G_DoHubReborn();
+         break;
       case ga_screenshot:
 	 M_ScreenShot();
 	 gameaction = ga_nothing;
@@ -2087,7 +2101,26 @@ void G_PlayerContinue(int player)
 
    p->usedown = p->attackdown = true;  // don't do anything immediately
    p->playerstate = PST_LIVE;
-   p->health = initial_health / 2;  // Ty 03/12/98 - use dehacked values
+   p->readyweapon = p->pendingweapon = wp_pistol;
+   p->health = initial_health;  // Ty 03/12/98 - use dehacked values
+   if(wolf3dmode)
+     {
+       p->armortype = 0;
+       p->armorpoints = 0;
+     }
+   if(IS_EXTRA_LOADED(EXTRA_SELFIE))
+     {
+       p->cheats &= ~CF_SELFIE;
+     }
+   if(IS_EXTRA_LOADED(EXTRA_JUMP))
+     {
+       p->cheats &= ~CF_JUMP;
+     }
+
+   i = p->powers[pw_strength];
+   memset(p->powers, 0, sizeof p->powers);
+   if(i) p->powers[pw_strength] = (12 << 6);
+
    for(i = 0; i < NUMAMMO; i++)
    {
       unsigned pa = p->ammo[i];

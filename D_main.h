@@ -81,6 +81,8 @@ void D_AdvanceDemo(void);
 void D_StartTitle(void);
 void D_DoomMain(void);
 
+void D_Reborn(void);
+
 // sf: display a message to the player: either in text mode or graphics
 void usermsg(char *s, ...);
 

@@ -200,11 +200,11 @@ int Ex_FindAllBex(char * dir, char *** fnames)
 typedef int (find_all_func_t)(char *, char ***);
 find_all_func_t *find_all_funcs[] = { Ex_FindAllWads, Ex_FindAllDeh, Ex_FindAllBex };
 
-int Ex_FindFilterWads(char *** fnames)
+static int Ex_FindSubdirWads(const char * subdir, char *** fnames)
 {
   struct stat sbuf;
   *filestr = 0;
-  sprintf(filestr, "%sfilters", D_DoomExeDir());
+  sprintf(filestr, "%s%s", D_DoomExeDir(), subdir);
 
   if (!stat(filestr, &sbuf))      
     {
@@ -216,31 +216,66 @@ int Ex_FindFilterWads(char *** fnames)
 }
 
 
-int Ex_DetectAndLoadFilters()
+static int Ex_DetectAndLoadSubdirWads(const char * kind, const char * subdir, extra_file_t extra)
 {
   char **fnames;
-  int numfilters, loaded = 0;
+  int numwads, loaded = 0;
   int i;
 
-  numfilters = Ex_FindFilterWads(&fnames);
+  numwads = Ex_FindSubdirWads(subdir, &fnames);
   *filestr = 0;
 
-  for(i = 0 ; i < numfilters ; i += 1)
+  for(i = 0 ; i < numwads ; i += 1)
     {
-      if(!W_AddExtraFile(fnames[i], EXTRA_FILTERS))
+      if(!W_AddExtraFile(fnames[i], extra))
         {
           if(!loaded) ExtractFileBase(fnames[i], filestr, sizeof(filestr) -1);
           loaded += 1;
         }
     }
 
-  if(loaded == 1) usermsg("%s filter loaded", filestr);
-  if(loaded > 1) usermsg("%s and %d other filter%s loaded",
+  if(loaded == 1) usermsg("%s %s loaded", filestr, kind);
+  if(loaded > 1) usermsg("%s and %d other %s%s loaded",
+    filestr, loaded, kind, loaded == 2 ? "" : "s");
+
+  if(numwads)
+    {
+      for(i = 0 ; i < numwads ; i += 1) free(fnames[i]);
+      free(fnames);
+    }
+
+  return loaded;
+}
+
+int Ex_DetectAndLoadFilters()
+{
+  return Ex_DetectAndLoadSubdirWads("filter", "filters", EXTRA_FILTERS);
+}
+
+
+int Ex_DetectAndAddSkins()
+{
+  char **fnames;
+  int numwads, loaded = 0;
+  int i;
+
+  numwads = Ex_FindSubdirWads("skins", &fnames);
+  *filestr = 0;
+
+  for(i = 0 ; i < numwads ; i += 1)
+    {
+      D_AddFile(fnames[i]);
+      ExtractFileBase(fnames[i], filestr, sizeof(filestr) -1);
+      loaded += 1;
+    }
+
+  if(loaded == 1) usermsg("%s skin added", filestr);
+  if(loaded > 1) usermsg("%s and %d other skin%s added",
     filestr, loaded, loaded == 2 ? "" : "s");
 
-  if(numfilters)
+  if(numwads)
     {
-      for(i = 0 ; i < numfilters ; i += 1) free(fnames[i]);
+      for(i = 0 ; i < numwads ; i += 1) free(fnames[i]);
       free(fnames);
     }
 
@@ -866,8 +901,18 @@ int Ex_Check1stEncWads(const char * wadname, const int index)
     WOLFDOOM_RES_WADS, sizeof(WOLFDOOM_RES_WADS) / sizeof(*WOLFDOOM_RES_WADS));
 }
 
+static char * SPEAR_PWADS[] = {"SOD.WAD"};
+static char * SPEAR_RES_WADS[] = { "BJ.WAD", "DISKSKIN.WAD" };
+
+int Ex_CheckSpearWads(const char * wadname, const int index) 
+{
+  return Ex_CheckWadsGeneralized(wadname, index, SPEAR_PWADS, sizeof(SPEAR_PWADS) / sizeof(*SPEAR_PWADS),
+    SPEAR_RES_WADS, sizeof(SPEAR_RES_WADS) / sizeof(*SPEAR_RES_WADS));
+}
+
+
 static char * NOCT_PWADS[] = {"CONFRONT.WAD", "TRAIL.WAD", "SECRET.WAD"};
-static char * NOCT_RES_WADS[] = { "NOCTFX.WAD" };
+static char * NOCT_RES_WADS[] = { "NOCTFX.WAD", "BJ.WAD", "DISKSKIN.WAD" };
 
 int Ex_CheckNoctWads(const char * wadname, const int index) 
 {
@@ -876,7 +921,7 @@ int Ex_CheckNoctWads(const char * wadname, const int index)
 }
 
 static char * ORG_PWADS[] = {"FUHRER.WAD", "FAUST.WAD", "ESCAPE.WAD"};
-static char * ORG_RES_WADS[] = { "ORGFX.WAD" };
+static char * ORG_RES_WADS[] = { "ORGFX.WAD", "BJ.WAD", "DISKSKIN.WAD" };
 
 int Ex_CheckOriginalWads(const char * wadname, const int index) 
 {
@@ -1024,7 +1069,8 @@ typedef int (related_wad_func_t)(const char *, const int);
 related_wad_func_t *related_wad_funcs[] = { Ex_Check1stEncWads,
   Ex_CheckArcticWads, Ex_CheckArcticSeWads,
   Ex_CheckBTSXWads, Ex_CheckKDiKDiZDWads,
-  Ex_CheckOriginalWads, Ex_CheckNoctWads };
+  Ex_CheckOriginalWads, Ex_CheckNoctWads,
+  Ex_CheckSpearWads };
 
 int Ex_InsertRelatedWads(const char * wadname, const int index)
 {

@@ -597,6 +597,12 @@ void D_StartTitle (void)
   D_AdvanceDemo();
 }
 
+void D_Reborn (void)
+{
+  gameaction = ga_reborn;
+}
+
+
 #ifdef GAMEBAR
 // print title for every printed line
 static char title[128];
@@ -1743,6 +1749,11 @@ void D_DoomMain(void)
   Ex_DetectAndLoadTapeWads(wadfiles, !M_CheckParm("-noload"));
 
   Ex_InsertFixes(wadfiles[0], !M_CheckParm("-noload"));
+  if (M_CheckParm ("-skins"))
+    {
+      startupmsg("Extras","Detecting skin WADs to autoload.");
+      Ex_DetectAndAddSkins();
+    }
   W_InitMultipleFiles(wadfiles);
 
   usermsg("");  // gap

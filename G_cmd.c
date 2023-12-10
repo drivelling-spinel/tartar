@@ -75,6 +75,12 @@ CONSOLE_COMMAND(endgame, cf_notnet)
   C_SetConsole();
 }
 
+CONSOLE_COMMAND(reborn, cf_notnet)
+{
+  MN_ClearMenus();
+  D_Reborn();
+}
+
 CONSOLE_COMMAND(pause, cf_server)
 {
   sendpause = true;
@@ -605,6 +611,8 @@ void G_AddCommands()
   C_AddCommand(bulletpufftype);
   C_AddCommand(rocket_trails);
   C_AddCommand(grenade_trails);
+
+  C_AddCommand(reborn);
 
   G_AddChatMacros();
   G_AddWeapPrefs();

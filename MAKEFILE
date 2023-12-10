@@ -433,7 +433,7 @@ $(O)/g_game.o: g_game.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  p_saveg.h p_tick.h d_main.h wi_stuff.h hu_stuff.h am_map.h w_wad.h \
  r_main.h r_draw.h p_map.h s_sound.h dstrings.h d_englsh.h r_sky.h \
  d_deh.h p_inter.h g_game.h p_hubs.h t_script.h t_parse.h t_vari.h \
- t_prepro.h g_bind.h hu_fspic.h d_dialog.h
+ t_prepro.h g_bind.h hu_fspic.h d_dialog.h ex_stuff.h
  
 $(O)/hu_frags.o: hu_frags.c hu_frags.h c_io.h doomstat.h doomdata.h \
  doomtype.h d_net.h d_player.h d_items.h doomdef.h z_zone.h m_swap.h \

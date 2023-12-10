@@ -31,6 +31,7 @@ void Ex_DetectAndLoadExtras(void);
 int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload);
 int Ex_InsertFixes(char * iwadfile, int autoload);
 void Ex_ListTapeWad();
+int Ex_DetectAndAddSkins();
 
 // load a specialy treated wad file that if game detects it 
 

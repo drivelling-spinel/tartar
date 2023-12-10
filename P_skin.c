@@ -62,7 +62,7 @@ void P_AddSkins();
 void P_AddSkin(skin_t *newskin);
 
 char *skinsoundnames[NUMSKINSOUNDS]=
-{
+{         
    "dsplpain",
    "dspdiehi",
    "dsoof",
@@ -72,7 +72,7 @@ char *skinsoundnames[NUMSKINSOUNDS]=
    "dspldeth",
    "dsplfall",
    "dsplfeet",
-   "dsfallht",
+   "dsfallht", 
 };
 
 void P_CreateMarine();
@@ -207,6 +207,7 @@ void P_ParseSkinCmd(char *line)
         }
 
         // is it a sound?
+        return;           // LP - no skin sounds in Tartar yet
 
         for(i=0; i<NUMSKINSOUNDS; i++)
         {

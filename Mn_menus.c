@@ -359,8 +359,9 @@ menu_t menu_features =
     {it_runcmd, "load wad",             "mn_loadwad" },
     {it_runcmd, "demos",                "mn_demos" },
     {it_gap},
-    {it_runcmd, "Start in continue mode", "use_continue 1; mn_newgame"},
+    {it_runcmd, "Start in arcade mode", "use_continue 1; mn_newgame"},
     {it_runcmd, "Tartar options",       "mn_tartar" },
+    {it_runcmd, "Restart level",        "mn_reborn" },
     {it_gap},
     {it_runcmd, "about",                "credits" },
     {it_runcmd, "about Tartar",         "tartar" },
@@ -1213,6 +1214,16 @@ CONSOLE_COMMAND(mn_endgame, 0)
   MN_Question(s_ENDGAME, "starttitle");
 }
 
+CONSOLE_COMMAND(mn_reborn, 0)
+{
+  if(gamestate == GS_DEMOSCREEN) return;
+  if(netgame) return;
+  if(cmdtype != c_menu && menuactive) return;
+  
+  MN_Question("Restart current level?", "reborn");
+}
+
+
 /////////////////////////////////////////////////////////////////
 //
 // Video Options
@@ -1849,7 +1860,9 @@ menu_t menu_extrabindings =
         {it_binding,      "pogo stick",            "pogo"},
         {it_binding,      "next music",            "nextmus"},
         {it_binding,      "prev music",            "nextmus 0"},
-        {it_binding,      "shot tip",              "tip"},
+        {it_binding,      "show tip",              "tip"},
+        {it_gap},
+        {it_binding,      "restart level",         "mn_reborn"},
         {it_end},
     },
     150, 1,                        // x,y offsets
@@ -1918,6 +1931,7 @@ void MN_AddMenus()
   // prompt messages
   C_AddCommand(mn_quit);
   C_AddCommand(mn_endgame);
+  C_AddCommand(mn_reborn);
 
   // haleyjd: quicksave, quickload
   C_AddCommand(quicksave);

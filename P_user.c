@@ -285,7 +285,7 @@ void P_DeathThink (player_t* player)
   if (player->cmd.buttons & BT_USE)
     {
       int cont = T_GetGlobalIntVar("_private_continue", -1);
-      if(cont > 0 && !(player->cmd.buttons & BT_ATTACK))
+      if(cont > 0)
         {
           T_EnsureGlobalIntVar("_private_continue", 2);
         }
