@@ -64,6 +64,7 @@ const unsigned char rndtable[256] = { // 1/19/98 killough -- made const
 int demo_insurance=0, default_demo_insurance=0;   // killough 3/31/98
 
 rng_t rng;     // the random number state
+rng_t extra_rng;
 
 unsigned long rngseed = 1993;   // killough 3/26/98: The seed
 
@@ -82,6 +83,8 @@ int P_Random(pr_class_t pr_class)
 
   unsigned long boom;
 
+  unsigned long *seed = pr_class < NUMPRCLASS ? &(rng.seed[0]) : &(extra_rng.seed[0]);
+
   // killough 3/31/98:
   // If demo sync insurance is not requested, use
   // much more unstable method by putting everything
@@ -95,11 +98,11 @@ int P_Random(pr_class_t pr_class)
   if (pr_class != pr_misc && !demo_insurance)      // killough 3/31/98
     pr_class = pr_all_in_one;
 
-  boom = rng.seed[pr_class];
+  boom = seed[pr_class];
 
   // killough 3/26/98: add pr_class*2 to addend
 
-  rng.seed[pr_class] = boom * 1664525ul + 221297ul + pr_class*2;
+  seed[pr_class] = boom * 1664525ul + 221297ul + pr_class*2;
 
   if (demo_compatibility)
     return rndtable[compat];
@@ -130,6 +133,8 @@ void M_ClearRandom (void)
   unsigned long seed = rngseed*2+1;    // add 3/26/98: add rngseed
   for (i=0; i<NUMPRCLASS; i++)         // go through each pr_class and set
     rng.seed[i] = seed *= 69069ul;     // each starting seed differently
+  for (i=0; i<NUMPRCLASS; i++)         // go through each pr_class and set
+    extra_rng.seed[i] = seed *= 69069ul;     // each starting seed differently
   rng.prndindex = rng.rndindex = 0;    // clear two compatibility indices
 }
 
