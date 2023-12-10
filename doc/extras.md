@@ -1,8 +1,9 @@
 # Extras and goodies 
 
 Description of additional stuff included with Tartar distribution
+or auto-loaded by Tartar if installed by the players 
 
-## Demos
+## Tartar demonstrations
 
 ### Chex Quest
 
@@ -57,11 +58,11 @@ To play the maps:
    or  
    TARTAR\TARTAR.EXE -iwad DOOM.WAD -file ETCGFX1.WAD LEVELS\ETC21.WAD  
 
-## Extras
+## Goodies
 
 ### COD10
 
-EXTRAS\COD10 contains Caverns of Darkness engine executable (COD.EXE) 
+GOODIES\COD10 contains Caverns of Darkness engine executable (COD.EXE) 
 built from the sources found in COD10SRC.ZIP that Joel Murdoch 
 has shared in 2020 without any modifications, the only change being 
 that allegro.h was replaced with the version coming from MBF 2.0.4
@@ -71,14 +72,14 @@ That alone has improved stability of COD.EXE on the author's
 target system.
 
 To use, download the original COD distribution (the file I got was 
-named CC-COD.ZIP), unzip it and then copy over the contents of EXTRAS\COD10.
+named CC-COD.ZIP), unzip it and then copy over the contents of GOODIES\COD10.
 It is not necessary to overrite KEYS.CSC with the version provided,
 if it's already present in your COD directory. Simply run COD.EXE to play.
 
 ### Eternity dialog tools
 
 A Python-based tool to compile dialog scripts into binary format that 
-Eternity Engine originally used for dialogs is included in EXTRAS\DLGTOOLS. 
+Eternity Engine originally used for dialogs is included in GOODIES\DLGTOOLS. 
 Sample scripts in plain text format and resulting binary lumps are provided
 as well. To run the tool first make sure Python 3 is installed, then run 
 the following command, replacing the names of script file and dialog lump 
@@ -93,7 +94,7 @@ Eternity TC assets demo pack.
 
 Eternal Doom by Team TNT has a powerfull shell executable that unfortunatelly 
 requires that player's Doom source port file is named DOOM2.EXE. Provided in 
-EXTRAS\ETERNAL is a hex-edited copy of the shell that calls ETERNITY.EXE instead,
+GOODIES\ETERNAL is a hex-edited copy of the shell that calls ETERNITY.EXE instead,
 so that players wishing to play Eternal Doom via Eternity Engine can do so 
 from the shell, enjoying all of the extras: simple level (and extra level) 
 selection, WAD patching and the like.
@@ -106,7 +107,42 @@ from arbitrary maps. Unlike other ports, SMMU and older versions of Eternity did
 keep all MAPINFO details in a single lump, and instead looked for these details 
 in the index entries of the each map itself (e.g. MAPINFO for MAP01 would be 
 in the lump MAP01, MAPINFO for MAP02 - in the lump MAP02 of the same wad file, etc.). 
-In EXTRAS\NERVE one can find a set of such lumps that, if incorporated into NERVE.WAD 
+In GOODIES\NERVE one can find a set of such lumps that, if incorporated into NERVE.WAD 
 (players would have to do that on their own) allows for No Rest for the Living 
 to be played via Tartar with intended map names, music tracks and end game text.
 
+## Extras
+
+Extras are mods by other authors that Tartar provides first-class support for,
+and would load in case they are found side by side with TARTAR.EXE, but that are not 
+shipped with Tartar.
+
+### FILTERS
+
+If FILTERS directory is found side by side with TARTAR.EXE it will be scanned for WAD-s,
+and all WAD-s found will be loaded for the purpose of registering the palettes and 
+color maps defined in them. Players can use PAL_NEXT and PAL_PREV console commands
+to cycle through those paletted while playing the game with arbitrary PWAD-s loaded. 
+The commands can be bound to key shortcuts in Extra Keys submenu of Key Bindings. 
+By default \[ and \] are assigned to the commands. 
+
+To try palette cycling in action:
+
+1. Install Tartar.
+
+2. Download InstaDoom mod, e.g. from idgames.
+
+3. From InstaDoom distribution zip, extract FILTERS directory and place that directory
+   (with all its contents) in the same directory as TARTAR.EXE.
+
+4. Run TARTAR.EXE and be on the lookout for a message in the console mentioning 
+   the number of loaded filters.
+
+5. If in "real" DOS set FILES in CONFIG.SYS to a considerably big values, e.g. 
+   FILES=70
+
+6. While in game (starting immediately from the title screen) use \[ and \] keys 
+   to switch palettes.
+
+###
+ 
