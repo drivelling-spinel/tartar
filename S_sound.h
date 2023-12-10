@@ -73,8 +73,9 @@ void S_StopMusic(void);
 void S_StopSounds();
 
 void S_StartTitleMusic(int music_id);
+void S_StartFinaleMusic(int music_id);
 void S_ResetTitleMusic();
-
+void S_RestartMusic();
 
 // Stop and resume music, during game PAUSE.
 void S_PauseSound(void);

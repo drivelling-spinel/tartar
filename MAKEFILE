@@ -472,7 +472,7 @@ $(O)/m_cheat.o: m_cheat.c doomstat.h doomdata.h doomtype.h d_net.h \
  m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h c_runcmd.h c_net.h \
  g_game.h r_data.h r_state.h p_chase.h p_inter.h m_cheat.h m_argv.h \
- s_sound.h dstrings.h d_englsh.h d_deh.h v_video.h hu_stuff.h
+ s_sound.h dstrings.h d_englsh.h d_deh.h v_video.h hu_stuff.h t_vari.h
  
 $(O)/ex_stuff.o: ex_stuff.c doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \

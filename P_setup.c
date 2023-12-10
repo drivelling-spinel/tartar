@@ -1840,7 +1840,7 @@ void P_InitEternityVars(void)
 
 void P_ApplyPersistentOptions(void) 
 {
-    int bloodvar, wolfvar, contvar, bjvar;
+    int bloodvar, wolfvar, contvar, bjvar, musloopvar;
 
     hint_bloodcolor = "";
     bloodvar = T_GetGlobalIntVar("_private_bloodcolor", -1);
@@ -1894,6 +1894,17 @@ void P_ApplyPersistentOptions(void)
     if(contvar >= 0)
       {
         T_EnsureGlobalIntVar("_private_continue", contvar);
+      }
+
+
+    musloopvar = T_GetGlobalIntVar("_private_continuous_music", -1);
+    if(musloopvar >= 0)
+      {
+        T_EnsureGlobalIntVar("_private_continuous_music", musloopvar);
+      }
+    if(musloopvar > 0)
+      {
+        loop_music = 0;
       }
 
 }

@@ -473,7 +473,6 @@ boolean I_IsMusicCardOPL(void)
   return midi_card > 0 && midi_card < MIDI_SB_OUT;
 }
 
-
 ///
 // MUSIC API.
 //
@@ -607,8 +606,9 @@ int I_RegisterSong(void *data)
 // Is the song playing?
 int I_QrySongPlaying(int handle)
 {
-  return 0;
+  return midi_is_playing();
 }
+
 
 /************************
         CONSOLE COMMANDS

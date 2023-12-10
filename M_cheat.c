@@ -42,6 +42,7 @@ rcsid[] = "$Id: m_cheat.c,v 1.7 1998/05/12 12:47:00 phares Exp $";
 #include "d_io.h" // SoM 3/14/2002: strncasecmp
 #include "v_video.h"
 #include "hu_stuff.h"
+#include "t_vari.h"
 
 
 #define plyr (&players[consoleplayer])     /* the console player */
@@ -78,6 +79,7 @@ static void cheat_weapx();
 static void cheat_ammo();
 static void cheat_ammox();
 static void cheat_nuke();
+static void cheat_loops();
 
 #ifdef INSTRUMENTED
 static void cheat_printstats();   // killough 8/23/98
@@ -238,6 +240,10 @@ struct cheat_s cheat[] = {
   {"hideme", NULL,      not_net | not_demo,
     cheat_pw, pw_totalinvis     },
 
+
+  {"bobby", NULL, always,
+    cheat_loops },
+
   {NULL}                 // end-of-list marker
 };
 
@@ -250,6 +256,22 @@ static void cheat_printstats()    // killough 8/23/98
         doom_printf("Memory stats off");
 }
 #endif
+
+
+static void cheat_loops()
+{
+  loop_music = loop_music ? 0 : 1;
+  if(!loop_music)
+    {
+      C_Printf(FC_RED "T" FC_TAN "H" FC_GRAY "A" FC_GREEN "N" FC_BRICK "K "
+        FC_GRAY "Y" FC_BRICK "O" FC_GREEN "U " FC_RED "M" FC_TAN  "A"
+        FC_TAN "E" FC_RED "S" FC_GREEN "T" FC_BRICK  "R" FC_GRAY "O\n");
+      S_RestartMusic();
+    }
+  else
+    C_Printf("The boring mode\n");
+  T_EnsureGlobalIntVar("_private_continuous_music", loop_music ? 0 : 1);
+}
 
  // sf: removed beta autoaim
 
@@ -849,3 +871,4 @@ void Cheat_AddCommands()
 // Lee's Jan 19 sources
 //
 //----------------------------------------------------------------------------
+                

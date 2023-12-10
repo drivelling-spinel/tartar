@@ -1488,8 +1488,8 @@ extern volatile int fli_timer;         /* for timing FLI playback */
 
 #if !defined alleg_sound_unused
 
-#define DIGI_VOICES           64       /* Theoretical maximums: */
-#define MIDI_VOICES           64       /* actual drivers may not be */
+#define DIGI_VOICES           32       /* Theoretical maximums: */
+#define MIDI_VOICES           32       /* actual drivers may not be */
 #define MIDI_TRACKS           64       /* able to handle this many */
 
 
@@ -1833,6 +1833,7 @@ int play_looped_midi(MIDI *midi, int loop_start, int loop_end);
 void stop_midi();
 void midi_pause();
 void midi_resume();
+int midi_is_playing();
 int midi_seek(int target);
 void midi_out(unsigned char *data, int length);
 int load_midi_patches();

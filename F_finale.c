@@ -288,7 +288,7 @@ void F_Ticker(void)
             finalestage = 1;
             wipegamestate = -1;     // force a wipe
             if(gameepisode == 3)
-	       S_StartMusic(mus_bunny);
+              S_StartFinaleMusic(mus_bunny);
             V_FillScreen(BG_COLOR, FG);
 	 }
 	 else if(!demo_compatibility && midstage)

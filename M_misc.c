@@ -1688,7 +1688,6 @@ default_t defaults[] = {
     "Suppress a fix for sky texture on same sector's floor and ceiling"
   },
 
-
   {NULL}         // last entry
 };
 

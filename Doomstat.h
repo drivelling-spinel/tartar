@@ -460,6 +460,7 @@ enum {
 
 extern int randomize_music;
 extern int random_mus_num;
+extern int loop_music;
 
 extern int estimated_maps_no;
 

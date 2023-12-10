@@ -2593,7 +2593,11 @@ void G_DoNewGame (void)
    netgame = false;               // killough 3/29/98
    deathmatch = false;
    basetic = gametic;             // killough 9/29/98
-   
+
+   if(!loop_music)
+     {
+       T_EnsureGlobalIntVar("_private_continuous_music", 1);
+     }
    if(use_continue)
      {
        T_EnsureGlobalIntVar("_private_continue", 1);

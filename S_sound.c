@@ -83,6 +83,8 @@ extern int snd_card, mus_card;
 extern boolean nosfxparm, nomusicparm;
 //jff end sound enabling variables readable here
 
+int loop_music = 1;
+
 typedef struct
 {
   sfxinfo_t *sfxinfo;  // sound information (if null, channel avail.)
@@ -125,6 +127,7 @@ sfxinfo_t *sfxinfos[SOUND_HASHSLOTS];
 musicinfo_t *musicinfos[SOUND_HASHSLOTS];
 
 static boolean title_mus_tampered = false;
+static boolean finale_mus_tampered = false;
 
 //
 // Internals.
@@ -409,6 +412,7 @@ void S_StopSound(const mobj_t *origin)
 }
 
 static int S_CheckMusicLump(int muisc);
+static void S_DoChangeMusic(musicinfo_t *music, int looping);
 
 //
 // Stop and resume music, during game PAUSE.
@@ -432,15 +436,74 @@ void S_ResumeSound(void)
     }
 }
 
+void S_RestartMusic(void)
+{
+  S_UpdateMusicLooping(true);
+}
+
+static void S_UpdateMusicLooping(boolean force)
+{
+  if(!title_mus_tampered && 
+    (mus_playing == &S_music[mus_dm2ttl] ||
+       mus_playing == &S_music[mus_intro] ||
+          mus_playing == &S_music[mus_introa]))
+    {
+      return;
+    }
+
+  if(!finale_mus_tampered &&
+    mus_playing == &S_music[mus_bunny])
+    {
+      return;
+    }
+
+  if(!force && !mus_playing)
+    {
+      return;
+    }
+
+  if(force)              
+    S_ResumeSound();
+
+  if ((!mus_paused && !I_QrySongPlaying(0)) || force)
+    {      
+      if((!force && !loop_music) || (force && !mus_playing))
+        {
+          if(randomize_music == randm_always)
+            S_ChangeToRandomMusic();
+          else
+            S_ChangeToNextMusic(true);
+
+          if(mus_playing)
+            C_Printf("Now playing %c%.6s\n", 128 + CR_GOLD, mus_playing->name);      
+        }
+      else
+        {
+          S_DoChangeMusic(mus_playing, loop_music);
+        }
+    }
+}
+
 //
 // Updates music & sounds
 //
+
+static int mustics = 0;
 
 void S_UpdateSounds(const mobj_t *listener)
 {
   int cnum;
   camera_t player;      // sf: a camera_t holding the information about
                         // the player
+
+  if (mus_card && !nomusicparm)
+    {
+      if(mustics++ > 35)
+        {
+          mustics = 0;
+          S_UpdateMusicLooping(false);
+        }
+    }
 
   //jff 1/22/98 return if sound is not enabled
   if (!snd_card || nosfxparm)
@@ -618,7 +681,7 @@ char * S_ChangeToPreselectedMusic(int i)
   musicinfo_t * music = NULL;
 
   music = &S_music[i];
-  S_ChangeMusic(music, 1);
+  S_ChangeMusic(music, loop_music);
 
   if(mus_playing)
     {
@@ -638,7 +701,7 @@ char * S_ChangeToRandomMusic()
   musicinfo_t * music = NULL;
 
   music = &S_music[i];
-  S_ChangeMusic(music, 1);
+  S_ChangeMusic(music, loop_music);
 
   if(mus_playing)
     {
@@ -647,6 +710,7 @@ char * S_ChangeToRandomMusic()
       strncpy(name, mus_playing->name, 6);
       idmusnum = i;
       title_mus_tampered = true;
+      finale_mus_tampered = true;
       return name;
     }
 
@@ -685,7 +749,12 @@ char * S_ChangeToNextMusic(boolean next)
         }
     }
 
-  if(music) S_ChangeMusic(music, 1);
+  if(!music)
+    {
+      music = &S_music[(gamemode == commercial) ? mus_runnin : mus_e1m1];
+    }
+
+  if(music) S_ChangeMusic(music, loop_music);
 
   if(mus_playing)
     {
@@ -693,6 +762,7 @@ char * S_ChangeToNextMusic(boolean next)
       name[0] = 0;
       strncpy(name, mus_playing->name, 6);
       title_mus_tampered = true;
+      finale_mus_tampered = true;
       idmusnum = i;
       return name;
     }
@@ -741,22 +811,15 @@ static int S_CheckMusicLump(int musnum)
   return W_CheckNumForName(namebuf) >= 0;
 }
 
-void S_ChangeMusic(musicinfo_t *music, int looping)
+
+static void S_DoChangeMusic(musicinfo_t *music, int looping)
 {
   int lumpnum;
   char namebuf[9];
 
-    //jff 1/22/98 return if music is not enabled
-  if (!mus_card || nomusicparm)
+  //LP: failed last time, don't try again
+  if(music == mus_playing && mus_playing->handle < 0)
     return;
-
-  // same as the one playing ?
-
-  if(mus_playing == music )
-    return;  
-
-  // shutdown old music
-  S_StopMusic();
 
   sprintf(namebuf, "d_%s", music->name);
 
@@ -775,6 +838,23 @@ void S_ChangeMusic(musicinfo_t *music, int looping)
   I_PlaySong(music->handle, looping);
 
   mus_playing = music;
+}
+
+void S_ChangeMusic(musicinfo_t *music, int looping)
+{
+    //jff 1/22/98 return if music is not enabled
+  if (!mus_card || nomusicparm)
+    return;
+
+  // same as the one playing ?
+
+  if(mus_playing == music )
+    return;  
+
+  // shutdown old music
+  S_StopMusic();
+
+  S_DoChangeMusic(music, looping);
 }
 
 void S_StartTitleMusic(int m_id)
@@ -796,6 +876,11 @@ void S_ResetTitleMusic()
   title_mus_tampered = false;
 }
 
+void S_StartFinaleMusic(int mus)
+{
+  finale_mus_tampered = false;
+  S_StartMusic(mus);
+}
 
 //
 // Starts some music with the music id found in sounds.h.
@@ -861,7 +946,7 @@ void S_Start(void)
   
   // sf: replacement music
   if(*info_music)
-    S_ChangeMusicName(info_music, true);
+    S_ChangeMusicName(info_music, loop_music);
   else
     {
       if (idmusnum!=-1)
