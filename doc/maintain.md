@@ -115,3 +115,61 @@ Here's an exmple of MAPINFO lump with these new properties:
   + Rheingold ep1                          - `rhein1.wad`
   + Rheingold ep2                          - `rhein2.wad`
   + Halten Sie                             - `halten.wad`
+
+## Stage 3 Maintenance Release 3
+_Note that this is documentation for a work in progress version of Tartar_
+
+### Menus
+
+- Loading game from empty slot is no longer possible
+- When entering the name for a saved game, 
+  player is presented for editing with the name 
+  currently saved into the slot instead of a
+  blank name. There's no longer a need
+  to type in the name of the game from scratch
+  every time the game is saved with the same name.
+  Entering the name of a game being saved into
+  an empty sleep slot starts with a blank name as 
+  before.
+- Empty savegame slots are shown as numbered by default
+- Load and Save Game screens layout yas been adjusted,
+  so that if a patch of non-standard height is used for 
+  their title, names of saved games are not offset from
+  the corresponding save game slot graphics. This in particular
+  improves the looks in Mac versions of the Spear of Destiny,
+  Original Missions and Nocturnal Missions from Wolfendoom
+  series by Laz Rojas.
+
+### Bugfixes 
+
+- Loading of DeHackED patches no longer stops when 
+  a line starting with '\\0' character is encountered.
+  This allows loading Mac version of Portal PWAD from
+  the Wolfendoom series by Laz Rojas
+- Bugs have been fixed in loading of tall patches,
+  building in-memory tall patch structures for mid textures,
+  rendering of tall patches in skies, map objects and mid textures.
+  Most apparently this results in giant chains now being drawn
+  correctly in Eviternity MAP21.
+- Bugs have been fixed in the tall patches workaround  function for 
+  top, bottom and 1s mid textures. The scyscrapers in MAP02 of
+  Jumpwad render without glitches now.
+- Workaround for tall textures is no longer applied to textures 
+  of less than 256 pixels. This condition existed previously,
+  but was coded wrongly, resulting in rendering artifacts on some
+  of the normal textures
+- Bug has been fixed in offset computation for segments loaded
+  from extended ZDoom format data. The most apparent change
+  is that animated diamonds at the start of MAP03 of Jumpwad are 
+  rendered correctly.
+- Bug in handling of huge node tables has been fixed by 
+  extending segment number reference from 16 to 32 bits in the
+  subsector structure. As a result maps on the scale of MAP32 of 
+  Eviternity have their geometry loaded and displayed correctly now.
+
+### System
+
+- DeepSea 32 bit format for NODES, SEGS and SUBSECTORS is now supprted, so all maps of Avactor (including MAP09 and MAP10) 
+can be loaded
+  
+  
