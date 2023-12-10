@@ -43,6 +43,7 @@ rcsid[] = "$Id: d_deh.c,v 1.20 1998/06/01 22:30:38 thldrmn Exp $";
 #include "d_think.h"
 #include "w_wad.h"
 #include "d_io.h"
+#include "ex_stuff.h"
 
 #ifndef TRUE
 #define TRUE 1
@@ -1747,7 +1748,7 @@ void deh_procBexCodePointers(DEHFILE *fpin, FILE* fpout, char *line, extra_file_
   char inbuffer[DEH_BUFFERMAX];
   int indexnum;
   char mnemonic[DEH_MAXKEYLEN];  // to hold the codepointer mnemonic
-  state_t *local_states = (extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? states2[1] : states2[0];
+  state_t *local_states = EXTRA_STATES_TABLE(extra);
   int i; // looper
   boolean found; // know if we found this one during lookup or not
 
@@ -1957,7 +1958,7 @@ void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
-  state_t *local_states = (extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? states2[1] : states2[0];
+  state_t *local_states = EXTRA_STATES_TABLE(extra);
   
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 
@@ -2041,7 +2042,7 @@ void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   long value;      // All deh values are ints or longs
   int indexnum;
   int i; // looper
-  state_t *local_states =(extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? states2[1] : states2[0];
+  state_t *local_states = EXTRA_STATES_TABLE(extra);
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
   // NOTE: different format from normal
@@ -2241,7 +2242,7 @@ void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
-  weaponinfo_t *local_weaponinfo = (extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? weaponinfo2[1] : weaponinfo2[0];
+  weaponinfo_t *local_weaponinfo = EXTRA_WEAPONS_TABLE(extra);;
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 

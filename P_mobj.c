@@ -46,6 +46,7 @@ rcsid[] = "$Id: p_mobj.c,v 1.26 1998/05/16 00:24:12 phares Exp $";
 #include "p_spec.h" // haleyjd 04/05/99: TerrainTypes
 #include "p_partcl.h"
 #include "d_deh.h"
+#include "ex_stuff.h"
 
 #ifdef MONSTER_FALLING_DMG
 void P_MonsterFallingDamage(mobj_t *);
@@ -92,7 +93,7 @@ boolean P_SetMobjState(mobj_t* mobj,statenum_t state)
   statenum_t i = state;                       // initial state
   boolean ret = true;                         // return value
   statenum_t tempstate[NUMSTATES];            // for use with recursion
-  state_t *local_states = mobj->intflags & MIF_STATE2 ? states2[1] : states2[0];  
+  state_t *local_states = EXTRA_ACTOR_STATES(mobj);  
 
   if (recursion++)                            // if recursion detected,
     memset(seenstate=tempstate,0,sizeof tempstate); // clear state table
@@ -898,7 +899,7 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
 {
   mobj_t *mobj = Z_Malloc(sizeof *mobj, PU_LEVEL, NULL);
   mobjinfo_t *info = &mobjinfo[type];
-  state_t *local_states = info->doomednum == -1000 ? states2[1] : states2[0];  
+  state_t *local_states = EXTRA_INFO_STATES(info);  
   state_t    *st;
 
   memset(mobj, 0, sizeof *mobj);
@@ -912,8 +913,7 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
   mobj->flags  = info->flags;
   mobj->flags2 = info->flags2; // haleyjd
   mobj->skin = NULL;
-  if(info->doomednum == -1000)
-    mobj->intflags |= MIF_STATE2; 
+  mobj->intflags |= EXTRA_ACTOR_FLAG(info); 
 
   // killough 8/23/98: no friends, bouncers, or touchy things in old demos
   if (demo_version < 203)

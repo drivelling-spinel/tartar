@@ -42,6 +42,7 @@ rcsid[] = "$Id: info.c,v 1.44 1998/05/12 12:46:36 phares Exp $";
 #include "p_mobj.h"
 #include "w_wad.h"
 #include "info.h"
+#include "ex_stuff.h"
 
 
 // ********************************************************************
@@ -9653,7 +9654,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
   },
 
   {   // MT_SELFFLASH - by default same as MT_PLASMA
-    -1000,   // doomednum
+    DOOMED_SELFIE,   // doomednum
     S_PLASBALL,   // spawnstate
     1000,   // spawnhealth
     S_NULL,   // seestate
@@ -9680,7 +9681,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
   },
   
   {   // MT_JUMPPAD - by default same as MT_PLASMA
-    -1000,   // doomednum
+    DOOMED_SELFIE,   // doomednum
     S_PLASBALL,   // spawnstate
     1000,   // spawnhealth
     S_NULL,   // seestate

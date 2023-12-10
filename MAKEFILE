@@ -364,7 +364,7 @@ $(O)/d_deh.o: d_deh.c doomdef.h z_zone.h m_swap.h version.h doomstat.h \
  doomdata.h doomtype.h d_net.h d_player.h d_items.h p_pspr.h m_fixed.h \
  i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h p_skin.h \
  sounds.h st_stuff.h d_event.h r_defs.h m_cheat.h p_inter.h g_game.h \
- w_wad.h dstrings.h d_englsh.h
+ w_wad.h dstrings.h d_englsh.h ex_stuff.h
  
 $(O)/d_items.o: d_items.c info.h d_think.h d_items.h doomdef.h z_zone.h \
  m_swap.h version.h
@@ -459,8 +459,8 @@ $(O)/hu_stuff.o: hu_stuff.c doomdef.h z_zone.h m_swap.h version.h \
 $(O)/info.o: info.c doomdef.h z_zone.h m_swap.h version.h sounds.h \
  m_fixed.h i_system.h d_ticcmd.h doomtype.h p_mobj.h tables.h \
  d_think.h doomdata.h info.h p_skin.h st_stuff.h d_event.h r_defs.h \
- d_player.h d_items.h p_pspr.h w_wad.h
- 
+ d_player.h d_items.h p_pspr.h w_wad.h ex_stuff.h
+  
 $(O)/m_argv.o: m_argv.c
 
 $(O)/m_bbox.o: m_bbox.c m_bbox.h z_zone.h m_fixed.h i_system.h d_ticcmd.h \
@@ -613,7 +613,7 @@ $(O)/p_mobj.o: p_mobj.c doomdef.h z_zone.h m_swap.h version.h doomstat.h \
  i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h p_skin.h \
  sounds.h st_stuff.h d_event.h r_defs.h m_random.h r_main.h r_data.h \
  r_state.h p_chase.h p_maputl.h p_map.h p_tick.h hu_stuff.h v_video.h \
- v_misc.h s_sound.h g_game.h p_inter.h wi_stuff.h p_spec.h
+ v_misc.h s_sound.h g_game.h p_inter.h wi_stuff.h p_spec.h ex_stuff.h
  
 $(O)/p_plats.o: p_plats.c doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
