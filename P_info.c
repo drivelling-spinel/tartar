@@ -105,7 +105,7 @@ enum
 //  RT_INTERTEXT
 } readtype;
 
-extern char * finallevel;
+extern char finallevel[9];
 extern int detect_finallevel;
 
 void P_LoadLevelInfo(int lumpnum)
@@ -325,7 +325,7 @@ void P_ClearLevelVars()
   info_sky2delta  = 0;
   
   LoadDefaultSoundNames(); // haleyjd
-  
+
   if(gamemode == commercial && isExMy(levelmapname))
   {
      static char nextlevel[10];
@@ -351,14 +351,8 @@ void P_ClearLevelVars()
               info_endofgame = stricmp(levelmapname, finallevel) ? "false" : "true";
            }
         else
-           switch(gamemission)
            {
-              case hacx_reg:
-                if(gamemap == 20) info_endofgame = "true";
-                break;
-
-              default:
-                if(gamemap == 30) info_endofgame = "true";
+              if(gamemap == 30) info_endofgame = "true";
            }
      }
   }

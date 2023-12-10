@@ -1920,7 +1920,9 @@ void D_NewWadLumps(int handle)
 {
   int i;
   char wad_firstlevel[9] = "";
+  int reset_finallevel = 0;
   char wad_finallevel[9] = "";
+  strncpy(wad_finallevel, finallevel, 8);
   
   for(i=0; i<numlumps; i++)
     {
@@ -1929,13 +1931,12 @@ void D_NewWadLumps(int handle)
       if(!strncmp(lumpinfo[i]->name, "THINGS", 8))    // a level
 	{
 	  char *name = lumpinfo[i-1]->name; // previous lump
-          *wad_finallevel = 0;
 	  
 	  // 'ExMy'
           // TODO: for DOOM1 we don't actually detect final level of a pwad
           if(isExMy(name))
             {
-              finallevel[0] = 0;
+              reset_finallevel = 1;
             }
 	  if(isExMy(name) && isExMy(wad_firstlevel))
 	    {
@@ -1967,9 +1968,6 @@ void D_NewWadLumps(int handle)
 	  // elsewhere (m_menu.c)
 	  if(!*wad_firstlevel && strcmp(name, "START") )
 	    strncpy(wad_firstlevel, name, 8);
-
-          if(*wad_finallevel)
-            strncpy(finallevel, wad_finallevel, 8);
 	}
       
       // new sound
@@ -2000,7 +1998,13 @@ void D_NewWadLumps(int handle)
     } 
   
   if(*wad_firstlevel) // a new first level?
-    strcpy(firstlevel, wad_firstlevel);
+    strncpy(firstlevel, wad_firstlevel, 8);
+
+  if(*wad_finallevel)
+    strncpy(finallevel, wad_finallevel, 8);
+
+  if(reset_finallevel)
+    finallevel[0] = 0;
 }
 
 
