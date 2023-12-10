@@ -70,6 +70,9 @@ extern menu_t menu_newgame;
 static command_t *input_command = NULL;       // NULL if not typing in
 static char input_buffer[128] = "";
 
+static int last_title_height = -1;
+#define DEFAULT_TITLE_HEIGHT (15)
+
 /////////////////////////////////////////////////////////////////////////////
 // 
 // MENU DRAWING
@@ -185,6 +188,11 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
 	  
 	  V_DrawPatchTranslated(x, y, 0, patch, colrngs[colour], 0);
 	  
+	  if(item->type == it_title)
+	    {
+	      last_title_height = height + 1;
+	    }
+	  
 	  return height + 1;   // 1 pixel gap
 	}
     }
@@ -201,8 +209,9 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
          (SCREENWIDTH-MN_StringWidth(item->description))/2,
 	 y
 	 );
+	   last_title_height = M_LINE;
     }
-  else
+  else if(item->description)
     {
       if( (menutime / BLINK_TIME / 2) % 2 == 1 || colour != select_colour) 
         // write description
@@ -219,6 +228,16 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
   
   switch(item->type)      
     {
+    case it_titlegap:
+      {
+        int off;
+        if(last_title_height == -1)
+          return M_LINE;
+        off = (DEFAULT_TITLE_HEIGHT - last_title_height);
+        if(off > - M_LINE)
+          return M_LINE + off;
+        return 0;
+      }
     case it_title:              // just description drawn
     case it_info:
     case it_runcmd:
@@ -366,6 +385,8 @@ void MN_DrawMenu(menu_t *menu)
 {
   int y;
   int itemnum;
+
+  last_title_height = -1;
 
   drawing_menu = menu;    // needed by DrawMenuItem
   y = menu->y;
@@ -531,7 +552,7 @@ void MN_Drawer()
 // ie. one that cannot be selected
 
 #define is_a_gap(it) ((it)->type == it_gap || (it)->type == it_info ||  \
-                      (it)->type == it_title)
+                      (it)->type == it_title || (it)->type == it_titlegap )
 
 extern menu_t menu_sound;
 

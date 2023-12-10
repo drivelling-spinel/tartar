@@ -874,7 +874,7 @@ menu_t menu_loadgame =
 {
   {
     {it_title,  FC_GOLD "load game",           NULL,              "M_LGTTL"},
-    {it_gap},
+    {it_titlegap},
     {it_runcmd, "save slot 0",                 "mn_load 0"},
     {it_gap},
     {it_runcmd, "save slot 1",                 "mn_load 1"},
@@ -1014,7 +1014,7 @@ menu_t menu_savegame =
 {
   {
     {it_title,  FC_GOLD "save game",           NULL,              "M_SGTTL"},
-    {it_gap},
+    {it_titlegap},
     {it_variable, "",                          "savegame_0"},
     {it_gap},
     {it_variable, "",                          "savegame_1"},
