@@ -6,7 +6,7 @@ The release includes:
 
 ###### New Tartar build that:
 
-1. No longer alters level geometry upon loading in an attempt to fix slime trails as this used to cause rendering problems even with vanilla Final Doom maps. remove_slime_trails configuration file property and p_rmslime CVAR are added to allow players to revert to the old behaviour, but it is not recommended.
+1. No longer alters level geometry upon loading in an attempt to fix slime trails as this used to cause rendering problems even with vanilla Final Doom maps. `remove_slime_trails` configuration file property and `p_rmslime` CVAR are added to allow players to revert to the old behaviour, but it is not recommended.
 2. No longer detects Freedoom Phase II as being TNT Evilution, outputs Feedoom Phase I or Freedoom Phase II as the name of the game at the start and treats Freedoom as a game mission pack internally
 3. Inverts the logic for SMMU coloured lightning and tall textures support compatibility flags to bring them in line with how compatibility flags work, all this for better demo compatibility (flag on means feature off)
 4. Does not corrupt recoloring tables after blood recoloring is switched off - at least KDiKDiZD was sensitive to this resulting in sprite artifacts
@@ -181,7 +181,45 @@ _Note that this is documentation for a work in progress version of Tartar_
   so all maps of Avactor (including MAP09 and MAP10) can be loaded
 - Slime trale removal is back on by default and can be overridden from
   the Eternity Options menu
-  
+- New MAPINFO property `endpic` has been introduced. When set it causes
+  a static Doom format graphics to be displayed after the tally screen
+  and "Entering..." part of the tally screen will not be displayed.
+  Unlike similar UMAPINFO property, setting endpic to the lump's name
+  will not result in the game ending with the level completion nor will 
+  Doom 2 character cast be skipped. 
+  Here is an example of how MAPINFO is used to show an
+  ending screen before proceeding to the character cast.
+
+    [level info]
+    endofgame=true
+    endpic=END1
+
+
+
+### Extras
+
+- WAD that disables slime trail removal for PLUTONIA.WAD 
+  (through OPTIONS lump) is included by default under FIXES\PLUTONIA
+- Helper WAD for 2022ADO.WAD is provided under GOODIES\TAPE.
+  It enables alternative Mega-WAD-style progression for the PWAD
+  with playthrough starting at E1M1 and ending with E5M8 completion
+  without players choosing a starting episode. 
+  The recommended way of starting Tartar for this is:   
+
+  `TARTAR.EXE -IWAD DOOM2 -FILE DOOM.WAD 2022ADO.WAD -NODEMO`
+
+- More helper WADs for WolfenDoom PWAD Collection are included
+  under GOODIES\TAPE. This time episode completion graphics is added 
+  to the following Mac versions of the PWAD-s to mimic behaviour of the 
+  DOS versions running with a customized source port:
+  + Original Missions: Escape from Cast Wolfenstein      - `escape.wad`   
+  + Original Missions: Operation Eisenfaust              - `faust.wad`
+  + Original Missions: Die, Fuehrer, Die!                - `fuhrer.wad`
+  + Nocturnal Missions: The Dark Secret                  - `secret.wad`
+  + Nocturnal Missions: Trail of the Madman              - `trail.wad`
+  + Nocturnal Missions: Confrontation                    - `confront.wad`
+  + Spear of Destiny                                     - `sod.wad`
+
 **Additionally** Tartar pre-packaged try out version (the Tartar-portable.zip)
 has been updated:
 
@@ -194,7 +232,8 @@ has been updated:
   drag and drop scenarios
 - ETERNAL.BAT has been added to conveniently launch Eternal Doom. Drag
   it onto dosbox.cmd once you have Eternal Doom installed into ETERNAL
-  directory. THe directory also has a patched ESHELL.EXE modified specifically
-  for the directory layout of Tartar-portable.zip
+  directory. ETERNAL directory also has a patched ESHELL.EXE modified 
+  specifically for the directory layout of Tartar-portable.zip
+
 
   
