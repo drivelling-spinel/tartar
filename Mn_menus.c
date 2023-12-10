@@ -1518,7 +1518,7 @@ menu_t menu_etccompat =
     {it_toggle, "colormaps applied unevenly to some walls", "comp_evenlight"},
     {it_toggle, "272 line type is WR Start Script",	        "comp_smmuline"},
     {it_toggle,   "MBF mushroom explosion frame in DEH",    "comp_mushroom"},   
-    {it_toggle,   "Exhative line specials check",           "comp_everyline"},   
+    {it_toggle,   "Exhaustive line specials check",         "comp_everyline"},   
     {it_toggle,   "SMMU coloured lighting",                 "comp_clighting"},   
     {it_toggle,   "Workaround for tall textures",           "comp_talltex"},   
     {it_end},

@@ -42,7 +42,7 @@ made available as COD10SRC.ZIP.
 ### Additional key bindings 
   
   Additional key bindings submenu for palette and screenshot-related commands 
-  have been added under Key Bindings/Extras.
+  (and jumping {DEV}) have been added under Key Bindings/Extras.
   
 ### Select WAD menu entry under Features has been removed
   
@@ -54,6 +54,7 @@ made available as COD10SRC.ZIP.
   - Checking every special line player crosses, including if player is blocked
     from moving by a wall or other object 
   - {DEV} SMMU colored lighting
+  - {DEV} Experimental support for rendering of textures with tall patches
 
 ### {DEV} Character rendering suited for fonts with height of up to 10 pixels
   
@@ -167,29 +168,30 @@ made available as COD10SRC.ZIP.
 
 ### C video, screenshot, renderer and graphics routines have been generalized
 
-  All C routines that had high resolution mode supported (i.e. 640x400 resolution
-  in addition to 320x200) have been updated to support any resolution that
-  is a power of 2 multiple of 320x200. In practical terms this means 1280x800
-  is now supported, but in theory these functions could work with e.g. 2560x1600
-  as well. 
+  All C routines that had high resolution mode supported (i.e. 640x400 
+  resolution in addition to 320x200) have been updated to support 
+  any resolution that is a power of 2 multiple of 320x200. In practical 
+  terms this means 1280x800 is now supported, but in theory these functions 
+  could work with e.g. 2560x1600 as well. 
 
   This is **not true** for Assembler functions, which have only been provided
   for the newly introduced 1280x800 renderer resolution. So adding new hi-res
-  modes is sadly not just a matter of extending available configuration options. 
+  modes is sadly not just a matter of extending available configuration 
+  options. 
 
 ### Renderer resolution option has been added
 
   Player can choose to render to screen buffer of the following dimensions:
 
   - 320x200   rendered image will be output in 320x200 resolution
-  - 640x400   rendered image will be output into 640x400 resolution if supported
-              otherwise will be output into 640x480 resolution 
+  - 640x400   rendered image will be output into 640x400 resolution if 
+              supported otherwise will be output into 640x480 resolution 
               with black bars on top and bottom
   - 1280x800  rendered image will be output into 1280x1024 resolution
               with black bars on top and bottom
 
-  The following CVAR values are supported for selecting resolution v_hires: 0, 1, 2.
-  The same can be setup with hires configuration file option.
+  The following CVAR values are supported for selecting resolution 
+  v_hires: 0, 1, 2. The same can be setup with hires configuration file option.
 
 ### Option for scaling to higher resolution has been added
   
@@ -222,8 +224,8 @@ made available as COD10SRC.ZIP.
   If activated without scaling to higher resolution:
   - 320x200   rendered image will not be changed
   - 640x400   rendered image will not be changed if video card supports 640x400 
-              resolution, otherwise it will be stretched and output into 640x480 
-              _without_ black bars on top and bottom
+              resolution, otherwise it will be stretched and output into 
+              640x480 _without_ black bars on top and bottom
   - 1280x800  rendered image will be stretched to 1280x960, and output 
               into 1280x1024 with black bars on top and bottom,
               bars being narrower than for an unstreteched 1280x800 image 
@@ -241,9 +243,9 @@ made available as COD10SRC.ZIP.
 
 ### Screenshot functions respect video scaling options
   
-  Saving a screenshot will result in the same image as being output to the screen,
-  as screenshot functions will perform the same scaling as screen output functions
-  do.
+  Saving a screenshot will result in the same image as being output to the 
+  screen, as screenshot functions will perform the same scaling as screen 
+  output functions do.
 
 ### Video page flipping can be explicitly set in Video options
   
@@ -254,14 +256,16 @@ made available as COD10SRC.ZIP.
 ### Waiting for retrace now follows MBF 2.0.4 logic 
   
   Waiting for retrace (vsync) will be attempted in page flipped modes only,
-  as this is the behaviour of the incorporated MBF 2.0.4 low level video routines.
+  as this is the behaviour of the incorporated MBF 2.0.4 low level video 
+  routines.
 
 ### Option to show flashing disk icon when loading has been removed
   
   Unlike Allegro counterparts, MBF 2.0.4 low level video routines do not have 
-  generic purpose blitting functions, so rendring sprites at arbitrary moment in game 
-  life cycle is no longer possible. One such case was the flashing disk/CD-ROM icon,
-  and as it's no longer supported, option is gone for it from the menu.
+  generic purpose blitting functions, so rendring sprites at arbitrary moment 
+  in game life cycle is no longer possible. One such case was the flashing 
+  disk/CD-ROM icon, and as it's no longer supported, option is gone for it 
+  from the menu.
 
 ### Option to show FPS counter has been added to Video options
   
@@ -334,8 +338,8 @@ made available as COD10SRC.ZIP.
   for rendering Boom-style  (i.e. line type 242) deep water surface as 
   translucent to be included. In fact this code results in nothing 
   resembling translucent water surface even if it is enabled explicitly 
-  with r_watertrans CVAR or water_translucency option in the configuration file,
-  both of which are off by default. This will also only work if 
+  with r_watertrans CVAR or water_translucency option in the configuration 
+  file, both of which are off by default. This will also only work if 
   general translucency is enabled in options. 
   
   The TRANWATER preprocessor define is not set for compiling Tartar,
@@ -407,6 +411,28 @@ made available as COD10SRC.ZIP.
 
   {DEV} No error message spamming occurs in for boundaries checking when
   rendering patches (graphics).
+  
+### {DEV} Experimental support for tall patches
+
+  Normally Doom graphics format, as handled by vanilla Doom and Boom by default,
+  has an image height limitation of 255. Subseqently released source ports
+  like PrBoom++ include support of the technique known as "tall paches" that 
+  allows to remove the height limitation, while keeping the image binary format.
+  
+  While Tartar retains the "classic" patches drawing routines it has inherited 
+  from Eternity Engine version it is based on, the "tall patches" technique 
+  support has been added for the two specific cases below:
+  
+  - Drawing of game actor graphics (monsters, pick ups and other assets in 
+    the map) and middle textures of 2-sided walls (these are often "grills" or
+    "vines" and the like) are always rendered with "tall" format support and 
+    thus images with source height of more than 255 pixels are output.
+  - For top and bottom textures as well as for middle textures of 1-sided walls
+    (which are normally your brick, mortar, wood, etc) rendering with "tall"
+    format support can be enabled with comp_talltex compatibility CVAR, which
+    can be set through "Workaround for tall textures" option under Eternity 
+    Options menu or via configuration file property with the same name. It
+    is recommended that Tartar is restarted after this option is toggled.
 
 ### {DEV} Rendering troubleshooting aids
 
@@ -522,9 +548,9 @@ look in a graphical editor had they loaded them.
 
 ### Filtering of mouse movement
   
-  Historically Eternity had been suffering from "jerky" mouse movement, as sharp 
-  turns by the player could easily result in 360 (or more) degree turns in game. 
-  Rather than fixing this at the source as SoM has done 
+  Historically Eternity had been suffering from "jerky" mouse movement, 
+  as sharp turns by the player could easily result in 360 (or more) degree 
+  turns in game. Rather than fixing this at the source as SoM has done 
   in [late 2008](https://web.archive.org/web/20090110014229/http://som.mancubus.net/),
   Tartar author has introduced clamping of exessive mouse readings
   to prevent unexpected turning behavior. This change is specific to Tartar and
@@ -546,11 +572,11 @@ look in a graphical editor had they loaded them.
   This allows players to, for example, rename TARTAR.EXE to DOOM.EXE and use a
   front end like DOOM-IT to load maps and mods with it.  
 
-### Configuration and other files are looked for in the directory of the .EXE file  
+### Configuration and other files are looked for in the directory of the .EXE  
 
-  Tartar looks for files necessary for it to run in the directory where .EXE sits,
-  not in the directory that was current when the .EXE was run. I.e. imagine this 
-  directory structure:
+  Tartar looks for files necessary for it to run in the directory where .EXE 
+  sits, not in the directory that was current when the .EXE was run. I.e. imagine 
+  this directory structure:
   
   C:\GAMES\DOOM2\  
   ...  
@@ -561,8 +587,9 @@ look in a graphical editor had they loaded them.
   C:\GAMES\DOOM2\TARTAR\TARTAR.EXE  
 
   If player runs the game from C:\GAMES\DOOM2 using command TARTAR\TARTAR.EXE
-  Tartar will load TARTAR.CFG and other files it needs from C:\GAMES\DOOM2\TARTAR,
-  and not C:\GAMES\DOOM2. The following files will be picked up from that directory:
+  Tartar will load TARTAR.CFG and other files it needs from 
+  C:\GAMES\DOOM2\TARTAR, and not C:\GAMES\DOOM2. The following files will be 
+  picked up from that directory:
 
   - TARTAR.CFG
   - ETERNITY.WAD
@@ -606,10 +633,11 @@ look in a graphical editor had they loaded them.
 
 ### Keypress processing has been reorganized 
   Keypress processing has been reorganized  to allow bindable console commands 
-  in most of the game screens, including title screen, intermission and automap.
-  This may cause actions to trigger from keypresses in game screens where 
-  players would not expect this at all, so author tried his best to ensure 
-  players experiece does not suffer and, for example, cheats work as expected.
+  in most of the game screens, including title screen, intermission and 
+  automap. This may cause actions to trigger from keypresses in game screens 
+  where players would not expect this at all, so author tried his best to 
+  ensure players experiece does not suffer and, for example, cheats work as 
+  expected.
   
   Additionally, console when opened is displayed on top of all other widgets
   including Menus, and players cannot interact with other widgets than console
@@ -737,10 +765,10 @@ look in a graphical editor had they loaded them.
   (up until the stage where it eventually crashes) .
 
   -noload argument is respected Tartar code and will cause it to avoid loading
-  any PWAD aside from the ones provided explicitly by the player and ETERNITY.WAD
-  E.g. none of the _fixes_, _helper_ or _extra_ WADs will be loaded and
-  none of the WAD and DEH files specified in the configuration file will be
-  loaded either.
+  any PWAD aside from the ones provided explicitly by the player and 
+  ETERNITY.WAD E.g. none of the _fixes_, _helper_ or _extra_ WADs 
+  will be loaded and none of the WAD and DEH files specified in the 
+  configuration file will be loaded either.
   
 ### {DEV} Support for extended node-builder format  
 
@@ -751,7 +779,8 @@ look in a graphical editor had they loaded them.
   To accomodate for increased number of nodes supported by the extended format
   BSP node table has been extended to 32 bits per node id for all maps. 
   Segs offset and angle computation has been added to map data parsing routine. 
-  The formulas for that computation are somewhat empiric, and need further work.
+  The formulas for that computation are somewhat empiric, and may need further 
+  work.
   
   Additionally, since support of the format allows Tartar to load maps of 
   recently released WAD-s like Sunlust, Ancient Alients, Eviternity or 
@@ -769,8 +798,8 @@ look in a graphical editor had they loaded them.
   supports. Moreover it will be loaded even if a PWAD version is provided.
   In addition to loading CHEX.WAD without requiring any Doom IWAD,
   the following compatibility changes have been made in Tartar
-  (as per the recommendation in readme file of Simon Howard's 
-  [DEH patch](https://www.doomworld.com/idgames/utils/exe_edit/patches/chexdeh) )
+  as per the recommendation in readme file of Simon Howard's 
+  [DEH patch](https://www.doomworld.com/idgames/utils/exe_edit/patches/chexdeh) 
 
   - Game will stop after level 5
   - Monsters will not produce drops on death
@@ -935,7 +964,10 @@ look in a graphical editor had they loaded them.
     as IWAD regardless whether it is a PWAD or IWAD version and when players
     specify an IWAD of their choice with -iwad command line argument Tartar
     will not enforce that it is in fact a PWAD.
-    
+  - {DEV} In case when map info lump dictates Tartar to use a certain 
+    intermission background image, but lump for that image is not present 
+    the game will display the menus background on end of map tally screen 
+    instead of crashing. 
 
 ## Gameplay changes and bugfixes
 
@@ -958,8 +990,8 @@ look in a graphical editor had they loaded them.
     unless replaced by PWADs)
 
   CVAR mon_bloodcolor controls blood re-coloring, values are 0-4, 0 corresponds
-  to no re-coloring, 4 - to auto (intelligent mode). The configuration file option
-  is bloodcolor.
+  to no re-coloring, 4 - to auto (intelligent mode). The configuration file
+  option is bloodcolor.
 
 ### DeHackEd-related bugfixes
 
@@ -978,6 +1010,7 @@ look in a graphical editor had they loaded them.
     than normal" extents due to scaling boundaries not computed correctly.
   - {DEV} Very far objects no longer "bleed" into player's view due to atan 
     computation overflows.
+
     
 ## Extras
 
@@ -1039,6 +1072,17 @@ look in a graphical editor had they loaded them.
                    No Rest for The Living (NERVE.WAD) and is dependent by
                    the helper WAD for NERVE included with Tartar distribution.
 
+### {DEV} Jumpwad, well... jumping
+
+  [Jumpwad](https://www.doomworld.com/forum/topic/129577) by ribbiks and
+  @grain_of_sault will be loaded automatically by Tartar when found side
+  by side with TARTAR.EXE. Out of JUMPWAD.WAD only lumps relevant to the
+  jumping mechanics will be loaded and bindable CCMD pogo has been added
+  to switch to "jumping" weapon. When "weapon" is active player hands will not
+  be displayed and firing will cause player to jump. To switch away from
+  "jumping" mode simply select any other weapon. Keyboard binding can be 
+  configured in Options menu Key Bindings/Extras.
+  
 
 ## New CVARS, CCMDS and configuration parameters
 
@@ -1063,6 +1107,7 @@ This section lists all the new console variables introduced in Tartar.
  - comp_mushroom     - enable MBF "mushroom explosion" code pointer refs
  - comp_everyline    - enable exhaustive checks for crossed line specials 
  - comp_clighting    - enable SMMU colored lightling
+ - comp_talltex      - enable experimental support for tall patches in textures
  - r_norender1       - suppress sky rendering 
  - r_norender2       - only render a single screen column
  - r_norender3       - switches sprites rendering on or off 
@@ -1074,10 +1119,11 @@ This section lists all the new console variables introduced in Tartar.
  - r_norender9       - suppress floor and ceiling rendering
  - r_norender0       - toggle rendering on/off 
  - debugcolumn       - dump column rendering debug info
+ - pogo              - switch to jumping mode
   
  - detect_finallevel - end the game after final level of PWAD, not after MAP30
  
- - -nodemo           - don't load demos
+ - -nodemo           - don't play demos
  - -wimaps           - force custom intermissions even when PWAD-s are loaded
  - -norender         - enable rendering aids
  - -fixes            - location to searh for WAD-s to auto-load 

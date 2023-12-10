@@ -69,7 +69,7 @@ To try Tartar with selfie extra:
 5. Play the game, take out the stick by pressing L whenever you want, remove it
    by switching to any weapon. Use Fire to take selfies.
 
-### Custom Intermission Maps
+### {DEV} Custom Intermission Maps
 
 Tartar supports custom Intermission Maps by doomworld.com user @olyacim. 
 If one of DOOM2, TNT or PLUTONIA IWADs is loaded without any PWAD-s and 
@@ -97,8 +97,8 @@ To use Intermission Maps with Tartar:
    
 ### Helper WAD-s
 
-Helper WAD-s found in GOODIES\TAPE directory are PWAD-specific extras that add to 
-players experience with particular WAD-s or fix bugs that would make 
+Helper WAD-s found in GOODIES\TAPE directory are PWAD-specific extras that add
+to players experience with particular WAD-s or fix bugs that would make 
 playing those WAD-s with Tartar impossible or less enjoyable.
 
 Among other goodies the following helper WAD-s are included in the distribution:
@@ -109,24 +109,25 @@ Among other goodies the following helper WAD-s are included in the distribution:
                                instructions
  - GOODIES\TAPE\3DODOOM.WAD  - fixes an issue with garbage output as options menu 
                                background 
- - GOODIES\TAPE\NERVE.WAD    - adds custom title pic, level names, assigns correct 
-                               music tracks and ensures intended level progression 
-                               for No Rest for the Living. Also enables custom 
-                               intermission backgrounds and thus will crash
-                               unless INTMAPNR.WAD is also loaded.
+ - GOODIES\TAPE\NERVE.WAD    - adds custom title pic, level names, assigns 
+                               correct music tracks and ensures intended level 
+                               progression for No Rest for the Living. Also 
+                               enables custom intermission backgrounds provided 
+                               INTMAPNR.WAD is also loaded.
                            
-To play No Rest for the Living with Tartar enjoying the benefits of the
+{DEV} To play No Rest for the Living with Tartar enjoying the benefits of the
 helper WAD provided:
 
 1. Install Tartar and check that Doom 2 runs with it.
 
-2. Obtain INTMAPNR.WAD and place it in the same directory as TARTAR.EXE.
+2. _Optional_ obtain INTMAPNR.WAD and place it in the same directory as 
+   TARTAR.EXE.
 
 3. Put _helper_ NERVE.WAD found in GOODIES\TAPE directory of the distribution
    into TAPE directory sitting side by side with TARTAR.EXE. E.g.
    
    C:\GAMES\DOOM2\TARTAR.EXE  
-   C:\GAMES\DOOM2\INTMAPNR.WAD
+   C:\GAMES\DOOM2\INTMAPNR.WAD    - optional
    ...  
    C:\GAMES\DOOM2\TAPE  
    C:\GAMES\DOOM2\TAPE\NERVE.WAD  
@@ -140,6 +141,36 @@ helper WAD provided:
                            
 6. If the abvove steps have been all carried out, both helper NERVE.WAD 
    and actual PWAD will be loaded and custom title pic will be displayed.
+
+### {DEV} Jumping with JUMPWAD.WAD
+
+If JUMPWAD.WAD is found side by side with TARTAR.EXE it will be loaded but
+out of all lumps only those that are required for the unique JUMPWAD 
+jump mechanics will be loaded. With JUMPWAD.WAD loaded as an extra,
+players can use POGO console command to activate jumping mode. In this mode
+their current weapon is brought down, and firing will result in jumping
+instead. The command can be bound to a key in Extra Keys submenu of Key 
+Bindings. By default no key is assigned to the command. To leave jumping
+mode switch to any weapon.
+
+To try palette cycling in action:
+
+1. Install Tartar.
+
+2. Download JUMPWAD.WAD, e.g. from ID Games archive and put it into 
+   the same directory as TARTAR.EXE
+
+3. Run TARTAR.EXE as usual (no need for an additional -file command line 
+   argument to load the JUMPWAD.WAD as an extra).
+
+4. While in game use POGO console command to activate jumping mode.
+
+5. Optionally go to Options and navigate to Bindings / Extra Keys 
+   submenu to assign a permanent key to POGO command.
+
+Note that Tartar also has experimental support for actually playing JUMPWAD.
+For that players have to load JUMPWAD.WAD in "the conventional manner" 
+with -file command line argument when starting TARTAR.EXE .
 
 ## Tartar demonstrations
 
