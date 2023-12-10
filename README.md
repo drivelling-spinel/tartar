@@ -73,7 +73,7 @@ machines for retro gaming.
 - Cycle through InstaDoom filters (or any other PLAYPAL/COLORMAP providing
 WAD-s for that matter) without restarting the level
 - Voltron assembly features:
-  -- drop in SELFIE.WAD and SELFIE.DEH to make sefies in any PWAD
+  -- drop in SELFIE.WAD and SELFIE.DEH to make selfies in any PWAD
      and still shoot plasma rifle happily 
   -- drop in JUMPWAD.WAD to switch to "pogo stick" mode in any PWAD
      and jump around by pressing fire
@@ -111,12 +111,9 @@ this is not what Tartar supports:
 ## Obtaining and installing Tartar
 
 Tartar distribution is available following the link below:
-
 <https://www.moddb.com/mods/tartar/downloads/tartar-distro>
-
 There, TARTAR directory contains latest version of the port 
 including TARTAR.EXE and additional assets and files required to run it. 
-EXTRAS document above describes the contents of GOODIES directories. 
 
 
 ### Playing Doom with TARTAR
@@ -162,17 +159,16 @@ to the installation. Suggested WAD-s to try out include:
   - [Doom Sound Bulb](https://www.doomworld.com/forum/topic/110822) by \@SeanTheBermanator
   - [Hi Res Doom Sound Effects Pack](https://www.perkristian.net/game_doom-sfx.shtml) by \@perkristian
   - [Doom 2 Minor Sprite Fixing Project](https://www.doomworld.com/forum/topic/62403) by \@revenant100
-  - [Doom 2 Minor Sprite Fixing Project](https://www.doomworld.com/forum/topic/62403) by \@revenant100
   - [DMXOPL](https://github.com/sneakernets/DMXOPL/releases/tag/v1.11-Final) by \@sneakernets
 
 Follow the below steps to have them installed with Tartar
 
 1. Install Tartar
 
-2. Drop the desired fix pack WAD into FIXES directory
+2. Drop the desired fix pack WAD and DEH files into FIXES directory
 
-3. Or if Tartar will be used with multiple IWADs drop the WAD into
-   a subdirectory of FIXES that has name matching the name of the IWAD
+3. Or if Tartar will be used with multiple IWADs drop WAD and DEH files
+   into  a subdirectory of FIXES that has name matching the name of the IWAD
    the fix pack is to be loaded with. For example:
    
    C:\GAMES\TARTAR\   
@@ -183,8 +179,10 @@ Follow the below steps to have them installed with Tartar
    C:\GMAES\TARTAR\FIXES\DMXOPL.WAD   
    C:\GAMES\TARTAR\FIXES\DOOM\   
    C:\GAMES\TARTAR\FIXES\DOOM\D1SPFX20.WAD   
+   C:\GAMES\TARTAR\FIXES\DOOM\D1DEHFIX.DEH   
    C:\GAMES\TARTAR\FIXES\DOOM2\   
    C:\GAMES\TARTAR\FIXES\DOOM2\D2SPFX20.WAD   
+   C:\GAMES\TARTAR\FIXES\DOOM2\D2DEHFIX.DEH   
 
 4. Start Tartar as you would normally do and enjoy improved Doom experience
 
@@ -203,7 +201,7 @@ Follow the below steps to have them installed with Tartar
    distribution into SHIMS directory where TARTAR is found. 
    
 4. Drop INTMAPNR.WAD (required step!) found in GOODIES\OLIACYM directory
-   of the distribution and place itnto the same same directory as TARTAR.EXE.
+   of the distribution and place into the same same directory as TARTAR.EXE.
    For example:
    
    C:\GAMES\TARTAR\   
@@ -215,15 +213,15 @@ Follow the below steps to have them installed with Tartar
    C:\GAMES\TARTAR\SHIMS\   
    C:\GAMES\TARTAR\SHIMS\NERVE.WAD   
 
-5. Run TARTAR.EXE -file NERVE to play
+5. Run TARTAR.EXE -nodemo -file NERVE to play
 
 ### Playing Sigil and Sigil II with Tartar
 
 1. Install Tartar with DOOM.WAD IWAD
 
-2. Drop Sigial and/or Sigil II WAD-s into the same directory
+2. Drop Sigil and/or Sigil II WAD-s into the same directory
 
-3. Drop SIGIAL.WAD and SIGIL2.WAD from GOODIES\SHIMS directory in the
+3. Drop SIGIL.WAD and SIGIL2.WAD from GOODIES\SHIMS directory in the
    distribution into SHIMS directory where TARTAR is found. For example:
    
    C:\GAMES\TARTAR\   
@@ -238,6 +236,22 @@ Follow the below steps to have them installed with Tartar
 
 4. Run TARTAR.EXE -file SIGIL2 to play both,   
    or TARTAR.EXE -file SIGIL_~1 to only play the first part
+
+### Playing cancelled Eternity TC with Tartar
+
+... well, what remains of it anyway.
+
+1. Install Tartar with DOOM2.WAD IWAD
+
+2. Copy all files from GOODIES\TRIBUTE directory of the distribution
+   into the same directory as TARTAR.EXE
+
+3. Run TARTAR.EXE -nodemo -file ETC ETCGFX2 ETCSKIN SWMP2021 ETC.DEH
+
+4. _Note_ that while this map originally by \@Quasar has been populated
+   with the TC denizens, and gives a good idea of the surviving bestiary,
+   some of the scripts may be off in current version of Tartar. Also
+   playing with translucency enabled is advised.
 
 ### Playing classic Wolfendoom with Tartar
 
@@ -255,7 +269,7 @@ Follow the below steps to have them installed with Tartar
    [Lrbjskin.zip](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip) 
 
 4. Drop _shim_ WAD with the same name as the PWAD to be player from GOODIES\SHIMS directory 
-   in the ditribution to SHIMS directory where TARTAR is found. For example:
+   in the distribution to SHIMS directory where TARTAR is found. For example:
 
    C:\GAMES\TARTAR\   
    C:\GAMES\TARTAR\TARTAR.EXE   
@@ -274,48 +288,38 @@ Follow the below steps to have them installed with Tartar
    command line argument. For example, if the PWAD-s are in the same directory 
    as TARTAR.EXE:   
    
-   TARTAR -FILE SOD SOD.DEH   
-   TARTAR -FILE CONFRONT NOCT.DEH   
-   TARTAR -FILE ESCAPE ORIGINAL.DEH   
-   TARTAR -FILE 2ND_ENC 2ND_ENC.DEH   
-   TARTAR -FILE AFTERMTH   
+   TARTAR.EXE -nodemo -file SOD SOD.DEH   
+   TARTAR.EXE -nodemo -file CONFRONT NOCT.DEH   
+   TARTAR.EXE -nodemo -file ESCAPE ORIGINAL.DEH   
+   TARTAR.EXE -nodemo -file 2ND_ENC 2ND_ENC.DEH   
+   TARTAR.EXE -nodemo -file AFTERMTH   
 
    _Note_ that Tartar will pull the other required WAD-s from the 
    directory where the specified PWAD-s sit, so there's no need to 
    type all of them, as long as they have been copied there.
 
-   For _original_ Operation Arctic Wolf:
-   TARTAR -FILE GFX1 ARCTIC1.DEH
+   For _original_ Operation Arctic Wolf:   
+   TARTAR.EXE -nodemo -file GFX1 ARCTIC1.DEH
 
-   For Operation Arctic Wolf Special Edition:
-   TARTAR -FILE ARCTGFX1 ARCTIC1.DEH
+   For Operation Arctic Wolf Special Edition:   
+   TARTAR.EXE -nodemo -file ARCTGFX1 ARCTIC1.DEH
 
    _Note_ that for Arctic Wolf there is no need to quit and change the way 
    the game is launched midway though. Tartar will automatically reload 
    the required PWAD/DEH combination based on the level being played.
 
 6. _Optionally_ add WOLFMIDI.WAD to play with original Wolfenstein music. 
-   The music tracks (courtesy of [VGMPF](https://www.vgmpf.com/Wiki/index.php?title=Wolfenstein_3D_(DOS)) 
+   The music tracks (courtesy of [VGMPF](https://www.vgmpf.com/Wiki/index.php?title=Wolfenstein_3D_(DOS)))
    can be found in GOODIES\WOLFMIDI directory of the distribution.
+   
+   TARTAR.EXE -nodemo -file HALTEN WOLFMIDI
 
-   TARTAR -FILE HALTEN WOLFMIDI
+7. _Optionally_ Tartar will automatically load B J Blazkowicz skin with
+   Wolfendoom. Obtain it [here](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip),
+   and put BJ.WAD side by side with the PWAD-s to be played. Then start the
+   game as normal.
    
-7. _Optionally_ Tartar will automatically load B J Blazkowicz skin  
-   with Wolfendoom if it is placed in SKINS directory where TARTAR is found. 
-   Obtain it [here](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip). 
-   For example:
-   
-   C:\GAMES\TARTAR\   
-   C:\GAMES\TARTAR\TARTAR.EXE   
-   C:\GAMES\TARTAR\DOOM.WAD2   
-   ...   
-   C:\GAMES\TARTAR\SHIMS\   
-   C:\GAMES\TARTAR\SHIMS\2ND_ENC.WAD   
-   ...   
-   C:\GAMES\TARTAR\SKINS\   
-   C:\GAMES\TARTAR\SKINS\BJ.WAD   
-   
-   TARTAR -FILE 2ND_ENC 2ND_ENC.DEH
+   TARTAR.EXE -nodemo -file 2ND_ENC 2ND_ENC.DEH
 
 ### Want more? Try extras!
 
@@ -325,7 +329,7 @@ Here's how to enable Doom 2 intermission screen maps created by \@olyacim.
 1. Install Tartar.
 
 2. Drop INTMAPD2.WAD found in GOODIES\OLIACYM directory of the distribution 
-   and place itnto the same same directory as TARTAR.EXE. For example:
+   and place into the same same directory as TARTAR.EXE. For example:
 
    C:\GAMES\TARTAR\   
    C:\GAMES\TARTAR\TARTAR.EXE   
