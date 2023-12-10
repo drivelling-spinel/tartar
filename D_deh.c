@@ -2737,6 +2737,7 @@ void deh_procStrings(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
               continue;
             }
         }
+        
       while (strlen(holdstring) + strlen(inbuffer) > maxstrlen) // Ty03/29/98 - fix stupid error
         {
 	  // killough 11/98: allocate enough the first time
@@ -2789,7 +2790,7 @@ boolean deh_procStringSub(char *key, char *lookfor, char *newstring, FILE *fpout
   int i;  // looper
   int selfie = 0;
   
-  if(!strcmp(lookfor, GOTSELFIE)) selfie += 1;
+  if(lookfor && !strcmp(lookfor, GOTSELFIE)) selfie += 1;
   if(!(extra == EXTRA_NONE || (extra == EXTRA_SELFIE && selfie))) return false;
 
   found = false;

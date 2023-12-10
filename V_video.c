@@ -299,7 +299,7 @@ void V_FillRect(int c, int width, int height, int destx, int desty, int destscrn
 
       for ( ; height>0 ; height--)
 	{
-          memcpy (dest, 0, width);
+          memset (dest, 0, width);
 	  dest += SCREENWIDTH;
 	}
     }
