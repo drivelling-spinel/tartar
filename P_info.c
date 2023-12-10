@@ -75,6 +75,7 @@ char *info_endofgame;
 int  info_nobloodcolor;
 int  info_wolf3d;
 int  info_wolfcolor;
+int  info_ghostskull;
 
 char * info_intermusic;
 char * info_endpic;
@@ -273,6 +274,7 @@ levelvar_t levelvars[]=
 #endif
   {IVT_INT,       "wolf3d",       &info_wolf3d},
   {IVT_INT,       "wolfcolor",    &info_wolfcolor},
+  {IVT_INT,       "ghostskull",   &info_ghostskull},
   {IVT_END,       0,              0}
 
 
@@ -355,6 +357,7 @@ void P_ClearLevelVars()
   info_nobloodcolor = 0;
   info_wolf3d = 0;
   info_wolfcolor = woco_none;
+  info_ghostskull = 0;
 #ifdef BOSSACTION
   info_bossaction_clear = "false";
   info_bossaction_thingtype = info_bossaction_tag = info_bossaction_linespecial = 0;

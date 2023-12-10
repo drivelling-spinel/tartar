@@ -128,6 +128,17 @@ boolean P_SetMobjState(mobj_t* mobj,statenum_t state)
 #ifdef BOSSACTION
       Ex_TryBossAction(mobj, st);
 #endif
+
+      if(state == S_SKULL_STND && info_ghostskull)
+        {
+          if(mobj->flags & MF_CORPSE)
+            {
+              mobj->flags = mobj->info->flags;
+              mobj->flags2 = mobj->info->flags2;
+              mobj->health = mobj->info->spawnhealth;
+            }
+        }
+      
       state = st->nextstate;
   } 
   while (!mobj->tics && !seenstate[state]);   // killough 4/9/98

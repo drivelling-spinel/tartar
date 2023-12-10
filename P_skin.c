@@ -43,7 +43,7 @@
 #include "w_wad.h"
 #include "z_zone.h"
 #include "d_io.h" //SoM 3/13/2002: Get rid of the strncasecmp warnings in VC++
-
+#include "ex_stuff.h"
 
 // SoM: 3/13/2002: VC++ throws an error here.
 #ifdef _MSC_VER
@@ -424,6 +424,9 @@ CONSOLE_NETVAR(skin, default_skin, cf_handlerset, netcmd_skin)
         P_SetSkin(skin, cmdsrc);
         // wake up status bar for new face
         redrawsbar = true;
+
+        if(defaults_loaded)
+          T_EnsureGlobalIntVar("_private_bjskin", 0);
 }
 
 void P_Skin_AddCommands()

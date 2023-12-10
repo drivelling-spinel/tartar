@@ -43,6 +43,8 @@
 #include "z_zone.h"
 #include "w_wad.h"
 #include "m_argv.h"
+#include "p_skin.h"
+
 
 #define EXTRA_STATES_INDEX(extra) ( (extra) == EXTRA_JUMP ? 2 : (extra) == EXTRA_SELFIE ? 1 : 0 )
 #define INIT_EXTRA_STATES(extra) { int idx = EXTRA_STATES_INDEX(extra); \
@@ -765,6 +767,13 @@ void Ex_ResetExtraStatus()
 ////////////////////////////////////////////////////////////////////////////////////
 // WolfenDoom stuff
 ////////////////////////////////////////////////////////////////////////////////////
+
+void Ex_SetWolfendoomSkin()
+{
+  skin_t * skin = P_SkinForName("BJ");
+  if(skin)
+    P_SetSkin(skin, consoleplayer);
+}
 
 #ifdef ARCTIC_STUFF
 int Ex_LoadArcticPart1()

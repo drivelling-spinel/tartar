@@ -1789,7 +1789,7 @@ void P_InitEternityVars(void)
 
 void P_ApplyPersistentOptions(void) 
 {
-    int bloodvar, wolfvar, contvar;
+    int bloodvar, wolfvar, contvar, bjvar;
 
     hint_bloodcolor = "";
     bloodvar = T_GetGlobalIntVar("_private_bloodcolor", -1);
@@ -1824,6 +1824,17 @@ void P_ApplyPersistentOptions(void)
     if(wolfvar >= 0)
       {
         T_EnsureGlobalIntVar("_private_wolfendoom", wolfvar);
+      }
+
+
+    bjvar = T_GetGlobalIntVar("_private_bjskin", -1);
+    if(bjvar < 0 && info_wolf3d)
+      {
+        Ex_SetWolfendoomSkin();
+      }
+    if(bjvar >= 0)
+      {
+        T_EnsureGlobalIntVar("_private_bjskin", bjvar);
       }
 
 

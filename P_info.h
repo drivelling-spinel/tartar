@@ -78,6 +78,7 @@ extern boolean default_weaponowned[NUMWEAPONS];
 
 extern int info_wolf3d;
 extern int info_wolfcolor;
+extern int info_ghostskull;
 
 #endif
 

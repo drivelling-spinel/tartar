@@ -78,6 +78,7 @@ void Ex_ResetExtraStatus();
 #define EXTRA_ACTOR_FLAG(info) ((info)->doomednum == DOOMED_SELFIE ? MIF_STATE2 : (info)->doomednum == DOOMED_JUMP ? MIF_STATE3 : 0)
 
 void Ex_WolfenDoomStuff();
+void Ex_SetWolfendoomSkin();
 void Ex_EnsureCorrectArcticPart(int lev);
 int Ex_InsertRelatedWads(const char * wadname, const int index);
 
