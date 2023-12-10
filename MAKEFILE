@@ -478,7 +478,7 @@ $(O)/ex_stuff.o: ex_stuff.c doomstat.h doomdata.h doomtype.h d_net.h \
  m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h c_runcmd.h c_net.h \
  g_game.h r_data.h r_state.h p_chase.h p_inter.h m_cheat.h m_argv.h \
- s_sound.h dstrings.h d_englsh.h d_deh.h ex_wad.h ex_stuff.h 
+ s_sound.h dstrings.h d_englsh.h d_deh.h ex_stuff.h 
  
 $(O)/m_misc.o: m_misc.c doomstat.h doomdata.h doomtype.h d_net.h d_player.h \
  d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h m_fixed.h \
@@ -627,7 +627,7 @@ $(O)/p_pspr.o: p_pspr.c doomstat.h doomdata.h doomtype.h d_net.h d_player.h \
  i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h p_skin.h \
  sounds.h st_stuff.h d_event.h r_defs.h g_game.h m_random.h p_enemy.h \
  p_inter.h p_map.h p_maputl.h p_tick.h r_main.h r_data.h r_state.h \
- p_chase.h r_segs.h r_things.h s_sound.h
+ p_chase.h r_segs.h r_things.h s_sound.h ex_stuff.h
  
 $(O)/p_saveg.o: p_saveg.c doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
@@ -694,7 +694,7 @@ $(O)/p_user.o: p_user.c doomstat.h doomdata.h doomtype.h d_net.h d_player.h \
  i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h p_skin.h \
  sounds.h st_stuff.h d_event.h r_defs.h c_net.h c_runcmd.h g_game.h \
  r_main.h r_data.h r_state.h p_chase.h p_map.h p_spec.h p_user.h \
- s_sound.h
+ s_sound.h ex_stuff.h
  
 $(O)/r_bsp.o: r_bsp.c doomstat.h doomdata.h doomtype.h d_net.h d_player.h \
  d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h m_fixed.h \
@@ -860,7 +860,7 @@ $(O)/wi_stuff.o: wi_stuff.c doomstat.h doomdata.h doomtype.h d_net.h \
 $(O)/z_zone.o: z_zone.c z_zone.h doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h m_swap.h version.h p_pspr.h m_fixed.h \
  i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h p_skin.h \
- sounds.h st_stuff.h d_event.h r_defs.h
+ sounds.h st_stuff.h d_event.h r_defs.h ex_stuff.h
  
 $(O)/hu_fspic.o: hu_fspic.c doomdef.h z_zone.h m_swap.h version.h \
  doomtype.h m_fixed.h i_system.h d_ticcmd.h c_io.h doomstat.h \

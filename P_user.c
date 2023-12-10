@@ -41,6 +41,7 @@ rcsid[] = "$Id: p_user.c,v 1.14 1998/05/12 12:47:25 phares Exp $";
 // haleyjd
 #include "sounds.h"
 #include "s_sound.h"
+#include "ex_stuff.h"
 
 // Index of the special effects (INVUL inverse) map.
 
@@ -435,7 +436,7 @@ void P_PlayerThink (player_t* player)
     player->usedown = false;
 
   // cycle psprites
-  if((player->cheats & CF_SELFIE) && !selfieMode)
+  if((player->cheats & CF_SELFIE) && !(IS_EXTRA_LOADED(EXTRA_SELFIE) || IS_EXTRA_LOADED(EXTRA_JUMP)))
     {
       player->psprites[ps_weapon].state = &states[S_BFGDOWN];
       player->psprites[ps_flash].state = NULL;      

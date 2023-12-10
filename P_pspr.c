@@ -44,6 +44,7 @@ rcsid[] = "$Id: p_pspr.c,v 1.13 1998/05/07 00:53:36 killough Exp $";
 #include "s_sound.h"
 #include "sounds.h"
 #include "c_runcmd.h"
+#include "ex_stuff.h"
 
 int weapon_speed = 6;
 int default_weapon_speed = 6;
@@ -452,20 +453,24 @@ void A_Lower(player_t *player, pspdef_t *psp)
       return;
     }
 
-  if(player->pendingweapon == wp_selfie || player->pendingweapon == wp_pogo)
+  if(player->pendingweapon == wp_selfie)
     {
-      if(selfieMode) 
+      if(IS_EXTRA_LOADED(EXTRA_SELFIE))
         {
           player->cheats |= CF_SELFIE;
-          switch(player->pendingweapon)
-            {
-              case wp_pogo:
-                player->pendingweapon = wp_pistol;
-                break;
-              case wp_selfie:
-              default:
-                player->pendingweapon = wp_bfg;
-            }          
+          player->pendingweapon = wp_bfg;
+        }
+      else
+        {
+          player->pendingweapon = P_SwitchWeapon(player);
+        }
+    }
+  else if(player->pendingweapon == wp_pogo)
+    {
+      if(IS_EXTRA_LOADED(EXTRA_JUMP))
+        {
+          player->cheats |= CF_SELFIE;
+          player->pendingweapon = wp_pistol;
         }
       else
         {

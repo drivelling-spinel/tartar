@@ -46,6 +46,7 @@ rcsid[] = "$Id: wi_stuff.c,v 1.11 1998/05/04 21:36:02 thldrmn Exp $";
 #include "p_tick.h"
 
 #include "c_io.h"
+#include "ex_stuff.h"
 
 // Ty 03/17/98: flag that new par times have been loaded in d_deh
 extern boolean deh_pars;  
@@ -2546,7 +2547,7 @@ wbstartstruct_t* WI_CommercialWbs(wbstartstruct_t * wbs, int lastnext)
   memcpy(&wbs2, wbs, sizeof(wbs2));
   if(gamemode == commercial)
   {
-    if(commercialWiMaps)
+    if(IS_EXTRA_LOADED(EXTRA_WIMAPS))
     {
       if(l < 0) wbs2.epsd = -1;
       else if(l <= 5) wbs2.epsd = 0;

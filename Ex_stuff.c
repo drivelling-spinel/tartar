@@ -47,10 +47,6 @@
 
 #define plyr (&players[consoleplayer])     /* the console player */
 
-
-boolean selfieMode = false;
-boolean commercialWiMaps;
-
 static char *Ex_tape(void)
 {
   static char *tps;      // cache results over multiple calls
@@ -283,7 +279,7 @@ int Ex_DetectAndLoadSelfie()
       if(states2[1][i].action == A_BFGsound) states2[1][i].action = A_SelfieSound;
     }
   weaponinfo2[1][wp_bfg].ammo = am_noammo;
-  selfieMode = true;
+  MARK_EXTRA_LOADED(EXTRA_SELFIE, true);
   C_Printf("%s\n",s_GOTSELFIE);
   
   return 1;
@@ -315,7 +311,7 @@ int Ex_DetectAndLoadJumpwad()
   weaponinfo2[1][wp_pistol].ammo = am_noammo;
   mobjinfo[MT_JUMPPAD].deathsound = sfx_jump;
   mobjinfo[MT_JUMPPAD].seesound = sfx_None;
-  selfieMode = true;
+  MARK_EXTRA_LOADED(EXTRA_JUMP, true);
 
   return 1;
 }
@@ -358,10 +354,8 @@ int Ex_DetectAndLoadWiMaps()
     default:
   }
 
-  if(!loaded)
-    commercialWiMaps = false;
-
-
+  MARK_EXTRA_LOADED(EXTRA_WIMAPS, loaded);
+  
   loaded += Ex_LoadWiMapsWad("intmapnr.wad");
   return loaded;
 }
@@ -381,7 +375,7 @@ void Ex_DetectAndLoadExtras(void)
 
 CONSOLE_COMMAND(selfie, 0)
 {
-  if(!plyr || !selfieMode || gamestate != GS_LEVEL) return;
+  if(!plyr || !IS_EXTRA_LOADED(EXTRA_SELFIE) || gamestate != GS_LEVEL) return;
   
   if(!(plyr->cheats & CF_SELFIE)) {
     plyr->pendingweapon = wp_selfie;
@@ -390,7 +384,7 @@ CONSOLE_COMMAND(selfie, 0)
 
 CONSOLE_COMMAND(pogo, 0)
 {
-  if(!plyr || !selfieMode || gamestate != GS_LEVEL) return;
+  if(!plyr || !IS_EXTRA_LOADED(EXTRA_JUMP) || gamestate != GS_LEVEL) return;
   
   if(!(plyr->cheats & CF_SELFIE)) {
     plyr->pendingweapon = wp_pogo;
@@ -659,3 +653,11 @@ void Ex_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
   D_NewWadLumps(handle, extra);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////
+
+
+void Ex_ResetExtraStatus()
+{
+  memset(extra_status, 0, sizeof(extra_status));
+}

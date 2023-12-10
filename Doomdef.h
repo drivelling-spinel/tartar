@@ -354,7 +354,9 @@ typedef enum {
   EXTRA_SELFIE,
   EXTRA_WIMAPS,
   EXTRA_TAPE,
-  EXTRA_JUMP
+  EXTRA_JUMP,
+  EXTRA_NERVE,
+  NUM_EXTRAS
 } extra_file_t; 
 
 #endif          // __DOOMDEF__

@@ -1033,12 +1033,12 @@ void IdentifyVersion (void)
 	    {
 	    case pack_tnt:
 	      game_name = "Final DOOM: TNT - Evilution version";
-	      commercialWiMaps = true;
+	      MARK_EXTRA_LOADED(EXTRA_WIMAPS, true);
 	      break;
 
 	    case pack_plut:
 	      game_name = "Final DOOM: The Plutonia Experiment version";
-	      commercialWiMaps = true;
+	      MARK_EXTRA_LOADED(EXTRA_WIMAPS, true);
 	      break;
 
             case hacx_reg:
@@ -1047,7 +1047,7 @@ void IdentifyVersion (void)
 
 	    case doom2:
 	    default:
-	      commercialWiMaps = true;
+	      MARK_EXTRA_LOADED(EXTRA_WIMAPS, true);
 
 	      i = strlen(iwad);
 	      if (i>=10 && !strnicmp(iwad+i-10,"doom2f.wad",10))
@@ -1382,6 +1382,7 @@ void D_DoomMain(void)
   IdentifyVersion();
   printf("\n"); // gap
 
+  Ex_ResetExtraStatus();
   modifiedgame = false;
 
   D_BuildBEXTables(); // haleyjd
@@ -1670,8 +1671,8 @@ void D_DoomMain(void)
 
 //  D_AddFile(NULL);           // killough 11/98
 
-  commercialWiMaps = !M_CheckParm("-noload") &&
-    ((commercialWiMaps && !modifiedgame) || M_CheckParm("-wimaps"));
+   MARK_EXTRA_LOADED(EXTRA_WIMAPS, !M_CheckParm("-noload") &&
+    ((IS_EXTRA_LOADED(EXTRA_WIMAPS) && !modifiedgame) || M_CheckParm("-wimaps")));
 
   startupmsg("W_Init", "Init WADfiles.");
   Ex_DetectAndLoadTapeWads(wadfiles, !M_CheckParm("-noload"));

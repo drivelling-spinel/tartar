@@ -51,6 +51,18 @@ int Ex_DynamicNumForName(dyna_lumpname_t name);
 #define I_ResetPalette() { byte * pal = Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_CACHE); I_SetPalette(pal + 768*(st_palette > 0 ? st_palette : 0)); }
 // and as sad as it is, modules calling this need the below
 extern int st_palette;
+extern int playpal_wad;              // idx of the wad that has selected PLAYPAL
+extern int playpal_wads_count;       // number of loaded wads with PLAYPAL lump
+extern int default_playpal_wad;      // idx of that last loaded wad with PLAYPAL lump
+                                     // preceding those autoloaded at the end
+extern char ** dyna_playpal_wads;    // names of the wad containing a PLAYPAL lump
 
+
+byte extra_status[NUM_EXTRAS];
+
+void Ex_ResetExtraStatus();
+
+#define IS_EXTRA_LOADED(extra) (extra_status[extra])
+#define MARK_EXTRA_LOADED(extra, trueornot) { extra_status[extra] = trueornot; }
 
 #endif
