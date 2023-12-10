@@ -516,7 +516,7 @@ $(O)/mn_misc.o: mn_misc.c doomstat.h doomdata.h doomtype.h d_net.h \
  m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h d_main.h p_chase.h \
  s_sound.h v_video.h r_data.h r_state.h v_misc.h w_wad.h mn_engin.h \
- c_runcmd.h mn_misc.h
+ c_runcmd.h mn_misc.h g_game.h
  
 $(O)/p_anim.o: p_anim.c z_zone.h doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h m_swap.h version.h p_pspr.h m_fixed.h \

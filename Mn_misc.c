@@ -41,6 +41,8 @@
 #include "mn_engin.h"
 #include "mn_misc.h"
 
+#include "g_game.h"
+
 /////////////////////////////////////////////////////////////////////////
 //
 // Pop-up Messages
@@ -117,52 +119,61 @@ void MN_PopupDrawer()
 
 boolean MN_PopupResponder(event_t *ev)
 {
-  if(ev->type != ev_keydown) return false;
-
-  switch(popup_message_type)
+  if(ev->type == ev_keydown) 
     {
-    case popup_alert:
-	{
-	  // haleyjd 02/24/02: restore saved menuactive state
-	  menuactive = popupMenuActive;
-	  // kill message
-	  redrawsbar = redrawborder = true; // need redraw
-	  current_menuwidget = NULL;
-	  S_StartSound(NULL, sfx_swtchx);
-	}
-      break;
+      switch(popup_message_type)
+        {
+          case popup_alert:
+            {
+              // haleyjd 02/24/02: restore saved menuactive state
+              menuactive = popupMenuActive;
+              // kill message
+              redrawsbar = redrawborder = true; // need redraw
+              current_menuwidget = NULL;
+              S_StartSound(NULL, sfx_swtchx);
+              return true;
+            }
 
-    case popup_question:
-      if(tolower(ev->data1) == 'y')     // yes!
-	{
-	  // run command and kill message
-	  // haleyjd 02/24/02: restore saved menuactive state
-	  // menuactive = false; // kill menu
-	  menuactive = popupMenuActive;
-	  cmdtype = c_menu;
-	  C_RunTextCmd(popup_message_command);
-	  S_StartSound(NULL, sfx_pistol);
-	  redrawsbar = redrawborder = true; // need redraw
-	  current_menuwidget = NULL;  // kill message
-	}
-      if(tolower(ev->data1) == 'n' || ev->data1 == KEYD_ESCAPE
-	 || ev->data1 == KEYD_BACKSPACE)     // no!
-	{
-	  // kill message
-	  // haleyjd 02/24/02: restore saved menuactive state
-	  // menuactive = false; // kill menu
-	  menuactive = popupMenuActive;
-	  S_StartSound(NULL, sfx_swtchx);
-	  redrawsbar = redrawborder = true; // need redraw
-	  current_menuwidget = NULL; // kill message
-	}
-      break;
+          case popup_question:
+            if(tolower(ev->data1) == 'y')     // yes!
+              {
+                // run command and kill message
+                // haleyjd 02/24/02: restore saved menuactive state
+                // menuactive = false; // kill menu
+                menuactive = popupMenuActive;
+                cmdtype = c_menu;
+                C_RunTextCmd(popup_message_command);
+                S_StartSound(NULL, sfx_pistol);
+                redrawsbar = redrawborder = true; // need redraw
+                current_menuwidget = NULL;  // kill message
+                return true;
+              }
+            if(tolower(ev->data1) == 'n' || ev->data1 == KEYD_ESCAPE
+               || ev->data1 == KEYD_BACKSPACE)     // no!
+              {
+                // kill message
+                // haleyjd 02/24/02: restore saved menuactive state
+                // menuactive = false; // kill menu
+                menuactive = popupMenuActive;
+                S_StartSound(NULL, sfx_swtchx);
+                redrawsbar = redrawborder = true; // need redraw
+                current_menuwidget = NULL; // kill message
+                return true;
+              }
       
-    default:
-      break;
+          default:
+            break;
+        }
     }
-  
-  return true; // always eatkey
+
+  if ((devparm && ev->data1 == key_help)
+      || ev->data1 == key_screenshot)
+    {
+      G_ScreenShot ();
+      return true;
+    }                             
+
+  return G_KeyCmdResponder(ev) || true;  // always eatkey
 }
 
 // widget for popup message alternate draw
@@ -259,7 +270,7 @@ static void MN_FindTartarScreen()
 {
   num_helpscreens = 0;  // reset
 
-  // add dynamic smmu credits screen
+  // add Tartar credits screen
 
   helpscreens[num_helpscreens++].Drawer = MN_DrawTartar;
 }
@@ -335,8 +346,6 @@ void MN_DrawTartar(void)
 
   V_DrawDistortedBackground("FLAT14", screens[0]);
 
-  // sf: SMMU credits
-
   V_WriteText(FC_GRAY "Tartar: Stage  5 testing (2021-2023)\n"
               FC_BLUE "\"Modern\" " FC_GREEN "DOS " FC_RED "Doom " FC_GREEN "port \n"
               "for " FC_BLUE "\"modern\" " FC_GREEN "retro machines\n"
@@ -372,6 +381,8 @@ void MN_HelpDrawer()
       // load lump
       patch = W_CacheLumpNum(helpscreens[viewing_helpscreen].lumpnum,
 			     PU_CACHE);
+
+      V_FillScreen(BG_COLOR, FG);
       // display lump
       V_DrawPatch(0, 0, 0, patch);
     }
@@ -379,41 +390,54 @@ void MN_HelpDrawer()
 
 boolean MN_HelpResponder(event_t *ev)
 {
-  if(ev->type != ev_keydown) return false;
+  if(ev->type == ev_keydown) 
+    {
+      if(ev->data1 == KEYD_BACKSPACE)
+        {
+          // go to previous screen
+          viewing_helpscreen--;
+          if(viewing_helpscreen < 0)
+            {
+              viewing_helpscreen = 0;
+            }
+          S_StartSound(NULL, sfx_swtchx);
+          return true;
+        }
+      if(ev->data1 == KEYD_ENTER)
+        {
+          // go to next helpscreen
+          viewing_helpscreen++;
+          if(viewing_helpscreen >= num_helpscreens)
+            {         
+              // cancel
+              ev->data1 = KEYD_ESCAPE;
+            }
+          else
+            {
+              S_StartSound(NULL, sfx_pistol);
+              return true;
+            }
+        }
+      if(ev->data1 == KEYD_ESCAPE)
+        {
+          // cancel helpscreen
+          redrawsbar = redrawborder = true; // need redraw
+          current_menuwidget = NULL;
+          menuactive = false;
+          S_StartSound(NULL, sfx_swtchx);
+          return true;
+        }      
+    }
 
-  if(ev->data1 == KEYD_BACKSPACE)
+  if ((devparm && ev->data1 == key_help)
+      || ev->data1 == key_screenshot)
     {
-      // go to previous screen
-      viewing_helpscreen--;
-      if(viewing_helpscreen < 0)
-	{
-	  viewing_helpscreen = 0;
-	}
-      S_StartSound(NULL, sfx_swtchx);
-    }
-  if(ev->data1 == KEYD_ENTER)
-    {
-      // go to next helpscreen
-      viewing_helpscreen++;
-      if(viewing_helpscreen >= num_helpscreens)
-	{	  
-          // cancel
-	  ev->data1 = KEYD_ESCAPE;
-	}
-      else
-	S_StartSound(NULL, sfx_pistol);
-    }
-  if(ev->data1 == KEYD_ESCAPE)
-    {
-      // cancel helpscreen
-      redrawsbar = redrawborder = true; // need redraw
-      current_menuwidget = NULL;
-      menuactive = false;
-      S_StartSound(NULL, sfx_swtchx);
-    }
-
+      G_ScreenShot ();
+      return true;
+    }                             
+  
   // always eatkey
-  return true;
+  return G_KeyCmdResponder(ev);
 }
 
 menuwidget_t helpscreen_widget = {MN_HelpDrawer, MN_HelpResponder};
@@ -422,7 +446,7 @@ CONSOLE_COMMAND(help, 0)
 {
   MN_ActivateMenu();
   MN_FindHelpScreens();        // search for help screens
-  
+
   // hook in widget to display menu
   current_menuwidget = &helpscreen_widget;
   
