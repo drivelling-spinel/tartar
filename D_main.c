@@ -1699,7 +1699,8 @@ void D_DoomMain(void)
 
 //  D_AddFile(NULL);           // killough 11/98
 
-  commercialWiMaps = (commercialWiMaps && !modifiedgame) || M_CheckParm("-wimaps");
+  commercialWiMaps = !M_CheckParm("-noload") &&
+    ((commercialWiMaps && !modifiedgame) || M_CheckParm("-wimaps"));
 
   startupmsg("W_Init", "Init WADfiles.");
   D_DetectAndLoadTapeWads(wadfiles, !M_CheckParm("-noload"));
