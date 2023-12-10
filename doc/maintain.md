@@ -42,8 +42,6 @@ Be mindful of playing too much with that UAC terminal found in the map - _you ha
 
 ## Stage 3 Maintenance Release 2
 
-_(this is documentation for a work in progress version of Tartar)_
-
 ### Sound
 
 - Stereo image is more pronounced with stereo separation computation "copied" from Hexen source, 
