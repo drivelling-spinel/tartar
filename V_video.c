@@ -327,14 +327,14 @@ void V_FillRect(int c, int width, int height, int destx, int desty, int destscrn
 void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
 			boolean flipped)
 {
-  int  w = SHORT(patch->width), h = SHORT(patch->height), col = w-1, colstop = -1, colstep = -1, ex;
+  int  w = SHORT(patch->width), h = SHORT(patch->height), col = w-1, colstop = -1, colstep = -1, ex, eh, ew;
   
   if (!flipped)
     col = 0, colstop = w, colstep = 1;
 
   y -= SHORT(patch->topoffset);
   x -= SHORT(patch->leftoffset);
-
+  
   if (x < 0)
     {
       col = flipped ? col + x : col - x;
@@ -346,11 +346,11 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
     {
       colstop = flipped ? colstop - ex : colstop + ex;
     }
-
+    
   // haleyjd 01/13/02: removed #ifdef RANGECHECK and demoted
   // from an I_Error call to a player message 
   if(x < 0 || x + colstop - col > SCREENWIDTH || 
-     y < 0 || 
+     y < 0 || y >= EFFECTIVE_HEIGHT ||
      (unsigned)scrn>4)
     {
       C_Printf(
@@ -359,8 +359,10 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
       return;      // killough 1/19/98: commented out printfs
     }
 
+  eh = (y + h > EFFECTIVE_HEIGHT) ? EFFECTIVE_HEIGHT - y : h;
+  ew = (col - colstop) * colstep;
   if (!scrn)
-    V_MarkRect (x, y, w, h);
+    V_MarkRect (x, y, ew, eh);
 
   if (hires)       // killough 11/98: hires support (well, sorta :)
     {
@@ -377,8 +379,10 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
 	      // killough 2/21/98: Unrolled and performance-tuned
               int wh = SCREENWIDTH<<hires<<hires;
 	      register const byte *source = (byte *) column + 3;
-              register byte *dest = desttop + column->topdelta*(wh);
-	      register int count = column->length;
+        register byte *dest = desttop + column->topdelta*(wh);
+        int cy = y + column->topdelta;
+	      register int count = (cy + column->length > EFFECTIVE_HEIGHT) ? EFFECTIVE_HEIGHT - cy : column->length;
+	      if(count < 0) count = 0;
 
 	      if ((count-=4)>=0)
 		do
@@ -427,7 +431,7 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
                     dest += wh;
 		  }
 		while (--count);
-	      column = (column_t *)(source+1); //killough 2/21/98 even faster
+	      column = (column_t *)((byte *) column + 4 + column->length); //killough 2/21/98 even faster
 	    }
 	}
     }
@@ -439,7 +443,7 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
 	{
 	  const column_t *column = 
 	    (const column_t *)((byte *)patch + LONG(patch->columnofs[col]));
-
+    
 	  // step through the posts in a column
 	  while (column->topdelta != 0xff)
 	    {
@@ -447,7 +451,9 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
 
 	      register const byte *source = (byte *) column + 3;
 	      register byte *dest = desttop + column->topdelta*SCREENWIDTH;
-	      register int count = column->length;
+        int cy = y + column->topdelta;
+	      register int count = (cy + column->length > EFFECTIVE_HEIGHT) ? EFFECTIVE_HEIGHT - cy : column->length;
+	      if(count < 0) count = 0;
 
 	      if ((count-=4)>=0)
 		do
@@ -473,7 +479,7 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
 		    dest += SCREENWIDTH;
 		  }
 		while (--count);
-	      column = (column_t *)(source+1); //killough 2/21/98 even faster
+	      column = (column_t *)((byte *) column + 4 + column->length); //killough 2/21/98 even faster
 	    }
 	}
     }
