@@ -877,10 +877,11 @@ void R_DrawPlayerSprites(void)
   pspdef_t *psp;
   sector_t tmpsec;
   int floorlightlevel, ceilinglightlevel;
-
+  int skip = (1 << viewplayer->readyweapon) & hide_weapon_on_flash;
+  
         // sf: psprite switch
   if(!showpsprites || viewcamera) return;
-
+    
   R_SectorColormap(viewplayer->mo->subsector->sector);
 
   // get light level
@@ -910,8 +911,31 @@ void R_DrawPlayerSprites(void)
 
   // add all active psprites
   for (i=0, psp=viewplayer->psprites; i<NUMPSPRITES; i++,psp++)
+  {
+    if(skip)
+    {
+      if(skip && i == ps_weapon) 
+      {
+        continue;
+      }
+      if(skip && i == ps_flash) 
+      {
+        if (psp->state)
+        {
+          R_DrawPSprite (psp);
+        }
+        else 
+        {
+          i = -1;
+          psp = viewplayer->psprites-1;
+        }
+        skip = 0;
+        continue;
+      }
+    }
     if (psp->state)
       R_DrawPSprite (psp);
+  }
 }
 
 //

@@ -452,6 +452,9 @@ extern int debugcolumn;
 
 #define background_flat (gamemission == cod || EternityMode ? "FLOOR4_8" : "FLOOR4_6")
 
+extern int def_hide_weapon_on_flash;
+extern int hide_weapon_on_flash;
+
 #endif
 
 

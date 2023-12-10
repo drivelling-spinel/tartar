@@ -1632,6 +1632,13 @@ default_t defaults[] = {
     "Whether to invoke slime trale removal code originally from MBF"
   },
 
+  {
+    "hide_weapon_on_flash",
+    &def_hide_weapon_on_flash, &hide_weapon_on_flash,
+    0, {0,65535}, dt_number, ss_none, wad_yes,
+    "Bitmask for wads to hide weapon sprite when gun flash is drawn"
+  },
+
   {NULL}         // last entry
 };
 

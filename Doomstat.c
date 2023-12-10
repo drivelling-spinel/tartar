@@ -129,6 +129,9 @@ int forceFlipPan; // haleyjd 12/08/01
 
 boolean remove_slime_trails;
 
+int def_hide_weapon_on_flash;
+int hide_weapon_on_flash;
+
 //----------------------------------------------------------------------------
 //
 // $Log: doomstat.c,v $
