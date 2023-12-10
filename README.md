@@ -51,7 +51,7 @@ Tartar distribution is available following the link below:
 
 <https://mega.nz/folder/V50HiaSJ#yZa2LjO_kJB3Vs4tvlR3cQ>
 
-There, STAGE3M1 directory contains current version of the port 
+There, STAGE3M2 directory contains current version of the port 
 including TARTAR.EXE and additional assets and files required to run it. 
 EXTRAS document above describes the contents of DEMOS and GOODIES directories. 
 
@@ -60,7 +60,7 @@ under TARTAR directory - it's available under STAGES/STAGE1.
 
 ### Playing Doom with TARTAR
 
-1. Download STAGE3M1 directory contents from the above link (MEGA has means 
+1. Download STAGE3M2 directory contents from the above link (MEGA has means 
    to download directory as a ZIP archive)
 
 2. For a quick and simple start either 
