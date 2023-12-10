@@ -972,6 +972,8 @@ int P_CheckTag(line_t *line)
     case 278:   // GR
     case 279:   // G1
     case 280:   // WR -- haleyjd
+    case 974:   // W1 specific to CoD
+    case 975:
       return 1;
     case 272:   // haleyjd: compatibility for SMMU 272 behavior
        if(comp[comp_smmuline])
@@ -1258,13 +1260,32 @@ void P_CrossSpecialLine(line_t *line, int side, mobj_t *thing)
       break;
 
     case 274: // joel
-	if (EV_LightRaise15(line))
-          line->special = 0;
+      if (gamemission == cod)
+        {
+          if (EV_LightRaise15(line))
+            line->special = 0;
+        }
+      else // console command (1sided)
+        {
+          t_trigger = thing;
+          T_RunScript(line->tag);
+          line->special = 0;        // clear trigger
+        }
       break;
 
     case 275:
-	if (EV_LightLower15 (line))
-          line->special = 0;
+      if (gamemission == cod)
+        {
+          if (EV_LightLower15 (line))
+            line->special = 0;
+        }
+      else
+        {
+          if(side) break;
+          t_trigger = thing;
+          T_RunScript(line->tag);
+          line->special = 0;        // clear trigger
+        }
       break;
 
     case 25:
