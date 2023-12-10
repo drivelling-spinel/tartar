@@ -1679,7 +1679,9 @@ static void G_DoLoadGame(void)
   }
 
   G_SetGameMap();       // get gameepisode, map
-
+#ifdef ARCTIC_STUFF
+  Ex_EnsureCorrectArcticPart(gamemap);
+#endif
   if (!forced_loadgame)
    {  // killough 3/16/98, 12/98: check lump name checksum
      checksum = G_Signature();

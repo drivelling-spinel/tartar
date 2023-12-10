@@ -359,6 +359,7 @@ typedef enum {
   EXTRA_TAPE,
   EXTRA_JUMP,
   EXTRA_NERVE,
+  EXTRA_ARCTIC,
   NUM_EXTRAS
 } extra_file_t; 
 

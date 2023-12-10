@@ -1253,6 +1253,12 @@ void D_DehackedFile(char * file)
   ProcessDehFile(file, D_dehout(), 0);  
 }
 
+void D_ExtraDehackedFile(char * file, extra_file_t extra)
+{
+  if (access(file, F_OK)) I_Error("Cannot find .deh or .bex file named %s", file);
+  ProcessExtraDehFile(extra, file, D_dehout(), 0);  
+}
+
 // killough 10/98: support preloaded wads
 
 static void D_ProcessWadPreincludes(void)
@@ -1890,6 +1896,7 @@ void D_DoomMain(void)
         C_Printf("Not loading bundled eternity.wad\n");
         C_Printf("as cod.wad was provided with -file\n");
      }
+
 
   idmusnum = -1; //jff 3/17/98 insure idmus number is blank
 

@@ -36,8 +36,8 @@ EXE=$(O)/tartar.exe
 CFLAGS_COMMON=-Wall
 
 # new features; comment out what you don't want at the moment
-# -DDOGS -DTRANWATER -DFAUXTRAN -DNORENDER 
-CFLAGS_NEWFEATURES=-DDOGS -DFAUXTRAN -DBOSSACTION
+# -DDOGS -DTRANWATER -DFAUXTRAN -DNORENDER -DARCTIC_STUFF
+CFLAGS_NEWFEATURES=-DDOGS -DFAUXTRAN -DBOSSACTION -DARCTIC_STUFF
         
 # debug options
 CFLAGS_DEBUG=-g -O2 -DRANGECHECK -DINSTRUMENTED -DZONEIDCHECK
@@ -648,7 +648,7 @@ $(O)/p_setup.o: p_setup.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  wi_stuff.h hu_frags.h m_bbox.h m_argv.h g_game.h w_wad.h p_hubs.h \
  r_main.h r_things.h r_sky.h p_maputl.h p_map.h p_setup.h p_spec.h \
  p_tick.h p_enemy.h p_info.h s_sound.h t_script.h t_parse.h t_vari.h \
- t_prepro.h p_anim.h hu_fspic.h
+ t_prepro.h p_anim.h hu_fspic.h ex_stuff.h
  
 $(O)/p_sight.o: p_sight.c doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \

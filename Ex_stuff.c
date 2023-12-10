@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 2022 Ludicros_peridot
@@ -53,6 +53,25 @@
     } \
 }
 
+#ifdef ARCTIC_STUFF
+#define INTIT_PRISTINE() {\
+  if(!pristine_st) memcpy(pristine_st = malloc(sizeof(states)), &states[0], sizeof(states)); \
+  if(!pristine_mt) memcpy(pristine_mt = malloc(sizeof(mobjinfo_t) * MT_EXTRAS), &mobjinfo[0], sizeof(mobjinfo_t) * MT_EXTRAS); \
+}
+
+#define RESTORE_PRISTINE() { \
+  assert(pristine_st); \
+  memcpy(&states[0], pristine_st, sizeof(states)); \
+  assert(pristine_mt); \
+  memcpy(&mobjinfo[0], pristine_mt, sizeof(mobjinfo_t) * MT_EXTRAS); \
+}
+
+
+
+extern state_t * pristine_st;
+extern mobjinfo_t * pristine_mt;
+#endif
+
 #define plyr (&players[consoleplayer])     /* the console player */
 
 static char *Ex_tape(void)
@@ -84,6 +103,11 @@ static char tapestr[PATH_MAX+1];
 
 static int        tapehandle = 0;
 extern int        hashnumlumps;
+
+#ifdef ARCTIC_STUFF
+static char *arctic_part1_wad = 0, *arctic_part1_deh = 0;
+static char *arctic_part2_wad = 0, *arctic_part2_deh = 0;
+#endif
 
 int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
 {
@@ -697,11 +721,78 @@ void Ex_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
 void Ex_ResetExtraStatus()
 {
   memset(extra_status, 0, sizeof(extra_status));
+#ifdef ARCTIC_STUFF
+  // a good place to initialize from pristine values
+  INTIT_PRISTINE();
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
 // WolfenDoom stuff
 ////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef ARCTIC_STUFF
+int Ex_LoadArcticPart1()
+{
+  if(arctic_part1_wad && arctic_part1_deh)
+    {
+      if(!W_AddExtraFile(arctic_part1_wad, EXTRA_ARCTIC))
+        {
+          RESTORE_PRISTINE();
+          D_ExtraDehackedFile(arctic_part1_deh, EXTRA_NONE);
+                              // here hack to tread deh as an ordinary one
+          D_ReInitWadfiles();
+          MARK_EXTRA_LOADED(EXTRA_ARCTIC, false);
+          return 1;
+        }
+    }
+  return 0;
+}
+
+int Ex_LoadArcticPart2()
+{
+  if(arctic_part2_wad && arctic_part2_deh)
+    {
+      if(!W_AddExtraFile(arctic_part2_wad, EXTRA_ARCTIC))
+        {
+          RESTORE_PRISTINE();
+          D_ExtraDehackedFile(arctic_part2_deh, EXTRA_NONE);
+                              // here hack to tread deh as an ordinary one
+          D_ReInitWadfiles();
+          MARK_EXTRA_LOADED(EXTRA_ARCTIC, true);
+          return 1;
+        }
+    }
+  return 0;
+}
+
+
+void Ex_EnsureCorrectArcticPart(int lev)
+{
+  if(!arctic_part1_wad || !arctic_part1_deh ||
+    !arctic_part2_wad || !arctic_part2_deh)
+    return;
+
+  if(lev < 20 && IS_EXTRA_LOADED(EXTRA_ARCTIC))
+    {
+      if(Ex_LoadArcticPart1())
+        C_Printf("Loaded Arctic part 1 wads\n%s\n%s",
+          arctic_part1_wad, arctic_part1_deh);
+      else
+        C_Printf("Failed to load Arctic part 1 wads\n%s\n%s",
+          arctic_part1_wad, arctic_part1_deh);
+    }
+  else if(lev >= 20 && !IS_EXTRA_LOADED(EXTRA_ARCTIC))
+    {
+      if(Ex_LoadArcticPart2())
+        C_Printf("Loaded Arctic part 2 wads\n%s\n%s",
+          arctic_part2_wad, arctic_part2_deh);
+      else
+        C_Printf("Failed to load Arctic part 2 wads\n%s\n%s",
+          arctic_part2_wad, arctic_part2_deh);
+    }
+}
+#endif
 
 void Ex_RevertDSStates()
 {
@@ -732,6 +823,7 @@ int Ex_InsertResWadIfMissing(const char * wadname, int index, const char * reswa
   return 1;
 }
 
+
 int Ex_CheckWadsGeneralized(const char * wadname, const int index, char * pwads[], int pwads_count, char * reswads[], int reswads_count) 
 {
   int i;
@@ -752,6 +844,18 @@ int Ex_CheckWadsGeneralized(const char * wadname, const int index, char * pwads[
   return 0;
 }
 
+char * Ex_CheckFilePathIfExists(const char * wadname, const char * tocheck)
+{
+  int i = strlen(wadname); 
+  struct stat sbuf;
+  for(i = strlen(wadname) - 1 ; i >= 0 && wadname[i] != '/' && wadname[i] != '\\' ; i -= 1);
+  assert(++i + strlen(tocheck) < sizeof(filestr));
+  strncpy(filestr, wadname, i);
+  filestr[i] = 0;
+  strcat(filestr, tocheck);
+  if(stat(filestr, &sbuf)) return 0;
+  return strdup(filestr);
+}
 
 static char * WOLFDOOM_PWADS[] = {"1ST_ENC.WAD", "AFTERMTH.WAD"};
 static char * WOLFDOOM_RES_WADS[] = { "WLFGFX.WAD", "WLFSND.WAD", "WLFST.WAD", "WLFTXT.WAD" };
@@ -775,7 +879,7 @@ int Ex_CheckNoctWads(const char * wadname, const int index)
   return 0;
 }
 
-int Ex_CheckOriginaltWads(const char * wadname, const int index) 
+int Ex_CheckOriginalWads(const char * wadname, const int index) 
 {
   ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
   assert(strlen(filestr) + 5 <= sizeof(filestr));
@@ -793,20 +897,59 @@ static char * ARCTIC_RES_WADS[] = { "ARCTIC.WAD", "ARC_FIX.WAD" };
 static char * ARCTIC_RES_WADS2[] = { "PISTOL.WAD", "ARCTICSN.WAD" };
 
 static char * ARCTIC_PWADS3[] = { "ARCTIC.WAD" };
-static char * ARCTIC_RES_WADS3[] = { "ARC_FIX.WAD", "PISTOL.WAD", "GFX1.WAD", "ARCTICSN.WAD" };
+static char * ARCTIC_RES_WADS3[] = { "ARC_FIX.WAD", "PISTOL.WAD", "GFX1.WAD", "ARCTIC1.DEH", "ARCTICSN.WAD" };
 
-
-int Ex_CheckArctictWads(const char * wadname, const int index) 
+#ifdef ARCTIC_STUFF
+void Ex_CheckArcticPartWads(const char * wadname,
+                            const char * wad1, const char *deh1,
+                            const char * wad2, const char *deh2)
 {
+  char * w1, * d1, * w2, * d2;
+  w1 = Ex_CheckFilePathIfExists(wadname, wad1);
+  d1 = Ex_CheckFilePathIfExists(wadname, deh1);
+  w2 = Ex_CheckFilePathIfExists(wadname, wad2);
+  d2 = Ex_CheckFilePathIfExists(wadname, deh2);
+  if(w1 && d1 && w2 && d2)
+    {
+      arctic_part1_wad = w1;
+      arctic_part1_deh = d1;
+      arctic_part2_wad = w2;
+      arctic_part2_deh = d2;
+    }
+  else
+    {
+      free(w1);
+      free(w2);
+      free(d1);
+      free(d2);
+    }
+}
+#endif
+
+int Ex_CheckArcticWads(const char * wadname, const int index) 
+{ 
+
   // option 1 - GFX1 or GFX2
   int c = Ex_CheckWadsGeneralized(wadname, index, ARCTIC_PWADS, sizeof(ARCTIC_PWADS) / sizeof(*ARCTIC_PWADS),
     ARCTIC_RES_WADS, sizeof(ARCTIC_RES_WADS) / sizeof(*ARCTIC_RES_WADS));
   c += Ex_CheckWadsGeneralized(wadname, index + c + 1, ARCTIC_PWADS, sizeof(ARCTIC_PWADS) / sizeof(*ARCTIC_PWADS),
     ARCTIC_RES_WADS2, sizeof(ARCTIC_RES_WADS2) / sizeof(*ARCTIC_RES_WADS2));
-  if(c != 0) return c;
-  
-  return Ex_CheckWadsGeneralized(wadname, index + 1, ARCTIC_PWADS3, sizeof(ARCTIC_PWADS3) / sizeof(*ARCTIC_PWADS3),
+  if(c != 0)
+    {
+#ifdef ARCTIC_STUFF
+      Ex_CheckArcticPartWads(wadname, "GFX1.WAD", "ARCTIC1.DEH",
+                             "GFX2.WAD", "ARCTIC2.DEH");
+#endif
+      return c;
+    }
+    
+  c = Ex_CheckWadsGeneralized(wadname, index + 1, ARCTIC_PWADS3, sizeof(ARCTIC_PWADS3) / sizeof(*ARCTIC_PWADS3),
     ARCTIC_RES_WADS3, sizeof(ARCTIC_RES_WADS3) / sizeof(*ARCTIC_RES_WADS3));
+#ifdef ARCTIC_STUFF
+  if(c != 0) Ex_CheckArcticPartWads(wadname, "GFX1.WAD", "ARCTIC1.DEH",
+                                             "GFX2.WAD", "ARCTIC2.DEH");
+#endif
+  return c;
 }
 
 static char * ARCTICSE_PWADS[] = { "ARCTGFX1.WAD", "ARCTGFX2.WAD"};
@@ -814,19 +957,30 @@ static char * ARCTICSE_RES_WADS[] = { "ARCTIC.WAD", "ARCTLEV.WAD" };
 
 
 static char * ARCTICSE_PWADS3[] = { "ARCTIC.WAD"};
-static char * ARCTICSE_RES_WADS3[] = { "ARCTLEV.WAD", "ARCTGFX1.WAD" };
+static char * ARCTICSE_RES_WADS3[] = { "ARCTLEV.WAD", "ARCTGFX1.WAD", "ARCTIC1.DEH" };
 
-int Ex_CheckArctictSeWads(const char * wadname, const int index) 
+int Ex_CheckArcticSeWads(const char * wadname, const int index) 
 {
   int c = Ex_CheckWadsGeneralized(wadname, index, ARCTICSE_PWADS, sizeof(ARCTICSE_PWADS) / sizeof(*ARCTICSE_PWADS),
     ARCTICSE_RES_WADS, sizeof(ARCTICSE_RES_WADS) / sizeof(*ARCTICSE_RES_WADS));
-  if(c) return c;
+  if(c != 0)
+    {
+#ifdef ARCTIC_STUFF
+      Ex_CheckArcticPartWads(wadname, "ARCTGFX1.WAD", "ARCTIC1.DEH",
+                                      "ARCTGFX2.WAD", "ARCTIC2.DEH");
+#endif
+      return c;
+    }
 
-  return Ex_CheckWadsGeneralized(wadname, index + 1, ARCTICSE_PWADS3, sizeof(ARCTICSE_PWADS3) / sizeof(*ARCTICSE_PWADS3),
+  c = Ex_CheckWadsGeneralized(wadname, index + 1, ARCTICSE_PWADS3, sizeof(ARCTICSE_PWADS3) / sizeof(*ARCTICSE_PWADS3),
     ARCTICSE_RES_WADS3, sizeof(ARCTICSE_RES_WADS3) / sizeof(*ARCTICSE_RES_WADS3));
+#ifdef ARCTIC_STUFF
+  if(c != 0) Ex_CheckArcticPartWads(wadname, "ARCTGFX1.WAD", "ARCTIC1.DEH",
+                                             "ARCTGFX2.WAD", "ARCTIC2.DEH");
+#endif
+  return c;
 }
-
-
+ 
 
 int Ex_CheckBTSXWads(const char * wadname, const int index) 
 {
@@ -876,7 +1030,7 @@ int Ex_CheckKDiKDiZDWads(const char * wadname, const int index)
 
 typedef int (related_wad_func_t)(const char *, const int);
 related_wad_func_t *related_wad_funcs[] = { Ex_Check1stEncWads,
-  Ex_CheckArctictWads, Ex_CheckArctictSeWads,
+  Ex_CheckArcticWads, Ex_CheckArcticSeWads,
   Ex_CheckBTSXWads, Ex_CheckKDiKDiZDWads };
 
 int Ex_InsertRelatedWads(const char * wadname, const int index)

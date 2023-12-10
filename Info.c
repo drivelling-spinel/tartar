@@ -1997,6 +1997,10 @@ state_t states[NUMSTATES] = {
   
 };
 
+#ifdef ARCTIC_STUFF
+state_t *pristine_st = 0;
+#endif
+
 state_t *states3[3] = {states, states, states};
 
 // ********************************************************************
@@ -9709,6 +9713,10 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     
   
 };
+
+#ifdef ARCTIC_STUFF
+mobjinfo_t * pristine_mt = 0;
+#endif
 
 //----------------------------------------------------------------------------
 //

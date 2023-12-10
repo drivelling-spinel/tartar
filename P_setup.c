@@ -61,6 +61,7 @@ rcsid[] = "$Id: p_setup.c,v 1.16 1998/05/07 00:56:49 killough Exp $";
 #include "d_dialog.h"
 #include "d_io.h" // SoM 3/14/2002: strncasecmp
 #include "t_vari.h"
+#include "ex_stuff.h"
 
 void T_BuildGameArrays(void); // in t_array.c
 
@@ -1499,6 +1500,10 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
 
   P_FreeSecNodeList();  // sf: free the psecnode_t linked list in p_map.c
   P_InitThinkers();
+
+#ifdef ARCTIC_STUFF
+  Ex_EnsureCorrectArcticPart(gamemap);
+#endif
 
   P_LoadOlo();                          // level names etc
   P_LoadLevelInfo (lumpnum);    // load level lump info(level name etc)

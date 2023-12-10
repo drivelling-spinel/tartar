@@ -338,7 +338,8 @@ void MN_DrawTartar(void)
   // sf: SMMU credits
 
   V_WriteText(FC_GRAY "Tartar: Stage  4 (2021-2023)\n"
-              FC_BLUE "\"Modern\" " FC_GRAY "DOS " FC_RED "Doom " FC_GRAY "port for " FC_BLUE "\"modern\" " FC_GRAY "retro machines\n"
+              FC_BLUE "\"Modern\" " FC_GREEN "DOS " FC_RED "Doom " FC_GREEN "port \n"
+              "for " FC_BLUE "\"modern\" " FC_GREEN "retro machines\n"
               "\n"
               FC_GRAY "Based on " FC_RED "Caverns of Darkness " FC_GRAY "engine\n"
               FC_GRAY "aka " FC_RED "EE 3.29 dev beta 5 joel-2\n"

@@ -2300,7 +2300,8 @@ typedef enum {
   Trigger_Revenant,
   Trigger_Mancubus,
 
-  MT_SELFFLASH,
+  MT_EXTRAS,
+  MT_SELFFLASH = MT_EXTRAS,
   MT_JUMPPAD,
 
   NUMMOBJTYPES  // Counter of how many there are
