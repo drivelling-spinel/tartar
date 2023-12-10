@@ -144,6 +144,7 @@ CONSOLE_COMMAND(mn_newgame, 0)
       return;
     }
 
+
   if(gamemode == commercial || gamemission == chex)
     {
        
@@ -165,6 +166,9 @@ CONSOLE_COMMAND(mn_newgame, 0)
     }
   else
     {
+      // hack -- cut off the nightmare difficulty from menu for older versions
+      if(W_CheckNumForName("M_NMARE") < 0)
+        menu_newgame.menuitems[8].type = it_end;
 #ifdef EPISINFO
       MN_StartMenu(Mn_BuildEpisodeMenu());
 #else
@@ -390,8 +394,21 @@ CONSOLE_COMMAND(newgame, cf_notnet)
     }
   else
     {
-      // start on first level of selected episode
-      G_DeferedInitNewNum(skill, start_episode, 1);
+#ifdef EPISINFO
+      int j = 0;
+      for(j = 0 ; start_episode != info_epis_num[j] && j < info_epis_count ; j ++);
+      if(j == info_epis_count)
+        {
+#endif
+          // start on first level of selected episode
+          G_DeferedInitNewNum(skill, start_episode, 1);
+#ifdef EPISINFO
+        }
+      else
+        {
+          G_DeferedInitNew(skill, info_epis_start[j]);
+        }
+#endif
     }
 
   MN_ClearMenus();

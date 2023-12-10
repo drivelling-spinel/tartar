@@ -63,7 +63,7 @@ extern boolean deh_pars;
 // This is supposedly ignored for commercial
 //  release (aka DOOM II), which had 34 maps
 //  in one episode. So there.
-#define NUMRETAILEP       (/*Ultimate Doom*/4 + /*Sigil*/1)
+#define NUMRETAILEP       (/*Ultimate Doom*/4)
 #define COMMERCIAL_IDX    (NUMRETAILEP)
 #define NUMCOMMERCIALEP   (4)
 #define NUMEPISODES       ((NUMRETAILEP) + (NUMCOMMERCIALEP) * 3 /* DOOM II + FINAL DOOM*/)
@@ -220,10 +220,6 @@ static point_t lnodes[NUMEPISODES][NUMMAPS2] =
   },
   
   // Retail dummy entry
-  {
-  },
-  
-  // Sigil dummy entry
   {
   },
   
@@ -811,17 +807,14 @@ static void WI_drawLF(void)
 {
   int y = WI_TITLEY;
   patch_t *patch=NULL;
-  
-  if(wbs->last>=0 && wbs->last < gamemode == commercial ? NUMCMAPS : NUMMAPS)
+
+  if(wbs->last>=0 && wbs->last < (gamemode == commercial ? NUMCMAPS : NUMMAPS))
     {
       patch=lnames[wbs->last];
     }
-  else  // new level
+  if(*info_levelpic)
     {
-      if(*info_levelpic)
-	{
-	  patch=W_CacheLumpName(info_levelpic,PU_CACHE);
-	}
+      patch=W_CacheLumpName(info_levelpic,PU_CACHE);
     }
   if(patch)
     {
@@ -847,18 +840,38 @@ static void WI_drawEL(void)
 // joel - don't show next level's graphic if it's end of game
   if (strcmp(info_endofgame, "true") && !*info_endpic && info_enterpictime)
     {
+      patch_t *patch=NULL;
       int y = WI_TITLEY;
       
       // draw "Entering"
       V_DrawPatch((SCREENWIDTH - SHORT(entering->width))/2,
                   y, FB, entering);
-      if(wbs->next>=0 && wbs->next < gamemode == commercial ? NUMCMAPS : NUMMAPS)
+      if(wbs->next>=0 && wbs->next < (gamemode == commercial ? NUMCMAPS : NUMMAPS))
+        {
+          patch = lnames[wbs->next];
+        }
+      else if(wbs->next >= 0) // else try our luck
+        {
+          char name[9];
+          *name = 0;
+          if(gamemode == commercial)
+            {
+              sprintf(name, "CWILV%2.2d", wbs->next);
+            }
+          else
+            {
+              sprintf(name, "WILV%1.1d%1.1d", wbs->epsd, wbs->next);
+            }
+          patch = W_CacheLumpName(name, PU_CACHE);
+        }
+
+      if(patch)
         {
           // draw level
-          y += (5*SHORT(lnames[wbs->next]->height))/4;
+          y += (5*SHORT(patch->height))/4;
           
-          V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->next]->width))/2,
-                      y, FB, lnames[wbs->next]);
+          V_DrawPatch((SCREENWIDTH - SHORT(patch->width))/2,
+                      y, FB, patch);
         }
     }
 }
@@ -931,7 +944,7 @@ static void WI_initAnimatedBack(void)
   if (gamemode == commercial)  // no animation for DOOM2
     return;
 
-  if (wbs->epsd > 2)
+  if (wbs->epsd < 0 || wbs->epsd > 2)
     return;
 
   for (i=0;i<NUMANIMS[wbs->epsd];i++)
@@ -968,7 +981,7 @@ static void WI_updateAnimatedBack(void)
   if (gamemode == commercial)
     return;
 
-  if (wbs->epsd > 2)
+  if (wbs->epsd < 0 || wbs->epsd > 2)
     return;
 
   for (i=0;i<NUMANIMS[wbs->epsd];i++)
@@ -1025,7 +1038,7 @@ static void WI_drawAnimatedBack(void)
   if (gamemode==commercial) //jff 4/25/98 Someone forgot commercial an enum
     return;
 
-  if (wbs->epsd > 2)
+  if (wbs->epsd < 0 || wbs->epsd > 2)
     return;
 
   for (i=0 ; i<NUMANIMS[wbs->epsd] ; i++)
@@ -1353,7 +1366,7 @@ static void WI_drawShowNextLoc(void)
   // draw animated background
   WI_drawAnimatedBack(); 
 
-  if (wbs2->epsd >= 0)
+  if ((gamemode == commercial) ? (wbs2->epsd >= 0) : (wbs->epsd >= 0 && wbs->epsd <= 2))
     {
       if (wbs2->epsd > 2 && wbs2->epsd < COMMERCIAL_IDX)
         {
@@ -1391,7 +1404,7 @@ static void WI_drawShowNextLoc(void)
 //
 static void WI_drawNoState(void)
 {
-  snl_pointeron = true;
+  snl_pointeron = !(gamemode != commercial && wbs->epsd > 2);
   WI_drawShowNextLoc();
 }
 
@@ -1558,7 +1571,7 @@ static void WI_updateDeathmatchStats(void)
 
             if (!strcmp(info_endofgame, "true") || !info_enterpictime)
               WI_initSkipState();
-            else if ( wbs2->epsd < 0)
+            else if ( (gamemode == commercial) ? (wbs2->epsd < 0) : (wbs->epsd > 2))
               WI_initNoState();
             else
               WI_initShowNextLoc();
@@ -1871,7 +1884,7 @@ static void WI_updateNetgameStats(void)
                   S_StartSound(0, sfx_sgcock);
                   if (!strcmp(info_endofgame, "true") || !info_enterpictime)
                     WI_initSkipState();
-                  else if ( wbs2->epsd < 0)
+                  else if ( (gamemode == commercial) ? (wbs2->epsd < 0) : (wbs->epsd > 2))
                     WI_initNoState();
                   else
                     WI_initShowNextLoc();
@@ -2080,7 +2093,7 @@ static void WI_updateStats(void)
 
                   if (!strcmp(info_endofgame, "true") || !info_enterpictime)
                     WI_initSkipState();
-                  else if (wbs2->epsd < 0)
+                  else if ( (gamemode == commercial) ? (wbs2->epsd < 0) : (wbs->epsd > 2))
                     WI_initNoState();
                   else
                     WI_initShowNextLoc();
@@ -2137,7 +2150,7 @@ static void WI_drawStats(void)
   //   new logic in g_game.c
 
   if(wbs->partime!=-1)
-    if (wbs->epsd < 3)
+    if (wbs->epsd < 3 || info_partime)
     {
         V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, FB, par);
         WI_drawTime(SCREENWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
@@ -2277,7 +2290,7 @@ void WI_DrawBackground(int lastnext)
     }      
   }
   
-  else if(gamemode == retail && wbs->epsd == 3)
+  else if(gamemode == retail && wbs->epsd > 2)
     strcpy(name, info_interpic);
   else 
     sprintf(name, "WIMAP%d", wbs->epsd);

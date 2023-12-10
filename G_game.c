@@ -611,23 +611,14 @@ void G_SetGameMap()
    if(gameepisode < 1)
       gameepisode = 1;
    
-   if(gamemode == retail)
-   {
-      if(gameepisode > 4)
-	 gameepisode = 4;
-   }
-   else if(gamemode == shareware)
+   if(gamemode == shareware)
    {
       if(gameepisode > 1)
 	 gameepisode = 1; // only start episode 1 on shareware
    }
-   else if(gameepisode > 3)
-      gameepisode = 3;
-   
+
    if(gamemap < 0)
       gamemap = 0;
-   if(gamemap > 9 && gamemode != commercial)
-      gamemap = 9;
 }
 
 static void G_DoHubReborn(void)
@@ -1149,7 +1140,7 @@ static void G_DoCompleted(void)
    
    if(statcopy)
       memcpy(statcopy, &wminfo, sizeof(wminfo));
-   
+
    WI_Start(&wminfo);
 }
 
@@ -1159,7 +1150,6 @@ static void G_DoWorldDone(void)
       F_StartCast();
       return;
    }
-
 
    idmusnum = -1; //jff 3/17/98 allow new level's music to be loaded
    gamestate = GS_LEVEL;
@@ -2482,7 +2472,7 @@ void G_DeferedInitNew(skill_t skill, char *levelname)
    }
    else
       d_episode = 1;
-   
+
    d_skill = skill;
 
    gameaction = ga_newgame;

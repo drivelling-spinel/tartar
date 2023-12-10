@@ -846,7 +846,7 @@ void S_Start(void)
 	mnum = idmusnum; //jff 3/17/98 reload IDMUS music if not -1
       else
 	if (gamemode == commercial)
-	  mnum = mus_runnin + gamemap - 1;
+          mnum = mus_runnin + (gamemap - 1) % (mus_ultima - mus_runnin + 1);
 	else
 	  {
 	    static const int spmus[] =     // Song - Who? - Where?
@@ -863,8 +863,8 @@ void S_Start(void)
 	      };
 	    
 	    // sf: simplified
-	    mnum = gameepisode < 4 ?
-	      mus_e1m1 + (gameepisode-1)*9 + gamemap-1 :
+            mnum = gameepisode != 4 ?
+              mus_e1m1 + ((gameepisode-1)%3)*9 + gamemap-1 :
 	      spmus[gamemap-1];
 	  }
      
