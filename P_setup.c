@@ -912,16 +912,15 @@ byte * P_LoadSegsExtended(byte * data)
       else if(li->linedef->dx < 0)
         li->offset = R_PointToDist2(li->linedef->v2->x, li->linedef->v2->y, li->v1->x, li->v1->y);
       else if(dx < 0)
-        li->offset = R_PointToDist2(li->linedef->v1->x, li->linedef->v1->y, li->v2->x, li->v2->y);
+        li->offset = R_PointToDist2(li->linedef->v2->x, li->linedef->v2->y, li->v1->x, li->v1->y);
       else if((li->linedef->dy > 0 && dy > 0) || (li->linedef->dy < 0 && dy < 0))
         li->offset = R_PointToDist2(li->linedef->v1->x, li->linedef->v1->y, li->v1->x, li->v1->y);
       else if(li->linedef->dy < 0)
         li->offset = R_PointToDist2(li->linedef->v2->x, li->linedef->v2->y, li->v1->x, li->v1->y);
-      else 
-        li->offset = R_PointToDist2(li->linedef->v1->x, li->linedef->v1->y, li->v2->x, li->v2->y);
-      
+      else
+        li->offset = R_PointToDist2(li->linedef->v2->x, li->linedef->v2->y, li->v1->x, li->v1->y);
       li->angle = R_PointToAngle2(li->v1->x, li->v1->y, li->v2->x, li->v2->y);
-      
+
       side = *(byte *)data;
       data += sizeof(byte);
       li->sidedef = &sides[(unsigned short)(ldef->sidenum[side])];
