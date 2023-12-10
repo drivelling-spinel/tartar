@@ -1427,6 +1427,7 @@ void D_SetGraphicsMode()
   D_ListWads();         // list wads to the console
   C_Printf("\n");       // leave a gap
 #endif
+  Ex_ListTapeWad();    
 }
 
 //
