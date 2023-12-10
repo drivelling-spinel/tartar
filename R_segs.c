@@ -243,6 +243,20 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
 
 #define THRESH (0x80 << HEIGHTBITS)
 
+#define DRAW_MASKED_ANYTHING(coord) \
+{ \
+  int local_floor = floorclip[dc_x], local_ceiling = ceilingclip[dc_x]; \
+  sprtopscreen = coord; \
+  spryscale = rw_scale; \
+  mfloorclip = floorclip; \
+  mceilingclip = ceilingclip; \
+  floorclip[dc_x] = dc_yh + 1; \
+  ceilingclip[dc_x] = dc_yl - 1; \
+  R_DrawMaskedColumn((column_t *)((byte *)dc_source) - 3); \
+  floorclip[dc_x] = local_floor; \
+  ceilingclip[dc_x] = local_ceiling; \
+} \
+
 static void R_RenderSegLoop (void)
 {
   fixed_t  texturecolumn = 0;   // shut up compiler warning
@@ -387,11 +401,7 @@ static void R_RenderSegLoop (void)
 #endif
             {
               if(comp[comp_talltex] && R_HasComposite(midtexture))
-                {
-                  mfloorclip = floorclip;
-                  mceilingclip = ceilingclip;
-                  R_DrawMaskedColumn((column_t *)((byte *)dc_source));
-                }
+                DRAW_MASKED_ANYTHING(dc_texturemid)
               else
                 colfunc ();
             }
@@ -422,11 +432,7 @@ static void R_RenderSegLoop (void)
 #endif
                     {
                       if(comp[comp_talltex] && R_HasComposite(toptexture))
-                        {
-                          mfloorclip = floorclip;
-                          mceilingclip = ceilingclip;
-                          R_DrawMaskedColumn((column_t *)((byte *)dc_source));
-                        }
+                        DRAW_MASKED_ANYTHING(dc_texturemid)
                       else                    
                         colfunc ();
                     }
@@ -465,11 +471,7 @@ static void R_RenderSegLoop (void)
 #endif
                     {
                       if(comp[comp_talltex] && R_HasComposite(bottomtexture))
-                        {
-                          mfloorclip = floorclip;
-                          mceilingclip = ceilingclip;
-                          R_DrawMaskedColumn((column_t *)((byte *)dc_source - 3));
-                        }
+                        DRAW_MASKED_ANYTHING(dc_texturemid)
                       else   
                         colfunc ();
                     }
