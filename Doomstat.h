@@ -445,6 +445,9 @@ enum {
 extern char * hint_wolfendoom;
 extern char * hint_bjskin;
 
+extern int randomize_music;
+extern int random_mus_num;
+
 //=======================================================
 
 extern boolean abort_render;

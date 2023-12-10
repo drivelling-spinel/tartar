@@ -266,10 +266,13 @@ CONSOLE_VARIABLE(wolfendoom, wolfendoom, 0) {
     hint_wolfendoom = "";
 }
 
-
-
 VARIABLE_BOOLEAN(wolflooks, NULL, onoff);
 CONSOLE_VARIABLE(wolflooks, wolflooks, 0) {}
+
+
+VARIABLE_BOOLEAN(randomize_music, NULL, onoff);
+CONSOLE_VARIABLE(randmus, randomize_music, 0) {}
+
 
 void P_Chase_AddCommands();
 void P_Skin_AddCommands();
@@ -310,6 +313,8 @@ void P_AddCommands()
 
   C_AddCommand(wolfendoom);
   C_AddCommand(wolflooks);
+
+  C_AddCommand(randmus);
 
   C_AddCommand(timelimit);
   C_AddCommand(fraglimit);

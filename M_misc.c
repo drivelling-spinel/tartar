@@ -1646,6 +1646,13 @@ default_t defaults[] = {
     "Bitmask for wads to hide weapon sprite when gun flash is drawn"
   },
 
+  {
+    "randomize_music",
+    &randomize_music, NULL,
+    0, {0, 1}, dt_number, ss_none, wad_no,
+    "Play random music track at level start"
+  },
+
   {NULL}         // last entry
 };
 

@@ -148,6 +148,8 @@ typedef enum {
   pr_clericevade,
   // End Eternity TC random seed classes
 
+  pr_mustrack,
+
   NUMPRCLASS                  // MUST be last item in list
 } pr_class_t;
 

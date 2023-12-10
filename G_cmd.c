@@ -209,6 +209,10 @@ CONSOLE_NETCMD(exitlevel, cf_server|cf_level, netcmd_exitlevel)
   G_ExitLevel();
 }
 
+VARIABLE_BOOLEAN(detect_finallevel, NULL,           onoff);
+CONSOLE_VARIABLE(detectfinal, detect_finallevel, 0) {}
+
+
 //////////////////////////////////////
 //
 // Demo Stuff
@@ -613,6 +617,7 @@ void G_AddCommands()
   C_AddCommand(grenade_trails);
 
   C_AddCommand(reborn);
+  C_AddCommand(detectfinal);
 
   G_AddChatMacros();
   G_AddWeapPrefs();

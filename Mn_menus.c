@@ -323,24 +323,49 @@ CONSOLE_VARIABLE(use_startmap, use_startmap, 0) {}
 // Access to new Tartar settings
 //
 
+menu_t menu_tartar_more =
+{
+  {
+    {it_title,      FC_GOLD "More Tartar options",     NULL,             },
+    {it_gap},
+    {it_variable,   "     Set message for tip command",          "settip"},
+    {it_gap},
+    {it_end},    
+  },
+  8, 1,                               // x,y
+  2,                                    // start item
+  mf_background  | mf_leftaligned | mf_collapsedescr
+};
+
+
 menu_t menu_tartar =
 {
   {
-    {it_title,      FC_GOLD "Tartar options",     NULL,               "M_ETCOPT"},
-    {it_togglehint, "     Armor for score only and no infights",       "wolfendoom", "hint_wolfendoom"},
-    {it_toggle,     "     Wolf3D look and feel mode               ",             "wolflooks"},
+    {it_title,      FC_GOLD "Tartar options",     NULL,               },
     {it_gap},
-    {it_variable,   "     Set message for tip command",          "settip"},
-    {it_end},
+    {it_toggle,     "End game after the last custom map",    "detectfinal"},
+    {it_toggle,     "Wait for game tic to refresh screen",   "i_ticwait"},
+    {it_toggle,     "With translucency on use grille mode",  "r_fauxtrans"},
+    {it_togglehint, "Armor for score only and no infights",  "wolfendoom", "hint_wolfendoom"},
+    {it_toggle,     "Wolf3D look and feel mode",             "wolflooks"},
+    {it_toggle,     "Play random music at map start",        "randmus"},
+    {it_gap},
+    {it_runcmd,     "More...", "mn_tartar_more"},
+    {it_end},    
   },
-  20, 1,                               // x,y
-  1,                                    // start item
-  mf_background  | mf_leftaligned | mf_collapsedescr
+  270, 1,                               // x,y
+  2,                                    // start item
+  mf_background  
 };
 
 CONSOLE_COMMAND(mn_tartar, 0)
 {
   MN_StartMenu(&menu_tartar);
+}
+
+CONSOLE_COMMAND(mn_tartar_more, 0)
+{
+  MN_StartMenu(&menu_tartar_more);
 }
 
 
@@ -1858,8 +1883,10 @@ menu_t menu_extrabindings =
         {it_binding,      "selfie stick",          "selfie"},
         {it_binding,      "screenshot",            "screenshot"},
         {it_binding,      "pogo stick",            "pogo"},
-        {it_binding,      "next music",            "nextmus"},
-        {it_binding,      "prev music",            "nextmus 0"},
+        {it_binding,      "next music track",      "nextmus"},
+        {it_binding,      "prev music track",      "nextmus 0"},
+        {it_binding,      "play random track",     "shuffle"},
+        {it_gap},
         {it_binding,      "show tip",              "tip"},
         {it_gap},
         {it_binding,      "restart level",         "mn_reborn"},
@@ -1942,6 +1969,7 @@ void MN_AddMenus()
   C_AddCommand(force_load);
 
   C_AddCommand(mn_tartar);
+  C_AddCommand(mn_tartar_more);
   C_AddCommand(use_continue);
 
   MN_CreateSaveCmds();

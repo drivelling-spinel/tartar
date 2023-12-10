@@ -41,6 +41,7 @@ rcsid[] = "$Id: s_sound.c,v 1.11 1998/05/03 22:57:06 killough Exp $";
 #include "p_info.h"
 #include "d_io.h" // SoM 3/14/2002: strncasecmp
 
+#include "time.h"
 
 // when to clip out sounds
 // Does not fit the large outdoor areas.
@@ -121,6 +122,8 @@ int idmusnum;
         // sf:
 sfxinfo_t *sfxinfos[SOUND_HASHSLOTS];
 musicinfo_t *musicinfos[SOUND_HASHSLOTS];
+
+static boolean title_mus_tampered = false;
 
 //
 // Internals.
@@ -553,6 +556,65 @@ void S_ChangeMusicNum(int musnum, int looping)
   S_ChangeMusic(music, looping);
 }
 
+int S_PreselectRandomMusic()
+{
+  int i;
+  static int last = 0;
+  int min = mus_None + 1;
+  int max = mus_inter - 1;
+  if(gamemode == commercial)
+    {
+      min = mus_runnin;
+      max = mus_read_m - 1;
+    }
+  i = (P_Random(pr_mustrack) % (max - min + 1)) + min;
+  if(mus_playing == &S_music[i] || i == last + min)
+    {
+      i = (P_Random(pr_mustrack) % (max - min + 1)) + min;
+    }
+  last = i - min;
+  return i;
+}
+
+char * S_ChangeToPreselectedMusic(int i)
+{
+  musicinfo_t * music = NULL;
+
+  music = &S_music[i];
+  S_ChangeMusic(music, 1);
+
+  if(mus_playing)
+    {
+      static char name[7];
+      name[0] = 0;
+      strncpy(name, mus_playing->name, 6);
+      return name;
+    }
+
+  return NULL;
+}
+
+
+char * S_ChangeToRandomMusic()
+{
+  int i = S_PreselectRandomMusic();
+  musicinfo_t * music = NULL;
+
+  music = &S_music[i];
+  S_ChangeMusic(music, 1);
+
+  if(mus_playing)
+    {
+      static char name[7];
+      name[0] = 0;
+      strncpy(name, mus_playing->name, 6);
+      title_mus_tampered = true;
+      return name;
+    }
+
+  return NULL;
+}
+
 char * S_ChangeToNextMusic(boolean next)
 {
   int i;
@@ -589,6 +651,7 @@ char * S_ChangeToNextMusic(boolean next)
       static char name[7];
       name[0] = 0;
       strncpy(name, mus_playing->name, 6);
+      title_mus_tampered = true;
       return name;
     }
 
@@ -656,6 +719,21 @@ void S_ChangeMusic(musicinfo_t *music, int looping)
 
   mus_playing = music;
 }
+
+void S_StartTitleMusic(int m_id)
+{
+  if(!title_mus_tampered)
+    {
+      S_StopMusic();
+      S_StartMusic(m_id);
+    }
+}
+
+void S_ResetTitleMusic()
+{
+  title_mus_tampered = false;
+}
+
 
 //
 // Starts some music with the music id found in sounds.h.
@@ -797,6 +875,11 @@ void S_Init(int sfxVolume, int musicVolume)
 
   // no sounds are playing, and they are not mus_paused
   mus_paused = 0;
+
+  {
+    int i = time(NULL) % 16;
+    while(i --> 0) P_Random(pr_mustrack);
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////

@@ -2657,6 +2657,8 @@ void G_InitNew(skill_t skill, char *name)
 
    G_SetFastParms(fastparm || skill == sk_nightmare);  // killough 4/10/98
 
+   random_mus_num = randomize_music ? S_PreselectRandomMusic(): -1;
+
    M_ClearRandom();
    
    respawnmonsters = skill == sk_nightmare || respawnparm;

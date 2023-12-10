@@ -795,12 +795,22 @@ CONSOLE_COMMAND(nextmus, cf_notnet)
 }
 
 
+CONSOLE_COMMAND(shuffle, cf_notnet)
+{
+   const char * mus = S_ChangeToRandomMusic();
+   if(mus)
+      player_printf(&players[consoleplayer], "%cNow playing %c%s",
+         128+mess_colour, 128 + CR_GOLD, mus);
+}
+
+
 void Cheat_AddCommands()
 {
    C_AddCommand(god);
    C_AddCommand(noclip);
    C_AddCommand(nuke);
    C_AddCommand(nextmus);
+   C_AddCommand(shuffle);
 }
 
 //----------------------------------------------------------------------------

@@ -151,6 +151,9 @@ mapthing_t playerstarts[MAXPLAYERS];
 
 static char msgbuf[256];
 
+int randomize_music = 0;
+int random_mus_num = -1;
+
 
 //
 // P_LoadVertexes
@@ -1687,6 +1690,14 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
           C_Printf("doom 1 level\n");
 
   camera = NULL;        // camera off
+
+  if(random_mus_num >= 0)
+    {
+      const char * mus = S_ChangeToPreselectedMusic(random_mus_num);
+      if(mus)
+        player_printf(&players[consoleplayer], "%cNow playing %c%s",
+           128+mess_colour, 128 + CR_GOLD, mus);      
+    }
 }
 
 void P_InitEternityVars(void);

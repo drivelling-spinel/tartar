@@ -483,14 +483,14 @@ static void D_SetPageName(char *name)
 
 static void D_DrawTitle1(char *name)
 {
-  S_StartMusic(mus_intro);
+  S_StartTitleMusic(mus_intro);
   pagetic = (TICRATE*170)/35;
   D_SetPageName(name);
 }
 
 static void D_DrawTitle2(char *name)
 {
-  S_StartMusic(mus_dm2ttl);
+  S_StartTitleMusic(mus_dm2ttl);
   D_SetPageName(name);
 }
 
@@ -592,6 +592,7 @@ void D_DoAdvanceDemo(void)
 //
 void D_StartTitle (void)
 {
+  S_ResetTitleMusic();
   gameaction = ga_nothing;
   demosequence = -1;
   D_AdvanceDemo();

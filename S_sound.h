@@ -62,11 +62,17 @@ void S_ChangeMusic(musicinfo_t *music, int looping);
 
 // Change to next music; return music name
 char * S_ChangeToNextMusic(boolean next);
-
+char * S_ChangeToRandomMusic();
+int S_PreselectRandomMusic();
+char * S_ChangeToPreselectedMusic(int index);
 
 // Stops the music fer sure.
 void S_StopMusic(void);
 void S_StopSounds();
+
+void S_StartTitleMusic(int music_id);
+void S_ResetTitleMusic();
+
 
 // Stop and resume music, during game PAUSE.
 void S_PauseSound(void);
