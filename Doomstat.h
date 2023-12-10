@@ -66,6 +66,8 @@ extern  boolean noasmxparm;   // checkparm of -noasmx   GB 2014
 extern  boolean asmp6parm;    // checkparm of -asmp6    GB 2014
 extern  boolean safeparm;     // checkparm of -safe     GB 2014
 
+extern  boolean nodemo;
+
                 // sf: screenblocks removed, replaced w/screenSize
 extern  int screenSize;     // killough 11/98
 

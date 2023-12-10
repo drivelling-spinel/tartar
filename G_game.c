@@ -1737,11 +1737,12 @@ static void G_DoLoadGame(void)
 
   Z_CheckHeap();
 
+
   // killough 12/98: support -recordfrom and -loadgame -playdemo
   if (!command_loadgame)
     singledemo = false;         // Clear singledemo flag if loading from menu
   else
-    if (singledemo)
+    if (singledemo && !nodemo)
       {
 	gameaction = ga_loadgame; // Mark that we're loading a game before demo
 	G_DoPlayDemo();           // This will detect it and won't reinit level
@@ -2883,6 +2884,7 @@ void G_BeginRecording(void)
 //
 void G_DeferedPlayDemo(char *name)
 {
+   if(nodemo) return;
    // haleyjd: removed SMMU cruft in attempt to fix
    defdemoname = name;
    gameaction = ga_playdemo;
@@ -2899,6 +2901,8 @@ void G_TimeDemo(char *name, boolean showmenu)
    // that was in scope for this function -- now name is a
    // parameter, not s. I've also made some other adjustments.
 
+   if(nodemo) return;
+ 
    if(W_CheckNumForName(name) == -1)
    {
       C_Printf("%s: demo not found\n", name);

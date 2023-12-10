@@ -109,6 +109,8 @@ boolean noasmxparm;     // working -noasmx GB 2014
 boolean asmp6parm;      // working -asmp6  GB 2014
 boolean safeparm;       // working -safe   GB 2014
 
+boolean nodemo;
+
 // jff 1/24/98 add new versions of these variables to remember command line
 boolean clnomonsters;   // checkparm of -nomonsters
 boolean clrespawnparm;  // checkparm of -respawn
@@ -1316,6 +1318,8 @@ void D_DoomMain(void)
 
   // killough 10/98: set default savename based on executable's name
   sprintf(savegamename = malloc(16), "%.4ssav", D_DoomExeName());
+
+  nodemo                      = M_CheckParm ("-nodemo");
 
   safeparm                    = M_CheckParm ("-safe");   // GB 2014  
   // GB 2014, safeparm: skip nearptr_enable function, retain memory protection. 0,1 FPS less if I put it in i_main

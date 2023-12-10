@@ -340,7 +340,6 @@ static void R_GenerateLookup(int texnum, int *const errors)
     {
       // killough 12/98: Warn about a common column construction bug
       unsigned limit = texture->height*3+3; // absolute column size limit
-      int badcol = devparm;                 // warn only if -devparm used
 
       for (i = texture->patchcount, patch = texture->patches; --i >= 0;)
 	{
@@ -367,15 +366,11 @@ static void R_GenerateLookup(int texnum, int *const errors)
 		    col = (column_t *)((byte *) col + col->length + 4);
 		  else
 		    { // killough 12/98: warn about column construction bug
-		      if (badcol)
-			{
-			  badcol = 0;
-                          // sf: changed to usermsg
-                          usermsg("\nWarning: Texture %8.8s "
-				 "(height %d) has bad column(s)"
-				 " starting at x = %d.",
-				 texture->name, texture->height, x);
-			}
+                      // sf: changed to usermsg
+                      error_printf("\nWarning: Texture %8.8s "
+                                   "(height %d) has bad column(s)"
+                                   " starting at x = %d.",
+                                   texture->name, texture->height, x);
 		      break;
 		    }
 	      }
@@ -392,22 +387,19 @@ static void R_GenerateLookup(int texnum, int *const errors)
   {
     int x = texture->width;
     int height = texture->height;
-    int csize = 0, err = 0;        // killough 10/98
+    int csize = 0;        // killough 10/98
 
     while (--x >= 0)
       {
-	if (!count[x].patches)     // killough 4/9/98
-	  if (devparm)
-	    {
-	      // killough 8/8/98
-              // sf: changed to use error_printf for graphical startup
-              error_printf("\nR_GenerateLookup:"
-                           " Column %d is without a patch in texture %.8s",
-                           x, texture->name);
-	      ++*errors;
-	    }
-	  else
-	    err = 1;               // killough 10/98
+        if (!count[x].patches)     // killough 4/9/98
+          {
+            // killough 8/8/98
+            // sf: changed to use error_printf for graphical startup
+            error_printf("\nR_GenerateLookup:"
+                         " Column %d is without a patch in texture %.8s",
+                         x, texture->name);
+            ++*errors;
+          }
 
         if (count[x].patches > 1)       // killough 4/9/98
           {
@@ -429,14 +421,7 @@ static void R_GenerateLookup(int texnum, int *const errors)
       }
 
     texturecompositesize[texnum] = csize;
-    
-    if (err)       // killough 10/98: non-verbose output
-      {
-                // sf: error_printf
-        error_printf("\nR_GenerateLookup: Column without a patch in texture %.8s",
-                      texture->name);
-	++*errors;
-      }
+
   }
   free(count);                    // killough 4/9/98
 }
@@ -509,9 +494,9 @@ void R_InitTextures (void)
 
           patchlookup[i] = (W_CheckNumForName)(name, ns_sprites);
 
-          if (patchlookup[i] == -1 && devparm)	    // killough 8/8/98
+          if (patchlookup[i] == -1)            // killough 8/8/98
                 // sf: changed to usermsg
-            usermsg("\nWarning: patch %.8s, index %d does not exist",name,i);
+            error_printf("\nWarning: patch %.8s, index %d does not exist",name,i);
         }
     }
   Z_Free(names);
@@ -640,18 +625,16 @@ void R_InitTextures (void)
   if (maptex2)
     Z_Free(maptex2);
 
-  if (errors)
-  {
-    fclose(error_file);
-    I_Error("\n\n%d errors.\nerrors dumped to %s\n", errors, error_filename);
-  }
-
   // Precalculate whatever possible.
   for (i=0 ; i<numtextures ; i++)
     R_GenerateLookup(i, &errors);
 
   if (errors)
-    I_Error("\n\n%d errors.", errors);
+    {
+      usermsg("\n\n%d errors.\nerrors dumped to %s\n", errors, error_filename);
+      error_printf("\n\n%d errors.", errors);
+      fclose(error_file);
+    }
 
   // Create translation table for global animation.
   // killough 4/9/98: make column offsets 32-bit;
@@ -711,7 +694,7 @@ void R_InitSpriteLumps(void)
   int i;
   patch_t *patch;
 
-  firstspritelump = W_GetNumForName("S_START") + 1;
+  firstspritelump = W_CheckNumForName("S_START") + 1;
   if (!firstspritelump)
     {
       firstspritelump = W_GetNumForName("SS_START") + 1;
@@ -1386,6 +1369,7 @@ static void error_printf(char *s, ...)
   }
 
   fprintf(error_file, tmp);
+  if(devparm) usermsg(tmp);
 }
 
 //-----------------------------------------------------------------------------

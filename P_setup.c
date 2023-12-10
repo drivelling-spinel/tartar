@@ -64,6 +64,8 @@ rcsid[] = "$Id: p_setup.c,v 1.16 1998/05/07 00:56:49 killough Exp $";
 
 void T_BuildGameArrays(void); // in t_array.c
 
+extern int level_error;
+
 //
 // MAP related Lookup tables.
 // Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
@@ -242,6 +244,8 @@ void P_LoadSubsectors (int lump)
     }
 
   Z_Free (data);
+
+  level_error += numsubsectors == 0;
 }
 
 //
@@ -1023,7 +1027,6 @@ boolean P_CheckLevel(int lumpnum)
 
 void T_InitSaveList(void); // haleyjd
 void P_LoadOlo(void);
-extern int level_error;
 
 //
 // P_SetupLevel
@@ -1148,6 +1151,7 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
 
   if(level_error)       // drop to the console
   {             
+    C_Printf("Unrecoverable error while loading map");
     C_SetConsole();
     return;
   }
@@ -1156,6 +1160,13 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
   P_LoadSubsectors(lumpnum+ML_SSECTORS);
   P_LoadNodes     (lumpnum+ML_NODES);
   P_LoadSegs      (lumpnum+ML_SEGS);
+
+  if(level_error)       // drop to the console
+  {             
+    C_Printf("Unrecoverable error while loading map");
+    C_SetConsole();
+    return;
+  }
 
   DEBUGMSG("loaded level\n");
 
