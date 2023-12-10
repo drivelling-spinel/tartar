@@ -23,5 +23,5 @@
 - Top and bottom textures with tall patches sometimes render with glitches; 
   this seems to be relevant for when very tall objects are in proximity, 
   see for example skyscrapers in Jumpwad MAP02 if IDCLIP-ed to close enough.
-- Tall patches are rendered with artifacts for skies, UI graphics and such.
+- No special handling of tall patches in some cases - e.g.  UI graphics; in fact only things and textures rendering code is  aware that tall patches exist
 - Tartar crashes when loading Avactor MAP09.
