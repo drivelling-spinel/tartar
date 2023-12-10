@@ -81,7 +81,6 @@ static fixed_t  topstep;
 static fixed_t  bottomfrac;
 static fixed_t  bottomstep;
 
-//#define TRANWATER
 #ifdef TRANWATER
 static fixed_t  bottomfrac2;    //sf
 static fixed_t  bottomstep2;
@@ -220,7 +219,10 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
         // draw the texture
         col = (column_t *)((byte *)
                            R_GetColumn(texnum, maskedtexturecol[dc_x]) - 3);
-        R_DrawMaskedColumn (col);
+#ifdef NORENDER
+        if(!norender8)
+#endif
+          R_DrawMaskedColumn (col);
         maskedtexturecol[dc_x] = D_MAXSHORT;
       }
 
@@ -251,6 +253,9 @@ static void R_RenderSegLoop (void)
       // no space above wall?
       int bottom = floorclip[rw_x]-1, top = ceilingclip[rw_x]+1;
 
+      if (yh < 0)
+        yh = viewheight - 1;
+
       if (yl < top)
         yl = top;
 
@@ -279,8 +284,6 @@ static void R_RenderSegLoop (void)
             {
               floorplane->top[rw_x] = top;
               floorplane->bottom[rw_x] = bottom;
-              // not clear how these end up being negative in the first place
-              if(floorplane->bottom[rw_x] < 1) floorplane->bottom[rw_x] = 1;
             }
         }
 
@@ -292,7 +295,7 @@ static void R_RenderSegLoop (void)
 	  if(yw < 0) yw = 0;
 	  if(yw >= viewheight) yw = viewheight-1;
 	  
-	  if(yw > floorplane2->top[rw_x])
+          if(yw > floorplane2->top[rw_x])
 	    floorplane2->top[rw_x] = yw;
 	  if(yw < floorplane2->bottom[rw_x])
 	    floorplane2->bottom[rw_x] = yw;
@@ -347,9 +350,12 @@ static void R_RenderSegLoop (void)
           dc_texturemid = rw_midtexturemid;
           dc_source = R_GetColumn(midtexture, texturecolumn);
           dc_texheight = textureheight[midtexture]>>FRACBITS; // killough
-          colfunc ();
-          ceilingclip[rw_x] = viewheight;
-          floorclip[rw_x] = -1;
+#ifdef NORENDER
+          if(!norender5)
+#endif
+            colfunc ();
+          ceilingclip[rw_x] = -1;
+          floorclip[rw_x] = viewheight;
         }
       else
         {
@@ -370,18 +376,21 @@ static void R_RenderSegLoop (void)
                   dc_texturemid = rw_toptexturemid;
                   dc_source = R_GetColumn(toptexture, texturecolumn);
                   dc_texheight = textureheight[toptexture]>>FRACBITS;//killough
-                  colfunc ();
+#ifdef NORENDER
+                  if(!norender6)       
+#endif
+                    colfunc ();
                   ceilingclip[rw_x] = mid;
                 }
               else
-                ceilingclip[rw_x] = yl-1;
+                ceilingclip[rw_x] = yl - 1;
             }
           else
           {  // no top wall
             if (markceiling)
-              ceilingclip[rw_x] = yl-1;
+              ceilingclip[rw_x] = yl - 1;
             if (markfloor2)
-              floorclip2[rw_x] = yl-1;
+              floorclip2[rw_x] = yl - 1;
           }
 
           if (bottomtexture)          // bottom wall
@@ -391,7 +400,7 @@ static void R_RenderSegLoop (void)
 
               // no space above wall?
               if (mid <= ceilingclip[rw_x])
-                mid = ceilingclip[rw_x]+1;
+                mid = ceilingclip[rw_x] + 1;
 
               if (mid <= yh)
                 {
@@ -401,29 +410,44 @@ static void R_RenderSegLoop (void)
                   dc_source = R_GetColumn(bottomtexture,
                                           texturecolumn);
                   dc_texheight = textureheight[bottomtexture]>>FRACBITS; // killough
-                  colfunc ();
+#ifdef NORENDER
+                  if(!norender7)
+#endif
+                    colfunc ();
                   floorclip[rw_x] = mid;
                   if (floorplane2 && floorplane2->height<worldlow)
-                        floorclip2[rw_x] = mid;
+                    {
+                        floorclip2[rw_x] = mid + 1;
+                    }
                 }
               else
                 {
-                  floorclip[rw_x] = yh+1;
+                  floorclip[rw_x] = yh + 1;
                 }
             }
           else
           {        // no bottom wall
             if (markfloor)
             {
-              floorclip[rw_x] = yh+1;
-                if (markfloor2)
-                    floorclip2[rw_x] = yh+1;
+              // nasty place
+              floorclip[rw_x] = yh + 1;
+                if (markfloor2)         
+                    floorclip2[rw_x] = yh + 1;
             }
           }
 
           // save texturecol for backdrawing of masked mid texture
           if (maskedtexture)
             maskedtexturecol[rw_x] = texturecolumn;
+        }
+
+      if(bottomfrac + bottomstep<= 0)
+        {
+          if(bottomfrac >= 0 && bottomstep >= 0)
+            {
+              bottomfrac = 0x7fffffffu;
+              bottomstep = 0;
+            }
         }
 
       rw_scale += rw_scalestep;

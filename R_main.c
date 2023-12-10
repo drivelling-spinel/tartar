@@ -76,6 +76,18 @@ extern int global_cmap_index; // haleyjd: NGCS
 
 void R_HOMdrawer();
 
+#ifdef NORENDER
+int norender1;
+int norender2;
+int norender3;
+int norender4;
+int norender5;
+int norender6;
+int norender7;
+int norender8;
+int norender9;
+int norender0;
+#endif
 
 //
 // precalculated math tables
@@ -928,6 +940,54 @@ CONSOLE_COMMAND(p_dumphubs, 0)
   P_DumpHubs();
 }
 
+#ifdef NORENDER
+VARIABLE_BOOLEAN(norender1, NULL, onoff);
+VARIABLE_BOOLEAN(norender2, NULL, onoff);
+VARIABLE_BOOLEAN(norender3, NULL, onoff);
+VARIABLE_BOOLEAN(norender4, NULL, onoff);
+VARIABLE_BOOLEAN(norender5, NULL, onoff);
+VARIABLE_BOOLEAN(norender6, NULL, onoff);
+VARIABLE_BOOLEAN(norender7, NULL, onoff);
+VARIABLE_BOOLEAN(norender8, NULL, onoff);
+VARIABLE_BOOLEAN(norender9, NULL, onoff);
+VARIABLE_BOOLEAN(norender0, NULL, onoff);
+
+CONSOLE_VARIABLE(r_norender1, norender1, 0) {
+  norender1 = norenderparm && norender1;
+}
+CONSOLE_VARIABLE(r_norender2, norender2, 0) {
+  norender2 = norenderparm && norender2;
+}
+CONSOLE_VARIABLE(r_norender3, norender3, 0) {
+  norender3 = norenderparm && norender3;
+}
+CONSOLE_VARIABLE(r_norender4, norender4, 0) {
+  norender4 = norenderparm && norender4;
+}
+CONSOLE_VARIABLE(r_norender5, norender5, 0) {
+  norender5 = norenderparm && norender5;
+}
+CONSOLE_VARIABLE(r_norender6, norender6, 0) {
+  norender6 = norenderparm && norender6;
+}
+CONSOLE_VARIABLE(r_norender7, norender7, 0) {
+  norender7 = norenderparm && norender7;
+}
+CONSOLE_VARIABLE(r_norender8, norender8, 0) {
+  norender8 = norenderparm && norender8;
+}
+CONSOLE_VARIABLE(r_norender9, norender9, 0) {
+  norender9 = norenderparm && norender9;
+}
+
+CONSOLE_VARIABLE(r_norender0, norender0, 0) {
+  norender0 = norender0 && norenderparm;
+  norender1 = norender2 = norender3 =
+  norender4 = norender5 = norender6 =
+  norender7 = norender8 = norender9 = norender0;
+}
+#endif
+
 void R_AddCommands()
 {
    C_AddCommand(lefthanded);
@@ -953,6 +1013,19 @@ void R_AddCommands()
    C_AddCommand(pal_next);
    C_AddCommand(pal_prev);
    C_AddCommand(pal_list);
+
+#ifdef NORENDER
+   C_AddCommand(r_norender1);
+   C_AddCommand(r_norender2);
+   C_AddCommand(r_norender3);
+   C_AddCommand(r_norender4);
+   C_AddCommand(r_norender5);
+   C_AddCommand(r_norender6);
+   C_AddCommand(r_norender7);
+   C_AddCommand(r_norender8);
+   C_AddCommand(r_norender9);
+   C_AddCommand(r_norender0);
+#endif
 }
 
 //----------------------------------------------------------------------------

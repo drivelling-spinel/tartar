@@ -449,7 +449,10 @@ void R_DrawVisSprite(vissprite_t *vis, int x1, int x2)
 
       column = (column_t *)((byte *) patch +
                             LONG(patch->columnofs[texturecolumn]));
-      R_DrawMaskedColumn (column);
+#ifdef NORENDER
+      if(!norender3)
+#endif
+        R_DrawMaskedColumn (column);
     }
   colfunc = hires == 2 ? R_DrawColumn2 : R_DrawColumn; // killough 3/14/98
 }

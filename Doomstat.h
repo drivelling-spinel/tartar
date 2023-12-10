@@ -434,6 +434,20 @@ extern boolean commercialWiMaps;
 
 extern boolean abort_render;
 
+#ifdef NORENDER
+extern int norender1;
+extern int norender2;
+extern int norender3;
+extern int norender4;
+extern int norender5;
+extern int norender6;
+extern int norender7;
+extern int norender8;
+extern int norender9;
+extern int norender0;
+extern boolean norenderparm;
+#endif
+
 #endif
 
 //----------------------------------------------------------------------------

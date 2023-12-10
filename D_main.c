@@ -136,6 +136,9 @@ boolean noasmxparm;     // working -noasmx GB 2014
 #endif
 boolean asmp6parm;      // working -asmp6  GB 2014
 boolean safeparm;       // working -safe   GB 2014
+#ifdef NORENDER
+boolean norenderparm;
+#endif
 
 boolean nodemo;
 
@@ -289,6 +292,10 @@ void D_Display (void)
     return;
 
   R_ReInitIfNeeded();
+#ifdef NORENDER
+  if(norenderparm)
+    V_FillScreen(128, FG);
+#endif
   abort_render = false;
   if (setsizeneeded)                // change the view size if needed
     {
@@ -1381,7 +1388,9 @@ void D_DoomMain(void)
   sprintf(savegamename = malloc(16), "%.4ssav", D_DoomExeName());
 
   nodemo                      = M_CheckParm ("-nodemo");
-
+#ifdef NORENDER
+  norenderparm                = M_CheckParm ("-norender");
+#endif
   safeparm                    = M_CheckParm ("-safe");   // GB 2014  
   // GB 2014, safeparm: skip nearptr_enable function, retain memory protection. 0,1 FPS less if I put it in i_main
   if (_get_dos_version(1)==0x532) {printf("Windows NT based OS detected: Safe mode enabled.\n"); safeparm=1;} // Windows NT, 2000, XP
@@ -2301,19 +2310,45 @@ int D_DetectAndLoadSelfie()
   return 1;
 }
 
-int D_DetectAndLoadWiMaps()
+int D_LoadWiMapsWad(const char *fname)
 {
-  const char * fname = "d2intmap.wad";
   struct stat sbuf;
+
   *filestr = 0;
   sprintf(filestr, "%s%s", D_DoomExeDir(), fname);
   if(!stat(filestr, &sbuf) && !W_AddExtraFile(filestr, EXTRA_WIMAPS)) 
     {
       C_Printf("Intermission maps loaded from %s\n", fname);
       return 1;
-    }  
-  commercialWiMaps = false;
+    }
+
   return 0;
+}
+
+
+int D_DetectAndLoadWiMaps()
+{
+  int loaded = 0;
+
+  switch(gamemission)
+  {
+    case doom2:
+      loaded += D_LoadWiMapsWad("intmapd2.wad");
+      break;
+
+    case pack_tnt:
+      loaded += D_LoadWiMapsWad("intmapev.wad");
+      break;
+
+    default:
+  }
+
+  if(!loaded)
+    commercialWiMaps = false;
+
+
+  loaded += D_LoadWiMapsWad("intmapnr.wad");
+  return loaded;
 }
 
 void D_DetectAndLoadExtras(void)

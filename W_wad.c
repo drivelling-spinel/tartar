@@ -217,7 +217,7 @@ int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_
   
   if(extra == EXTRA_WIMAPS)
     {
-      static char * names[] = { "WI2MAP", "WISP", "WIUR" };
+      static char * names[] = { "WI2MAP", "NRLMAP", "WISP", "WIUR" };
       int i = 0;
 
       for(i = 0 ; i < (gamemode == commercial ? 3 : 1); i += 1)

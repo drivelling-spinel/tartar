@@ -188,8 +188,10 @@ static void R_MapPlane(int y, int x1, int x2)
   else
 #endif
 
+#ifdef NORENDER
+  if(!norender9)
+#endif
     R_DrawSpan();
-
 
   // visplane viewing
 
@@ -298,6 +300,7 @@ visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel,
   check->colormap = zlight;
   check->trans = 0;
 
+  check->pad1 = check->pad2 = 0xffff;
   memset (check->top, 0xff, sizeof check->top);
 
   return check;
@@ -340,6 +343,7 @@ visplane_t *R_CheckPlane(visplane_t *pl, int start, int stop)
       pl = new_pl;
       pl->minx = start;
       pl->maxx = stop;
+      pl->pad1 = pl->pad2 = 0xffff;
       memset(pl->top, 0xff, sizeof pl->top);
     }
 
@@ -397,7 +401,10 @@ void do_draw_newsky(visplane_t *pl)
            dc_source =
              R_GetColumn(skyTexture2,  
                (((an + xtoviewangle[x])) >> (ANGLETOSKYSHIFT))+offset2);
-           colfunc();
+#ifdef NORENDER
+           if(!norender1)
+#endif
+             colfunc();
         }
 
       // now draw sky 1 with R_DrawNewSkyColumn (masked)
@@ -432,7 +439,10 @@ void do_draw_newsky(visplane_t *pl)
            dc_source =
              R_GetColumn(skyTexture,  
                (((an + xtoviewangle[x])) >> (ANGLETOSKYSHIFT))+offset);
-           colfunc();
+#ifdef NORENDER
+          if(!norender1)
+#endif
+             colfunc();
         }
    }
 }
@@ -520,7 +530,10 @@ static void do_draw_plane(visplane_t *pl)
           {
             dc_source = R_GetColumn(texture,   
              ((an + xtoviewangle[x])^flip) >> (ANGLETOSKYSHIFT));
-            colfunc();
+#ifdef NORENDER
+            if(!norender1)
+#endif
+              colfunc();
           }
       }
     else      // regular flat

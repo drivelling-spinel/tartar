@@ -414,8 +414,8 @@ static void R_GenerateLookup(int texnum, int *const errors)
             colofs[x] = csize + 3;        // three header bytes in a column
 	    // killough 12/98: add room for one extra post
             csize += 4*count[x].posts+5;  // 1 stop byte plus 4 bytes per post
+            csize += height;              // height bytes of texture data
           }
-        csize += height;                  // height bytes of texture data
       }
 
     texturecompositesize[texnum] = csize;
@@ -1411,6 +1411,19 @@ static void error_printf(char *s, ...)
   fprintf(error_file, tmp);
   if(devparm || !(ecount%5000)) usermsg(tmp);
   ecount += 1;
+}
+
+int R_CheckTextures(const char * msg)
+{
+  int i, x;
+
+  for(i = 0 ; i < numtextures ; i += 1)
+  {
+    for(x = 0 ; x < texturewidthmask[i] ; x += 1)
+    {
+      if(texturecolumnofs[i][x] > 0xfffffu) I_Error(msg);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
