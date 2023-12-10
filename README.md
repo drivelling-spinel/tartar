@@ -19,10 +19,10 @@ machines for retro gaming.
   and bugfixes  
 - Treats certain popular WADs as first class mods improving
   player's experience with them:
-  - InstaDoom by @linguica
-  - Intemission Maps by @oliacym
+  - InstaDoom by \@linguica
+  - Intemission Maps by \@oliacym
   - No Rest for the Living via a "helper WAD"  
-  - Jumpwad.wad by @Grain of Salt and Ribbiks 
+  - Jumpwad.wad by \@Grain of Salt and Ribbiks 
 - New display (game view) size for higher resolutions and 
   new translucency mode
 - Can load more complex (i.e. "more contemporary") maps
@@ -101,9 +101,9 @@ under TARTAR directory - it's available under STAGES/STAGE1.
 
 Tartar's WAD autoloading makes it easy to add fix packs
 to the installation. Suggested WAD-s to try out include:
-  - Doom Sound Bulb by @SeanTheBermanator
-  - Hi Res Doom Sound Effects Pack by @perkristian
-  - Doom 2 Minor Sprite Fixing Project by @revenant100
+  - Doom Sound Bulb by \@SeanTheBermanator
+  - Hi Res Doom Sound Effects Pack by \@perkristian
+  - Doom 2 Minor Sprite Fixing Project by \@revenant100
 
 Follow the below steps to have them installed with Tartar
 
@@ -114,22 +114,22 @@ Follow the below steps to have them installed with Tartar
 3. Or if Tartar will be used with multiple IWADs drop the WAD into
    a subdirectory of FIXES that has name matching the name of the IWAD
    the fix pack is to be loaded with. For example:
-   
-  C:\GAMES\TARTAR\
-  C:\GAMES\TARTAR\TARTAR.EXE
-  ...
-  C:\GAMES\TARTAR\FIXES\
-  C:\GAMES\TARTAR\FIXES\Doom_Sound_Bulb.wad  
-  C:\GAMES\TARTAR\FIXES\DOOM\
-  C:\GAMES\TARTAR\FIXES\DOOM\D1SPFX20.WAD
-  C:\GAMES\TARTAR\FIXES\DOOM2\
-  C:\GAMES\TARTAR\FIXES\DOOM2\D2SPFX20.WAD
+      
+  C:\GAMES\TARTAR\   
+  C:\GAMES\TARTAR\TARTAR.EXE   
+  ...   
+  C:\GAMES\TARTAR\FIXES\   
+  C:\GAMES\TARTAR\FIXES\Doom_Sound_Bulb.wad   
+  C:\GAMES\TARTAR\FIXES\DOOM\   
+  C:\GAMES\TARTAR\FIXES\DOOM\D1SPFX20.WAD   
+  C:\GAMES\TARTAR\FIXES\DOOM2\   
+  C:\GAMES\TARTAR\FIXES\DOOM2\D2SPFX20.WAD   
 
 4. Start Tartar as you would normally do and enjoy improved Doom experience
 
 5. Should you want to play a certain PWAD without any of the fix packs loaded
    start Tartar with a command similar to the below one:
-   
+      
    TARTAR.EXE -noload -file NUTS.WAD
 
 ## On the name of the port
