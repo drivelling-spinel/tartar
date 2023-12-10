@@ -62,11 +62,13 @@ extern boolean deh_pars;
 // This is supposedly ignored for commercial
 //  release (aka DOOM II), which had 34 maps
 //  in one episode. So there.
-#define NUMEPISODES       (/*Ultimate Doom*/ 4 + /*Sigil*/ 1 + /*DOOM II*/ 4)
+#define NUMRETAILEP       (/*Ultimate Doom*/4 + /*Sigil*/1)
+#define COMMERCIAL_IDX    (NUMRETAILEP)
+#define NUMCOMMERCIALEP   (4)
+#define NUMEPISODES       ((NUMRETAILEP) + (NUMCOMMERCIALEP) * 3 /* DOOM II + FINAL DOOM*/)
 #define NUMMAPS           9
 // DOOM II (commercial) has up to 10 maps in each "episode"
 #define NUMMAPS2          10
-#define COMMERCIAL_IDX    5
 
 // Not used
 // in tics
@@ -225,6 +227,7 @@ static point_t lnodes[NUMEPISODES][NUMMAPS2] =
   },
   
   // Doom 2 (commercial) "episodes"
+  // Hell on Earth
   {
     { 80, 170 },
     { 170, 130 }, 
@@ -294,7 +297,7 @@ MAP20 80 80
     { 121, 85 },
     { 191, 87 },
     { 159, 67 },
-  }
+  },
 /*
 Spots
 {
@@ -310,7 +313,188 @@ MAP29 191 87
 MAP30 159 67
 }
 */  
-};
+  // TNT Evilution
+  {
+    { 47, 122 },
+    { 91, 143 }, 
+    { 149, 131 }, 
+    { 150, 166 }, 
+    { 221, 142 }, 
+    { 268, 115 }, 
+  },
+/*
+MAP01-06
+{
+MAP01 47 122
+MAP02 91 143
+MAP03 149 131
+MAP04 150 166
+MAP05 221 142
+MAP06 268 115
+}
+*/
+  {
+    { 93, 120 },
+    { 195, 164 }, 
+    { 227, 133 }, 
+    { 158, 94 }, 
+    { 222, 56 }, 
+  },
+/*
+MAP07-11
+{
+MAP07 93 120
+MAP08 195 164
+MAP09 227 133
+MAP10 158 94
+MAP11 222 56
+}
+*/  
+  {
+    { 136, 159 },
+    { 253, 113 }, 
+    { 176, 123 }, 
+    { 76, 115 }, 
+    { 24, 108 }, 
+    { 72, 59 }, 
+    { 145, 50 }, 
+    { 174, 50 }, 
+    { 209, 56 }, 
+  },
+/*
+MAP12-20
+{
+MAP12 136 159
+MAP13 253 113
+MAP14 176 123
+MAP15 76 115
+MAP16 24 108
+MAP17 72 59
+MAP18 145 50
+MAP19 174 50
+MAP20 209 56
+}
+*/  
+  {
+    { 36, 142 },
+    { 130, 166 }, 
+    { 201, 138 }, 
+    { 265, 124 }, 
+    { 268, 94 }, 
+    { 207, 78 }, 
+    { 153, 120 },
+    { 60, 87 },
+    { 122, 49 },
+    { 53, 26 },
+  },
+/*
+MAP21-30
+{
+MAP21 36 142
+MAP22 130 166
+MAP23 201 138
+MAP24 265 124
+MAP25 268 94
+MAP26 207 78
+MAP27 153 120
+MAP28 60 87
+MAP29 122 49
+MAP30 53 26
+}
+*/  
+  // Plutonia Experiment
+  {
+    { 60, 40 },
+    { 79, 153 }, 
+    { 269, 61 }, 
+    { 248, 173 }, 
+    { 266, 125 }, 
+    { 158, 85 }, 
+  },
+/*
+
+Spots
+{
+MAP01 60 40
+MAP02 79 153
+MAP03 269 61
+MAP04 248 173
+MAP05 266 125
+MAP06 158 85
+}
+  
+*/
+  {
+    { 127, 166 },
+    { 273, 154 }, 
+    { 95, 85 }, 
+    { 242, 95 }, 
+    { 28, 28 }, 
+  },
+/*
+Spots
+{
+MAP07 127 166
+MAP08 273 154
+MAP09 95 85
+MAP10 242 95
+MAP11 28 28
+}
+
+*/  
+  {
+    { 52, 61 },
+    { 75, 81 }, 
+    { 104, 91 }, 
+    { 68, 173 }, 
+    { 170, 177 }, 
+    { 179, 140 }, 
+    { 226, 131 }, 
+    { 292, 171 }, 
+    { 220, 89 }, 
+  },
+/*
+Spots
+{
+MAP12 52 61
+MAP13 75 81
+MAP14 104 91
+MAP15 68 173
+MAP16 170 177
+MAP17 179 140
+MAP18 226 131
+MAP19 292 171
+MAP20 220 89
+}
+
+*/  
+  {
+    { 116, 172 },
+    { 154, 135 }, 
+    { 101, 45 }, 
+    { 20, 87 }, 
+    { 90, 104 }, 
+    { 251, 126 }, 
+    { 175, 66 },
+    { 220, 174 },
+    { 296, 71 },
+    { 232, 63 },
+  }
+/*
+Spots
+{
+MAP21 116 172
+MAP22 154 135
+MAP23 101 45
+MAP24 20 87
+MAP25 90 104
+MAP26 251 126
+MAP27 175 66
+MAP28 220 174
+MAP29 296 71
+MAP30 232 63
+}
+*/  };
 
 
 //
@@ -2038,13 +2222,41 @@ void WI_Ticker(void)
 void WI_DrawBackground(int lastnext)
 {
   char  name[9];  // limited to 8 characters
-
+  
   if (gamemode == commercial)
   {
     wbstartstruct_t * wbs2 = WI_CommercialWbs(wbs, lastnext);
     if(wbs2->epsd < 0) strcpy(name, info_interpic);
-    else sprintf(name, "WI2MAP%d", (wbs2->epsd - COMMERCIAL_IDX + 1));
+    else 
+    {
+      int epsd = wbs2->epsd;
+      char * templ;
+  
+      switch(gamemission) {
+      case pack_plut:
+        epsd -= NUMCOMMERCIALEP /*skipped TNT*/;
+      case pack_tnt:
+        epsd -= NUMCOMMERCIALEP /*skipped DOOM 2*/;
+      default:
+        epsd -= COMMERCIAL_IDX - 1 /*skipped DOOM 1*/;
+        break;
+      }
+  
+      switch(gamemission) {
+      case pack_plut:
+        templ = "PLUMAP%.2d";
+        break;
+      case pack_tnt:
+        templ = "EVIMAP%.2d";
+        break;
+      default:
+        templ = "WI2MAP%d";
+        break;
+      }
+      sprintf(name, templ, epsd);
+    }      
   }
+  
   else if(gamemode == retail && wbs->epsd == 3)
     strcpy(name, info_interpic);
   else 
@@ -2337,23 +2549,37 @@ wbstartstruct_t* WI_CommercialWbs(wbstartstruct_t * wbs, int lastnext)
     if(commercialWiMaps)
     {
       if(l < 0) wbs2.epsd = -1;
-      else if(l <= 5) wbs2.epsd = 0 + COMMERCIAL_IDX;
+      else if(l <= 5) wbs2.epsd = 0;
       else if(l <= 10)
       {
-        wbs2.epsd = 1 + COMMERCIAL_IDX;
+        wbs2.epsd = 1;
         l -= 6;
       }
       else if(l <= 19) 
       {
-        wbs2.epsd = 2 + COMMERCIAL_IDX;
+        wbs2.epsd = 2;
         l -= 11;
       }
       else if(l <= 29)
       {
-        wbs2.epsd = 3 + COMMERCIAL_IDX;
+        wbs2.epsd = 3;
         l -= 20;
       }
       else wbs2.epsd = -1;
+      
+      if(wbs2.epsd >= 0) 
+      {  
+        switch(gamemission)
+        {
+          case pack_plut:
+            wbs2.epsd += NUMCOMMERCIALEP /* skip TNT */;
+          case pack_tnt:
+            wbs2.epsd += NUMCOMMERCIALEP /* skip DOOM 2 */;
+          default:
+            wbs2.epsd += COMMERCIAL_IDX  /* skip Ultimate DOOM */;
+            break;
+        }
+      }
     } 
     else wbs2.epsd = -1;
     if(lastnext) wbs2.last = l;

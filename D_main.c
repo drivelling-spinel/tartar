@@ -1059,10 +1059,12 @@ void IdentifyVersion (void)
 	    {
 	    case pack_tnt:
 	      game_name = "Final DOOM: TNT - Evilution version";
+	      commercialWiMaps = true;
 	      break;
 
 	    case pack_plut:
 	      game_name = "Final DOOM: The Plutonia Experiment version";
+	      commercialWiMaps = true;
 	      break;
 
             case hacx_reg:
