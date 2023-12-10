@@ -341,16 +341,21 @@ fixed_t sprtopscreen;
 
 void R_DrawMaskedColumn(column_t *column)
 {
-  int topscreen, bottomscreen;
+  int topscreen, bottomscreen, tall = 0;
   fixed_t basetexturemid = dc_texturemid;
   
   dc_texheight = 0; // killough 11/98
 
   while (column->topdelta != 0xff)
     {
+      if(column->topdelta < tall)
+        tall += column->topdelta;
+      else
+        tall = column->topdelta;
       // calculate unclipped screen coordinates for post
-      topscreen = sprtopscreen + spryscale*column->topdelta;
+      topscreen = sprtopscreen + spryscale*tall;
       bottomscreen = topscreen + spryscale*column->length;
+      tall += column->length;
 
       // Here's where "sparkles" come in -- killough:
       dc_yl = (topscreen + FRACUNIT - 1)>>FRACBITS;

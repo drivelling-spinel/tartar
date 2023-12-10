@@ -17,10 +17,10 @@
 - Weird texturing effects have been noticed in some maps with extended
   nodes tables - e.g. diamonds at the start of Jumpwad MAP03 do not
   render right
-- Tall patches rendering is not supported. Both sprites and textures
+- Tall patches rendering is partially supported. Bextures
   that use patches with vertical extents of 255 pixels and more will
-  render incorrectly. See Eviternity MAP27 for an example of both.
+  render incorrectly. See Eviternity MAP27 for an example.
 - Extremely big maps like Eviternity MAP32 would not render correctly.
-- Trying to detect the keyboard in SETUP.EXE gives ... 
-  "error reading keyboard.dat".
+- Loading game with -load command line argument crashes the game with 
+  Eviternity
   
