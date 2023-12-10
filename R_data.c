@@ -199,7 +199,7 @@ static void R_DrawColumnInCache(const column_t *patch, byte *cache,
 
 static void R_GenerateComposite(int texnum)
 {
-  byte *block = Z_Malloc(texturecompositesize[texnum], PU_STATIC,
+  byte *block = Z_Calloc(texturecompositesize[texnum], 1, PU_STATIC,
                          (void **) &texturecomposite[texnum]);
   texture_t *texture = textures[texnum];
   // Composite the columns together.
@@ -368,10 +368,10 @@ static void R_GenerateLookup(int texnum, int *const errors)
 		  else
 		    { // killough 12/98: warn about column construction bug
                       // sf: changed to usermsg
-                      error_printf("\nWarning: Texture %8.8s "
+                      error_printf("\nWarning: Texture %8.8s[%d] "
                                    "(height %d) has bad column(s)"
                                    " starting at x = %d.",
-                                   texture->name, texture->height, x);
+                                   texture->name, texnum, texture->height, x);
 		      break;
 		    }
 	      }
@@ -394,12 +394,9 @@ static void R_GenerateLookup(int texnum, int *const errors)
       {
         if (!count[x].patches)     // killough 4/9/98
           {
-            // killough 8/8/98
-            // sf: changed to use error_printf for graphical startup
-            error_printf("\nR_GenerateLookup:"
-                         " Column %d is without a patch in texture %.8s",
-                         x, texture->name);
-            ++*errors;
+            collump[x] = -1;
+            colofs[x] = csize + 3;
+            csize += 5;
           }
 
         if (count[x].patches > 1)       // killough 4/9/98
@@ -1283,7 +1280,7 @@ void R_FreeData()
   spritetopoffset = 0;
   
   Z_Free(flattranslation);
-  flattranslation;
+  flattranslation = 0;
   
   Z_Free(main_tranmap);
   main_tranmap = 0;
