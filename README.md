@@ -8,27 +8,87 @@ machines for retro gaming.
 
 - Has better audio compatibility through updated Allegro library 
   from [MBF 2.0.4 Maintenance Release](doc/COPYRGHT/MBFUP204.TXT)
-  and plays 16 bit sound effects 
+  and plays 16 bit sound effects (useful if you have SB16 or later)
 - Supports additional screen resolutions of 640x480 and 1280x1024
-- Can load
-    - classic Caverns of Darkness TC for DOS
-    - what remains from the cancelled Eternity TC
-    - Chex Quest without dependency on any Doom assets
+  with and without upscaling from smaller core rendering resolution
+  and optional aspect ratio correction for non-CRT displays
 - Includes numerous quality of life improvements including 
-  auto-loading of WAD, DEH and BEX files, compatibility improvements
-  and bugfixes  
-- Treats certain popular WADs as first class mods improving
-  player's experience with them:
-  - InstaDoom by \@linguica
-  - Intemission Maps by \@oliacym
-  - No Rest for the Living via a "helper WAD"  
-  - Jumpwad.wad by \@Grain of Salt and Ribbiks 
-- New display (game view) size for higher resolutions and 
-  new translucency mode
-- Can load more complex (i.e. "more contemporary") maps
-  than the Eternity Engine version it is based on. Some but 
-  not all maps from Eviternity, Ancient Aliens and Sunlust can
-  be played for example
+  auto-loading of WAD, DEH and BEX files to included
+  skins, fixes and WAD compatibility packs for specific PWADs
+- Offers extended game view size for higher resolutions, 
+  new optional "grille" translucency for sprites and textures and 
+  new optional "simplified" and more accessible level shading mode  
+- Contains many bugfixes and PWAD compatibility improvements
+- Implements the compulsory blood spat recoloring for "hissies", 
+  "bruisers", flemoids, ubermutants and roaches
+
+## What to play with Tartar
+
+- Original Caverns of Darkness TC for DOS
+- Curios from what remains of the cancelled Eternity TC
+- Vanilla Doom 2, TNT Evilution and Plutonia Experiment   
+  (with animated intermission screens a-la Doom 1 courtesy of 
+  Doomworld user \@oliacym)
+- No Rest for the Living (aka NERVE.WAD) with proper map names,
+  music tracks assignment, levels and secrets progression and 
+  intermission backdrops courtesy of \@oliacym 
+  with helper WAD included in the distribution
+- Chex Quest without Doom IWAD - and it will end after level 5!   
+  (also green slime splashes can be activated by switching on particles)
+- [Wolfendoom collection by Laz Rojas]
+  (https://www.moddb.com/mods/tartar/news/tartar-source-port-almost-good-enough-for-wolfendoom-now)
+  (MAC versions strongly preferred!)
+  with helper WAD included in the distribution
+- Strain TC for DOS - via a compatibility option to change [MBF collisions code]
+  (https://www.doomworld.com/forum/post/2507168)
+- Sunlust and maps using _uncompressed_ extended nodes table format
+- Eviternity and maps using sprites and textures that are
+  more than 255 pixels tall
+- Ancient Aliens and maps with non 9px high fonts, elaborate MUS format music tracks
+  and non power-of-2 wide textures 
+- Avactor and maps with DeepSea extended node format
+- Hydrosphere and maps with higher resolution sky textures,
+  in this case also with proper progression and ending
+  with helper WAD included in the distribution
+- The Long Trek Back Home with intermission backdrops by \@oliacym 
+  with helper WAD included in the distribution
+- 2022 A Doom Odyssey with non-episodic linear progression through all maps,
+  proper secrets progression and intermission screens 
+  with helper WAD included in the distribution
+- ??? and maps with non-Unix line endings in DeHackEd patches, 
+  or other DeHackEd patches sheninegans like references to non-existant code pointers
+  (e.g. Rush)
+- HACX commercial release without Doom II IWAD  
+  (but make sure Tartar is given a PLAYPAL, e.g. by putting one of InstaDoom
+  filter WAD-s into FILTERS directory AND that text mode startup is on!)
+- Also - only if you are desperate enough - The People's Doom as IWAD
+
+## Also...
+... for some traits "less common among source ports":
+- Arcade play mode where player is resurrected on the spot without
+  level restarting 
+- Next/prev music track bindable hotkeys
+- Screenshots from virtually anywhere in the game with bindable hotkey
+- Cycle through InstaDoom filters (or any other PLAYPAL/COLORMAP providing
+WAD-s for that matter) without restarting the level
+- Voltron assembly features:
+  -- drop in SELFIE.WAD and SELFIE.DEH to make sefies in any PWAD
+     and still shoot plasma rifle happily 
+  -- drop in JUMPWAD.WAD to switch to "pogo stick" mode in any PWAD
+     and jump around by pressing fire
+- Send regards to the loved ones with a bindable hotkey, 
+  (e.g. while recording a video)
+
+## What Tartar CANNOT do
+While these traits may be more common among source ports these days,
+this is not what Tartar supports:
+- Cannot display PNG sprites and textures
+- Cannot load _compressed_ extended format node tables or Hexen format maps
+- Cannot play OGG, MP3 or FLAC sounds or music
+- Cannot process UMAPINFO or singe lump stand alone EMAPINFO lumps
+- Cannot cope with MBF21 and DEHEXTRA features and code pointers in DeHackEd patches
+- Cannot run Heretic, Hexen or Strife 
+- Cannot apply EDF or DECORATE extensions from the mods to the game
 
 ## Documentation
 
