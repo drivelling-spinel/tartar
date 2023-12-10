@@ -319,7 +319,7 @@ CONSOLE_VARIABLE(use_startmap, use_startmap, 0) {}
 /////////////////////////////////////////////////////
 //
 // Tartar Menu
-//
+// 
 // Access to new Tartar settings
 //
 
@@ -327,7 +327,8 @@ menu_t menu_tartar =
 {
   {
     {it_title,  FC_GOLD "Tartar options",     NULL,               "M_ETCOPT"},
-    {it_toggle, "Make game feel closer to Wolf3D",       "wolfendoom"},   
+    {it_toggle, "Gameplay changes for Wolfendoom",       "wolfendoom"},
+    {it_toggle, "Wolf3D look and feel mode",             "wolflooks"},   
     {it_end},
   },
   270, 1,                               // x,y
@@ -359,6 +360,7 @@ menu_t menu_features =
     {it_runcmd, "Tartar options",       "mn_tartar" },
     {it_gap},
     {it_runcmd, "about",                "credits" },
+    {it_runcmd, "about Tartar",         "tartar" },
     {it_gap},
     {it_end},
   },

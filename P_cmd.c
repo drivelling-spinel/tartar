@@ -253,6 +253,8 @@ CONSOLE_VARIABLE(wolfendoom, wolfendoom, 0) {
     if(defaults_loaded) T_EnsureGlobalIntVar("_private_wolfendoom", wolfendoom);
 }
 
+VARIABLE_BOOLEAN(wolflooks, NULL, onoff);
+CONSOLE_VARIABLE(wolflooks, wolflooks, 0) {}
 
 void P_Chase_AddCommands();
 void P_Skin_AddCommands();
@@ -288,6 +290,7 @@ void P_AddCommands()
   C_AddCommand(mon_bloodcolor);
 
   C_AddCommand(wolfendoom);
+  C_AddCommand(wolflooks);
 
   C_AddCommand(timelimit);
   C_AddCommand(fraglimit);

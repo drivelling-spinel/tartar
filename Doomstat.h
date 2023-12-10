@@ -429,6 +429,7 @@ extern int forceFlipPan;
 
 extern int wolfendoom;
 extern int wolf3dmode;
+extern int wolflooks;
 
 //=======================================================
 

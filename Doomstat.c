@@ -134,6 +134,7 @@ int hide_weapon_on_flash;
 
 int wolfendoom;
 int wolf3dmode;
+int wolflooks;
 
 //----------------------------------------------------------------------------
 //

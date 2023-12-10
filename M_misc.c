@@ -1622,7 +1622,14 @@ default_t defaults[] = {
     "wolfendoom",
     &wolfendoom, NULL,
     0, {0,1}, dt_number, ss_none, wad_yes,
-    "Brings Doom slightly closer to Wolf3D with WolfenDoom loaded"
+    "Gameplay changes for Wolfendoom (no armor, no monster infighting)"
+  },
+
+  {
+    "wolflooks",
+    &wolflooks, NULL,
+    0, {0,1}, dt_number, ss_none, wad_yes,
+    "Brings Doom slightly closer to Wolf3D in looks and feel"
   },
 
   {

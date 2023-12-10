@@ -214,6 +214,8 @@ void MN_Question(char *message, char *command)
 
 void MN_DrawCredits(void);
 
+void MN_DrawTartar(void);
+
 typedef struct
 {
   int lumpnum;
@@ -252,6 +254,16 @@ static void MN_FindCreditScreens()
   AddHelpScreen("HELP2");       // shareware screen
   AddHelpScreen("CREDIT");      // credits screen
 }
+
+static void MN_FindTartarScreen()
+{
+  num_helpscreens = 0;  // reset
+
+  // add dynamic smmu credits screen
+
+  helpscreens[num_helpscreens++].Drawer = MN_DrawTartar;
+}
+
 
 static void MN_FindHelpScreens()
 {
@@ -313,6 +325,39 @@ void MN_DrawCredits(void)
               "         http://fraggle.alkali.org/",
               10, 25);
 }
+
+
+void MN_DrawTartar(void)
+{
+  inhelpscreens = true;
+
+  // LP: added for Tartar
+
+  V_DrawDistortedBackground("FLAT14", screens[0]);
+
+  // sf: SMMU credits
+
+  V_WriteText(FC_GRAY "Tartar: Stage  4 (2021-2023)\n"
+              FC_BLUE "\"Modern\" " FC_GRAY "DOS " FC_RED "Doom " FC_GRAY "port for " FC_BLUE "\"modern\" " FC_GRAY "retro machines\n"
+              "\n"
+              FC_GRAY "Based on " FC_RED "Caverns of Darkness " FC_GRAY "engine\n"
+              FC_GRAY "aka " FC_RED "EE 3.29 dev beta 5 joel-2\n"
+              FC_GRAY "(C) 2002, " FC_RED "Joel Murdoch\n"
+              "\n"
+              FC_GRAY "Programming:" FC_RED " Ludicrous_peridot\n"
+              FC_GRAY "Includes code and assets by Eternity Engine\n"
+              FC_GRAY "and ZDoom contributors\n"
+              FC_GRAY "See " FC_RED "ABOUT" FC_GRAY " for Eternity Engine credits\n"
+              FC_GRAY "Also includes code from MBF 2.04 by " FC_RED "Gerwin\n"
+	      "\n"
+	      "\n"
+              FC_GRAY"  https://www.moddb.com/\n"
+              FC_GRAY"           company/ludicrous-peridot\n"
+              FC_GRAY"  https://gitlab.com/\n"
+              FC_GRAY"           ludicrous_peridot/cod10mbf\n",
+              10, 25);
+}
+
 
 void MN_HelpDrawer()
 {
@@ -396,6 +441,21 @@ CONSOLE_COMMAND(credits, 0)
   // start on first screen
   viewing_helpscreen = 0;
 }
+
+
+
+CONSOLE_COMMAND(tartar, 0)
+{
+  MN_ActivateMenu();
+  MN_FindTartarScreen();        // search for help screens
+  
+  // hook in widget to display menu
+  current_menuwidget = &helpscreen_widget;
+  
+  // start on first screen
+  viewing_helpscreen = 0;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -504,6 +564,8 @@ void MN_AddMiscCommands()
 {
   C_AddCommand(credits);
   C_AddCommand(help);
+
+  C_AddCommand(tartar);
 }
 
 // EOF
