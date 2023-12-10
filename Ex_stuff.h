@@ -79,4 +79,8 @@ void Ex_ResetExtraStatus();
 void Ex_WolfenDoomStuff();
 int Ex_InsertRelatedWads(const char * wadname, const int index);
 
+#ifdef BOSSACTION
+boolean Ex_TryBossAction(mobj_t * dead, state_t * current);
+#endif
+
 #endif

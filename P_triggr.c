@@ -29,7 +29,7 @@
 #include "p_spec.h"
 #include "p_info.h"
 
-
+#ifdef BOSSACTION
 void P_TriggerSpecialLine(line_t * line)
 {
 
@@ -1400,3 +1400,26 @@ void P_TriggerSpecialLine(line_t * line)
       break;
     }
 }
+
+
+void A_BossDeath();
+void A_ETCBossDeath();
+
+
+boolean Ex_TryBossAction(mobj_t * dead, state_t * state)
+{
+  if(!info_bossaction_thingtype)
+    return false;
+  if(state->nextstate != S_NULL)
+    return false;
+  if(state->action == A_BossDeath || state->action == A_ETCBossDeath)
+    return false;
+  if(dead->info->doomednum != info_bossaction_thingtype)
+    return false;
+    
+  A_BossDeath(dead);
+
+  return false;
+}
+
+#endif

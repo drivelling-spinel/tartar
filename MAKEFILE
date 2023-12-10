@@ -37,7 +37,7 @@ CFLAGS_COMMON=-Wall
 
 # new features; comment out what you don't want at the moment
 # -DDOGS -DTRANWATER -DFAUXTRAN -DNORENDER 
-CFLAGS_NEWFEATURES=-DDOGS -DFAUXTRAN
+CFLAGS_NEWFEATURES=-DDOGS -DFAUXTRAN -DBOSSACTION
         
 # debug options
 CFLAGS_DEBUG=-g -O2 -DRANGECHECK -DINSTRUMENTED -DZONEIDCHECK
@@ -589,7 +589,7 @@ $(O)/p_inter.o: p_inter.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h v_video.h r_data.h \
  r_state.h p_chase.h v_misc.h dstrings.h d_englsh.h m_random.h \
  g_game.h hu_stuff.h hu_frags.h am_map.h r_main.h r_segs.h s_sound.h \
- p_tick.h d_deh.h p_inter.h
+ p_tick.h d_deh.h p_inter.h ex_stuff.h
  
 $(O)/p_lights.o: p_lights.c doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \

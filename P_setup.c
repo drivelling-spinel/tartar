@@ -424,11 +424,12 @@ void P_LoadThings(int lump)
       mt->options = SHORT(mt->options);
       
       spawnedthings[i] = P_SpawnMapThing(mt);
-      
-      if(info_bossaction_thingtype == mt->type)
+#ifdef BOSSACTION
+      if(info_bossaction_thingtype == mt->type && spawnedthings[i])
       {
-         spawnedthings[i]->flags2 |= MF2_MAP07BOSS1;
+         spawnedthings[i]->flags2 |= MF2_MAPINFOBOSS;
       }
+#endif      
    }
    
    // haleyjd: all player things for players in this game

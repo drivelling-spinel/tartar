@@ -230,11 +230,14 @@ typedef enum
   MF2_E1M8BOSS      = 0x00001000,  // is an E1M8 boss 
   MF2_E2M8BOSS      = 0x00002000,  // is an E2M8 boss
   MF2_E3M8BOSS      = 0x00004000,  // is an E3M8 boss
-  MF2_BOSS 	    = 0x00008000,  // is a boss
+  MF2_BOSS          = 0x00008000,  // is a boss
   MF2_E4M6BOSS      = 0x00010000,  // is an E4M6 boss
   MF2_E4M8BOSS      = 0x00020000,  // is an E4M8 boss
-  MF2_FLOATBOB 	    = 0x00080000,  // uses floatbob z movement
-  MF2_DONTDRAW 	    = 0x00100000,  // doesn't generate vissprite
+#ifdef BOSSACTION
+  MF2_MAPINFOBOSS   = 0x00040000,  // is a boss according to mapinfo
+#endif
+  MF2_FLOATBOB      = 0x00080000,  // uses floatbob z movement
+  MF2_DONTDRAW      = 0x00100000,  // doesn't generate vissprite
   MF2_SHORTMRANGE   = 0x00200000,  // has short missile range
   MF2_LONGMELEE     = 0x00400000,  // has long melee range
   MF2_RANGEHALF     = 0x00800000,  // uses half actual distance

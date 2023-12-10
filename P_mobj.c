@@ -93,7 +93,7 @@ boolean P_SetMobjState(mobj_t* mobj,statenum_t state)
   statenum_t i = state;                       // initial state
   boolean ret = true;                         // return value
   statenum_t tempstate[NUMSTATES];            // for use with recursion
-  state_t *local_states = EXTRA_ACTOR_STATES(mobj);  
+  state_t *local_states = EXTRA_ACTOR_STATES(mobj);
 
   if (recursion++)                            // if recursion detected,
     memset(seenstate=tempstate,0,sizeof tempstate); // clear state table
@@ -124,7 +124,9 @@ boolean P_SetMobjState(mobj_t* mobj,statenum_t state)
         st->action(mobj);
 
       seenstate[state] = 1 + st->nextstate;   // killough 4/9/98
-
+#ifdef BOSSACTION
+      Ex_TryBossAction(mobj, st);
+#endif
       state = st->nextstate;
   } 
   while (!mobj->tics && !seenstate[state]);   // killough 4/9/98

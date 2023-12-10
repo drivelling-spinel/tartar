@@ -66,10 +66,12 @@ extern char *info_sound_doropn;
 extern char *info_sound_dorcls;
 extern char *info_sound_pstart;
 
+#ifdef BOSSACTION
 extern char *info_bossaction_clear;
 extern int info_bossaction_thingtype;
 extern int info_bossaction_tag;
 extern int info_bossaction_linespecial;
+#endif
 
 extern boolean default_weaponowned[NUMWEAPONS];
 

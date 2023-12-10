@@ -2181,16 +2181,18 @@ void A_BossDeath(mobj_t *mo)
   unsigned int flag = 0; // haleyjd
   int tag;
   
-  if(!strcmp(info_bossaction_clear, "false"))
+#ifdef BOSSACTION
+  if(strcmp(info_bossaction_clear, "false"))
     {
        return;
     }
-    
   if (info_bossaction_thingtype == mo->info->doomednum)
     {
-      flag = MF2_MAP07BOSS1;
+      flag = MF2_MAPINFOBOSS;
     }  
-  else if (gamemode == commercial)
+  else 
+#endif
+       if (gamemode == commercial)
     {
       if (gamemap != 7)
         return;
@@ -2297,8 +2299,13 @@ void A_BossDeath(mobj_t *mo)
   }
 
   // victory!
-  tag = info_bossaction_tag ? info_bossaction_tag : 666;
-  
+  tag = 666;
+#ifdef BOSSACTION
+  if (info_bossaction_tag)
+    {
+       tag = info_bossaction_tag;
+    }
+      
   if (info_bossaction_linespecial)
     {
        junk.tag = tag;
@@ -2306,7 +2313,9 @@ void A_BossDeath(mobj_t *mo)
        P_TriggerSpecialLine(&junk);
        return;
     }    
-  else if ( gamemode == commercial)
+  else
+#endif 
+       if ( gamemode == commercial)
     {
       if (gamemap == 7)
         {
