@@ -2605,8 +2605,16 @@ void deh_procText(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   // killough 10/98: fix incorrect usage of feof
   {
     int c, totlen = 0;
+
+    while (totlen < fromlen && (c = fgetc(fpin)) != EOF)
+      {
+        if(c == 0xd) continue;
+        inbuffer[totlen++] = c;
+      }
     while (totlen < fromlen + tolen && (c = fgetc(fpin)) != EOF)
-      inbuffer[totlen++] = c;
+      {
+        inbuffer[totlen++] = c;
+      }
     inbuffer[totlen]='\0';
   }
   
