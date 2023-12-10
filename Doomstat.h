@@ -442,6 +442,8 @@ extern boolean norenderparm;
 extern int debugcolumn;
 #endif
 
+#define background_flat (gamemission == cod || EternityMode ? "FLOOR4_8" : "FLOOR4_6")
+
 #endif
 
 //----------------------------------------------------------------------------

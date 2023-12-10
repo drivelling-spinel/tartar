@@ -370,13 +370,13 @@ int Ex_DetectAndLoadNerve()
 void Ex_DetectAndLoadExtras(void)
 {
   int loaded = 0, total = 0;
-  MARK_EXTRA_LOADED(EXTRA_FILTERS, total += loaded = Ex_DetectAndLoadFilters());
-  MARK_EXTRA_LOADED(EXTRA_JUMP, total += loaded = Ex_DetectAndLoadJumpwad());
-  MARK_EXTRA_LOADED(EXTRA_SELFIE, total += loaded = Ex_DetectAndLoadSelfie());
+  MARK_EXTRA_LOADED(EXTRA_FILTERS, (total += loaded = Ex_DetectAndLoadFilters(), loaded));
+  MARK_EXTRA_LOADED(EXTRA_JUMP, (total += loaded = Ex_DetectAndLoadJumpwad(), loaded));
+  MARK_EXTRA_LOADED(EXTRA_SELFIE, (total += loaded = Ex_DetectAndLoadSelfie(), loaded));
   // WIMAPS is special in that D_Main can signal not to load them via extra status
   if(IS_EXTRA_LOADED(EXTRA_WIMAPS))
-    MARK_EXTRA_LOADED(EXTRA_WIMAPS, total += loaded = Ex_DetectAndLoadWiMaps());
-  MARK_EXTRA_LOADED(EXTRA_NERVE, total += loaded = Ex_DetectAndLoadNerve())
+    MARK_EXTRA_LOADED(EXTRA_WIMAPS, (total += loaded = Ex_DetectAndLoadWiMaps(), loaded));
+  MARK_EXTRA_LOADED(EXTRA_NERVE, (total += loaded = Ex_DetectAndLoadNerve(), loaded));
   if(total)
     D_ReInitWadfiles();
 }

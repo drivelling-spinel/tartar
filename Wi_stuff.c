@@ -2264,8 +2264,13 @@ void WI_DrawBackground(int lastnext)
     sprintf(name, "WIMAP%d", wbs->epsd);
 
   // background
-  bg = W_CacheLumpName(name, PU_CACHE);    
-  V_DrawPatch(0, 0, 1, bg);
+  if(W_CheckNumForName(name) >= 0)
+    {
+      bg = W_CacheLumpName(name, PU_CACHE);    
+      V_DrawPatch(0, 0, 1, bg);
+    }
+  else 
+    V_DrawBackground(background_flat, screens[1]);
 }
 
 // ====================================================================
