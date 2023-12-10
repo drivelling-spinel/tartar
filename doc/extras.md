@@ -48,7 +48,7 @@ Unlike the original SELFIE.WAD stick, the one in Tartar does not replace any
 of the players' weapons, nor does it require any ammo. Behaviour of plasma gun 
 and BFG are unchanged when SELFIE.WAD is loaded as an extra. 
 
-To activate the stick use SELFIE console command, by default bound to key L.
+To activate the stick use SELFIE console command, by default bound to key \\.
 To deactivate the stick select any weapon. With the stick out press Fire to 
 take a selfie; this produces 3 screenshots, filenames for which are output in 
 the console.
@@ -97,23 +97,23 @@ To use Intermission Maps with Tartar:
    
 ### Helper WAD-s
 
-Helper WAD-s found in TAPE directory are PWAD-specific extras that add to 
+Helper WAD-s found in GOODIES\TAPE directory are PWAD-specific extras that add to 
 players experience with particular WAD-s or fix bugs that would make 
 playing those WAD-s with Tartar impossible or less enjoyable.
 
 Among other goodies the following helper WAD-s are included in the distribution:
 
- - TAPE\LONGTREK.WAD     - adds custom intermission backgrounds; will crash
-                           unless INTMAPD2.WAD is also loaded. See Custom
-                           Intermission Maps section of this file for 
-                           instructions
- - TAPE\3DODOOM.WAD      - fixes an issue with garbage output as options menu 
-                           background 
- - TAPE\NERVE.WAD        - adds custom title pic, level names, assigns correct 
-                           music tracks and ensures intended level progression 
-                           for No Rest for the Living. Also enables custom 
-                           intermission backgrounds and thus will crash
-                           unless INTMAPNR.WAD is also loaded.
+ - GOODIES\TAPE\LONGTREK.WAD - adds custom intermission backgrounds; will crash
+                               unless INTMAPD2.WAD is also loaded. See Custom
+                               Intermission Maps section of this file for 
+                               instructions
+ - GOODIES\TAPE\3DODOOM.WAD  - fixes an issue with garbage output as options menu 
+                               background 
+ - GOODIES\TAPE\NERVE.WAD    - adds custom title pic, level names, assigns correct 
+                               music tracks and ensures intended level progression 
+                               for No Rest for the Living. Also enables custom 
+                               intermission backgrounds and thus will crash
+                               unless INTMAPNR.WAD is also loaded.
                            
 To play No Rest for the Living with Tartar enjoying the benefits of the
 helper WAD provided:
@@ -122,7 +122,7 @@ helper WAD provided:
 
 2. Obtain INTMAPNR.WAD and place it in the same directory as TARTAR.EXE.
 
-3. Put _helper_ NERVE.WAD found in TAPE directory of the distribution
+3. Put _helper_ NERVE.WAD found in GOODIES\TAPE directory of the distribution
    into TAPE directory sitting side by side with TARTAR.EXE. E.g.
    
    C:\GAMES\DOOM2\TARTAR.EXE  
@@ -247,11 +247,11 @@ instead looked for these details in the index entries of the each map itself
 (e.g. MAPINFO for MAP01 would be in the lump MAP01, MAPINFO for MAP02 - 
 in the lump MAP02 of the same wad file, etc.). 
 
-In NERVE\LUMPS\NOINTMAP one can find a set of such lumps that, 
+In GOODIES\NERVE\LUMPS\NOINTMAP one can find a set of such lumps that, 
 if incorporated into NERVE.WAD allows for No Rest for the Living to be played 
 via Tartar with intended map names, music tracks and end game text.
 
-Alternatively in NERVE\LUMPS\INTMAPS a similar set of lumps is 
+Alternatively in GOODIES\NERVE\LUMPS\INTMAPS a similar set of lumps is 
 provided that uses intermission screen backgrounds from [No Rest for the Living
  Intermission Maps](https://www.doomworld.com/forum/topic/129415) by
 @oliacym. These are also included in the NERVE.WAD helper WAD shipped with
