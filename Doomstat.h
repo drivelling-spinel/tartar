@@ -139,6 +139,7 @@ enum {
   comp_smmuline,    //         05/25/01: smmu 272 linedef bug
   comp_scratch,     //         02/15/02: melee z check (#24)
   comp_mushroom,
+  comp_everyline,
   COMP_TOTAL=32  // Some extra room for additional variables
 };
 

@@ -359,7 +359,6 @@ static boolean P_Move(mobj_t *actor, boolean dropoff) // killough 9/12/98
   tryy = actor->y + (deltay = speed * yspeed[actor->movedir]);
 
   // killough 12/98: rearrange, fix potential for stickiness on ice
-
   if (friction <= ORIG_FRICTION)
     try_ok = P_TryMove(actor, tryx, tryy, dropoff);
   else

@@ -1518,6 +1518,7 @@ menu_t menu_etccompat =
     {it_toggle, "colormaps applied unevenly to some walls", "comp_evenlight"},
     {it_toggle, "272 line type is WR Start Script",	    "comp_smmuline"},
     {it_toggle,   "MBF mushroom explosion frame in DEH",    "comp_mushroom"},   
+    {it_toggle,   "Check all line specials even when blocked",    "comp_everyline"},   
     {it_end},
   },
   270, 1,               // x, y

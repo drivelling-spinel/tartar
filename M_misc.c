@@ -1595,7 +1595,14 @@ default_t defaults[] = {
     1, {0,1}, dt_number, ss_comp, wad_yes,
     "When loading DEH treat MBF Mushroor fame number as actual S_MUSHROOM"
   },
-  
+
+  {
+    "comp_everyline",
+    &default_comp[comp_everyline], &comp[comp_everyline],
+    1, {0,1}, dt_number, ss_comp, wad_yes,
+    "When being blocked by a line check all line specials for having being crossed"
+  },
+    
   {NULL}         // last entry
 };
 

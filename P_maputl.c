@@ -408,6 +408,38 @@ boolean P_BlockLinesIterator(int x, int y, boolean func(line_t*))
   return true;  // everything was checked
 }
 
+boolean P_BlockLinesIterator2(int x, int y, boolean func(line_t*))
+{
+  int        offset;
+  const long *list;   // killough 3/1/98: for removal of blockmap limit
+  boolean    hit = true;
+
+  if (x<0 || y<0 || x>=bmapwidth || y>=bmapheight)
+    return true;
+  offset = y*bmapwidth+x;
+  offset = *(blockmap+offset);
+  list = blockmaplump+offset;     // original was reading         // phares
+                                  // delmiting 0 as linedef 0     // phares
+
+  // killough 1/31/98: for compatibility we need to use the old method.
+  // Most demos go out of sync, and maybe other problems happen, if we
+  // don't consider linedef 0. For safety this should be qualified.
+
+  if (!demo_compatibility) // killough 2/22/98: demo_compatibility check
+    list++;     // skip 0 starting delimiter                      // phares
+  for ( ; *list != -1 ; list++)                                   // phares
+    {
+      line_t *ld = &lines[*list];
+      if (ld->validcount == validcount)
+        continue;       // line has already been checked
+      ld->validcount = validcount;
+      hit = hit && func(ld);
+      // making this up, really
+      if(demo_compatibility && !hit) return false;
+    }
+  return hit;  // everything was checked
+}
+
 //
 // P_BlockThingsIterator
 //

@@ -79,6 +79,7 @@ line_t        *blockline;    // killough 8/11/98: blocking linedef
 line_t        *floorline;    // killough 8/1/98: Highest touched floor
 static int    tmunstuck;     // killough 8/1/98: whether to allow unsticking
 
+
 // keep track of special lines as they are hit,
 // but don't process them until the move is proven valid
 
@@ -317,13 +318,13 @@ static boolean PIT_CrossLine(line_t *ld)
 
 static int untouched(line_t *ld)
 {
-  fixed_t x, y, tmbbox[4];
+  fixed_t x, y, tmunbox[4];
   return 
-    (tmbbox[BOXRIGHT] = (x=tmthing->x)+tmthing->radius) <= ld->bbox[BOXLEFT] ||
-    (tmbbox[BOXLEFT] = x-tmthing->radius) >= ld->bbox[BOXRIGHT] ||
-    (tmbbox[BOXTOP] = (y=tmthing->y)+tmthing->radius) <= ld->bbox[BOXBOTTOM] ||
-    (tmbbox[BOXBOTTOM] = y-tmthing->radius) >= ld->bbox[BOXTOP] ||
-    P_BoxOnLineSide(tmbbox, ld) != -1;
+    (tmunbox[BOXRIGHT] = (x=tmthing->x)+tmthing->radius) <= ld->bbox[BOXLEFT] ||
+    (tmunbox[BOXLEFT] = x-tmthing->radius) >= ld->bbox[BOXRIGHT] ||
+    (tmunbox[BOXTOP] = (y=tmthing->y)+tmthing->radius) <= ld->bbox[BOXBOTTOM] ||
+    (tmunbox[BOXBOTTOM] = y-tmthing->radius) >= ld->bbox[BOXTOP] ||
+    P_BoxOnLineSide(tmunbox, ld) != -1;
 }
 
 //
@@ -653,6 +654,7 @@ boolean Check_Sides(mobj_t *actor, int x, int y)
 boolean P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y) 
 {
   int xl, xh, yl, yh, bx, by;
+  boolean fit = true;
   subsector_t *newsubsec;
 
   tmthing = thing;
@@ -716,12 +718,17 @@ boolean P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
   yl = (tmbbox[BOXBOTTOM] - bmaporgy)>>MAPBLOCKSHIFT;
   yh = (tmbbox[BOXTOP] - bmaporgy)>>MAPBLOCKSHIFT;
 
-  for (bx=xl ; bx<=xh ; bx++)
-    for (by=yl ; by<=yh ; by++)
-      if (!P_BlockLinesIterator(bx,by,PIT_CheckLine))
-	return false; // doesn't fit
+  if(comp[comp_everyline])
+    for (bx=xl ; bx<=xh ; bx++)
+      for (by=yl ; by<=yh ; by++)
+        fit = fit && P_BlockLinesIterator2(bx,by,PIT_CheckLine);
+  else
+    for (bx=xl ; bx<=xh ; bx++)
+      for (by=yl ; by<=yh ; by++)
+        if(!P_BlockLinesIterator(bx,by,PIT_CheckLine))
+          return false;
 
-  return true;
+  return fit;      
 }
 
 //
@@ -735,11 +742,25 @@ boolean P_TryMove(mobj_t *thing, fixed_t x, fixed_t y, boolean dropoff)
 {
   fixed_t oldx, oldy;
   subsector_t *rsubsec; // haleyjd
+  int i;
 
   felldown = floatok = false;               // killough 11/98
-
+  
   if (!P_CheckPosition(thing, x, y))
-    return false;   // solid wall or thing
+    {
+      if (comp[comp_everyline] && !(thing->flags & (MF_TELEPORT | MF_NOCLIP)))
+        for(i = numspechit - 1; i >= 0 ; i -= 1)
+          if (spechit[i]->special)  // see if the line was crossed
+	          { 
+	            int oldside;
+  	          if ((oldside = P_PointOnLineSide(thing->x, thing->y, spechit[i])) !=
+	              P_PointOnLineSide(x, y, spechit[i]))
+	              {
+	                P_CrossSpecialLine(spechit[i], oldside, thing);
+	              }
+	         }
+      return false;   // solid wall or thing
+	  }    
 
   if (!(thing->flags & MF_NOCLIP))
     {
@@ -822,13 +843,13 @@ boolean P_TryMove(mobj_t *thing, fixed_t x, fixed_t y, boolean dropoff)
   // killough 11/98: simplified
 
   if (!(thing->flags & (MF_TELEPORT | MF_NOCLIP)))
-    while (numspechit--)
-      if (spechit[numspechit]->special)  // see if the line was crossed
+    for(i = numspechit - 1 ; i >= 0 ; i -= 1)
+      if (spechit[i]->special)  // see if the line was crossed
 	{
 	  int oldside;
-	  if ((oldside = P_PointOnLineSide(oldx, oldy, spechit[numspechit])) !=
-	      P_PointOnLineSide(thing->x, thing->y, spechit[numspechit]))
-	    P_CrossSpecialLine(spechit[numspechit], oldside, thing);
+	  if ((oldside = P_PointOnLineSide(oldx, oldy, spechit[i])) !=
+	      P_PointOnLineSide(thing->x, thing->y, spechit[i]))
+	    P_CrossSpecialLine(spechit[i], oldside, thing);
 	}
 
   return true;
