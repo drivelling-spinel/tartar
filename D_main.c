@@ -106,6 +106,18 @@ static char *D_tape(void)
   return tps;
 }
 
+static char *D_fixes(void)
+{
+  static char *fps;      // cache results over multiple calls
+  if (!fps)
+    {
+      int p = M_CheckParm("-fixes");
+      fps = p && ++p < myargc ? myargv[p] : "";
+    }
+  return fps;
+}
+
+
 char **wadfiles;
 
 // killough 10/98: preloaded files
@@ -1347,6 +1359,7 @@ void D_SetGraphicsMode()
 
 void D_DetectAndLoadExtras(void);
 int D_DetectAndLoadTapeWads(char *const *filenames, int autoload);
+int D_InsertFixes(char * iwadfile, int autoload);
 
 //
 // D_DoomMain
@@ -1679,7 +1692,10 @@ void D_DoomMain(void)
 
   startupmsg("W_Init", "Init WADfiles.");
   D_DetectAndLoadTapeWads(wadfiles, !M_CheckParm("-noload"));
+
+  D_InsertFixes(wadfiles[0], !M_CheckParm("-noload"));
   W_InitMultipleFiles(wadfiles);
+
   usermsg("");  // gap
 
   D_ProcessDehPreincludes(); // killough 10/98: process preincluded .deh files
@@ -2155,6 +2171,7 @@ int D_FindFilterWads(char *** fnames)
   return 0;  
 }
 
+
 int D_DetectAndLoadFilters()
 {
   char **fnames;
@@ -2185,6 +2202,60 @@ int D_DetectAndLoadFilters()
 
   return loaded;
 }
+
+int D_InsertAllFixesInDir(char * dirname)
+{
+  struct stat sbuf;
+  int numfixes = 0, i;
+  char **fnames;
+
+  if (!stat(dirname, &sbuf))      
+    {
+      if(!S_ISDIR(sbuf.st_mode)) return 0;
+      numfixes = D_FindAllWads(dirname, &fnames);
+      if(numfixes)
+        {
+          for(i = numfixes - 1 ; i >= 0 ; i -= 1)
+          {
+            D_InsertFile(fnames[i]); 
+            free(fnames[i]);
+          }
+          free(fnames);
+        }
+    }
+
+  return numfixes;  
+}
+
+int D_InsertFixes(char * iwadfile, int autoload)
+{
+  int numfixes = 0;
+  int l = 0;
+  *filestr = 0;
+
+  if (*D_fixes())
+    {
+      assert(strlen(D_fixes()) < sizeof(filestr));
+      strcpy(filestr, D_fixes());
+    }
+  else if(autoload)
+    {
+      assert(strlen(D_DoomExeDir()) + strlen("fixes") < sizeof(filestr));
+      sprintf(filestr, "%s%s", D_DoomExeDir(), "fixes");
+    }
+
+  if(!*filestr) return 0;
+
+  l = strlen(filestr);
+  numfixes += D_InsertAllFixesInDir(filestr);
+  assert(l < sizeof(filestr) - 2);
+  strcat(filestr, "/");
+  ExtractFileBase(iwadfile, filestr + l + 1, sizeof(filestr) - l - 1);
+  numfixes += D_InsertAllFixesInDir(filestr);
+
+  return numfixes;
+}
+
 
 void A_TakeSelfie();
 void A_SelfieSound();
