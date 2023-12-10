@@ -1570,7 +1570,10 @@ menu_t menu_enemies =
     {it_toggle,     "climb tall stairs",            "mon_climb"},
     {it_toggle,     "no height check melee attacks",   "comp_scratch"}, // joel
     {it_gap},
+    {it_toggle,     "color of blood",               "mon_bloodcolor"},
+    {it_gap},
     {it_info,       FC_GOLD "mbf friend options"},
+    {it_gap},
     {it_variable,   "friend distance",              "mon_distfriend"},
     {it_toggle,     "rescue dying friends",         "mon_helpfriends"},
     {it_end},

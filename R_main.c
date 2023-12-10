@@ -757,6 +757,8 @@ void R_AddCommands()
    C_AddCommand(r_stretchsky);
    C_AddCommand(r_swirl);
    C_AddCommand(r_trans);
+   C_AddCommand(r_fauxtrans);
+   C_AddCommand(r_watertrans);
    C_AddCommand(r_tranpct);
    C_AddCommand(screensize);
    C_AddCommand(gamma);

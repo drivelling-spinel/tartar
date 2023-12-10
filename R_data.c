@@ -980,6 +980,17 @@ int R_FlatNumForName(const char *name)    // killough -- const added
 }
 
 //
+// R_CheckFlatNumForName
+// Chek whether flat is available.
+//
+int R_CheckFlatNumForName(const char *name)    
+{
+  return (W_CheckNumForName)(name, ns_flats) != -1;
+}
+
+
+
+//
 // R_CheckTextureNumForName
 // Check whether texture is available.
 // Filter out NoTexture indicator.

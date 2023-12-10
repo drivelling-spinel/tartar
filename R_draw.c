@@ -528,6 +528,7 @@ translat_t translations[] =
     {16,  16},     // pink
     {56,  8},      // cream
     {88,  8},      // white
+    {112, 16}      // good old green again
 };
 
 // sf : rewritten
@@ -542,8 +543,10 @@ void R_InitTranslationTables (void)
     {
       for(c=0; c<256; c++)
 	translationtables[i*256 + c] =
-	  (c < 0x70 || c > 0x7f) ? c : translations[i].start +
-	  ((c & 0xf) * (translations[i].number-1))/15;
+          (c >= 0x70 && c <= 0x7f) || (c >= 0xb0 && c <= 0xbf) 
+             ? translations[i].start +
+                ((c & 0xf) * (translations[i].number-1))/15
+             : c;
     }
 }
 

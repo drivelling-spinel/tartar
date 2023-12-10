@@ -381,7 +381,11 @@ void R_DrawVisSprite(vissprite_t *vis, int x1, int x2)
   if(vis->patch == -1)
   {
      // this vissprite belongs to a particle
-     R_DrawParticle(vis);
+#ifdef FAUXTRAN
+     if(general_translucency && faux_translucency) R_DrawCheckeredParticle(vis);
+     else
+#endif
+       R_DrawParticle(vis);
      return;
   }
   
@@ -579,6 +583,10 @@ void R_ProjectSprite (mobj_t* thing)
 
   vis->mobjflags = thing->flags;
   vis->colour = thing->colour;
+  if (thing->intflags & MIF_BLOODBLUE) vis->colour = 6;
+  else if (thing->intflags & MIF_BLOODGREEN) vis->colour = 15;
+  else if (thing->intflags & MIF_BLOODYELLOW) vis->colour = 7;
+
   vis->scale = xscale;
   vis->gx = thing->x;
   vis->gy = thing->y;
@@ -1323,6 +1331,74 @@ void R_ProjectParticle(particle_t *particle)
       vis->colormap = ltable[index];
    }
 }
+
+
+#ifdef FAUXTRAN
+//
+// R_DrawCheckeredParticle
+//
+void R_DrawCheckeredParticle(vissprite_t *vis)
+{
+   int x1, x2;
+   int yl, yh;
+   byte color;
+
+   x1 = vis->x1;
+   x2 = vis->x2;
+   if(x1 < 0)
+      x1 = 0;
+   if(x2 < x1)
+      x2 = x1;
+   if(x2 >= viewwidth)
+      x2 = viewwidth - 1;
+
+   yl = (centeryfrac - FixedMul(vis->texturemid, vis->scale) + 
+         FRACUNIT - 1) >> FRACBITS;
+   yh = yl + (x2 - x1);
+
+   // due to square shape, it is unnecessary to clip the entire
+   // particle
+   if(yh >= mfloorclip[x1])
+      yh = mfloorclip[x1]-1;
+   if(yl <= mceilingclip[x1])
+      yl = mceilingclip[x1]+1;
+   if(yh >= mfloorclip[x2])
+      yh = mfloorclip[x2]-1;
+   if(yl <= mceilingclip[x2])
+      yl = mceilingclip[x2]+1;
+
+   color = vis->colormap[vis->startfrac];
+
+   {
+      int xcount, ycount, spacing;
+      byte *dest;
+
+      xcount = x2 - x1 + 1;
+      ycount = yh - yl + 1;
+      
+      if(ycount <= 0)
+	 return;
+
+      spacing = (SCREENWIDTH << hires) - xcount;
+      dest = ylookup[yl] + columnofs[x1];
+      
+      do // step in y
+      {
+	 int count = xcount;
+         dc_faux = (yh - ycount + 1) ^ (x2 - count + 1);
+         
+	 do // step in x
+	 {
+            if((dc_faux & 1) || (!vis->mobjflags)) *dest = color;
+	    dest += 1;	   // go to next pixel
+            dc_faux ++;
+	 } while(--count);
+	 dest += spacing;  // go to next row
+      } while(--ycount);
+   }
+}
+#endif
+
 
 //
 // R_DrawParticle

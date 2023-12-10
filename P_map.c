@@ -1559,7 +1559,12 @@ static boolean PTR_ShootTraverse(intercept_t *in)
    }
    else
    {
-      P_SpawnBlood(x, y, z,
+      if(bloodcolor)
+         P_SpawnBlood2(x, y, z,
+	           R_PointToAngle2(0, 0, trace.dx, trace.dy) - ANG180,
+                   la_damage, th);
+      else
+         P_SpawnBlood(x, y, z,
 	           R_PointToAngle2(0, 0, trace.dx, trace.dy) - ANG180,
 	           la_damage);
    }

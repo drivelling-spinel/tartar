@@ -44,7 +44,7 @@ int sky2flatnum;  // haleyjd: number of F_SKY2 flat for Hexen-style skies
 int skytexture;
 int sky2texture;
 int skytexturemid;
-int stretchsky=0; // joel - hard code to off to compensate for config bug
+int stretchsky;
 
 fixed_t Sky1ColumnOffset, Sky2ColumnOffset;
 
@@ -74,7 +74,10 @@ void R_StartSky()
 
   skyflatnum = R_FlatNumForName(SKYFLATNAME);
 
-  sky2flatnum = R_FlatNumForName(SKY2FLATNAME); // haleyjd
+  sky2flatnum = -1;
+  if (R_CheckFlatNumForName(SKY2FLATNAME))
+     sky2flatnum = R_FlatNumForName(SKY2FLATNAME); // haleyjd
+
 
   // DOOM determines the sky texture to be used
   // depending on the current episode, and the game version.

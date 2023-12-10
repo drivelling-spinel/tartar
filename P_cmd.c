@@ -73,6 +73,7 @@ char *skills[]=
  "ultra violence", "nightmare"};
 char *bfgtypestr[3]= {"bfg9000", "classic", "bfg11k"};
 char *dmstr[] = {"co-op", "deathmatch", "altdeath", "trideath"};
+char *bloodcolors[] = {"original", "blue", "green", "yellow", "auto" };
 
 /*************************************************************************
         Constants
@@ -233,6 +234,11 @@ CONSOLE_NETVAR(mon_helpfriends, help_friends, cf_server, netcmd_monhelpfriends) 
 VARIABLE_INT(distfriend, &default_distfriend,   0, 1024, NULL);
 CONSOLE_NETVAR(mon_distfriend, distfriend, cf_server, netcmd_mondistfriend) {}
 
+
+// blood recolor
+VARIABLE_INT(bloodcolor, NULL, 0, sizeof(bloodcolors)/sizeof(*bloodcolors) - 1, bloodcolors);
+CONSOLE_VARIABLE(mon_bloodcolor, bloodcolor, 0) {}
+
 void P_Chase_AddCommands();
 void P_Skin_AddCommands();
 
@@ -264,6 +270,7 @@ void P_AddCommands()
   C_AddCommand(mon_climb);
   C_AddCommand(mon_helpfriends);
   C_AddCommand(mon_distfriend);
+  C_AddCommand(mon_bloodcolor);
   
   C_AddCommand(timelimit);
   C_AddCommand(fraglimit);

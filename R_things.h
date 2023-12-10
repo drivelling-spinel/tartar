@@ -75,6 +75,9 @@ void R_DrawMasked(void);
 void R_ClipVisSprite(vissprite_t *vis, int xl, int xh);
 
 void R_DrawParticle(vissprite_t *vis);
+#ifdef FAUXTRAN
+void R_DrawCheckeredParticle(vissprite_t *vis);
+#endif
 void R_ProjectParticle(particle_t *particle);
 void R_ClearParticles(void);
 void R_InitParticles(void);

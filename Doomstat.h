@@ -95,6 +95,8 @@ extern int monster_infighting, default_monster_infighting;
 
 extern int monkeys, default_monkeys;
 
+extern int bloodcolor;
+
 // v1.1-like pitched sounds
 extern int pitched_sounds;
 
@@ -102,6 +104,7 @@ extern int general_translucency;
 extern int faux_translucency;
 extern int water_translucency;
 extern int tran_filter_pct;
+extern int stretchsky;
 extern int demo_insurance, default_demo_insurance;      // killough 4/5/98
 
 // -------------------------------------------

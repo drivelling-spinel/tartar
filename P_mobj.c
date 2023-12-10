@@ -1421,11 +1421,11 @@ void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int updown)
   }
 }
 
+//
+// _SpawnBloodInternal
+//
 
-//
-// P_SpawnBlood
-//
-void P_SpawnBlood(fixed_t x,fixed_t y,fixed_t z, angle_t dir, int damage)
+mobj_t * _SpawnBloodInternal(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage, int pkind)
 {
    mobj_t* th;
    // killough 5/5/98: remove dependence on order of evaluation:
@@ -1453,8 +1453,62 @@ void P_SpawnBlood(fixed_t x,fixed_t y,fixed_t z, angle_t dir, int damage)
    if(drawparticles && bloodsplat_particle)
    {
       th->flags2 |= MF2_DONTDRAW;
-      P_DrawSplash2(32, x, y, z, dir, 2, 0);
+      P_DrawSplash2(32, x, y, z, dir, 2, pkind);
    }
+
+   return th;
+}
+
+
+//
+// P_SpawnBlood2
+//
+void P_SpawnBlood2(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage, mobj_t *source)
+{
+   int bcolor = 0;
+   mobj_t* th;
+
+   if(bloodcolor)
+   {
+      switch(bloodcolor) {
+        case 1:
+        case 2:
+        case 3:
+           bcolor = bloodcolor;
+           break;
+        case 4:
+           if(gamemission == chex) bcolor = 2;
+           else
+              switch(source->type)
+              {
+                 case MT_HEAD:
+                    bcolor = 1;
+                    break;
+                 case MT_BRUISER:
+                 case MT_KNIGHT:
+                 case MT_CKNIGHT:
+                 case MT_CBRUISER:
+                    bcolor = 2;
+                    break;
+                 default:
+                    bcolor = 0;
+              }
+           break;
+        default:
+           bcolor = 0;
+      }
+   }
+  
+   th = _SpawnBloodInternal(x, y, z, dir, damage, bcolor << 4);
+   if(bcolor) th->intflags |= ((1 << 15) << bcolor);
+}
+
+//
+// P_SpawnBlood
+//
+void P_SpawnBlood(fixed_t x,fixed_t y,fixed_t z, angle_t dir, int damage)
+{
+   _SpawnBloodInternal(x, y, z, dir, damage, 0);
 }
 
 void P_SpawnParticle(fixed_t x, fixed_t y, fixed_t z)

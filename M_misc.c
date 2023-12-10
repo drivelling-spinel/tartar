@@ -223,6 +223,12 @@ default_t defaults[] = {
     0, {0,1}, dt_number, ss_gen, wad_yes,
     "1 to enable variable pitch in sound effects (from id's original code)"
   },
+  { 
+    "stretchsky",
+    &stretchsky, NULL,
+    0, {0,1}, dt_number, ss_gen, wad_yes,
+    "0 to enable sky stretching"
+  },
 
   { // phares
     "translucency",
@@ -367,6 +373,14 @@ default_t defaults[] = {
     1, {0,1}, dt_number, ss_enem, wad_yes,
     "1 to enable monsters to be affected by friction"
   },
+
+  { // killough 3/1/98
+    "bloodcolor",
+    &bloodcolor, NULL,
+    0, {0,4}, dt_number, ss_enem, wad_yes,
+    "set to non-0 value to enable re-coloring monster blood splashes"
+  },
+
 
   { //killough 9/9/98:
     "help_friends",

@@ -255,6 +255,10 @@ enum {
   MIF_ARMED	  = 0x00000002, // Object is armed (for MF_TOUCHY objects)
   MIF_LINEDONE	  = 0x00000004, // Object has activated W1 or S1 linedef via DEH frame
   MIF_DIEDFALLING = 0x00000008, // haleyjd: object died by falling
+
+  MIF_BLOODBLUE   = 0x00010000,
+  MIF_BLOODGREEN  = 0x00020000,
+  MIF_BLOODYELLOW = 0x00040000
 };
 
 // ammo + weapon in a dropped backpack 
@@ -461,6 +465,7 @@ boolean P_SetMobjState(mobj_t *mobj, statenum_t state);
 void    P_MobjThinker(mobj_t *mobj);
 void    P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int updown);
 void    P_SpawnBlood(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage);
+void    P_SpawnBlood2(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage, mobj_t *source);
 mobj_t  *P_SpawnMissile(mobj_t *source, mobj_t *dest, mobjtype_t type);
 mobj_t  *P_SpawnPlayerMissile(mobj_t *source, mobjtype_t type);
 mobj_t  *P_SpawnMapThing (mapthing_t*  mthing);
