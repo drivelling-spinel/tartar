@@ -35,7 +35,7 @@ machines for retro gaming.
 1. [CHANGES](doc/changes.md)     - comprehensive list of changes in Tartar 
                                    milestone release compared to the 
                                    Eternity Engine version it is based on
-2. [MAINTAIN](doc/maintain.md)   - changes in latest maintenance release  
+2. [MAINTAIN](doc/maintain.md)   - changes in latest maintenance release 
                                    not covered by the above doc
 3. [AUTHORS](doc/authors.md)     - acknowledgements for authors of the ports 
                                    Tartar is based on and their work
