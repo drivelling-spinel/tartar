@@ -23,9 +23,13 @@
 - Top and bottom textures with tall patches sometimes render with glitches; 
   this seems to be relevant for when very tall objects are in proximity, 
   see for example skyscrapers in Jumpwad MAP02 if IDCLIP-ed to close enough.
-- No special handling of tall patches in some cases - e.g.  UI graphics; in fact only things and textures rendering code is  aware that tall patches exist.
+- No special handling of tall patches in some cases - e.g.  UI graphics;
+  in fact only things and textures rendering code is  aware that tall patches exist.
 - Tartar crashes when loading Avactor MAP09.
-- Eternity MAP11 has sky rendering artifacts _although I think I meant Eviternity when taking notes_
+- Eternity MAP11 has sky rendering artifacts 
+  _although I think I meant Eviternity when taking notes_
 - Switching weapons while shooting crashes game
 - Original 1st encounter Wolfendoom sounds are played at incorrect sampling rat
 - Weapon in SSG slot has glitchy animation in Rheingold and (original) Arctic Wolf 
+- Vertical line artifact visible in Well of Souls (check revenants) and KDiKDiZD dressing room
+I _think_ it is observable in SMMU as well
