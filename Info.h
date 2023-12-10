@@ -1995,7 +1995,7 @@ typedef struct
 
 // these are in info.c
 extern state_t  states[NUMSTATES];
-extern state_t  *states2[2];
+extern state_t  *states3[3];
 extern char *sprnames[];             // 1/17/98 killough
 
 // ********************************************************************

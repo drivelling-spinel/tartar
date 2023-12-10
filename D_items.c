@@ -150,7 +150,7 @@ weaponinfo_t    weaponinfo[NUMWEAPONS] =
 
 };
 
-weaponinfo_t *weaponinfo2[2] = {weaponinfo, weaponinfo};
+weaponinfo_t *weaponinfo3[3] = {weaponinfo, weaponinfo};
 
 //----------------------------------------------------------------------------
 //

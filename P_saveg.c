@@ -42,6 +42,7 @@ rcsid[] = "$Id: p_saveg.c,v 1.17 1998/05/03 23:10:22 killough Exp $";
 #include "t_script.h"
 #include "t_array.h" // haleyjd
 #include "hu_fspic.h"
+#include "ex_stuff.h"
 
 byte *save_p;
 
@@ -119,7 +120,7 @@ void P_ArchivePlayers (void)
     if (playeringame[i])
       {
         int      j;
-        state_t * local_states = (players[i].cheats & CF_SELFIE) ? states2[1] : states2[0];
+        state_t * local_states = EXTRA_PLAYER_STATES(&players[i]);
         player_t *dest;
 
         PADSAVEP();
@@ -155,7 +156,7 @@ void P_UnArchivePlayers (void)
     	  if(!hub_changelevel)
 	        {
 	          memcpy(&players[i], save_p, sizeof(player_t));
-	          local_states = (players[i].cheats & CF_SELFIE) ? states2[1] : states2[0];
+	          local_states = EXTRA_PLAYER_STATES(&players[i]);
     	      for (j=0 ; j<NUMPSPRITES ; j++)
 	            if (players[i].psprites[j].state)
 	              {

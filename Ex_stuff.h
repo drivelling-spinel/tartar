@@ -61,18 +61,19 @@ extern char ** dyna_playpal_wads;    // names of the wad containing a PLAYPAL lu
 byte extra_status[NUM_EXTRAS];
 
 #define DOOMED_SELFIE (-1000)
+#define DOOMED_JUMP (-1000)
 
 void Ex_ResetExtraStatus();
 
 #define IS_EXTRA_LOADED(extra) (extra_status[extra])
 #define MARK_EXTRA_LOADED(extra, trueornot) { extra_status[extra] = trueornot; }
 
-#define EXTRA_STATES_TABLE(extra) ((extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? states2[1] : states2[0])
-#define EXTRA_WEAPONS_TABLE(extra) ((extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? weaponinfo2[1] : weaponinfo2[0])
-#define EXTRA_ACTOR_STATES(actor) ((actor->intflags & MIF_STATE2) ? states2[1] : states2[0])
-#define EXTRA_PLAYER_STATES(player) ((player->cheats & CF_SELFIE) ? states2[1] : states2[0])
-#define EXTRA_PLAYER_WEAPONS(player) ((player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0])
-#define EXTRA_INFO_STATES(info) ((info->doomednum == DOOMED_SELFIE) ? states2[1] : states2[0]) 
-#define EXTRA_ACTOR_FLAG(info) ((info->doomednum == DOOMED_SELFIE) ? MIF_STATE2 : 0)
+#define EXTRA_STATES_TABLE(extra) ((extra) == EXTRA_SELFIE ? states3[1] : (extra) == EXTRA_JUMP ? states3[2] : states3[0])
+#define EXTRA_WEAPONS_TABLE(extra) ((extra) == EXTRA_SELFIE ? weaponinfo3[1] : (extra) == EXTRA_JUMP ? weaponinfo3[2] : weaponinfo3[0])
+#define EXTRA_ACTOR_STATES(actor) (((actor)->intflags & MIF_STATE2) ? states3[1] : ((actor)->intflags & MIF_STATE3) ? states3[1] : states3[0])
+#define EXTRA_PLAYER_STATES(player) (((player)->cheats & CF_SELFIE) ? states3[1] : ((player)->cheats & CF_JUMP) ? states3[2] : states3[0])
+#define EXTRA_PLAYER_WEAPONS(player) (((player)->cheats & CF_SELFIE) ? weaponinfo3[1] : ((player)->cheats & CF_JUMP) ? weaponinfo3[2] : weaponinfo3[0])
+#define EXTRA_INFO_STATES(info) ((info)->doomednum == DOOMED_SELFIE ? states3[1] : (info)->doomednum == DOOMED_JUMP ? states3[2] : states3[0]) 
+#define EXTRA_ACTOR_FLAG(info) ((info)->doomednum == DOOMED_SELFIE ? MIF_STATE2 : (info)->doomednum == DOOMED_JUMP ? MIF_STATE3 : 0)
 
 #endif

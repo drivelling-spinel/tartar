@@ -2242,7 +2242,7 @@ void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
-  weaponinfo_t *local_weaponinfo = EXTRA_WEAPONS_TABLE(extra);;
+  weaponinfo_t *local_weaponinfo = EXTRA_WEAPONS_TABLE(extra);
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 

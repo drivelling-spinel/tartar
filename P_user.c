@@ -412,7 +412,7 @@ void P_PlayerThink (player_t* player)
 
       // killough 2/8/98, 3/22/98 -- end of weapon selection changes
 
-      if (player->weaponowned[newweapon] && (newweapon != player->readyweapon || player->cheats & CF_SELFIE))
+      if (player->weaponowned[newweapon] && (newweapon != player->readyweapon || player->cheats & CF_SELFIE || player->cheats & CF_JUMP))
 
 	// Do not go to plasma or BFG in shareware,
 	//  even if cheated.
@@ -436,11 +436,19 @@ void P_PlayerThink (player_t* player)
     player->usedown = false;
 
   // cycle psprites
-  if((player->cheats & CF_SELFIE) && !(IS_EXTRA_LOADED(EXTRA_SELFIE) || IS_EXTRA_LOADED(EXTRA_JUMP)))
+  if((player->cheats & CF_SELFIE) && !IS_EXTRA_LOADED(EXTRA_SELFIE))
     {
       player->psprites[ps_weapon].state = &states[S_BFGDOWN];
       player->psprites[ps_flash].state = NULL;      
       player->cheats &= ~CF_SELFIE;
+      player->pendingweapon = P_SwitchWeapon(player);
+    }
+
+  if((player->cheats & CF_JUMP) && !IS_EXTRA_LOADED(EXTRA_JUMP))
+    {
+      player->psprites[ps_weapon].state = &states[S_PISTOLDOWN];
+      player->psprites[ps_flash].state = NULL;      
+      player->cheats &= ~CF_JUMP;
       player->pendingweapon = P_SwitchWeapon(player);
     }
 

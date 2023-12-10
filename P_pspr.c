@@ -458,6 +458,7 @@ void A_Lower(player_t *player, pspdef_t *psp)
       if(IS_EXTRA_LOADED(EXTRA_SELFIE))
         {
           player->cheats |= CF_SELFIE;
+          player->cheats &= ~CF_JUMP;
           player->pendingweapon = wp_bfg;
         }
       else
@@ -469,7 +470,8 @@ void A_Lower(player_t *player, pspdef_t *psp)
     {
       if(IS_EXTRA_LOADED(EXTRA_JUMP))
         {
-          player->cheats |= CF_SELFIE;
+          player->cheats |= CF_JUMP;
+          player->cheats &= ~CF_SELFIE;
           player->pendingweapon = wp_pistol;
         }
       else
@@ -478,10 +480,16 @@ void A_Lower(player_t *player, pspdef_t *psp)
         }
     }
   else 
-    if((player->cheats & CF_SELFIE))
-      {
-        player->cheats &= ~CF_SELFIE;
-      }
+    {
+      if((player->cheats & CF_SELFIE))
+        {
+          player->cheats &= ~CF_SELFIE;
+        }
+      if((player->cheats & CF_JUMP))
+        {
+          player->cheats &= ~CF_JUMP;
+        }
+    }
     
   player->readyweapon = player->pendingweapon;
 

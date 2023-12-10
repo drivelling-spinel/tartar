@@ -260,7 +260,8 @@ enum {
   MIF_BLOODGREEN  = 0x00020000,
   MIF_BLOODYELLOW = 0x00040000,
                      
-  MIF_STATE2 = 0x00100000
+  MIF_STATE2 = 0x00100000,
+  MIF_STATE3 = 0x00200000
 };
 
 // ammo + weapon in a dropped backpack 

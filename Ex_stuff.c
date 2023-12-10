@@ -44,12 +44,12 @@
 #include "w_wad.h"
 #include "m_argv.h"
 
-#define EXTRA_STATES_INDEX(extra) ( (extra == EXTRA_JUMP || extra == EXTRA_SELFIE) ? 1 : 0 )
+#define EXTRA_STATES_INDEX(extra) ( extra == EXTRA_JUMP ? 2 : extra == EXTRA_SELFIE ? 1 : 0 )
 #define INIT_EXTRA_STATES(extra) { int idx = EXTRA_STATES_INDEX(extra); \
-  if(idx && states2[idx] == states) \
+  if(idx && states3[idx] == states) \
     { \
-      memcpy(states2[idx] = malloc(sizeof(states)), &states, sizeof(states)); \
-      memcpy(weaponinfo2[idx] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo)); \
+      memcpy(states3[idx] = malloc(sizeof(states)), &states, sizeof(states)); \
+      memcpy(weaponinfo3[idx] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo)); \
     } \
 }
 
@@ -278,11 +278,11 @@ int Ex_DetectAndLoadSelfie()
   // another hack - we just happen to know that selfie overrides BFG sprites
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {
-      if(states2[1][i].sprite == SPR_BFGG) states2[1][i].sprite = SPR_SELF;
-      if(states2[1][i].action == A_FirePlasma) states2[1][i].action = A_TakeSelfie;
-      if(states2[1][i].action == A_BFGsound) states2[1][i].action = A_SelfieSound;
+      if(states3[EXTRA_STATES_INDEX(EXTRA_SELFIE)][i].sprite == SPR_BFGG) states3[EXTRA_STATES_INDEX(EXTRA_SELFIE)][i].sprite = SPR_SELF;
+      if(states3[EXTRA_STATES_INDEX(EXTRA_SELFIE)][i].action == A_FirePlasma) states3[EXTRA_STATES_INDEX(EXTRA_SELFIE)][i].action = A_TakeSelfie;
+      if(states3[EXTRA_STATES_INDEX(EXTRA_SELFIE)][i].action == A_BFGsound) states3[EXTRA_STATES_INDEX(EXTRA_SELFIE)][i].action = A_SelfieSound;
     }
-  weaponinfo2[1][wp_bfg].ammo = am_noammo;
+  weaponinfo3[EXTRA_STATES_INDEX(EXTRA_SELFIE)][wp_bfg].ammo = am_noammo;
   MARK_EXTRA_LOADED(EXTRA_SELFIE, true);
   C_Printf("%s\n",s_GOTSELFIE);
   
@@ -302,13 +302,13 @@ int Ex_DetectAndLoadJumpwad()
   if(W_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {
-      if(states2[1][i].sprite == SPR_PISF) states2[1][i].sprite = SPR_JMPF;
-      if(states2[1][i].sprite == SPR_PISG) states2[1][i].sprite = SPR_JMPG;
-      if(states2[1][i].sprite == SPR_PLSS) states2[1][i].sprite = SPR_JMPS;
-      if(states2[1][i].action == A_FirePlasma) states2[1][i].action = A_PlaceJumppad;
-      if(states2[1][i].action == A_VileAttack) states2[1][i].action = A_TossUp;
+      if(states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].sprite == SPR_PISF) states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].sprite = SPR_JMPF;
+      if(states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].sprite == SPR_PISG) states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].sprite = SPR_JMPG;
+      if(states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].sprite == SPR_PLSS) states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].sprite = SPR_JMPS;
+      if(states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].action == A_FirePlasma) states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].action = A_PlaceJumppad;
+      if(states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].action == A_VileAttack) states3[EXTRA_STATES_INDEX(EXTRA_JUMP)][i].action = A_TossUp;
     }
-  weaponinfo2[1][wp_pistol].ammo = am_noammo;
+  weaponinfo3[EXTRA_STATES_INDEX(EXTRA_JUMP)][wp_pistol].ammo = am_noammo;
   mobjinfo[MT_JUMPPAD].deathsound = sfx_jump;
   mobjinfo[MT_JUMPPAD].seesound = sfx_None;
   MARK_EXTRA_LOADED(EXTRA_JUMP, true);
@@ -390,7 +390,7 @@ CONSOLE_COMMAND(pogo, 0)
 {
   if(!plyr || !IS_EXTRA_LOADED(EXTRA_JUMP) || gamestate != GS_LEVEL) return;
   
-  if(!(plyr->cheats & CF_SELFIE)) {
+  if(!(plyr->cheats & CF_JUMP)) {
     plyr->pendingweapon = wp_pogo;
   }
 }

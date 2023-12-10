@@ -78,7 +78,8 @@ typedef enum
   // Not really a cheat, just a debug aid.
   CF_NOMOMENTUM       = 4,
   
-  CF_SELFIE           = 8
+  CF_SELFIE           = 8,
+  CF_JUMP             = 16
 
 } cheat_t;
 

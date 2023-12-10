@@ -1997,7 +1997,7 @@ state_t states[NUMSTATES] = {
   
 };
 
-state_t *states2[2] = {states, states};
+state_t *states3[3] = {states, states, states};
 
 // ********************************************************************
 // Object "Thing" definitions
@@ -9681,7 +9681,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
   },
   
   {   // MT_JUMPPAD - by default same as MT_PLASMA
-    DOOMED_SELFIE,   // doomednum
+    DOOMED_JUMP,   // doomednum
     S_PLASBALL,   // spawnstate
     1000,   // spawnhealth
     S_NULL,   // seestate

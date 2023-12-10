@@ -538,7 +538,7 @@ void ST_updateWidgets(void)
 {
   static int  largeammo = 2023; // means "n/a"
   int         i;
-  weaponinfo_t *local_weaponinfo = (plyr->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  weaponinfo_t *local_weaponinfo = EXTRA_PLAYER_WEAPONS(plyr);
 
   // must redirect the pointer if the ready weapon has changed.
   //  if (w_ready.data != plyr->readyweapon)
@@ -643,7 +643,7 @@ void ST_doPaletteStuff(void)
 void ST_drawWidgets(boolean refresh)
 {
   int i;
-  weaponinfo_t *local_weaponinfo = (plyr->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  weaponinfo_t *local_weaponinfo = EXTRA_PLAYER_WEAPONS(plyr);
 
   // used by w_arms[] widgets
   st_armson = st_statusbaron && !deathmatch;
@@ -894,7 +894,7 @@ void ST_initData(void)
 void ST_createWidgets(void)
 {
   int i;
-  weaponinfo_t *local_weaponinfo = (plyr->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  weaponinfo_t *local_weaponinfo = EXTRA_PLAYER_WEAPONS(plyr);
 
   // ready weapon ammo
   STlib_initNum(&w_ready,
