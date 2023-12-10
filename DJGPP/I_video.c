@@ -453,55 +453,60 @@ void blitScreenAspectScaled(const byte * scr, int scale)
    register byte *dest = scr;
    register const byte *source = *screens;
    int w = SCREENWIDTH << hires;
-   int h = EFFECTIVE_HEIGHT << hires;
+   int h = 0, H = EFFECTIVE_HEIGHT << hires;
    int q;
    byte z = 2;
-   assert(scale == 1);
-   while (h > 0)
+   register byte shf = scale - 1;
+
+   while ((h >> shf) < H)
      {
-       for ( q = 0; q < z && h > 0; q ++ )
+       for ( q = 0; q < z && (h >> shf) < H; q ++ )
          {
-           register int count = w;
-           register byte *dest2 = dest + (w << 1);
+           register int count = w << shf;
+           register byte *dest2 = dest + (w << scale);
+           register byte x;
            if ((count-=4)>=0)
              do
                {
                  register byte s0,s1;
-                 s0 = source[0];
-                 s1 = source[1];
+                 x = 0;
+                 s0 = source[x++];
+                 s1 = source[x++ >> shf];
                  dest2[0] = dest[0] = s0;
                  dest2[2] = dest[2] = s1;
                  dest2[1] = dest[1] = s0;
                  dest2[3] = dest[3] = s1;
                  dest += 4;
                  dest2 += 4;
-                 s0 = source[2];
-                 s1 = source[3];
-                 source += 4;
+                 s0 = source[x++ >> shf];
+                 s1 = source[x++ >> shf];
                  dest2[0] = dest[0] = s0;
                  dest2[2] = dest[2] = s1;
                  dest2[1] = dest[1] = s0;
                  dest2[3] = dest[3] = s1;
                  dest += 4;
                  dest2 += 4;
+                 source += (4 >> shf);
                }
              while ((count-=4)>=0);
+           x = 0;
            if (count+=4)
              do
                {
                  dest[0] = dest2[0] = dest[1] =
-                   dest2[1] = *source++;
+                   dest2[1] = source[x++ >> shf];
                  dest += 2;
                  dest2 += 2;
                }
              while (--count);
-           dest += (w << 1);
-           h--;
+           dest += (w << scale);
+           source = source + (x >> shf) - SCREENWIDTH * ((((h >> shf) + 1) << shf) - h - 1);
+           h++;
          }
        if(q < z) break;
        z ^= 1;
-       memcpy(dest, dest - (w << 1), (w << 1));
-       dest += (w << 1);
+       memcpy(dest, dest - (w << scale), (w << scale));
+       dest += (w << scale);
      }
 }
 
@@ -609,46 +614,51 @@ void blitScreenScaled(const byte * scr, int scale)
    register byte *dest = scr;
    register const byte *source = *screens;
    int w = SCREENWIDTH << hires;
-   int h = EFFECTIVE_HEIGHT << hires;
-   assert(scale == 1);
-   while (h > 0)
+   int h = 0, H = EFFECTIVE_HEIGHT << hires;
+   register byte shf = scale - 1;
+
+   while ((h >> shf) < H)
      {
-       register int count = w;
-       register byte *dest2 = dest + (w << 1);
+       register int count = w << shf;
+       register byte *dest2 = dest + (w << scale);
+       register byte x;
        if ((count-=4)>=0)
          do
            {
              register byte s0,s1;
-             s0 = source[0];
-             s1 = source[1];
+             x = 0;
+             s0 = source[x++];
+             s1 = source[x++ >> shf];
              dest2[0] = dest[0] = s0;
              dest2[2] = dest[2] = s1;
              dest2[1] = dest[1] = s0;
              dest2[3] = dest[3] = s1;
              dest += 4;
              dest2 += 4;
-             s0 = source[2];
-             s1 = source[3];
-             source += 4;
+             s0 = source[x++ >> shf];
+             s1 = source[x++ >> shf];
              dest2[0] = dest[0] = s0;
              dest2[2] = dest[2] = s1;
              dest2[1] = dest[1] = s0;
              dest2[3] = dest[3] = s1;
              dest += 4;
              dest2 += 4;
+             source += (4 >> shf);
            }
          while ((count-=4)>=0);
+       x = 0;
        if (count+=4)
          do
            {
              dest[0] = dest2[0] = dest[1] =
-               dest2[1] = *source++;
+               dest2[1] = source[x++ >> shf];
              dest += 2;
              dest2 += 2;
            }
          while (--count);
-       dest += (w << 1);
-       h--;
+       dest += (w << scale);
+       source = source + (x >> shf) - SCREENWIDTH * ((((h >> shf) + 1) << shf) - h - 1);
+       h++;
      }
 }
 

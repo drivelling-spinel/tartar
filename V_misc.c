@@ -477,7 +477,7 @@ void V_ClassicFPSDrawer()
 
 void V_Init(void)
 {
-  int known_height = (SCREEN_LOWEST > 0 ? SCREEN_LOWEST : SCREENHEIGHT) << hires;
+  int known_height = (SCREEN_LOWEST > 0 ? SCREEN_LOWEST + 1: SCREENHEIGHT) << hires;
   int size = (SCREENWIDTH << hires) * CORRECT_ASPECT(known_height);
   int rsize = RESULTING_SCALE - hires;
 
