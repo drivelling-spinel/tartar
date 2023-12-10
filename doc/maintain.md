@@ -130,7 +130,7 @@ _Note that this is documentation for a work in progress version of Tartar_
   every time the game is saved with the same name.
   Entering the name of a game being saved into
   an empty sleep slot starts with a blank name as 
-  before.
+  before
 - Empty savegame slots are shown as numbered by default
 - Load and Save Game screens layout yas been adjusted,
   so that if a patch of non-standard height is used for 
@@ -138,7 +138,9 @@ _Note that this is documentation for a work in progress version of Tartar_
   the corresponding save game slot graphics. This in particular
   improves the looks in Mac versions of the Spear of Destiny,
   Original Missions and Nocturnal Missions from Wolfendoom
-  series by Laz Rojas.
+  series by Laz Rojas
+- Option to control slime trale removal at level start
+  has been added to the options menu
 
 ### Bugfixes 
 
@@ -150,7 +152,7 @@ _Note that this is documentation for a work in progress version of Tartar_
   building in-memory tall patch structures for mid textures,
   rendering of tall patches in skies, map objects and mid textures.
   Most apparently this results in giant chains now being drawn
-  correctly in Eviternity MAP21.
+  correctly in Eviternity MAP21
 - Bugs have been fixed in the tall patches workaround  function for 
   top, bottom and 1s mid textures. The scyscrapers in MAP02 of
   Jumpwad render without glitches now.
@@ -161,15 +163,38 @@ _Note that this is documentation for a work in progress version of Tartar_
 - Bug has been fixed in offset computation for segments loaded
   from extended ZDoom format data. The most apparent change
   is that animated diamonds at the start of MAP03 of Jumpwad are 
-  rendered correctly.
+  rendered correctly
 - Bug in handling of huge node tables has been fixed by 
   extending segment number reference from 16 to 32 bits in the
   subsector structure. As a result maps on the scale of MAP32 of 
-  Eviternity have their geometry loaded and displayed correctly now.
+  Eviternity have their geometry loaded and displayed correctly now
+- Finishing 5th map of any Doom 1 episode no longer takes players
+  to episode end. THis behaviour is retained for Chex Quest
+  (it was in fact only intended for Chex Quest originally)
+- `force_load <slot>` CCMD has been added that takes advantage of
+  original MBF code to override savegame compatibility checks
+  when loading a level
 
 ### System
 
-- DeepSea 32 bit format for NODES, SEGS and SUBSECTORS is now supprted, so all maps of Avactor (including MAP09 and MAP10) 
-can be loaded
+- DeepSea 32 bit format for NODES, SEGS and SUBSECTORS is now supprted,
+  so all maps of Avactor (including MAP09 and MAP10) can be loaded
+- Slime trale removal is back on by default and can be overridden from
+  the Eternity Options menu
   
+**Additionally** Tartar pre-packaged try out version (the Tartar-portable.zip)
+has been updated:
+
+- Previous build of DOSBox has been replaced by the Enhanced Community Edition
+  build for better stability
+- MIDI playback is now via FluidLiquid with soundfont included with the zip
+- Fixes directory has been reorganized and Chex and Hacx DEH files have
+  been added
+- Bugs have been fixed in doom2.cmd for both single file and directory
+  drag and drop scenarios
+- ETERNAL.BAT has been added to conveniently launch Eternal Doom. Drag
+  it onto dosbox.cmd once you have Eternal Doom installed into ETERNAL
+  directory. THe directory also has a patched ESHELL.EXE modified specifically
+  for the directory layout of Tartar-portable.zip
+
   

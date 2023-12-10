@@ -28,4 +28,7 @@ The following bugs are expected to be fixed in the third maintenance release of 
 - Tartar crashes when loading Avactor MAP09.
 - Switching weapons while shooting crashes game
 - Loading from empty slot crashes the game
+- For maps with extreme extends automap zoom computation overflows which results 
+  automap going blank and random crashes
 - Saving game crashes Tartar on MAP04 of BOOMER.WAD
+- Finishing E?M5 takes to episode end and not E?M6
