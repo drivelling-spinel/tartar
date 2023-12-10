@@ -41,9 +41,9 @@ extern "C" {
 #define ALLEGRO_DATE_STR         "1997"
 
 /* remove these if you only want 256 color graphics support */
-#define ALLEGRO_COLOR16
-#define ALLEGRO_COLOR24
-#define ALLEGRO_COLOR32
+//#define ALLEGRO_COLOR16
+//#define ALLEGRO_COLOR24
+//#define ALLEGRO_COLOR32
 
 
 
@@ -1488,9 +1488,9 @@ extern volatile int fli_timer;         /* for timing FLI playback */
 
 #if !defined alleg_sound_unused
 
-#define DIGI_VOICES           32       /* Theoretical maximums: */
-#define MIDI_VOICES           32       /* actual drivers may not be */
-#define MIDI_TRACKS           32       /* able to handle this many */
+#define DIGI_VOICES           64       /* Theoretical maximums: */
+#define MIDI_VOICES           64       /* actual drivers may not be */
+#define MIDI_TRACKS           64       /* able to handle this many */
 
 
 typedef struct SAMPLE                  /* a sample */
@@ -1538,7 +1538,10 @@ typedef struct AUDIOSTREAM
 #define DIGI_SB20             4 
 #define DIGI_SBPRO            5 
 #define DIGI_SB16             6 
-#define DIGI_GUS              7
+#define DIGI_WSS              7
+#define DIGI_ESSAUDIO         8
+#define DIGI_SNDSCAPE         9
+#define DIGI_GUSPNP           10
 
 #else 
 
@@ -1659,7 +1662,7 @@ extern DIGI_DRIVER digi_none;
 
 #ifdef DJGPP
 /* for djgpp */
-extern DIGI_DRIVER digi_sb, digi_gus;
+extern DIGI_DRIVER digi_sb, digi_wss, digi_essaudio, digi_sndscape, digi_guspnp;
 #else
 /* for linux */
 extern DIGI_DRIVER digi_linux_sound_not_implemented_yet;
@@ -1714,8 +1717,17 @@ extern _MIDI_DRIVER_INFO _midi_driver_list[];
       {  0,                NULL,                0     }                      \
    };
 
-#define DIGI_DRIVER_GUS                                                      \
-      {  DIGI_GUS,         &digi_gus,           TRUE   },
+#define DIGI_DRIVER_WSS                                                      \
+      {  DIGI_WSS,         &digi_wss,           TRUE   },
+
+#define DIGI_DRIVER_ESSAUDIO                                                 \
+      {  DIGI_ESSAUDIO,    &digi_essaudio,      TRUE   },
+
+#define DIGI_DRIVER_SNDSCAPE                                                 \
+      {  DIGI_SNDSCAPE,    &digi_sndscape,      TRUE   },
+
+#define DIGI_DRIVER_GUSPNP                                                      \
+      {  DIGI_GUSPNP,      &digi_guspnp,        TRUE   },
 
 #define DIGI_DRIVER_SB                                                       \
       {  DIGI_SB,          &digi_sb,            TRUE   },                    \
@@ -1763,6 +1775,7 @@ void remove_sound();
 void set_volume(int digi_volume, int midi_volume);
 
 int load_ibk(char *filename, int drums);
+int load_op2(char *filename);
 
 SAMPLE *load_sample(char *filename);
 SAMPLE *load_wav(char *filename);

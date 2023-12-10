@@ -913,6 +913,12 @@ void S_Init(int sfxVolume, int musicVolume)
   else
     usermsg("\tsounds to be cached dynamically.");
 
+  if(W_CheckNumForName("GENMIDI") >= 0)
+    {
+      I_LoadSoundBank(W_CacheLumpName("GENMIDI", PU_CACHE));
+      usermsg("\tloading sound banks from GENMIDI lump");
+    }
+
   // no sounds are playing, and they are not mus_paused
   mus_paused = 0;
 

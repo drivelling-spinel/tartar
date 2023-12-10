@@ -44,6 +44,9 @@ void I_InitSound();
 // ... scan for any new sounds found after more wads have been loaded
 void I_RescanSounds();
 
+// load the instruments for music playback using WAD data
+void I_LoadSoundBank(void *bank);
+
 // ... update sound buffer and audio device at runtime...
 void I_UpdateSound(void);
 void I_SubmitSound(void);

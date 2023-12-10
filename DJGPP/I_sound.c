@@ -439,28 +439,25 @@ void I_InitSound(void)
  
   I_RescanSounds();
 
-  // GB 2014
-  // Allegro load_ibk: Reads in a .IBK patch set file, for use by the Adlib driver.
-  // Returns non-zero on error. 
-  // int load_ibk(char *filename, int drums)
-  if (mus_card>0)
-  {
-    if (gamemission==doom2 || gamemission==pack_tnt || gamemission==pack_plut) 
-    {	
-      char filestr[256];
-      sprintf(filestr, "%sMBF_D2GM.IBK", D_DoomExeDir());
-
-           if (load_ibk(filestr,0)==0) fprintf(stdout, " - %s loaded", filestr);
-           else                        fprintf(stdout, " - failed to load %s", filestr); 
-       //load_ibk("drum.ibk",1);
-    }	
-  }
   // Finished initialization.
   puts("\nI_InitSound: sound module ready");    // killough 8/8/98
 
 //  rest(4000);
 //  sleep(8); //uncomment for debugging
 }
+
+void I_LoadSoundBank(void *bank)
+{
+  // GB 2014
+  // Allegro load_ibk: Reads in a .IBK patch set file, for use by the Adlib driver.
+  // Returns non-zero on error. 
+  // int load_ibk(char *filename, int drums)
+  if (mus_card>0)
+  {
+     load_op2(bank);
+  } 
+}
+
 
 ///
 // MUSIC API.
