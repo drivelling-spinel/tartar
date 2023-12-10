@@ -9,13 +9,14 @@
 - TARTAR.EXE is a memory hog, especially in higher resolutions.
   Running in Windows 98 is recommended with 65535 DPMI memory in shortcut
   properties. For DOSBox enabling full 63Mb of memory is recommended.
-- Demos in Eviternity play outright weirdly.
 - With FILTERS directory filled with InstaDoom WAD-s Tartar exhausts DOS
   file handles very quickly, suggested CONFIG.SYS setting being FILES=70
 - Loading a game saved on E1-type exit special sector crahses Tartar
-- Before showing outtro or character cast intermission background is 
-  first shown for a second or so
 - When loading a game where player skin was changed from marine, 
   player mobj sprite is retained, but player skin is set to marine 
 - Map30 in Eviternity has some visual glitches (HOM) at the beginning 
 - Jumping in Jumpwad loaded as PWAD results in red screen fade sometimes 
+- Switching between palettes on the fly causes garbage colors on the screen 
+  bor a brief moment if status bar logic causes palete to be changed
+- Moving from map to map with MAP CCMD sometimes does not cause screen wipe,
+  which leaves garbage on screen borders when view size is not covering all screen

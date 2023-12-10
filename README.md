@@ -90,6 +90,7 @@ this is not what Tartar supports:
 - Cannot cope with MBF21 and DEHEXTRA features and code pointers in DeHackEd patches
 - Cannot run Heretic, Hexen or Strife 
 - Cannot apply EDF or DECORATE extensions from the mods to the game
+- Is not guaranteed to play demos in _more recent_ "Boom" or "MBF" formats
 
 ## Documentation
 
