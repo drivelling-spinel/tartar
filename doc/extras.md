@@ -115,30 +115,31 @@ to be played via Tartar with intended map names, music tracks and end game text.
 
 Extras are mods by other authors that Tartar provides first-class support for,
 and would load in case they are found side by side with TARTAR.EXE, but that are not 
-shipped with Tartar.
+shipped with Tartar. Players do not need any special command line arguments 
+to load these WAD-s, once they have been installed.
 
 ### FILTERS
 
 If FILTERS directory is found side by side with TARTAR.EXE it will be scanned for WAD-s,
 and all WAD-s found will be loaded for the purpose of registering the palettes and 
 color maps defined in them. Players can use PAL_NEXT and PAL_PREV console commands
-to cycle through those paletted while playing the game with arbitrary PWAD-s loaded. 
-The commands can be bound to key shortcuts in Extra Keys submenu of Key Bindings. 
-By default \[ and \] are assigned to the commands. 
+to cycle through those palettes while playing the game with arbitrary PWAD-s loaded. 
+The commands can be bound to key in Extra Keys submenu of Key Bindings. By default 
+\[ and \] are assigned to the commands. 
 
 To try palette cycling in action:
 
 1. Install Tartar.
 
-2. Download InstaDoom mod, e.g. from idgames.
+2. Download InstaDoom mod, e.g. from from ID Games archive.
 
 3. From InstaDoom distribution zip, extract FILTERS directory and place that directory
    (with all its contents) in the same directory as TARTAR.EXE.
 
-4. Run TARTAR.EXE (without any additional command line arguments) and be on the lookout
+4. Run TARTAR.EXE as usual (no need for -file command line argument) and be on the lookout
    for a message in the console mentioning the number of loaded filters.
 
-5. If in "real" DOS set FILES in CONFIG.SYS to a considerably big values, e.g. 
+5. If in "real" DOS set FILES in CONFIG.SYS to a considerably big value, e.g. 
    FILES=70
 
 6. While in game (starting immediately from the title screen) use \[ and \] keys 
@@ -149,37 +150,45 @@ To try palette cycling in action:
 In addition to **FILTERS** from InstaDoom Tartar has support for SELFIE.WAD 
 from the same mod. When SELFIE.WAD and SELFIE.DEH are found in the same directory as 
 TARTAR.EXE, they are loaded and players are given a selfie stick. Unlike the
-original SELFIE.WAD stick, the one in Tartar does not replace any of the player's
+original SELFIE.WAD stick, the one in Tartar does not replace any of the players'
 weapons, nor does it require any ammo. Behaviour of plasma gun and BFG are unchanged
 when SELFIE.WAD is loaded as an extra. 
 
 To activate the stick use SELFIE console command, by default bound to key L.
-To deactivate the stick select any weapon. With stick out press Fire to take a selfie;
-this produces 3 screenshots, filenames for which are output in console.
+To deactivate the stick select any weapon. With the stick out press Fire to 
+take a selfie; this produces 3 screenshots, filenames for which are output in the console.
 
 To try Tartar with selfie extra:
 
 1. Install Tartar.
 
-2. Download InstaDoom mod, e.g. from idgames.
+2. Download InstaDoom mod, e.g. from ID Games archive.
 
 3. From InstaDoom distribution zip, extract SELFIE.WAD and SELFIE.DEH into the same 
    directory as TARTAR.EXE.
 
-4. Run TARTAR.EXE (without any additional command line arguments) and be on the lookout
-   for a message in the console mentioning the selfie stick.
+4. Run TARTAR.EXE as usual (no need for -file or -deh command line argument) and be 
+   on the lookout for a message in the console mentioning the selfie stick.
 
 5. Play the game, take out the stick by pressing L whenever you want, remove it
    by switching to any weapon. Use Fire to take selfies.
 
-### Doom II Intermission maps
+### Doom II Intermission Maps
 
 Tartar supports Doom II Intermission Maps by [doomworld.com](https://doomworld.com/) 
 user @olyacim. If Doom II IWAD is loaded without any PWAD-s and Intermission Maps
 WAD is detected by Tartar, it will use @olyacim's images for backgrounds in MAP01-MAP30
 intemission screens, decorating them with blood spats and "you-are-here" arrows.
 
-No details are provided for installing Doom II Intermission maps with Tartar at this
-stage, as mod's author is yet to release a version that uses Doom graphic format 
-for images, and not PNGs.
+To use Intermission Maps with Tartar:
+
+1. Install Tartar.
+
+2. Obtain D2INTMAP.WAD - _since mod's author is yet to release a version that uses 
+   Doom graphic format for images, and not PNGs, players may need to use DOOM 
+   editing tool (like Slade) to create the WAD with converted images_
+
+3. Run TARTAR.EXE without PWAD-s (no need for -file or -deh command line argument) and be 
+   on the lookout for a message in the console mentioning the selfie stick.
+
  
