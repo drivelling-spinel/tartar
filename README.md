@@ -221,21 +221,22 @@ Follow the below steps to have them installed with Tartar
 
 2. Drop Sigil and/or Sigil II WAD-s into the same directory
 
-3. Drop SIGIL.WAD and SIGIL2.WAD from GOODIES\SHIMS directory in the
+3. Drop SIGIL2.WAD from GOODIES\SHIMS directory in the
    distribution into SHIMS directory where TARTAR is found. For example:
    
    C:\GAMES\TARTAR\   
    C:\GAMES\TARTAR\TARTAR.EXE   
    C:\GAMES\TARTAR\DOOM.WAD   
    C:\GAMES\TARTAR\SIGIL_v1_21.WAD   
-   C:\GAMES\TARTAR\SIGIL2.WAD   
+   C:\GAMES\TARTAR\SIGIL_II_V1_0.WAD   
    ...   
    C:\GAMES\TARTAR\SHIMS\   
    C:\GAMES\TARTAR\SHIMS\SIGIL.WAD   
    C:\GAMES\TARTAR\SHIMS\SIGIL2.WAD   
 
-4. Run TARTAR.EXE -file SIGIL2 to play both,   
-   or TARTAR.EXE -file SIGIL_~1 to only play the first part
+4. Run TARTAR.EXE -file SIGIL_II_V1_0 to play both Sigil II,
+   or TARTAR.EXE -file SIGIL_v1_21 to only play Sigil, 
+   or TARTAR.EXE -file SIGIL_v1_21 SIGIL_II_V1_0 to play both 
 
 ### Playing cancelled Eternity TC with Tartar
 
