@@ -10,9 +10,9 @@ machines for retro gaming.
   from [MBF 2.0.4 Maintenance Release](https://www.vogons.org/viewtopic.php?f=24&t=40857)
 - Supports additional screen resolutions of 640x480 and 1280x1024
 - Can load
-  -- classic Caverns of Darkness TC for DOS
-  -- what remain from the cancelled Eternity TC
-  -- Chex Quest without dependency on any Doom assets
+    - classic Caverns of Darkness TC for DOS
+    - what remain from the cancelled Eternity TC
+    - Chex Quest without dependency on any Doom assets
 - Includes numerous smaller changes that are seen by the author as 
   quality of life improvements 
 
@@ -31,7 +31,7 @@ machines for retro gaming.
 
 Tartar distribution is available following the link below:
 
-[https://mega.nz/folder/V50HiaSJ#yZa2LjO_kJB3Vs4tvlR3cQ]
+<https://mega.nz/folder/V50HiaSJ#yZa2LjO_kJB3Vs4tvlR3cQ>
 
 There, TARTAR directory contains the the port TARTAR.EXE and additional 
 assets and files required to run it. EXTRAS document above describes the
