@@ -408,6 +408,8 @@ void S_StopSound(const mobj_t *origin)
       }
 }
 
+static int S_CheckMusicLump(int muisc);
+
 //
 // Stop and resume music, during game PAUSE.
 //
@@ -723,7 +725,22 @@ void S_ChangeMusicName(char *name, int looping)
       S_StopMusic(); // stop music anyway
     }
 }
-               
+
+static int S_CheckMusicLump(int musnum)
+{
+  musicinfo_t * music = NULL;
+  char namebuf[9];
+
+  if (musnum <= mus_None || musnum >= NUMMUSIC)
+    {
+      return 0;
+    }
+  music = &S_music[musnum];
+
+  sprintf(namebuf, "d_%s", music->name);
+  return W_CheckNumForName(namebuf) >= 0;
+}
+
 void S_ChangeMusic(musicinfo_t *music, int looping)
 {
   int lumpnum;
@@ -767,7 +784,8 @@ void S_StartTitleMusic(int m_id)
       S_StopMusic();
       if(m_id == mus_intro && I_IsMusicCardOPL())
         {
-          m_id = mus_introa;
+          if(S_CheckMusicLump(mus_introa))
+            m_id = mus_introa;
         }
       S_StartMusic(m_id);
     }
