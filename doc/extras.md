@@ -186,9 +186,10 @@ To use Intermission Maps with Tartar:
 
 2. Obtain D2INTMAP.WAD - _since mod's author is yet to release a version that uses 
    Doom graphic format for images, and not PNGs, players may need to use DOOM 
-   editing tool (like Slade) to create the WAD with converted images_
+   editing tool (like Slade) to create the WAD with converted images_ - and
+   place it in the same directory as TARTAR.EXE.
 
-3. Run TARTAR.EXE without PWAD-s (no need for -file or -deh command line argument) and be 
-   on the lookout for a message in the console mentioning the selfie stick.
+3. Run TARTAR.EXE with DOOM2 IWAD. When running without PWAD-s no additional 
+   arguments are required. When running with PWADS, enable the intermission maps 
+   by adding -wimaps command line argument.
 
- 
