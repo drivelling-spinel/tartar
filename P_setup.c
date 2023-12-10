@@ -179,8 +179,7 @@ static boolean P_ShouldRandomizeMusic(int mapLumpNum)
   if(*info_music)
     return FALSE;
 
-  if(musLump->handle == mapLump->handle &&
-    !W_IsLumpFromIWAD(musLumpNum))
+  if(!W_IsLumpFromIWAD(musLumpNum))
       return FALSE;
 
   if(estimated_maps_no > 3)

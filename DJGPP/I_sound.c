@@ -536,6 +536,26 @@ int I_RegisterSong(void *data)
   //jff 1/21/98 just stop any midi currently playing
   stop_midi();
 
+  if(!strncmp("RIFF", data, 4))
+    {
+      int sz = ((unsigned *)data)[1] - 12;
+      int i;
+
+      for(i = 8 ; i < sz ; i ++)
+        {
+          if(((byte *)data)[i] != 'R') continue;
+          if(!strncmp("RMIDdata", ((byte *)data) + i, 8)) break;
+        }
+
+      if(i >= sz)
+        {
+          doom_printf("Error loading midi: %d", BADMIDHDR);
+          return -1;
+        }
+
+      data = (void *)(((byte *)data) + i + 12);
+    }
+
   // convert the MUS lump data to a MIDI structure
   //jff 1/17/98 make divisions 89, compression allowed
   if    //jff 02/08/98 add native midi support
