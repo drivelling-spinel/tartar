@@ -32,3 +32,11 @@
 - Original 1st encounter Wolfendoom sounds are played at incorrect sampling rate
 - Weapon in SSG slot has glitchy animation in Rheingold and (original) Arctic Wolf 
 - Loading from empty slot crashes the game
+
+
+
+
+- Stereo imagine (especially with headphones) leaves much to be desires, as in   
+  it is difficult to figure out enemy position by ear
+- MAP04 of Fire on the Mountain crashes the port
+- Death exits don't work properly (check either of Earthless, Nostalgia or Unternity)
