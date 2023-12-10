@@ -138,6 +138,7 @@ enum {
   comp_evenlight,   //         08/11/00: even colormap application fix
   comp_smmuline,    //         05/25/01: smmu 272 linedef bug
   comp_scratch,     //         02/15/02: melee z check (#24)
+  comp_mushroom,
   COMP_TOTAL=32  // Some extra room for additional variables
 };
 

@@ -1515,6 +1515,7 @@ menu_t menu_compat =
     {it_toggle,   "use doom's floor motion behaviour",      "comp_floors"},
     {it_toggle,   "use doom's linedef trigger model",       "comp_model"},
     {it_toggle,   "linedef effects with sector tag = 0",    "comp_zerotags"},
+   
     {it_end},
   },
   270, 5,                     // x,y
@@ -1538,6 +1539,7 @@ menu_t menu_etccompat =
     {it_toggle, "falling damage inactive",                  "comp_fallingdmg"},
     {it_toggle, "colormaps applied unevenly to some walls", "comp_evenlight"},
     {it_toggle, "272 line type is WR Start Script",	    "comp_smmuline"},
+    {it_toggle,   "MBF mushroom explosion frame in DEH",    "comp_mushroom"},   
     {it_end},
   },
   270, 5,              // x, y

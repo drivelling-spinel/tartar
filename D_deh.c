@@ -52,6 +52,9 @@ rcsid[] = "$Id: d_deh.c,v 1.20 1998/06/01 22:30:38 thldrmn Exp $";
 #define FALSE 0
 #endif
 
+#define MBF_MUSHROOM (S_MUSHROOM + 21)
+#define SMMU_MUSHROOM (S_MUSHROOM)
+
 // killough 10/98: new functions, to allow processing DEH files in-memory
 // (e.g. from wads)
 
@@ -2073,6 +2076,11 @@ void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 
       if (!stricmp(key,deh_state[4]))  // Codep frame (not set in Frame deh block)
         {
+          if(value == MBF_MUSHROOM && !safeparm && comp[comp_mushroom]) 
+            {
+              if (fpout) fprintf(fpout," - using %ld instead of %ld for S_MUSHROOM effect\n", SMMU_MUSHROOM, MBF_MUSHROOM);
+              value = SMMU_MUSHROOM;
+            }
           local_states[indexnum].action = deh_codeptr[value];
           if (fpout) fprintf(fpout," - applied %p from codeptr[%ld] to states[%d]\n",deh_codeptr[value],value,indexnum);
           // Write BEX-oriented line to match:

@@ -1589,6 +1589,13 @@ default_t defaults[] = {
     "draw particle grenade trails"
   },
 
+  {
+    "comp_mushroom",
+    &default_comp[comp_mushroom], &comp[comp_mushroom],
+    1, {0,1}, dt_number, ss_comp, wad_yes,
+    "When loading DEH treat MBF Mushroor fame number as actual S_MUSHROOM"
+  },
+  
   {NULL}         // last entry
 };
 
