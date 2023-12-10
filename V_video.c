@@ -327,7 +327,7 @@ void V_FillRect(int c, int width, int height, int destx, int desty, int destscrn
 void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
 			boolean flipped)
 {
-  int  w = SHORT(patch->width), col = w-1, colstop = -1, colstep = -1;
+  int  w = SHORT(patch->width), h = SHORT(patch->height), col = w-1, colstop = -1, colstep = -1, ex;
   
   if (!flipped)
     col = 0, colstop = w, colstep = 1;
@@ -335,21 +335,32 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
   y -= SHORT(patch->topoffset);
   x -= SHORT(patch->leftoffset);
 
+  if (x < 0)
+    {
+      col = flipped ? col + x : col - x;
+      x = 0;
+    }
+  
+  ex = SCREENWIDTH - colstop + col - x; 
+  if (ex < 0) 
+    {
+      colstop = flipped ? colstop - ex : colstop + ex;
+    }
+
   // haleyjd 01/13/02: removed #ifdef RANGECHECK and demoted
   // from an I_Error call to a player message 
-  if(x < 0 || x + SHORT(patch->width) > SCREENWIDTH || 
+  if(x < 0 || x + colstop - col > SCREENWIDTH || 
      y < 0 || 
      (unsigned)scrn>4)
-  {
-     C_Printf(
-	"Bad V_DrawPatchGeneral: x:%i y:%i xw:%i yw:%i scrn:%i\n",
-	x, y, x + SHORT(patch->width), y + SHORT(patch->height),
-	scrn);
-     return;      // killough 1/19/98: commented out printfs
-  }
+    {
+      C_Printf(
+        "Bad V_DrawPatchGeneral: x:%i y:%i xw:%i yw:%i scrn:%i\n",
+        x, y, x + w, y + h, scrn);
+      return;      // killough 1/19/98: commented out printfs
+    }
 
   if (!scrn)
-    V_MarkRect (x, y, SHORT(patch->width), SHORT(patch->height));
+    V_MarkRect (x, y, w, h);
 
   if (hires)       // killough 11/98: hires support (well, sorta :)
     {
