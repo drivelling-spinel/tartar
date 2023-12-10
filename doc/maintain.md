@@ -1,3 +1,5 @@
+## Stage 3 Maintenance Release 1
+
 Recent brilliant Knee Deep in Knee Deep in ZDoom has inspired me to blow off the dust from Tartar code and prepare a maintenance release of Stage 3 that mostly addresses issues with the new mod (all that while Stage 4 has been put on hiatus somewhat and none of Stage 4 commits have made it through into the trunk yet).
 
 The release includes:
@@ -35,3 +37,59 @@ II. An alternative build of Tartar is included in the portable package that does
    TARTAR -file KDiKDi_A KDiKDi_B KDiKDiM1 -warp 1
 
 Be mindful of playing too much with that UAC terminal found in the map - _you have been warned_.
+
+
+
+## Stage 3 Maintenance Release 2
+
+_(this is documentation for a work in progress version of Tartar)_
+
+### Sound
+
+- Stereo image is more pronounced with stereo separation computation "copied" from Hexen source, 
+  replacing original MBF code, and slight volume adjusment applied to sound sources behind the player
+- WAV format sound effect lumps with "metadata" are now supported
+
+### Gameplay changes and bugfixes
+
+- Game no longer crashes sporadically after loading a WAD that references a non-existent flat lump 
+- Intermission text is no longer cut off completely if a line which is too long to fit on the screen is encountered
+- "Tall" sky textures (e.g. 256 pixel and higher) that have two "posts" per "column" are rendered without a "tutti-frutti" horizontal line
+- "Tall" sky textures are no longer vertically misplaced 
+- Intermission text display has been shifted a few pixels to the left to accommodate for longer strings in some PWADS 
+- Leaving map via a "death" (or "suicide") exit starts next level at "pistol start", does not leavel player in a "zombie" state
+- New `intermusic` property has been added to MAPINFO to select particular song to play during intermission (outtro) screen
+- New set of "boss action" properties has been added to MAPINFO following UMAPINFO standard as an example.   
+  Code for these properties needs preprocessor definition `BOSSACTION` to be compiled in, which is set by default. 
+- `bossaction_clear` when present and set to anything but `false` cancels any "boss action" on the map;   
+  takes precedence over any other "boss action" properties
+- `bossaction_thingtype` decimal [thing type](https://doomwiki.org/wiki/Thing_types) of the monster that acts as the boss of the map;
+  only a single type of boss per map is supported
+- `bossaction_linespecial` [special line type](https://doomwiki.org/wiki/Linedef_type#Table_of_all_types)    
+  corresponding to the effect to trigger when all the level bosses are dead
+- `bossaction_tag` sector tag to apply the effect defined by `bossaction_linespecial` to;
+  only a single special sector per level is supported; vaue of *666* is used if omitted or in case of *0* 
+
+Here's an exmple of MAPINFO lump with these new properties:
+
+    [level info]
+    levelname=The Dam
+    levelpic=CWILV05
+    nextlevel=MAP07
+    skyname=SKYOR
+    partime=240
+    music=THE_DA
+    intermusic=DM2TTL
+    inter-backdrop=WWATER
+    endofgame=true
+    intertext=M6TEXT
+    bossaction-thingtype=16
+    bossaction-linespecial=23
+    bossaction-tag=69
+
+
+
+### Extras
+
+- `Hydrosphere.wad` "helper" WAD is included with the release. Look for it under GOODIES\TAPE directory.
+- `KDiKDi_A.WAD` "helper" WAD has been updated to reflect better "tall" sky textures supported by the source port. 
