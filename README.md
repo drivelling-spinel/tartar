@@ -4,7 +4,7 @@ Tartar is a Doom source port for DOS, author aiming for it to be useful
 to players running pure (as in non-emulated) DOS or Windows 9X on modern 
 machines for retro gaming. 
 
-## Tartar hilights
+## Tartar highlights
 
 - Has better audio compatibility through updated Allegro library 
   from [MBF 2.0.4 Maintenance Release](doc/COPYRGHT/MBFUP204.TXT)
