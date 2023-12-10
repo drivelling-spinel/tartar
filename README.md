@@ -18,14 +18,16 @@ machines for retro gaming.
 
 ## Documentation
 
-1. [CHANGES](doc/changes.md) - comprehensive list of changes in Tartar 
-                               compared to ee-2.39db5-joel2 it is based on
-2. [AUTHORS](doc/authors.md) - acknowledgements for authors of the ports Tartar 
-                               is based on and their work
-3. [README](doc/TARTAR.TXT)  - templated readme one would expect to accompany 
-                               any Doom related release
-4. [EXTRAS](doc/extras.md)   - notes on extras and goodies included with the
-                               binary distribution 
+1. [CHANGES](doc/chng2022.md) - comprehensive list of changes in Tartar 
+                                compared to the version released for Christmas 2021
+2. [AUTHORS](doc/authors.md)  - acknowledgements for authors of the ports Tartar 
+                                is based on and their work
+3. [README](doc/TARTAR.TXT)   - templated readme one would expect to accompany 
+                                any Doom related relea
+4. [BUGS](doc/bugs.md)        - known issues in Tartar 
+5. [EXTRAS](doc/extras.md)    - notes on extras and goodies included with the
+                                binary distribution 
+
 
 ## Obtaining and installing Tartar
 
