@@ -62,12 +62,13 @@ machines for retro gaming.
   (but make sure Tartar is given a PLAYPAL, e.g. by putting one of InstaDoom
   filter WAD-s into FILTERS directory AND that text mode startup is on!)
 - Also - only if you are desperate enough - The People's Doom as IWAD
+- ... and last but not least Doom 1.1 with tiled status bar extravaganza
 
 ## Also...
 ... for some traits "less common among source ports":
 - Arcade play mode where player is resurrected on the spot without
   level restarting 
-- Next/prev music track bindable hotkeys
+- Next/prev music track bindable hotkeys and music tracks randomizer
 - Screenshots from virtually anywhere in the game with bindable hotkey
 - Cycle through InstaDoom filters (or any other PLAYPAL/COLORMAP providing
 WAD-s for that matter) without restarting the level
