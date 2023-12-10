@@ -410,24 +410,16 @@ void R_DrawVisSprite(vissprite_t *vis, int x1, int x2)
 
   if(vis->mobjflags & MF_SHADOW)   // shadow draw
   {
-#ifdef FAUXTRAN
-     if(general_translucency && faux_translucency)
-     {
-         colfunc = hires == 2 ? R_DrawCheckers2 : R_DrawCheckers;
-         if(vis->colour)
-         {
-              dc_translation = translationtables + vis->colour*256 - 256;
-              colfunc = R_DrawTranslatedCheckers;
-         }
-     }
-     else
-#endif
-       colfunc = R_DrawFuzzColumn;    // killough 3/14/98
+     colfunc = R_DrawFuzzColumn;    // killough 3/14/98
   }
   else if(vis->colour)
   {
      colfunc = R_DrawTranslatedColumn;
      dc_translation = translationtables + vis->colour*256 - 256;
+#ifdef FAUXTRAN
+     if(vis->mobjflags & MF_TRANSLUCENT && general_translucency && faux_translucency)
+       colfunc = R_DrawTranslatedCheckers;
+#endif
   }
   else if(vis->mobjflags & MF_TRANSLUCENT && general_translucency) // phares
   {
@@ -774,7 +766,11 @@ void R_DrawPSprite (pspdef_t *psp)
    || viewplayer->powers[pw_invisibility] & 8)
   {
            // sf: shadow draw now detected by flags
-     vis->mobjflags |= MF_SHADOW;                    // shadow draw
+#ifdef FAUXTRAN
+     if(general_translucency && faux_translucency) vis->mobjflags |= MF_TRANSLUCENT;
+     else
+#endif
+       vis->mobjflags |= MF_SHADOW;                    // shadow draw
      vis->colormap = colormaps[global_cmap_index]; // haleyjd: NGCS -- was 0
   }
   else if (fixedcolormap)

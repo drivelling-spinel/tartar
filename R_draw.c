@@ -302,6 +302,32 @@ static const int fuzzoffset[FUZZTABLE] = {
   1,1,0,1,1,0,1 
 }; 
 
+#define HI_FUZZTABLE 151
+
+static const int hi_fuzzoffset[] = {
+  1,0,1,0,1,1,0,
+  1,1,0,1,1,1,0,
+  1,1,1,0,0,0,0,
+  1,0,0,1,1,1,1,0,
+  1,0,1,1,0,0,1,
+  1,0,0,0,0,1,1,
+  1,1,0,1,1,0,1, 
+  1,0,0,0,0,1,1,
+  1,0,1,1,0,0,1,
+  1,0,0,1,1,1,1,0,
+  1,1,1,0,0,0,0,
+  1,1,0,1,1,1,0,
+  1,1,1,0,0,0,0,
+  1,0,0,0,0,1,1,
+  1,0,1,1,0,0,1,
+  1,0,0,1,1,1,1,0,
+  1,1,0,1,1,1,0,
+  1,1,1,0,0,0,0,
+  1,1,0,1,1,0,1,
+  1,0,1,1,0,0,1,
+  1,1,1,0,0,0,0,1
+}; 
+
 static int fuzzpos = 0; 
 
 //
@@ -320,70 +346,147 @@ static int fuzzpos = 0;
 
 void R_DrawFuzzColumn(void) 
 { 
-  int      count; 
-  byte     *dest; 
-  fixed_t  frac;
-  fixed_t  fracstep;     
+  if (hires)
+    {
+      byte     *dest, *src; 
+      fixed_t  frac;
+      fixed_t  fracstep;
+      const int b = hires, w = SCREENWIDTH << hires, bw = w * hires;
+      int      ly = dc_yl;
+      int      hirescount = b - (ly % b); 
+      int      fw = (ly < viewheight - b - 1) ? bw  : -w, bc = ly < b ? 0 : -w;
 
-  // Adjust borders. Low...
-  if (!dc_yl) 
-    dc_yl = 1;
-
-  // .. and high.
-  if (dc_yh == viewheight-1) 
-    dc_yh = viewheight - 2; 
-
-  count = dc_yh - dc_yl;
-
-  // Zero length.
-  if (count < 0) 
-    return; 
-    
+      // Zero length.
+      if (dc_yh - dc_yl < 0) 
+        return; 
+        
 #ifdef RANGECHECK 
-  // haleyjd: these should apparently be adjusted for hires
+      // haleyjd: these should apparently be adjusted for hires
 
-  if ((unsigned) dc_x >= SCREENWIDTH << hires
-      || dc_yl < 0 
-      || dc_yh >= SCREENHEIGHT << hires)
-    I_Error ("R_DrawFuzzColumn: %i to %i at %i",
-             dc_yl, dc_yh, dc_x);
+      if ((unsigned) dc_x >= SCREENWIDTH << hires
+          || dc_yl < 0 
+          || dc_yh >= SCREENHEIGHT << hires)
+        I_Error ("R_DrawFuzzColumn: %i to %i at %i",
+                 dc_yl, dc_yh, dc_x);
 #endif
 
-  // Keep till detailshift bug in blocky mode fixed,
-  //  or blocky mode removed.
+      // Keep till detailshift bug in blocky mode fixed,
+      //  or blocky mode removed.
 
-  // Does not work with blocky mode.
-  dest = ylookup[dc_yl] + columnofs[dc_x];
-  
-  // Looks familiar.
-  fracstep = dc_iscale; 
-  frac = dc_texturemid + (dc_yl-centery)*fracstep; 
+      // Does not work with blocky mode.
+      dest = ylookup[dc_yl] + columnofs[dc_x];
+      src = ylookup[dc_yl - (dc_yl % b)] + columnofs[dc_x - (dc_x % b)];
+      
+      // Looks familiar.
+      fracstep = dc_iscale; 
+      frac = dc_texturemid + (dc_yl-centery)*fracstep; 
 
-  // Looks like an attempt at dithering,
-  // using the colormap #6 (of 0-31, a bit brighter than average).
+      if(dc_x % b) do 
+        {
+          *dest = dc_colormap[6*256+dest[-1]];
+          dest += SCREENWIDTH << hires;
+          frac += fracstep; 
+        } while (++ly <= dc_yh); 
 
-  do 
+      // Looks like an attempt at dithering,
+      // using the colormap #6 (of 0-31, a bit brighter than average).
+      
+      else do  
+        {
+          // Lookup framebuffer, and retrieve
+          //  a pixel that is either one column
+          //  left or right of the current one.
+          // Add index from colormap to index.
+          // killough 3/20/98: use fullcolormap instead of colormaps
+          // sf: use dc_colormap for coloured lighting
+
+                    //sf : hires
+          *dest = dc_colormap[6*256+src[hi_fuzzoffset[fuzzpos] ? fw : bc]];
+
+          if(!--hirescount)
+            {
+              hirescount = b;
+               // Clamp table lookup index.
+              if (++fuzzpos == HI_FUZZTABLE) 
+                fuzzpos = 0;
+              src += bw;
+              fw = (ly < viewheight - b - 1) ? bw : -w;
+              bc = -w;
+            }
+            
+          dest += SCREENWIDTH << hires;
+          frac += fracstep; 
+        } while (++ly <= dc_yh); 
+    }
+  else
     {
-      // Lookup framebuffer, and retrieve
-      //  a pixel that is either one column
-      //  left or right of the current one.
-      // Add index from colormap to index.
-      // killough 3/20/98: use fullcolormap instead of colormaps
-      // sf: use dc_colormap for coloured lighting
+      int      count; 
+      byte     *dest; 
+      fixed_t  frac;
+      fixed_t  fracstep;     
 
-                //sf : hires
-      *dest = dc_colormap[6*256+dest[
-      fuzzoffset[fuzzpos] ? SCREENWIDTH<<hires : -(SCREENWIDTH<<hires)]];
+      fuzzpos %= FUZZTABLE;
 
+      // Adjust borders. Low...
+      if (!dc_yl) 
+        dc_yl = 1;
 
-      // Clamp table lookup index.
-      if (++fuzzpos == FUZZTABLE) 
-        fuzzpos = 0;
+      // .. and high.
+      if (dc_yh == viewheight-1) 
+        dc_yh = viewheight - 2; 
+
+      count = dc_yh - dc_yl;
+
+      // Zero length.
+      if (count < 0) 
+        return; 
         
-      dest += SCREENWIDTH << hires;
+#ifdef RANGECHECK 
+      // haleyjd: these should apparently be adjusted for hires
 
-      frac += fracstep; 
-    } while (count--); 
+      if ((unsigned) dc_x >= SCREENWIDTH 
+          || dc_yl < 0 
+          || dc_yh >= SCREENHEIGHT)
+        I_Error ("R_DrawFuzzColumn: %i to %i at %i",
+                 dc_yl, dc_yh, dc_x);
+#endif
+
+      // Keep till detailshift bug in blocky mode fixed,
+      //  or blocky mode removed.
+
+      // Does not work with blocky mode.
+      dest = ylookup[dc_yl] + columnofs[dc_x];
+      
+      // Looks familiar.
+      fracstep = dc_iscale; 
+      frac = dc_texturemid + (dc_yl-centery)*fracstep; 
+
+      // Looks like an attempt at dithering,
+      // using the colormap #6 (of 0-31, a bit brighter than average).
+
+      do 
+        {
+          // Lookup framebuffer, and retrieve
+          //  a pixel that is either one column
+          //  left or right of the current one.
+          // Add index from colormap to index.
+          // killough 3/20/98: use fullcolormap instead of colormaps
+          // sf: use dc_colormap for coloured lighting
+
+                    //sf : hires
+          *dest = dc_colormap[6*256+dest[
+          fuzzoffset[fuzzpos] ? SCREENWIDTH : -(SCREENWIDTH)]];
+
+
+          // Clamp table lookup index.
+          if (++fuzzpos == FUZZTABLE) 
+            fuzzpos = 0;
+            
+          dest += SCREENWIDTH;
+
+          frac += fracstep; 
+        } while (count--); 
+    }
 }
 
 //
