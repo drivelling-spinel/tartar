@@ -2272,7 +2272,7 @@ void G_WorldDone(void)
    if(secretexit)
       players[consoleplayer].didsecret = true;
    
-   if(info_intertext)
+   if(info_intertext || *info_endpic)
    {
       F_StartFinale();
    }

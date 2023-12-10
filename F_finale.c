@@ -69,6 +69,7 @@ static int midstage;                 // whether we're in "mid-stage"
 //
 void F_StartFinale (void)
 {
+  const char * default_text = "error: no intermission text defined";
   gameaction = ga_nothing;
   gamestate = GS_FINALE;
   automapactive = false;
@@ -109,7 +110,7 @@ void F_StartFinale (void)
         default:
              // haleyjd: use reasonable defaults
              finaleflat = bgflatE1;
-             finaletext = "error: no intermission text defined";
+             finaletext = default_text;
              break;
       }
       break;
@@ -157,7 +158,7 @@ void F_StartFinale (void)
         default:
              // haleyjd: use reasonable defaults
              finaleflat = bgflat06;
-             finaletext = "error: no intermission text defined";
+             finaletext = default_text;
              break;
       }
       // Ty 08/27/98 - end gamemission logic
@@ -169,7 +170,7 @@ void F_StartFinale (void)
     default:  // Ty 03/30/98 - not externalized
          S_ChangeMusicNum(mus_read_m, true);
          finaleflat = "F_SKY1"; // Not used anywhere else.
-         finaletext = s_C1TEXT;  // FIXME - other text, music?
+         finaletext = default_text;  // FIXME - other text, music?
          break;
   }
 
@@ -207,6 +208,14 @@ void F_StartFinale (void)
 
   finalestage = 0;
   finalecount = 0;
+  
+  if(default_text == finaletext && *info_endpic)
+  {
+     finalecount = 0;
+     finalestage = 1;
+     wipegamestate = -1;     // force a wipe
+     V_FillScreen(BG_COLOR, FG);
+  }
 }
 
 
