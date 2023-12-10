@@ -1278,6 +1278,11 @@ void P_Init (void)
    P_InitEternityVars(); // haleyjd 09/18/99
 }
 
+void P_Free(void)
+{
+   R_FreeSprites();
+}
+
 //
 // OLO Support. - sf
 //

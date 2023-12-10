@@ -69,6 +69,7 @@ void R_AddSprites(sector_t *sec,int); // killough 9/18/98
 void R_AddPSprites(void);
 void R_DrawSprites(void);
 void R_InitSprites(char **namelist);
+void R_FreeSprites(void);
 void R_ClearSprites(void);
 void R_DrawMasked(void);
 
@@ -81,6 +82,7 @@ void R_DrawCheckeredParticle(vissprite_t *vis);
 void R_ProjectParticle(particle_t *particle);
 void R_ClearParticles(void);
 void R_InitParticles(void);
+void R_FreeParticles(void);
 particle_t *newParticle(void);
 
 #endif

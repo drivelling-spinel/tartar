@@ -1301,6 +1301,7 @@ static void D_ProcessDehInWad(int i)
         //sf:
 void startupmsg(char *func, char *desc)
 {
+  DEBUGMSG(func); DEBUGMSG(": "); DEBUGMSG(desc); DEBUGMSG("\n");
   // add colours in console mode
   usermsg(in_textmode ? "%s: %s" : FC_GRAY "%s: " FC_RED "%s",
 	  func, desc);
@@ -1947,6 +1948,7 @@ void D_ReInitWadfiles()
 {
   R_Free();
   R_Init();
+  P_Free();
   P_Init();
   I_RescanSounds();
 }

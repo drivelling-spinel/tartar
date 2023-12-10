@@ -31,6 +31,7 @@
 
 void P_SetupLevel(char*, int playermask, skill_t skill);
 void P_Init(void);               // Called by startup code.
+void P_Free(void);
 
 extern byte     *rejectmatrix;   // for fast sight rejection
 

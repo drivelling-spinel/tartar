@@ -179,7 +179,7 @@ void R_InitSpriteDefs(char **namelist)
 
   numsprites = i;
 
-  sprites = Z_Malloc(numsprites *sizeof(*sprites), PU_STATIC, NULL);
+  sprites = Z_Calloc(numsprites, sizeof(*sprites), PU_STATIC, NULL);
 
   // Create hash table based on just the first four letters of each sprite
   // killough 1/31/98
@@ -271,6 +271,16 @@ void R_InitSpriteDefs(char **namelist)
         }
     }
   free(hash);             // free hash table
+}
+
+void R_FreeSprites()
+{
+  int i = 0;
+  for(i = 0 ; i < numsprites ; i += 1)
+    if(sprites[i].numframes) 
+      free(sprites[i].spriteframes);
+  free(sprites);
+  sprites = 0;
 }
 
 //
@@ -1145,6 +1155,12 @@ particle_t *newParticle(void)
       activeParticles = result - Particles;
    }
    return result;
+}
+
+void R_FreeParticles()
+{
+  free(Particles);
+  Particles = 0;
 }
 
 //

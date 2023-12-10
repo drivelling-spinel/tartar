@@ -504,9 +504,9 @@ void blitScreenAspectCorrected(const byte * scr)
 {
     int i;
     int w = (SCREENWIDTH << RESULTING_SCALE);
-    int sz = (CORRECT_ASPECT(EFFECTIVE_HEIGHT) << RESULTING_SCALE) / 10;
+    int sz = (EFFECTIVE_HEIGHT << RESULTING_SCALE);
     const byte * restore = screens[0];
-    for ( i = 0 ; i < sz ; i ++ )
+    for ( i = 0 ; i < sz ; i += 10 )
       {
         int z = 6;
         int q;
@@ -571,6 +571,23 @@ void blitScreenAspectCorrected(const byte * scr)
             scr += w;
           }
       }
+      
+    if(i -= sz) 
+      {
+        if (cpu_family >= 6 || asmp6parm)       // PPro or PII
+          {
+            ppro_blit(scr, (10 - i) * w);
+          }
+        else if (cpu_family >= 5)  // Pentium
+          {
+            pent_blit(scr, (10 - i) * w);
+          }
+        else                       // Others
+          {
+            memcpy(scr, *screens, (10 - i) * w);
+          }      
+       }
+    
     screens[0] = restore;
 }
 

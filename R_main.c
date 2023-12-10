@@ -487,8 +487,8 @@ void R_Free(void)
   scalelight = 0;
   zlight = 0;
   fullcolormap = 0;
-  colormaps = 0;
-
+  
+  R_FreeParticles();
 }
 
 //

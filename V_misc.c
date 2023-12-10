@@ -480,17 +480,16 @@ void V_Init(void)
   int known_height = SCREEN_LOWEST > 0 ? SCREEN_LOWEST : SCREENHEIGHT;
   int size = (SCREENWIDTH << hires) * (CORRECT_ASPECT(known_height) << hires);
   int rsize = RESULTING_SCALE - hires;
-  static byte *s;
 
-  if (s) free(s);
   if (screens[0]) free(screens[0]);
+  if (screens[1]) free(screens[1]);
+  if (screens[2]) free(screens[2]);
+//  if (screens[3]) free(screens[3]);
 
-  screens[3] = (screens[2] = (screens[1] = s = calloc(size,2 + (1 << rsize << rsize))) + size) + (size <<rsize << rsize);
-
-  screens[0] = calloc(size,1);
-
-  memset(screens[0], 0, size);
-
+  screens[0] = malloc(size);
+  screens[1] = malloc(size);
+  screens[2] = malloc(size <<rsize << rsize);
+//  screens[3] = malloc(size);
 }
 
 /////////////////////////////
