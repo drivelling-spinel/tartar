@@ -1,5 +1,7 @@
 List of features for Stage 4 and their current completion state
 
+[ 0% ]   Fix crahses when changing weapon while firing
+
 [ 50%]   Auto-loading of multipart PWAD-s (Arctic wolf, 1-st encounter, etc) 
         when only a single PWAD of the package is provided with -file
 
