@@ -1150,7 +1150,7 @@ int R_FlatNumForName(const char *name)    // killough -- const added
   if (i == -1)
     {
       C_Printf("R_FlatNumForName: %.8s not found\n", name);
-      i = 0;
+      i = firstflat;
     }
   return i - firstflat;
 }
