@@ -1519,6 +1519,7 @@ menu_t menu_etccompat =
     {it_toggle, "272 line type is WR Start Script",	    "comp_smmuline"},
     {it_toggle,   "MBF mushroom explosion frame in DEH",    "comp_mushroom"},   
     {it_toggle,   "Check all line specials even when blocked",    "comp_everyline"},   
+    {it_toggle,   "SMMU coloured lighting",                  "comp_clighting"},   
     {it_end},
   },
   270, 1,               // x, y

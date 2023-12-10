@@ -1602,7 +1602,15 @@ default_t defaults[] = {
     1, {0,1}, dt_number, ss_comp, wad_yes,
     "When being blocked by a line check all line specials for having being crossed"
   },
-    
+
+  {
+    "comp_clighting",
+    &default_comp[comp_clighting], &comp[comp_clighting],
+    1, {0,1}, dt_number, ss_comp, wad_yes,
+    "Switch SMMU coloured lighting on or off (try off for less rendering glitches in PWADs"
+  },
+
+
   {NULL}         // last entry
 };
 

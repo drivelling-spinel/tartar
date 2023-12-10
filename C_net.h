@@ -86,7 +86,13 @@ enum
   netcmd_comp_21,   //		falling damage
   netcmd_comp_22,   //          colormap application
   netcmd_comp_23,   //          272 linedef bug
-  netcmd_comp_24,   //          melee z check
+  netcmd_comp_25,   //          melee z check
+  netcmd_comp_26,   //          extending further
+  netcmd_comp_27,   
+  netcmd_comp_28,   
+  netcmd_comp_29,   
+  netcmd_comp_30,   
+  netcmd_comp_31,   
   NUMNETCMDS,
 };
 

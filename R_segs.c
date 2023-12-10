@@ -203,7 +203,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
           if (t + (Long64) textureheight[texnum] * spryscale < 0 ||
               t > (Long64) MAX_SCREENHEIGHT << FRACBITS*2)
             continue;        // skip if the texture is out of screen's range
-          sprtopscreen = (long)(t >> FRACBITS);
+          sprtopscreen = (long)(t >> FRACBITS); 
         }
 
         dc_iscale = 0xffffffffu / (unsigned) spryscale;
@@ -417,7 +417,7 @@ static void R_RenderSegLoop (void)
                   floorclip[rw_x] = mid;
                   if (floorplane2 && floorplane2->height<worldlow)
                     {
-                        floorclip2[rw_x] = mid + 1;
+                        floorclip2[rw_x] = mid;
                     }
                 }
               else
@@ -523,9 +523,7 @@ void R_StoreWallRange(const int start, const int stop)
 
   // calculate rw_distance for scale calculation
   // TODO: hopefully R_PointToAngle2 func does what I think
-  rw_normalangle = curline->angle;
-  if(rw_normalangle == -1) rw_normalangle = R_PointToAngle2(curline->v1->x, curline->v1->y, curline->v2->x, curline->v2->y);
-  rw_normalangle += ANG90;
+  rw_normalangle = curline->angle + ANG90;
   offsetangle = abs(rw_normalangle-rw_angle1);
 
   if (offsetangle > ANG90)
@@ -659,9 +657,9 @@ void R_StoreWallRange(const int start, const int stop)
 
       // hack to allow height changes in outdoor areas
       if ((frontsector->ceilingpic == skyflatnum ||
-	   frontsector->ceilingpic == sky2flatnum) && 
-	  (backsector->ceilingpic == skyflatnum ||
-	   backsector->ceilingpic == sky2flatnum))
+           frontsector->ceilingpic == sky2flatnum) && 
+          (backsector->ceilingpic == skyflatnum ||
+           backsector->ceilingpic == sky2flatnum))
         worldtop = worldhigh;
 
       markfloor = worldlow != worldbottom
@@ -677,7 +675,7 @@ void R_StoreWallRange(const int start, const int stop)
         || frontsector->heightsec != -1
 
                 // sf: for coloured lighting
-        || backsector->heightsec != frontsector->heightsec
+        || (backsector->heightsec != frontsector->heightsec && comp[comp_clighting])
 
         // killough 4/17/98: draw floors if different light levels
         || backsector->floorlightsec != frontsector->floorlightsec
@@ -695,12 +693,12 @@ void R_StoreWallRange(const int start, const int stop)
         // from bleeding through fake ceilings
         || (frontsector->heightsec != -1 &&
             (frontsector->ceilingpic!=skyflatnum &&
-	     frontsector->ceilingpic!=sky2flatnum))
+             frontsector->ceilingpic!=sky2flatnum))
 
         // killough 4/17/98: draw ceilings if different light levels
         || backsector->ceilinglightsec != frontsector->ceilinglightsec
                 // sf: for coloured lighting
-        || backsector->heightsec != frontsector->heightsec
+        || (backsector->heightsec != frontsector->heightsec && comp[comp_clighting])
         ;
 
       if (backsector->ceilingheight <= frontsector->floorheight

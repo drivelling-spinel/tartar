@@ -353,9 +353,9 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
      y < 0 || y >= EFFECTIVE_HEIGHT ||
      (unsigned)scrn>4)
     {
-      C_Printf(
-        "Bad V_DrawPatchGeneral: x:%i y:%i xw:%i yw:%i scrn:%i\n",
-        x, y, x + w, y + h, scrn);
+ //     C_Printf(
+ //       "Bad V_DrawPatchGeneral: x:%i y:%i xw:%i yw:%i scrn:%i\n",
+ //       x, y, x + w, y + h, scrn);
       return;      // killough 1/19/98: commented out printfs
     }
 
@@ -501,10 +501,10 @@ void V_DrawPatchUnscaled(int x, int y, int scrn, patch_t *patch)
      y < 0 || 
      (unsigned)scrn>4)
   {
-     C_Printf(
-	"Bad V_DrawPatchUnscaled: x:%i y:%i xw:%i yw:%i scrn:%i\n",
-	x, y, x + SHORT(patch->width), y + SHORT(patch->height),
-	scrn);
+  //   C_Printf(
+  //      "Bad V_DrawPatchUnscaled: x:%i y:%i xw:%i yw:%i scrn:%i\n",
+  //      x, y, x + SHORT(patch->width), y + SHORT(patch->height),
+  //      scrn);
      return;      // killough 1/19/98: commented out printfs
   }
 
@@ -642,10 +642,10 @@ void V_DrawPatchTranslated(int x, int y, int scrn, patch_t *patch,
      y < 0 || 
      (unsigned)scrn>4)
   {
-     C_Printf(
-	"Bad V_DrawPatchTranslated: x:%i y:%i xw:%i yw:%i scrn:%i\n",
-	x, y, x + SHORT(patch->width), y + SHORT(patch->height),
-	scrn);
+   //  C_Printf(
+   //     "Bad V_DrawPatchTranslated: x:%i y:%i xw:%i yw:%i scrn:%i\n",
+   //     x, y, x + SHORT(patch->width), y + SHORT(patch->height),
+   //     scrn);
      return;    // killough 1/19/98: commented out printfs
   }
 
@@ -815,10 +815,10 @@ void V_DrawPatchTL(int x, int y, int scrn, patch_t *patch,
      y < 0 || 
      (unsigned)scrn>4)
   {
-     C_Printf(
-	"Bad V_DrawPatchTL: x:%i y:%i xw:%i yw:%i scrn:%i\n",
-	x, y, x + SHORT(patch->width), y + SHORT(patch->height),
-	scrn);
+   //  C_Printf(
+   //     "Bad V_DrawPatchTL: x:%i y:%i xw:%i yw:%i scrn:%i\n",
+   //     x, y, x + SHORT(patch->width), y + SHORT(patch->height),
+   //     scrn);
      return;    // killough 1/19/98: commented out printfs
   }
 

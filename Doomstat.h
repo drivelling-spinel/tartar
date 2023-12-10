@@ -140,6 +140,7 @@ enum {
   comp_scratch,     //         02/15/02: melee z check (#24)
   comp_mushroom,
   comp_everyline,
+  comp_clighting,
   COMP_TOTAL=32  // Some extra room for additional variables
 };
 

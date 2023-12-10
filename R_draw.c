@@ -393,6 +393,8 @@ void R_DrawFuzzColumn(void)
       
       else do  
         {
+          lighttable_t * localmap = comp[comp_clighting] ? dc_colormap : fullcolormap;
+
           // Lookup framebuffer, and retrieve
           //  a pixel that is either one column
           //  left or right of the current one.
@@ -401,7 +403,7 @@ void R_DrawFuzzColumn(void)
           // sf: use dc_colormap for coloured lighting
 
                     //sf : hires
-          *dest = dc_colormap[6*256+src[hi_fuzzoffset[fuzzpos] ? fw : bc]];
+          *dest = localmap[6*256+src[hi_fuzzoffset[fuzzpos] ? fw : bc]];
 
           if(!--hirescount)
             {
@@ -466,15 +468,16 @@ void R_DrawFuzzColumn(void)
 
       do 
         {
+          lighttable_t * localmap = comp[comp_clighting] ? dc_colormap : fullcolormap;
           // Lookup framebuffer, and retrieve
           //  a pixel that is either one column
           //  left or right of the current one.
           // Add index from colormap to index.
           // killough 3/20/98: use fullcolormap instead of colormaps
-          // sf: use dc_colormap for coloured lighting
 
-                    //sf : hires
-          *dest = dc_colormap[6*256+dest[
+          // sf: use dc_colormap for coloured lighting
+            //sf : hires
+          *dest = localmap[6*256+dest[
           fuzzoffset[fuzzpos] ? SCREENWIDTH : -(SCREENWIDTH)]];
 
 

@@ -522,14 +522,15 @@ const char *comp_strings[] =
   "smmuline",   //          SMMU 272 linedef bug
   "scratch",    //          02/15/02: melee z check
   "mushroom",
-  "everyline"
+  "everyline",
+  "clighting"
 };
 
 void G_AddCompat()
 {
   int i;
 
-  for(i=0; i<=comp_everyline; i++)   // haleyjd: update this regularly
+  for(i=0; i<=comp_clighting; i++)   // haleyjd: update this regularly
     {
       variable_t *variable;
       command_t *command;
