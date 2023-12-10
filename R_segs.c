@@ -241,21 +241,16 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
 #define HEIGHTBITS 12
 #define HEIGHTUNIT (1<<HEIGHTBITS)
 
-#define OVERFLOWN(yl, yh) ((yh) < (yl))
+#define THRESH (0x80 << HEIGHTBITS)
 
 static void R_RenderSegLoop (void)
 {
   fixed_t  texturecolumn = 0;   // shut up compiler warning
-  int yh0 = (bottomfrac - bottomstep)>>HEIGHTBITS, yl0 = (topfrac - topstep)>>HEIGHTBITS;
-  boolean overflown = OVERFLOWN(yl0, yh0);
 
   for ( ; rw_x < rw_stopx ; rw_x ++)
     {
       // mark floor / ceiling areas
       int yh = bottomfrac>>HEIGHTBITS, yl = (topfrac+HEIGHTUNIT-1)>>HEIGHTBITS;
-      int yh2 = (bottomstep + bottomfrac)>>HEIGHTBITS,
-          yl2 = (topstep + topfrac)>>HEIGHTBITS;
-      boolean has_overflown = overflown;
       // no space above wall?
       int bottom = floorclip[rw_x]-1, top = ceilingclip[rw_x]+1;
 
@@ -284,20 +279,9 @@ static void R_RenderSegLoop (void)
           sprintf(msgbuf, "ceilingclip[rw_x]=%d, ceilingplane->top[rw_x]=%d, ceilingplane->bottom[rw_x]=%d\n",
             ceilingclip[rw_x],ceilingplane->top[rw_x], ceilingplane->bottom[rw_x]);
           DEBUGMSG(msgbuf);
-          sprintf(msgbuf, "has_overflown=%d, OVERFLOWN(yl, yh)=%d, OVERFLOWN(yl2, yh2)=%d\n",
-            has_overflown, OVERFLOWN(topfrac>>HEIGHTBITS, bottomfrac>>HEIGHTBITS), OVERFLOWN(yl2, yh2));
-          DEBUGMSG(msgbuf);
         }
 #endif
 
-      // can't trust the math here
-      if(overflown = OVERFLOWN(topfrac>>HEIGHTBITS, bottomfrac>>HEIGHTBITS))
-        {
-//          yl = viewheight - 1;
-//          yh = viewheight -1;
-        }
-        
-     
       if(yh < 0)
         yh = 0;
         
@@ -884,9 +868,20 @@ void R_StoreWallRange(const int start, const int stop)
 
   topstep = -FixedMul (rw_scalestep, worldtop);
   topfrac = (centeryfrac >> 4) - FixedMul (worldtop, rw_scale);
+  
+  if(topstep < -THRESH || topstep > THRESH)
+    {
+      topstep = 0;
+      topfrac = 0;
+    }
 
   bottomstep = -FixedMul (rw_scalestep,worldbottom);
   bottomfrac = (centeryfrac >> 4) - FixedMul (worldbottom, rw_scale);
+  if(bottomstep < -THRESH || bottomstep > THRESH)
+    {
+      bottomstep = 0;
+      bottomfrac = viewheight << HEIGHTBITS;
+    }
 
 #ifdef TRANWATER
   if (floorplane2)
