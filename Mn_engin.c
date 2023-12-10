@@ -88,6 +88,8 @@ static int last_title_height = -1;
 #define unselect_colour    CR_RED
 #define select_colour      CR_GRAY
 #define var_colour         CR_GREEN
+#define over_colour        CR_TAN
+#define help_colour        CR_GOLD
 
 enum
 {
@@ -118,6 +120,9 @@ static void MN_GetItemVariable(menuitem_t *item)
       item->var = cmd->variable;
     }
 }
+
+
+
 
         // width of slider, in mid-patches
 #define SLIDE_PATCHES 9
@@ -166,7 +171,7 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
  
   // draw an alternate patch?
  
-  if(item->patch)
+  if(item->patch && item->type != it_togglehint)
     {
       patch_t *patch;
       int lumpnum;
@@ -279,6 +284,7 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
     // it_toggle and it_variable are drawn the same
 
     case it_toggle:
+    case it_togglehint:
     case it_variable:
       {
         char varvalue[1024];             // temp buffer
@@ -456,14 +462,31 @@ void MN_DrawMenu(menu_t *menu)
   else
     {
       char *helpmsg = "";
+      int col = help_colour;
 
       // write some help about the item
       menuitem_t *menuitem = &menu->menuitems[menu->selected];
       
       if(menuitem->type == it_variable)       // variable
 	helpmsg = "press enter to change";
+
+      if(menuitem->type == it_togglehint)
+        {
+          static char shint[1024];
+          const char * v = "";
+          command_t * cmd = C_GetCmdForName(menuitem->patch);
+          if(cmd) v = C_VariableValue(cmd->variable);
+          *shint = 0;
+          if(*v)
+            {
+              strncpy(shint, v, 1024);
+              col = over_colour;
+            }          
+          helpmsg = shint;
+        }
       
-      if(menuitem->type == it_toggle)         // togglable variable
+      if(menuitem->type == it_toggle          // togglable variable
+        || (menuitem->type == it_togglehint && !*helpmsg)) 
 	{
 	  // enter to change boolean variables
 	  // left/right otherwise
@@ -474,7 +497,7 @@ void MN_DrawMenu(menu_t *menu)
 	  else
 	    helpmsg = "use left/right to change value";
 	}
-      MN_WriteTextColoured(helpmsg, CR_GOLD, 10, SCREENHEIGHT - M_LINE);
+      MN_WriteTextColoured(helpmsg, col, 10, SCREENHEIGHT - M_LINE);
     }
 }
 
@@ -727,6 +750,7 @@ boolean MN_Responder (event_t *ev)
 	  }
 	
 	case it_toggle:
+        case it_togglehint:
 	  {
 	    // boolean values only toggled on enter
 	    if(menuitem->var->type != vt_int ||
@@ -791,6 +815,7 @@ boolean MN_Responder (event_t *ev)
 	{
 	case it_slider:
 	case it_toggle:
+        case it_togglehint:
 	  {
 	    // no on-off int values
 	    if(menuitem->var->type == vt_int &&
@@ -819,6 +844,7 @@ boolean MN_Responder (event_t *ev)
 	{
 	case it_slider:
 	case it_toggle:
+        case it_togglehint:
 	  {
 	    // no on-off int values
 	    if(menuitem->var->type == vt_int &&

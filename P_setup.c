@@ -1790,12 +1790,14 @@ void P_InitEternityVars(void)
 void P_ApplyPersistentOptions(void) 
 {
     int bloodvar, wolfvar, contvar;
-    
+
+    hint_bloodcolor = "";
     bloodvar = T_GetGlobalIntVar("_private_bloodcolor", -1);
     if(bloodvar < 0 && info_nobloodcolor)
       {
         R_RefreshTranslationTables(0);
         prtclblood = 0;
+        hint_bloodcolor = "Using Original from map defaults.\nToggle to override.";
       }
     else
       {
@@ -1808,10 +1810,12 @@ void P_ApplyPersistentOptions(void)
       }
 
 
+    hint_wolfendoom = "";
     wolfvar = T_GetGlobalIntVar("_private_wolfendoom", -1);
     if(wolfvar < 0 && info_wolf3d)
       {
         wolf3dmode = 1;
+        hint_wolfendoom = "Using On from map defaults.\nToggle to override.";
       }
     else 
       {

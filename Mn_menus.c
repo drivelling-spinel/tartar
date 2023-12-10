@@ -326,9 +326,9 @@ CONSOLE_VARIABLE(use_startmap, use_startmap, 0) {}
 menu_t menu_tartar =
 {
   {
-    {it_title,  FC_GOLD "Tartar options",     NULL,               "M_ETCOPT"},
-    {it_toggle, "Gameplay changes for Wolfendoom",       "wolfendoom"},
-    {it_toggle, "Wolf3D look and feel mode",             "wolflooks"},   
+    {it_title,      FC_GOLD "Tartar options",     NULL,               "M_ETCOPT"},
+    {it_togglehint, "Gameplay changes for Wolfendoom",       "wolfendoom", "hint_wolfendoom"},
+    {it_toggle,     "Wolf3D look and feel mode",             "wolflooks"},   
     {it_end},
   },
   270, 1,                               // x,y
@@ -1624,7 +1624,7 @@ menu_t menu_enemies =
     {it_toggle,     "affected by friction",         "mon_friction"},
     {it_toggle,     "climb tall stairs",            "mon_climb"},
     {it_toggle,     "no height check melee attacks",   "comp_scratch"}, // joel
-    {it_toggle,     "color of blood",               "mon_bloodcolor"},
+    {it_togglehint, "color of blood",               "mon_bloodcolor", "hint_bloodcolor"},
     {it_info,       FC_GOLD "mbf friend options"},
     {it_variable,   "friend distance",              "mon_distfriend"},
     {it_toggle,     "rescue dying friends",         "mon_helpfriends"},

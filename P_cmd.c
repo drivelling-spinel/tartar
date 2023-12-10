@@ -85,6 +85,13 @@ char *bloodcolors[] = {"original", "blue", "green", "yellow", "auto" };
 CONST_STRING(info_creator);
 CONSOLE_CONST(creator, info_creator);
 
+
+CONST_STRING(hint_bloodcolor);
+CONSOLE_CONST(hint_bloodcolor, hint_bloodcolor);
+
+CONST_STRING(hint_wolfendoom);
+CONSOLE_CONST(hint_wolfendoom, hint_wolfendoom);
+
 /*************************************************************************
                 Game variables
  *************************************************************************/
@@ -244,6 +251,7 @@ CONSOLE_VARIABLE(mon_bloodcolor, bloodcolor, 0) {
     prtclblood = bloodcolor;
     if(defaults_loaded) T_EnsureGlobalIntVar("_private_bloodcolor", bloodcolor);
     R_RefreshTranslationTables(bloodcolor);
+    hint_bloodcolor = "";
 }
 
 // wolf3d mode
@@ -251,7 +259,10 @@ VARIABLE_BOOLEAN(wolfendoom, NULL, onoff);
 CONSOLE_VARIABLE(wolfendoom, wolfendoom, 0) {
     wolf3dmode = wolfendoom;
     if(defaults_loaded) T_EnsureGlobalIntVar("_private_wolfendoom", wolfendoom);
+    hint_wolfendoom = "";
 }
+
+
 
 VARIABLE_BOOLEAN(wolflooks, NULL, onoff);
 CONSOLE_VARIABLE(wolflooks, wolflooks, 0) {}
@@ -262,6 +273,9 @@ void P_Skin_AddCommands();
 void P_AddCommands()
 {
   C_AddCommand(creator);
+
+  C_AddCommand(hint_bloodcolor);
+  C_AddCommand(hint_wolfendoom);
   
   C_AddCommand(colour);
   C_AddCommand(deathmatch);

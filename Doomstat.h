@@ -100,6 +100,8 @@ extern int monkeys, default_monkeys;
 extern int bloodcolor;
 extern int prtclblood;
 
+extern char *hint_bloodcolor;
+
 // v1.1-like pitched sounds
 extern int pitched_sounds;
 
@@ -439,6 +441,9 @@ enum {
   woco_knight = 8,
   woco_any = 15
 };
+
+extern char * hint_wolfendoom;
+
 
 //=======================================================
 

@@ -105,6 +105,7 @@ struct menuitem_s
     it_automap,          // an automap colour
     it_binding,		 // haleyjd: a key binding
     it_titlegap,         // a "sping" gap item that takes title patch height into account
+    it_togglehint,       // a toggle item with a hint
     it_end,              // last menuitem in the list
   } type;
   

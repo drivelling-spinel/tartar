@@ -116,6 +116,7 @@ int monkeys, default_monkeys;
 
 int bloodcolor;
 int prtclblood;
+char * hint_bloodcolor = "";
 
 boolean cinema_pause = false; // haleyjd 08/22/01
 
@@ -135,6 +136,7 @@ int hide_weapon_on_flash;
 int wolfendoom;
 int wolf3dmode;
 int wolflooks;
+char * hint_wolfendoom = "";
 
 //----------------------------------------------------------------------------
 //
