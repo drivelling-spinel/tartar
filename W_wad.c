@@ -227,6 +227,18 @@ int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_
       return 0;
     }
 
+  if(extra == EXTRA_JUMP)
+    {
+      static char * names[] = { "DEHACKED" };
+      int i = 0;
+
+      for(i = 0 ; i < 1 ; i += 1)
+        {
+          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
+        }
+      return 0;
+    }
+
   return 1;
 }
 

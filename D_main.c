@@ -2281,25 +2281,19 @@ void A_BFGsound();
 int D_DetectAndLoadSelfie()
 {
   struct stat sbuf;
-  char filestr[256];
-  char * files[] = { "selfie.wad" };
-  int i = 0, found = 0;
+  int i = 0;
 
   selfieMode = false;
   
   *filestr = 0;
-  for(i = 0; i < 1 ; i++)
+  sprintf(filestr, "%sselfie.wad", D_DoomExeDir());
+  if(stat(filestr, &sbuf)) return 0;
+
+  if(states2[0] == states2[1])
     {
-      sprintf(filestr, "%s%s", D_DoomExeDir(), files[i]);
-      if(!stat(filestr, &sbuf)) found += 1;
+      memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
+      memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
     }
-    
-  if(found != i) return 0;
-
-
-  memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
-  memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
-  sprintf(filestr, "%s%s", D_DoomExeDir(), files[0]);
   if(W_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
   // another hack - we just happen to know that selfie overrides BFG sprites
   for(i = 0 ; i < NUMSTATES ; i += 1)
@@ -2314,6 +2308,26 @@ int D_DetectAndLoadSelfie()
   
   return 1;
 }
+
+int D_DetectAndLoadJumpwad()
+{
+  struct stat sbuf;
+  int i = 0;
+  
+  *filestr = 0;
+  sprintf(filestr, "%sjumpwad.wad", D_DoomExeDir());
+  if(stat(filestr, &sbuf)) return 0;
+  
+  if(states2[0] == states2[1])    
+    {
+      memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
+      memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
+    }
+  if(W_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
+
+  return 1;
+}
+
 
 int D_LoadWiMapsWad(const char *fname)
 {
@@ -2362,7 +2376,8 @@ int D_DetectAndLoadWiMaps()
 
 void D_DetectAndLoadExtras(void)
 {
-  if(D_DetectAndLoadFilters() + D_DetectAndLoadSelfie() + D_DetectAndLoadWiMaps())
+  //HACK: loading selfie.wad _after_ jumpwad.wad for a purpose
+  if(D_DetectAndLoadFilters() + D_DetectAndLoadJumpwad() + D_DetectAndLoadSelfie() + D_DetectAndLoadWiMaps())
     D_ReInitWadfiles();
 }
 

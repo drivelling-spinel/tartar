@@ -1747,9 +1747,11 @@ void deh_procBexCodePointers(DEHFILE *fpin, FILE* fpout, char *line, extra_file_
   char inbuffer[DEH_BUFFERMAX];
   int indexnum;
   char mnemonic[DEH_MAXKEYLEN];  // to hold the codepointer mnemonic
-  state_t *local_states = extra == EXTRA_SELFIE ? states2[1] : states2[0];
+  state_t *local_states = (extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? states2[1] : states2[0];
   int i; // looper
   boolean found; // know if we found this one during lookup or not
+
+  if(extra != EXTRA_NONE && extra != EXTRA_SELFIE && extra != EXTRA_JUMP) return;
 
   // Ty 05/16/98 - initialize it to something, dummy!
   strncpy(inbuffer,line,DEH_BUFFERMAX);
@@ -1954,8 +1956,8 @@ void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
-  state_t *local_states = extra == EXTRA_SELFIE ? states2[1] : states2[0];
-
+  state_t *local_states = (extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? states2[1] : states2[0];
+  
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 
   // killough 8/98: allow hex numbers in input:
@@ -1963,6 +1965,8 @@ void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   if (fpout) fprintf(fpout,"Processing Frame at index %d: %s\n",indexnum,key);
   if (indexnum < 0 || indexnum >= NUMSTATES)
     if (fpout) fprintf(fpout,"Bad frame number %d of %d\n",indexnum, NUMSTATES);
+
+  if(extra != EXTRA_NONE && extra != EXTRA_SELFIE && extra != EXTRA_JUMP) return;
 
   while (!dehfeof(fpin) && *inbuffer && (*inbuffer != ' '))
     {
@@ -2036,7 +2040,7 @@ void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   long value;      // All deh values are ints or longs
   int indexnum;
   int i; // looper
-  state_t *local_states = extra == EXTRA_SELFIE ? states2[1] : states2[0];
+  state_t *local_states =(extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? states2[1] : states2[0];
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
   // NOTE: different format from normal
@@ -2055,6 +2059,8 @@ void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
         fprintf(fpout,"Bad pointer number %d of %d\n",indexnum, NUMSTATES);
       return;
     }
+    
+  if(extra != EXTRA_NONE && extra != EXTRA_SELFIE && extra != EXTRA_JUMP) return;    
 
   while (!dehfeof(fpin) && *inbuffer && (*inbuffer != ' '))
     {
@@ -2234,7 +2240,7 @@ void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
-  weaponinfo_t *local_weaponinfo = extra == EXTRA_SELFIE ? weaponinfo2[1] : weaponinfo2[0];
+  weaponinfo_t *local_weaponinfo = (extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? weaponinfo2[1] : weaponinfo2[0];
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 
@@ -2245,6 +2251,8 @@ void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   if (indexnum < 0 || indexnum >= NUMWEAPONS)
     if (fpout) fprintf(fpout,"Bad weapon number %d of %d\n",
                        indexnum, NUMWEAPONS);
+
+  if(extra != EXTRA_NONE && extra != EXTRA_SELFIE && extra != EXTRA_JUMP) return;
 
   while (!dehfeof(fpin) && *inbuffer && (*inbuffer != ' '))
     {
