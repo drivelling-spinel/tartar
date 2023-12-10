@@ -89,6 +89,7 @@ subsector_t *subsectors;
 
 int      numnodes;
 node_t   *nodes;
+int      *nodepath;
 
 int      numlines;
 line_t   *lines;
@@ -463,7 +464,7 @@ void P_LoadNodes (int lump)
   
   numnodes = sz / sizeof(mapnode_t);
   nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);
-
+  nodepath = Z_Calloc (numnodes, sizeof(int), PU_LEVEL, 0);
 
   for (i=0; i<numnodes; i++)
     {
@@ -505,6 +506,7 @@ void P_LoadNodes32 (int lump)
   numnodes = (sz - 8) / sizeof(mapnodeext_t);
   nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);
   data = W_CacheLumpNum (lump, PU_STATIC) + 8;
+  nodepath = Z_Calloc (numnodes, 1, PU_LEVEL, 0);
 
   for (i=0; i<numnodes; i++)
     {

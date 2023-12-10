@@ -727,8 +727,46 @@ static void R_Subsector(int num)
 //
 // killough 5/2/98: reformatted, removed tail recursion
 
+#define push(node) (nodepath[sp++]=(node))
+#define pop() (nodepath[--sp])
+#define peek() (nodepath[sp])
+
+void R_RenderBSPNode2(int startnum)
+{
+  int sp = 0;
+  
+  push(startnum);
+  while(sp > 0)
+    {
+      int bspnum = pop();
+      
+      if(bspnum & NFX_SUBSECTOR)
+        {
+          R_Subsector(bspnum & ~NFX_SUBSECTOR);
+        }
+      else
+        {
+          node_t * node = &nodes[bspnum];
+          int side;
+
+          // Decide which side the view point is on.
+          side = R_PointOnSide(viewx, viewy, node);
+
+          // Possibly divide back space.
+          if (R_CheckBBox(node->bbox[side^1]))
+            push(node->children[side^1]);
+
+          // Recursively divide front space.
+          push(node->children[side]);      
+        }
+    }
+}
+
 void R_RenderBSPNode(int bspnum)
 {
+  R_RenderBSPNode2(bspnum);
+  return;
+ 
   while (!(bspnum & NFX_SUBSECTOR))  // Found a subsector?
     {
       node_t *bsp = &nodes[bspnum];
@@ -748,6 +786,7 @@ void R_RenderBSPNode(int bspnum)
     }
   R_Subsector(bspnum == -1 ? 0 : bspnum & ~NFX_SUBSECTOR);
 }
+
 
 //----------------------------------------------------------------------------
 //
