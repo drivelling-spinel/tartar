@@ -109,9 +109,11 @@ static void C_InitBackdrop()
    case commercial:
    case retail: 
       lumpname = "INTERPIC";
+      if(gamemission == chex) lumpname = "WIMAP0";
       break;
    case registered: 
       lumpname = "PFUB2";
+      if(gamemission == chex) lumpname = "WIMAP0";
       break;
    default: 
       lumpname = "TITLEPIC";

@@ -327,8 +327,8 @@ sfxinfo_t S_sfx[] = {
   { "mbdopn",  sg_none,  100, 0, -1, -1, 0 },
   { "mbdcls",  sg_none,  100, 0, -1, -1, 0 },
   
-  { "slf",    sg_none,   64, 0, -1, -1, 0 },
-  { "jmpxpl", sg_none,   70, 0, -1, -1, 0 }
+  { "slf",    sg_none,   100, 0, -1, -1, 0 },
+  { "noway",    sg_oof,    100, 0, -1, -1, 0, sk_oof+1 }
   
 };
 sfxinfo_t chgun=

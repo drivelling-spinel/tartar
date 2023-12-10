@@ -1191,7 +1191,7 @@ void A_TossUp(mobj_t *actor)
   if (!P_CheckSight(actor, actor->target))
     return;
 
-  S_StartSound(actor, sfx_barexp);
+  S_StartSound(actor, sfx_jump);
   actor->target->momz = 1000*FRACUNIT/actor->target->info->mass;
 }
 

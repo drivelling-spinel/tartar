@@ -117,17 +117,20 @@ void Ex_ListTapeWad()
     C_Printf(FC_GOLD "%s " FC_RED "is taped onto the WADs\n", tapestr);
 }
 
-int Ex_FindAllWads(char * dir, char *** fnames)
+int Ex_FindAllFilesByExtension(char * dir, char * ext, char *** fnames)
 {
   DIR *dirp;
   struct dirent * ent;
   char ** nms;
   int num = 0, i, l = strlen(dir) + 2;
 
+  assert(strlen(ext) == 4);
+
+ 
   dirp = opendir(dir);
   while(dirp && (ent = readdir(dirp)))
     {
-      if(ent->d_namlen >= 4 && !strnicmp(".wad", ent->d_name + ent->d_namlen - 4, 4))
+      if(ent->d_namlen >= 4 && !strnicmp(ext, ent->d_name + ent->d_namlen - 4, 4))
         num += 1;
     }
 
@@ -139,7 +142,7 @@ int Ex_FindAllWads(char * dir, char *** fnames)
       i = num;
 
       while(i && (ent = readdir(dirp)))
-        if(ent->d_namlen >= 4 && !strnicmp(".wad", ent->d_name + ent->d_namlen - 4, 4))
+        if(ent->d_namlen >= 4 && !strnicmp(ext, ent->d_name + ent->d_namlen - 4, 4))
           {
             nms[num - i] = malloc(ent->d_namlen + l);
             memset(nms[num - i], 0, ent->d_namlen + l);
@@ -154,6 +157,24 @@ int Ex_FindAllWads(char * dir, char *** fnames)
   return num;
 }
 
+
+int Ex_FindAllWads(char * dir, char *** fnames)
+{
+  return Ex_FindAllFilesByExtension(dir, ".wad", fnames);
+}
+
+int Ex_FindAllDeh(char * dir, char *** fnames)
+{
+  return Ex_FindAllFilesByExtension(dir, ".deh", fnames);
+}
+
+int Ex_FindAllBex(char * dir, char *** fnames)
+{
+  return Ex_FindAllFilesByExtension(dir, ".bex", fnames);
+}
+
+typedef int (find_all_func_t)(char *, char ***);
+find_all_func_t *find_all_funcs[] = { Ex_FindAllWads, Ex_FindAllDeh, Ex_FindAllBex };
 
 int Ex_FindFilterWads(char *** fnames)
 {
@@ -202,28 +223,34 @@ int Ex_DetectAndLoadFilters()
   return loaded;
 }
 
+
 int Ex_InsertAllFixesInDir(char * dirname)
 {
   struct stat sbuf;
-  int numfixes = 0, i;
+  int numfixes = 0, i, total = 0, e;
   char **fnames;
 
   if (!stat(dirname, &sbuf))      
     {
+    
       if(!S_ISDIR(sbuf.st_mode)) return 0;
-      numfixes = Ex_FindAllWads(dirname, &fnames);
-      if(numfixes)
+      for(e = 0 ; e < sizeof(find_all_funcs) / sizeof(*find_all_funcs) ; e += 1)
         {
-          for(i = numfixes - 1 ; i >= 0 ; i -= 1)
-          {
-            D_InsertFile(fnames[i]); 
-            free(fnames[i]);
-          }
-          free(fnames);
-        }
+          numfixes = find_all_funcs[e](dirname, &fnames);
+          if(numfixes)
+            {
+              for(i = numfixes - 1 ; i >= 0 ; i -= 1)
+              {
+                D_InsertFile(fnames[i]); 
+                free(fnames[i]);
+              }
+              free(fnames);
+              total += numfixes;
+            }
+         }
     }
 
-  return numfixes;  
+  return total;  
 }
 
 int Ex_InsertFixes(char * iwadfile, int autoload)
@@ -523,10 +550,10 @@ int Ex_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file
 
   if(extra == EXTRA_JUMP)
     {
-      static char * names[] = { "PISF", "PISG", "PLSS", "SS_START", "S_END", "S_START", "DEHACKED", "DSFIRXPL" };
+      static char * names[] = { "PISF", "PISG", "PLSS", "SS_START", "S_END", "S_START", "DEHACKED" };
       int i = 0;
 
-      for(i = 0 ; i < 8 ; i += 1)
+      for(i = 0 ; i < 7 ; i += 1)
         {
           if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
         }
@@ -568,12 +595,6 @@ int Ex_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, con
         {
           char *c = lump->name;
           c[0] = 'J'; c[1] = 'M'; c[2] = 'P';
-          return 1;
-        }
-      if(!strnicmp(lump->name, "DSFIRXPL", 8))
-        {
-          char *c = lump->name;
-          c[2] = 'J'; c[3] = 'M'; c[4] = 'P';
           return 1;
         }
     }
