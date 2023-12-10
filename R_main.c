@@ -394,7 +394,12 @@ void R_ExecuteSetViewSize (void)
   if (setblocks == 11)
     {
       scaledviewwidth = SCREENWIDTH;
-      scaledviewheight = SCREENHEIGHT;                    // killough 11/98
+      scaledviewheight = SCREENHEIGHT;                   // killough 11/98
+    }
+  else if (setblocks == 12)
+    {
+      scaledviewwidth = SCREENWIDTH;
+      scaledviewheight = EFFECTIVE_HEIGHT - ST_HEIGHT;   // killough 11/98
     }
   else
     {
@@ -484,9 +489,6 @@ void R_Free(void)
   fullcolormap = 0;
   colormaps = 0;
 
-  for (i=0 ; sprites && i<numsprites ; i++) Z_Free(sprites[i].spriteframes);
-  Z_Free(sprites);
-  sprites = 0;
 }
 
 //
@@ -760,7 +762,7 @@ VARIABLE_BOOLEAN(faux_translucency, NULL,           onoff);
 VARIABLE_BOOLEAN(water_translucency, NULL,           onoff);
 VARIABLE_INT(tran_filter_pct, NULL,             0, 100, NULL);
 VARIABLE_BOOLEAN(autodetect_hom, NULL,              yesno);
-VARIABLE_INT(screenSize, NULL,                  0, 8, NULL);
+VARIABLE_INT(screenSize, NULL,                  0, 9, NULL);
 VARIABLE_INT(zoom, NULL,                        0, 8192, NULL);
 VARIABLE_INT(usegamma, NULL,                    0, 4, NULL);
 
@@ -890,14 +892,18 @@ CONSOLE_VARIABLE(screensize, screenSize, cf_buffered)
 {
   S_StartSound(NULL,sfx_stnmov);
 
+  if(screenSize >= 8)
+  {
+     clearscreen = 1;
+     ST_Start();
+     AM_LevelInit();
+  }
+
   if(gamestate == GS_LEVEL) // not in intercam
   {
      hide_menu = 20;             // hide the menu for a few tics
-     R_SetViewSize (screenSize+3);
+     R_SetViewSize (screenSize + 3);
   }
-
-  if(screenSize == 8)        // fullscreen
-    HU_ToggleHUD();
 }
 
 CONSOLE_COMMAND(p_dumphubs, 0)

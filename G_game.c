@@ -685,6 +685,7 @@ static void G_DoLoadLevel(void)
    
    //jff 4/26/98 wake up the status bar in case were coming out of a DM demo
    // killough 5/13/98: in case netdemo has consoleplayer other than green
+   
    ST_Start();
 
    // haleyjd: code below is not reliable and definitely causes memory

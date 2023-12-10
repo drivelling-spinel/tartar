@@ -523,7 +523,7 @@ default_t defaults[] = {
     // changed values down 3
     "screensize",
     &screenSize, NULL,
-    7, {0,8}, dt_number, ss_none, wad_no,
+    7, {0,9}, dt_number, ss_none, wad_no,
     "initial play screen size"
   },
 

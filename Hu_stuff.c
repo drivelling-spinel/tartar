@@ -326,8 +326,7 @@ void HU_CrossHairDraw()
   // where to draw??
   
   drawx = SCREENWIDTH/2 - crosshair->width/2;
-  drawy = scaledviewheight == SCREENHEIGHT ? SCREENHEIGHT/2 :
-    (SCREENHEIGHT-ST_HEIGHT)/2;
+  drawy = (screenSize >= 8) ? SCREENHEIGHT/2 : (SCREENHEIGHT-ST_HEIGHT)/2;
   
   // check for bfglook: make crosshair face forward
 
@@ -560,7 +559,7 @@ void HU_CentreMsgTimed(char *s, int clocks)
 
 textwidget_t hu_leveltime =
 {
-  SCREENWIDTH-60, SCREENHEIGHT-ST_HEIGHT-8,      // x, y
+  SCREENWIDTH-60, 0,      // x, y
   0,                                             // normal font
   NULL,                                          // null msg
   HU_LevelTimeHandler                            // handler
@@ -583,7 +582,8 @@ void HU_LevelTimeHandler(struct textwidget_s *widget)
   sprintf(timestr, "%02i:%02i:%02i", seconds/3600, (seconds%3600)/60,
 	  seconds%60);
   
-  hu_leveltime.message = timestr;        
+  hu_leveltime.message = timestr;
+  hu_leveltime.y = EFFECTIVE_HEIGHT-ST_HEIGHT-8;        
 }
 
 ///////////////////////////////////////////
@@ -593,7 +593,7 @@ void HU_LevelTimeHandler(struct textwidget_s *widget)
 
 textwidget_t hu_levelname =
 {
-  0, SCREENHEIGHT-ST_HEIGHT-8,       // x,y 
+  0, 0,       // x,y 
   0,                                 // normal font
   NULL,                              // init to nothing
   HU_LevelNameHandler                // handler
@@ -602,6 +602,7 @@ textwidget_t hu_levelname =
 void HU_LevelNameHandler(struct textwidget_s *widget)
 {
   hu_levelname.message = automapactive ? levelname : NULL;
+  hu_levelname.y = EFFECTIVE_HEIGHT-ST_HEIGHT -8;
 }
 
 ///////////////////////////////////////////////

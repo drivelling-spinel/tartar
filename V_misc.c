@@ -475,16 +475,15 @@ void V_ClassicFPSDrawer()
 //
 // killough 11/98: rewritten to support hires
 
-
 void V_Init(void)
 {
-  int size = (SCREENWIDTH << hires) * (CORRECT_ASPECT(SCREENHEIGHT) << hires);
+  int known_height = SCREEN_LOWEST > 0 ? SCREEN_LOWEST : SCREENHEIGHT;
+  int size = (SCREENWIDTH << hires) * (CORRECT_ASPECT(known_height) << hires);
   int rsize = RESULTING_SCALE - hires;
   static byte *s;
 
   if (s) free(s);
   if (screens[0]) free(screens[0]);
-
 
   screens[3] = (screens[2] = (screens[1] = s = calloc(size,2 + (1 << rsize << rsize))) + size) + (size <<rsize << rsize);
 
@@ -506,12 +505,12 @@ static void V_TileFlat(byte *back_src, byte *back_dest)
   int x, y;
   byte *src = back_src;          // copy of back_src
   
-  V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
+  V_MarkRect (0, 0, SCREENWIDTH, EFFECTIVE_HEIGHT);
   
   if (hires)       // killough 11/98: hires support
 #if 0              // this tiles it in hires
                    // has not been adjusted to hires > 1
-    for (y = 0 ; y < SCREENHEIGHT*2 ; src = ((++y & 63)<<6) + back_src)
+    for (y = 0 ; y < EFFECTIVE_HEIGHT*2 ; src = ((++y & 63)<<6) + back_src)
       for (x = 0 ; x < SCREENWIDTH*2/64 ; x++)
 	{
 	  memcpy (back_dest,back_src+((y & 63)<<6),64);
@@ -520,7 +519,7 @@ static void V_TileFlat(byte *back_src, byte *back_dest)
 #endif
   
   // while this pixel-doubles it
-  for (y = 0 ; y < SCREENHEIGHT ; src = ((++y & 63)<<6) + back_src,
+  for (y = 0 ; y < EFFECTIVE_HEIGHT ; src = ((++y & 63)<<6) + back_src,
          back_dest += ((SCREENWIDTH<<hires)<<hires) - (SCREENWIDTH<<hires))
     for (x = 0 ; x < SCREENWIDTH/64 ; x++)
       {
@@ -538,7 +537,7 @@ static void V_TileFlat(byte *back_src, byte *back_dest)
         back_dest += (64 << hires);
       }
   else
-    for (y = 0 ; y < SCREENHEIGHT ; src = ((++y & 63)<<6) + back_src)
+    for (y = 0 ; y < EFFECTIVE_HEIGHT ; src = ((++y & 63)<<6) + back_src)
       for (x = 0 ; x < SCREENWIDTH/64 ; x++)
 	{
 	  memcpy (back_dest,back_src+((y & 63)<<6),64);

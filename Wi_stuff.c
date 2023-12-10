@@ -498,7 +498,7 @@ static void WI_slamBackground(void)
   if(realbackdrop)
     R_RenderPlayerView (players+displayplayer, &intercam);
   else
-    V_CopyRect(0, 0, 1, SCREENWIDTH, SCREENHEIGHT, 0, 0, 0);  // killough 11/98
+    V_CopyRect(0, 0, 1, SCREENWIDTH, EFFECTIVE_HEIGHT, 0, 0, 0);  // killough 11/98
 }
 
 // ====================================================================
@@ -799,7 +799,7 @@ WI_drawNum
     }
 
   // if non-number, do not draw it
-  if (n == 1994)
+  if (n == 2023)
     return 0;
 
   // draw the new number

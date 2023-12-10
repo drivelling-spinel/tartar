@@ -588,7 +588,7 @@ void AM_LevelInit(void)
   // killough 11/98: ... finally add hires support :)
 
   f_w = (SCREENWIDTH) << hires;
-  f_h = (SCREENHEIGHT-ST_HEIGHT) << hires;
+  f_h = (EFFECTIVE_HEIGHT-ST_HEIGHT) << hires;
 
   AM_findMinMaxBoundaries();
   scale_mtof = FixedDiv(min_scale_mtof, (int) (0.7*FRACUNIT));

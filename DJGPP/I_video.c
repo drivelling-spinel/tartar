@@ -1,4 +1,4 @@
-// screen_hEmacs style mode select   -*- C++ -*-
+// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // $Id: i_video.c,v 1.3 2000-08-12 21:29:28 fraggle Exp $
@@ -238,6 +238,7 @@ int show_fps;
 int scale_to_hires;
 int scale_aspect;
 int fps;
+int clearscreen;
 
 int in_graphics_mode;
 int in_page_flip, in_hires, linear;
@@ -323,10 +324,18 @@ void I_FinishUpdate(void)
   // int c=I_GetTime_RealTime();
   // int d=I_GetTime_RealTime();
 
-   int ymax=CORRECT_ASPECT(SCREENHEIGHT), size;
+   int ymax=CORRECT_ASPECT(EFFECTIVE_HEIGHT), size;
    int res_scale = RESULTING_SCALE;
    byte * swap = screens[0];
+   int effective_band = blackband;
    if (noblit || !in_graphics_mode) return;
+     
+   if(in_hires && clearscreen)
+   {
+     clearscreen = 0;
+     if (linear) vesa_clear_pages_LFB   (2, 0x08);      // may be garbage left in video memory, 
+     else vesa_clear_pages_banked(2, 0x08);      // which will    
+   }
 
  //if (v12_compat)    M_DrawText2(1,10,CR_BLUE,true,"V12_COMPAT");   // debug
  //if (compatibility) M_DrawText2(1,16,CR_BLUE,true,"compatibility");// debug 
@@ -349,13 +358,15 @@ void I_FinishUpdate(void)
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
    size = in_hires ? (SCREENWIDTH<<res_scale)*(ymax<<res_scale) : SCREENWIDTH*ymax;
 
+   if(screenSize > 8) effective_band = 0;
+
    if (in_hires && (SCALING_TO_HIRES || CORRECTING_ASPECT))
      {
        I_ReadScreen(screens[2]);
        screens[0] = screens[2];
        screens[2] = swap;
      }
-
+  
    if (in_page_flip)
       if (!in_hires && (current_mode<256)) // Transfer from system memory to planar 'mode X' video memory:
       {
@@ -366,21 +377,22 @@ void I_FinishUpdate(void)
             // Pentium Pros and above need special consideration in the planar multiplexing code, to avoid partial stalls. killough
          } else screen_base_addr=0;
 		 dascreen=(byte *) __djgpp_conventional_base + 0xA0000 + screen_base_addr;
+		 
          #ifdef CALT // GB 2014: option for C variant of blast function
          if (noasmxparm)                                   blast_C         (dascreen, *screens, ymax);
          else 
          #endif // CALT
-         if (cpu_family >= 6 || asmp6parm) {if (ymax==200) ppro_blast      (dascreen, *screens);  // PPro, PII
-                                            else           ppro_blast_nobar(dascreen, *screens);}
-         else                              {if (ymax==200) blast           (dascreen, *screens);  // Other CPUs, e.g. 486
-                                            else           blast_nobar     (dascreen, *screens);}
+         if (cpu_family >= 6 || asmp6parm) {/*if (ymax==200) */ ppro_blast      (dascreen, *screens);  // PPro, PII
+                                            /*else           ppro_blast_nobar(dascreen, *screens); */}
+         else                              {/*if (ymax==200) */ blast           (dascreen, *screens);  // Other CPUs, e.g. 486
+                                            /*else           blast_nobar     (dascreen, *screens); */}
          outportw(0x3d4, screen_base_addr | 0x0c);              // page flip 
          return;
       } 
       else scroll_offset = scroll_offset ? 0 : screen_h;        // hires hardware page-flipping (VBE 2.0)
    // killough 8/15/98: no page flipping; use other methods:
    else if (use_vsync && !timingdemo && current_mode<256) wait_vsync(); // killough 2/7/98: use vsync() to prevent screen breaks.
-
+   
    if (!linear || safeparm)
    {                                                            // note: divide scroll offset /2 to test if pageflipping occurs
       if (current_mode>255) vesa_blitscreen_banked(screens[0], size, scroll_offset); // VESA Banked (slower)
@@ -389,7 +401,7 @@ void I_FinishUpdate(void)
    else
    {  // 1/16/98 killough: optimization based on CPU type:
       if (current_mode>255) 
-    	 dascreen = (byte *) screen_base_addr + scroll_offset*mode_BPS + blackband*mode_BPS; // VESA LFB access
+         dascreen = (byte *) screen_base_addr + scroll_offset*mode_BPS + effective_band*mode_BPS; // VESA LFB access
            if (cpu_family >= 6 || asmp6parm) ppro_blit(dascreen,size);       // PPro, PII
       else if (cpu_family >= 5) pent_blit(dascreen,size);       // Pentium (GB 2014: not used for Cx5x86, but it is a little slower anyways)
       else                      memcpy(dascreen,screens[0],size); // Others
@@ -412,7 +424,7 @@ void blitScreenAspectScaled(const byte * scr)
    register byte *dest = scr;
    register const byte *source = *screens;
    int w = SCREENWIDTH << hires;
-   int h = SCREENHEIGHT << hires;
+   int h = EFFECTIVE_HEIGHT << hires;
    int q;
    byte z = 2;
    while (h > 0)
@@ -468,7 +480,7 @@ void blitScreenAspectCorrected(const byte * scr)
 {
     int i;
     int w = (SCREENWIDTH << RESULTING_SCALE);
-    int sz = (CORRECT_ASPECT(SCREENHEIGHT) << RESULTING_SCALE) / 10;
+    int sz = (CORRECT_ASPECT(EFFECTIVE_HEIGHT) << RESULTING_SCALE) / 10;
     const byte * restore = screens[0];
     for ( i = 0 ; i < sz ; i ++ )
       {
@@ -545,7 +557,7 @@ void blitScreenScaled(const byte * scr)
    register byte *dest = scr;
    register const byte *source = *screens;
    int w = SCREENWIDTH << hires;
-   int h = SCREENHEIGHT << hires;
+   int h = EFFECTIVE_HEIGHT << hires;
    while (h > 0)
      {
        register int count = w;
@@ -605,7 +617,7 @@ void I_ReadScreen(byte *scr)
     }
   else
     {
-      int size = (SCREENWIDTH<<hires)*(SCREENHEIGHT<<hires);
+      int size = (SCREENWIDTH<<hires)*(EFFECTIVE_HEIGHT<<hires);
       // 1/18/98 killough: optimized based on CPU type:
          if (cpu_family >= 6 || asmp6parm) ppro_blit(scr,size); // PPro or PII
       else if (cpu_family >= 5) pent_blit(scr,size); // Pentium
@@ -717,7 +729,7 @@ static void I_InitGraphicsMode(void)
   int hiresfail=0;
   char safestring[]="SAFE MODE / ";     
   if (!safeparm) safestring[0]='\0';
-  blackband = 0; 
+  blackband = 0;
 
   // PREPARATION AT FIRST RUN
   if (!in_graphics_mode) 
@@ -852,6 +864,7 @@ static void I_InitGraphicsMode(void)
   if (!in_graphics_mode || (hires && !in_hires)) V_Init(); // required buffer size has changed
   scroll_offset = 0;
   in_graphics_mode = 1;
+  clearscreen = 0;
   in_textmode = false;
   in_page_flip = page_flip;
   in_hires = RESULTING_SCALE;
@@ -860,7 +873,7 @@ static void I_InitGraphicsMode(void)
   I_ResetPalette();
   modeswitched=1; 
   if (current_mode==0x12) sprintf(mode_string,"%sMODE:X SIZE:%dx%d LFB:%s CPU:%d VBE:%d",  safestring,               screen_w, screen_h, linear ? "true" : "false", cpu_family, vesa_version);  
-  else                    sprintf(mode_string,"%sMODE:%xh SIZE:%dx%d LFB:%s CPU:%d VBE:%d",safestring, current_mode, screen_w, screen_h, linear ? "true" : "false", cpu_family, vesa_version); 
+  else                    sprintf(mode_string,"%sMODE:%xh SIZE:%dx%d LFB:%s CPU:%d VBE:%d",safestring, current_mode, screen_w, screen_h, linear ? "true" : "false", cpu_family, vesa_version);
 }
 
 //-----------------------------------------------------------------------------
@@ -884,7 +897,7 @@ void I_ResetScreen(void)
   if (gamestate == GS_INTERMISSION)
     {
       WI_DrawBackground();
-      V_CopyRect(0, 0, 1, SCREENWIDTH, SCREENHEIGHT, 0, 0, 0);
+      V_CopyRect(0, 0, 1, SCREENWIDTH, EFFECTIVE_HEIGHT, 0, 0, 0);
     }
 
   Z_CheckHeap();

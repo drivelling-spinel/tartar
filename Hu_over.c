@@ -551,8 +551,9 @@ void HU_OverlaySetup()
 void HU_OverlayDraw()
 {
   int i;
-  
-  if(viewheight != (SCREENHEIGHT<<hires)) return;  // fullscreen only
+
+  if(screenSize != 8) return; // fullscreen only
+  if(gamestate != GS_LEVEL) return;                                                                      
   if(automapactive) return;
   if(!hud_enabled) return;
   

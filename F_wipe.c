@@ -45,7 +45,7 @@ static char *start_screen[MAX_SCREENWIDTH] = {0};
 // y co-ordinate of various columns
 static int worms[SCREENWIDTH];
 
-#define wipe_scrheight (SCREENHEIGHT<<hires)
+#define wipe_scrheight (EFFECTIVE_HEIGHT<<hires)
 #define wipe_scrwidth (SCREENWIDTH<<hires)
 
 boolean        inwipe = false;

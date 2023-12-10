@@ -32,13 +32,23 @@
 #include "doomtype.h"
 #include "d_event.h"
 #include "r_defs.h"
+#include "i_video.h"
 
 // Size of statusbar.
 // Now sensitive for scaling.
 
+typedef enum
+{
+  ST_NORMAL,
+  ST_FULL_OFF,
+  ST_FULL_ON
+} st_fullscreen_style;
+
+#define ST_FS_STYLE (screenSize >= 8 ? screenSize > 8 ? ST_FULL_ON : ST_FULL_OFF : ST_NORMAL)
+
 #define ST_HEIGHT (32*SCREEN_MUL)
 #define ST_WIDTH  SCREENWIDTH
-#define ST_Y      (SCREENHEIGHT - ST_HEIGHT)
+#define ST_Y      (EFFECTIVE_HEIGHT - ST_HEIGHT)
 
 //
 // STATUS BAR
@@ -51,7 +61,7 @@ boolean ST_Responder(event_t* ev);
 void ST_Ticker(void);
 
 // Called by main loop.
-void ST_Drawer(boolean fullscreen, boolean refresh);
+void ST_Drawer(st_fullscreen_style fullscreen, boolean refresh);
 
 // Called when the console player is spawned on each level.
 void ST_Start(void);

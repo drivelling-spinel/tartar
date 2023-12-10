@@ -230,10 +230,8 @@ void V_CopyRect(int srcx, int srcy, int srcscrn, int width,
   if (srcx<0
       ||srcx+width >SCREENWIDTH
       || srcy<0
-      || srcy+height>SCREENHEIGHT
       ||destx<0||destx+width >SCREENWIDTH
       || desty<0
-      || desty+height>SCREENHEIGHT
       || (unsigned)srcscrn>4
       || (unsigned)destscrn>4)
     I_Error ("Bad V_CopyRect");
@@ -302,7 +300,7 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
   // haleyjd 01/13/02: removed #ifdef RANGECHECK and demoted
   // from an I_Error call to a player message 
   if(x < 0 || x + SHORT(patch->width) > SCREENWIDTH || 
-     y < 0 || y + SHORT(patch->height) > SCREENHEIGHT || 
+     y < 0 || 
      (unsigned)scrn>4)
   {
      C_Printf(
@@ -445,7 +443,7 @@ void V_DrawPatchUnscaled(int x, int y, int scrn, patch_t *patch)
   // haleyjd 01/12/02: removed #ifdef RANGECHECK, demoted to a
   // player message
   if(x < 0 || x + SHORT(patch->width) > (SCREENWIDTH << hires) || 
-     y < 0 || y + SHORT(patch->height) > (SCREENHEIGHT << hires) || 
+     y < 0 || 
      (unsigned)scrn>4)
   {
      C_Printf(
@@ -586,7 +584,7 @@ void V_DrawPatchTranslated(int x, int y, int scrn, patch_t *patch,
   // haleyjd 01/13/02: removed #ifdef RANGECHECK, demoted to a
   // player message
   if(x < 0 || x + SHORT(patch->width) > SCREENWIDTH || 
-     y < 0 || y + SHORT(patch->height) > SCREENHEIGHT || 
+     y < 0 || 
      (unsigned)scrn>4)
   {
      C_Printf(
@@ -759,7 +757,7 @@ void V_DrawPatchTL(int x, int y, int scrn, patch_t *patch,
   // haleyjd 01/13/02: removed #ifdef RANGECHECK, demoted to a
   // player message
   if(x < 0 || x + SHORT(patch->width) > SCREENWIDTH || 
-     y < 0 || y + SHORT(patch->height) > SCREENHEIGHT || 
+     y < 0 || 
      (unsigned)scrn>4)
   {
      C_Printf(
@@ -1002,7 +1000,6 @@ void V_DrawBlock(int x, int y, int scrn, int width, int height, byte *src)
   if (x<0
       ||x+width >SCREENWIDTH
       || y<0
-      || y+height>SCREENHEIGHT
       || (unsigned)scrn>4 )
     I_Error ("Bad V_DrawBlock");
 #endif
@@ -1062,7 +1059,6 @@ void V_GetBlock(int x, int y, int scrn, int width, int height, byte *dest)
   if (x<0
       ||x+width >SCREENWIDTH
       || y<0
-      || y+height>SCREENHEIGHT
       || (unsigned)scrn>4 )
     I_Error ("Bad V_DrawBlock");
 #endif

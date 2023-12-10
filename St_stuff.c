@@ -63,7 +63,7 @@ rcsid[] = "$Id: st_stuff.c,v 1.46 1998/05/06 16:05:40 jim Exp $";
 #define ST_X2                   104
 
 #define ST_FX                   143
-#define ST_FY                   169
+#define ST_FY                   (ST_Y + 1)
 
 // Should be set to patch width
 //  for tall numbers later on
@@ -77,7 +77,7 @@ rcsid[] = "$Id: st_stuff.c,v 1.46 1998/05/06 16:05:40 jim Exp $";
 #define ST_DEADFACE             (ST_GODFACE+1)
 
 #define ST_FACESX               143
-#define ST_FACESY               168
+#define ST_FACESY               (ST_Y + 0)
 
 #define ST_EVILGRINCOUNT        (2*TICRATE)
 #define ST_STRAIGHTFACECOUNT    (TICRATE/2)
@@ -99,73 +99,73 @@ rcsid[] = "$Id: st_stuff.c,v 1.46 1998/05/06 16:05:40 jim Exp $";
 // AMMO number pos.
 #define ST_AMMOWIDTH            3
 #define ST_AMMOX                44
-#define ST_AMMOY                171
+#define ST_AMMOY                (ST_Y + 3)
 
 // HEALTH number pos.
 #define ST_HEALTHWIDTH          3
 #define ST_HEALTHX              90
-#define ST_HEALTHY              171
+#define ST_HEALTHY              (ST_Y + 3)
 
 // Weapon pos.
 #define ST_ARMSX                111
-#define ST_ARMSY                172
+#define ST_ARMSY                (ST_Y + 4)
 #define ST_ARMSBGX              104
-#define ST_ARMSBGY              168
+#define ST_ARMSBGY              (ST_Y + 0)
 #define ST_ARMSXSPACE           12
 #define ST_ARMSYSPACE           10
 
 // Frags pos.
 #define ST_FRAGSX               138
-#define ST_FRAGSY               171
+#define ST_FRAGSY               (ST_Y + 3)
 #define ST_FRAGSWIDTH           2
 
 // ARMOR number pos.
 #define ST_ARMORWIDTH           3
 #define ST_ARMORX               221
-#define ST_ARMORY               171
+#define ST_ARMORY               (ST_Y + 3)
 
 // Key icon positions.
 #define ST_KEY0WIDTH            8
 #define ST_KEY0HEIGHT           5
 #define ST_KEY0X                239
-#define ST_KEY0Y                171
+#define ST_KEY0Y                (ST_Y + 3)
 #define ST_KEY1WIDTH            ST_KEY0WIDTH
 #define ST_KEY1X                239
-#define ST_KEY1Y                181
+#define ST_KEY1Y                (ST_Y + 13)
 #define ST_KEY2WIDTH            ST_KEY0WIDTH
 #define ST_KEY2X                239
-#define ST_KEY2Y                191
+#define ST_KEY2Y                (ST_Y + 23)
 
 // Ammunition counter.
 #define ST_AMMO0WIDTH           3
 #define ST_AMMO0HEIGHT          6
 #define ST_AMMO0X               288
-#define ST_AMMO0Y               173
+#define ST_AMMO0Y               (ST_Y + 5)
 #define ST_AMMO1WIDTH           ST_AMMO0WIDTH
 #define ST_AMMO1X               288
-#define ST_AMMO1Y               179
+#define ST_AMMO1Y               (ST_Y + 11)
 #define ST_AMMO2WIDTH           ST_AMMO0WIDTH
 #define ST_AMMO2X               288
-#define ST_AMMO2Y               191
+#define ST_AMMO2Y               (ST_Y + 23)
 #define ST_AMMO3WIDTH           ST_AMMO0WIDTH
 #define ST_AMMO3X               288
-#define ST_AMMO3Y               185
+#define ST_AMMO3Y               (ST_Y + 17)
 
 // Indicate maximum ammunition.
 // Only needed because backpack exists.
 #define ST_MAXAMMO0WIDTH        3
 #define ST_MAXAMMO0HEIGHT       5
 #define ST_MAXAMMO0X            314
-#define ST_MAXAMMO0Y            173
+#define ST_MAXAMMO0Y            (ST_Y + 5)
 #define ST_MAXAMMO1WIDTH        ST_MAXAMMO0WIDTH
 #define ST_MAXAMMO1X            314
-#define ST_MAXAMMO1Y            179
+#define ST_MAXAMMO1Y            (ST_Y + 11)
 #define ST_MAXAMMO2WIDTH        ST_MAXAMMO0WIDTH
 #define ST_MAXAMMO2X            314
-#define ST_MAXAMMO2Y            191
+#define ST_MAXAMMO2Y            (ST_Y + 23)
 #define ST_MAXAMMO3WIDTH        ST_MAXAMMO0WIDTH
 #define ST_MAXAMMO3X            314
-#define ST_MAXAMMO3Y            185
+#define ST_MAXAMMO3Y            (ST_Y + 17)
 
 // killough 2/8/98: weapon info position macros UNUSED, removed here
 
@@ -540,7 +540,7 @@ int sts_traditional_keys; // killough 2/28/98: traditional status bar keys
 
 void ST_updateWidgets(void)
 {
-  static int  largeammo = 1994; // means "n/a"
+  static int  largeammo = 2023; // means "n/a"
   int         i;
 
   // must redirect the pointer if the ready weapon has changed.
@@ -725,9 +725,9 @@ void ST_diffDraw(void)
   ST_drawWidgets(false);
 }
 
-void ST_Drawer(boolean fullscreen, boolean refresh)
+void ST_Drawer(st_fullscreen_style fullscreen, boolean refresh)
 {
-  st_statusbaron = !fullscreen || automapactive;
+  st_statusbaron = (fullscreen != ST_FULL_OFF) || automapactive;
   st_firsttime = st_firsttime || refresh;
 
   ST_doPaletteStuff();  // Do red-/gold-shifts from damage/items
@@ -735,7 +735,7 @@ void ST_Drawer(boolean fullscreen, boolean refresh)
           // sf: draw nothing in fullscreen
           // tiny bit faster and also removes the problem of status bar
           // percent '%' signs being drawn in fullscreen
-  if(fullscreen && !automapactive) return;
+  if(fullscreen == ST_FULL_OFF && !automapactive) return;
 
   if (st_firsttime)
     ST_doRefresh();     // If just after ST_Start(), refresh all

@@ -216,12 +216,22 @@ void D_ProcessEvents (void)
     {
       if((events+eventtail)->type == ev_keydown && (events+eventtail)->data1 == KEYD_ENTER)
         i = 0;
-     
-      if(!C_Responder(events+eventtail))
-        if(!ST_Responder(events+eventtail))
-          if (!MN_Responder(events+eventtail))
-            G_Responder(events+eventtail);
-    }
+        
+      if(menuactive) 
+      {
+        if (!MN_Responder(events+eventtail))
+          if(!C_Responder(events+eventtail))
+            if(!ST_Responder(events+eventtail))
+              G_Responder(events+eventtail);
+      }
+      else
+      {
+        if(!C_Responder(events+eventtail))
+          if(!ST_Responder(events+eventtail))
+            if (!MN_Responder(events+eventtail))
+              G_Responder(events+eventtail);
+      }
+    }  
 }
 
 //
@@ -280,7 +290,7 @@ void D_Display (void)
           R_RenderPlayerView (&players[displayplayer], camera);
       }
 
-      ST_Drawer(scaledviewheight == 200, redrawsbar);    // killough 11/98
+      ST_Drawer(ST_FS_STYLE, redrawsbar);    // killough 11/98
       HU_Drawer();
       if(currentdialog)
 	 DLG_Drawer();

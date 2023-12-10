@@ -1,8 +1,8 @@
 ############################################################################
 # Eternity Makefile
  
-#MODE = RELEASE
-MODE = DEBUG
+MODE = RELEASE
+#MODE = DEBUG
 O = $(O_$(MODE))
 O_RELEASE = obj
 O_DEBUG = objdebug
@@ -39,12 +39,13 @@ CFLAGS_COMMON=-Wall
 CFLAGS_NEWFEATURES=-DDOGS -DTRANWATER -DFAUXTRAN
         
 # debug options
-#CFLAGS_DEBUG=-g -O2 -DRANGECHECK -DINSTRUMENTED -DZONEIDCHECK -DCHECKHEAP
 CFLAGS_DEBUG=-g -O2 -DRANGECHECK -DINSTRUMENTED -DZONEIDCHECK
+# -DCHECKHEAP
 LDFLAGS_DEBUG=
         
 # optimized (release) options
-CFLAGS_RELEASE=-DRANGECHECK -O3 -ffast-math -fomit-frame-pointer -m486 -mreg-alloc=adcbSDB
+CFLAGS_RELEASE=-O3 -ffast-math -fomit-frame-pointer -m486 -mreg-alloc=adcbSDB -DZONEIDCHECK
+# -DRANGECHECK 
 LDFLAGS_RELEASE=
 # -s
        
@@ -762,7 +763,7 @@ $(O)/st_lib.o: st_lib.c doomdef.h z_zone.h m_swap.h version.h doomstat.h \
  doomdata.h doomtype.h d_net.h d_player.h d_items.h p_pspr.h m_fixed.h \
  i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h p_skin.h \
  sounds.h st_stuff.h d_event.h r_defs.h v_video.h r_data.h r_state.h \
- p_chase.h v_misc.h w_wad.h st_lib.h r_main.h
+ p_chase.h v_misc.h w_wad.h st_lib.h r_main.h i_video.h
  
 $(O)/st_stuff.o: st_stuff.c doomdef.h z_zone.h m_swap.h version.h \
  doomstat.h doomdata.h doomtype.h d_net.h d_player.h d_items.h \

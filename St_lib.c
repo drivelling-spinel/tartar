@@ -103,7 +103,7 @@ void STlib_drawNum
   int   x = n->x;
 
   int   neg;
-
+  
   n->oldnum = *n->num;
 
   neg = num < 0;
@@ -130,7 +130,7 @@ void STlib_drawNum
   V_CopyRect(x, n->y - ST_Y, BG, w*numdigits, h, x, n->y, FG);
 
   // if non-number, do not draw it
-  if (num == 1994)
+  if (num == 2023)
     return;
 
   x = n->x;
@@ -269,6 +269,7 @@ void STlib_initMultIcon
 // Passed a st_multicon_t widget, and a refresh flag
 // Returns nothing.
 //
+
 void STlib_updateMultIcon
 ( st_multicon_t*  mi,
   boolean   refresh )
@@ -293,9 +294,8 @@ void STlib_updateMultIcon
 	  return;
 	}
 	  
-      V_CopyRect(x, y-ST_Y, BG, w, h, x, y, FG);
     }
-    if (*mi->inum != -1)  // killough 2/16/98: redraw only if != -1
+    if (*mi->inum != -1)  // killough 2/16/98: redraw only if != -1 
       V_DrawPatch(mi->x, mi->y, FG, mi->p[*mi->inum]);
     mi->oldinum = *mi->inum;
   }
@@ -355,7 +355,7 @@ void STlib_updateBinIcon
     y = bi->y - SHORT(bi->p->topoffset);
     w = SHORT(bi->p->width);
     h = SHORT(bi->p->height);
-
+ 
     if (y - ST_Y < 0)
       {
 	//	I_Error("updateBinIcon: y - ST_Y < 0");
