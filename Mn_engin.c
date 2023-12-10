@@ -78,7 +78,7 @@ static char input_buffer[128] = "";
 
         // gap from variable description to value
 #define GAP 20
-#define background_flat "FLOOR4_8"
+#define background_flat (gamemission == cod || EternityMode ? "FLOOR4_8" : "FLOOR4_6")
 #define SKULL_HEIGHT 19
 #define BLINK_TIME 8
 
