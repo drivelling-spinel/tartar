@@ -743,6 +743,7 @@ boolean MN_Responder (event_t *ev)
 	    // get input for new value
 	    input_command = C_GetCmdForName(menuitem->data);
 	    input_buffer[0] = 0;             // clear input buffer
+	    if(menuitem->var) strncpy(input_buffer, C_VariableStringValue(menuitem->var), sizeof(input_buffer) - 1);
 	    break;
 	  }
 

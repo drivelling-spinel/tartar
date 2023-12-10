@@ -71,6 +71,7 @@ char *mn_wadname;            // wad to load
 
 char empty_slot[] = "empty slot";
 char *savegamenames[SAVESLOTS];
+byte savegamestates[SAVESLOTS];
 
 void MN_InitMenus()
 {
@@ -816,9 +817,9 @@ void MN_ReadSaveStrings(void)
   for (i=0; i<SAVESLOTS; i++)
     {
       char name[PATH_MAX+1];    // killough 3/22/98
-      char description[SAVESTRINGSIZE]; // sf
+      char description[SAVESTRINGSIZE+1]; // sf
       FILE *fp;  // killough 11/98: change to use stdio
-
+      description[0] = 0;
       G_SaveGameName(name, i);
 
       // haleyjd: fraggle got rid of this - perhaps cause of the crash?
@@ -829,16 +830,19 @@ void MN_ReadSaveStrings(void)
 
       fp = fopen(name,"rb");
       if (!fp)
-	{   // Ty 03/27/98 - externalized:
+        {   // Ty 03/27/98 - externalized:
           // haleyjd
           if(savegamenames[i]) Z_Free(savegamenames[i]);
           savegamenames[i] = Z_Strdup("empty slot", PU_STATIC, 0);
-	  continue;
-	}
+          savegamestates[i] = 0;
+          continue;
+        }
 
       fread(description, SAVESTRINGSIZE, 1, fp);
+      description[SAVESTRINGSIZE] = 0;
       if(savegamenames[i]) Z_Free(savegamenames[i]);
       savegamenames[i] = Z_Strdup(description, PU_STATIC, 0);  // haleyjd
+      savegamestates[i] = 1;
       fclose(fp);
     }
 }
@@ -912,8 +916,7 @@ void MN_LoadGameDrawer()
   // this is lame
   for(i=0, y=2; i<SAVESLOTS; i++, y+=2)  // haleyjd
     {
-      menu_loadgame.menuitems[y].description =
-	savegamenames[i] ? savegamenames[i] : empty_slot;
+      menu_loadgame.menuitems[y].description = savegamenames[i];
     }
 }
 
@@ -932,7 +935,6 @@ CONSOLE_COMMAND(mn_loadgame, 0)
 	       "while recording a demo!\n\n"PRESSKEY);
       return;
    }
-   
    MN_ReadSaveStrings();  // get savegame descriptions
    MN_StartMenu(&menu_loadgame);
 }
@@ -947,7 +949,7 @@ CONSOLE_COMMAND(mn_load, 0)
    
    slot = atoi(c_argv[0]);
    
-   if(savegamenames[slot] == empty_slot)
+   if(!savegamestates[slot])
       return;     // empty slot
    
    G_SaveGameName(name, slot);
