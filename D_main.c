@@ -1306,7 +1306,8 @@ static void D_ProcessDehInWad(int i, extra_file_t extra)
 {
   if (i >= 0)
     {
-      if (!strncasecmp(lumpinfo[i]->name, "dehacked", 8) && lumpinfo[i]->namespace == ns_global)
+      if (!strncasecmp(lumpinfo[i]->name, "dehacked", 8) && lumpinfo[i]->namespace == ns_global
+        && W_LumpLength(i) > 0)
  	      ProcessExtraDehFile(extra, NULL, D_dehout(), i);
     }
 }
