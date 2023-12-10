@@ -947,7 +947,7 @@ CONSOLE_COMMAND(p_dumphubs, 0)
 
 VARIABLE_BOOLEAN(remove_slime_trails, NULL, onoff);
 
-CONSOLE_VARIABLE(p_rmslime, remove_slime_trails, cf_buffered)
+CONSOLE_VARIABLE(p_rmslime, remove_slime_trails, 0)
 {
   C_Printf("p_rmslime change will take effect on next level start");
 }

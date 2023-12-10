@@ -1628,7 +1628,7 @@ default_t defaults[] = {
   {
     "remove_slime_trails",
     &remove_slime_trails, NULL,
-    0, {0,1}, dt_number, ss_none, wad_yes,
+    1, {0,1}, dt_number, ss_none, wad_yes,
     "Whether to invoke slime trale removal code originally from MBF"
   },
 

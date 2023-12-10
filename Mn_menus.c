@@ -1536,6 +1536,7 @@ menu_t menu_etccompat =
     {it_toggle,   "Disable SMMU coloured lighting",         "comp_clighting"},   
     {it_toggle,   "Disable support for tall textures",      "comp_talltex"},   
     {it_toggle,   "Make Wolfendoom closer to Wolf3D",       "wolfendoom"},   
+    {it_toggle,   "Remove slime trails (Firelines way)",    "p_rmslime"},
     {it_end},
   },
   270, 1,               // x, y
