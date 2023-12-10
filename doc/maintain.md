@@ -23,10 +23,10 @@ Loook for the WAD named KDiKDi_A.WAD in GOODIES\TAPE and put it into TAPE direct
 
 ###### New kind of distribution package for Tartar
 
-For the maintenance release I am introducing an experimental package that includes Tartar preconfigured and bundled with DosBOX for Windows and all the goodies and extras, all as a single ZIP file. Freedoom Phase II is included as IWAD and Community Chest 2 as a sample PWAD - drag it onto DOOM2.CMD to start playing immediately. This package includes works by other authors that are provided unmodified with readme and licence files available in COPYRGHT directory (provided these were part of the said works). Look for Tartar-portable.zip in the binary distribution directory to try it out.
+For the maintenance release I am introducing an experimental package that includes Tartar preconfigured and bundled with DosBOX for Windows and all the goodies and extras, all as a single ZIP file. Freedoom Phase II is included as IWAD and Community Chest 2 as a sample PWAD - drag it onto DOOM2.CMD to start playing immediately. This package includes works by other authors that are provided unmodified with readme and license files available in COPYRGHT directory (provided these were part of the said works). Look for Tartar-portable.zip in the binary distribution directory to try it out.
 
 Note that:
-I. None of the commerically available IWAD-s or PWAD-s are included.
+I. None of the commercially available IWAD-s or PWAD-s are included.
 II. An alternative build of Tartar is included in the portable package that does not support 640x400 resolution and switches to 640x480 resolution instead.
 
 
