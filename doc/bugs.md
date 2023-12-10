@@ -20,3 +20,5 @@
   bor a brief moment if status bar logic causes palete to be changed
 - Moving from map to map with MAP CCMD sometimes does not cause screen wipe,
   which leaves garbage on screen borders when view size is not covering all screen
+- Switching to the "extra" screen size makes non-ingured mugshot to show for a 
+  short period of time in status bar
