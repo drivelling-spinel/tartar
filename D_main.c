@@ -315,7 +315,7 @@ void D_Display (void)
 	 DLG_Drawer();
       break;
     case GS_INTERMISSION:
-      WI_Drawer();
+      WI_Drawer();      
       break;
     case GS_FINALE:
       F_Drawer();
@@ -387,6 +387,8 @@ void D_PageTicker(void)
   if (/*!singledemo &&*/ --pagetic < 0)
     D_AdvanceDemo();
     
+
+  ST_TryStop();
 }
 
 //

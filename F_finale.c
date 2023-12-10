@@ -289,6 +289,8 @@ void F_Ticker(void)
 	 }
       }
    }
+   
+   ST_TryStop();
 }
 
 //

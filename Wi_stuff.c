@@ -2231,6 +2231,8 @@ void WI_Ticker(void)
     }
 
     WI_TickerCamera();
+    
+    ST_TryStop();
 }
 
 // killough 11/98:

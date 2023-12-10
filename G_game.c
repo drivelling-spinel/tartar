@@ -990,7 +990,7 @@ static void G_DoCompleted(void)
    
    if(automapactive)
       AM_Stop();
-
+      
    if(gamemode != commercial) // kilough 2/7/98
    {
       switch(gamemap)
@@ -1812,9 +1812,11 @@ void G_Ticker(void)
 	 break;
       case ga_completed:
 	 G_DoCompleted();
+	 ST_StopLater();
 	 break;
       case ga_victory:
 	 F_StartFinale();
+	 ST_StopLater();
 	 break;
       case ga_worlddone:
 	 G_DoWorldDone();
@@ -2962,6 +2964,8 @@ void G_TimeDemo(char *name, boolean showmenu)
 
 boolean G_CheckDemoStatus(void)
 {
+   ST_StopLater();
+
    if(demorecording)
    {
       demorecording = false;

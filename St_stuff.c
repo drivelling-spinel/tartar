@@ -289,7 +289,22 @@ extern byte     *translationtables;
 // STATUS BAR CODE
 //
 
+static int      st_stop_later_tm = 0;
+
 void ST_Stop(void);
+
+void ST_StopLater()
+{
+  if(st_stop_later_tm) return;
+  st_stop_later_tm = I_GetTime();
+}
+
+void ST_TryStop()
+{
+  if(!st_stop_later_tm || I_GetTime() - st_stop_later_tm < 30) return;
+  st_stop_later_tm = 0;
+  ST_Stop();
+}
 
 void ST_refreshBackground(void)
 {
@@ -1045,6 +1060,7 @@ static boolean st_stopped = true;
 
 void ST_Start(void)
 {
+  st_stop_later_tm = 0;
   if (!st_stopped)
     ST_Stop();
   ST_initData();
