@@ -1848,9 +1848,9 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line)
         }
       for (ix=0; ix < DEH_MOBJINFOMAX; ix++)
         {
-          if (!strcasecmp(key,deh_mobjinfo[ix]))  // killough 8/98
+          if (!stricmp(key,deh_mobjinfo[ix]))  // killough 8/98
             {
-              if (!strcasecmp(key,"bits") && !value) // killough 10/98
+              if (!stricmp(key,"bits") && !value) // killough 10/98
                 {
                   // figure out what the bits are
                   value = 0;
@@ -1864,7 +1864,7 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line)
                     {
                       int iy;
                       for (iy=0; iy < DEH_MOBJFLAGMAX; iy++)
-                        if (!strcasecmp(strval,deh_mobjflags[iy].name))
+                        if (!stricmp(strval,deh_mobjflags[iy].name))
                           {
                             if (fpout)
                               fprintf(fpout, "ORed value 0x%08lx %s\n",
@@ -1882,7 +1882,7 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line)
                                      value, value);
                 }
                 // haleyjd 04/09/99: flags2 support
-                else if (!strcasecmp(key,"bits2") && !value) // killough 10/98
+                else if (!stricmp(key,"bits2") && !value) // killough 10/98
                 {
                   // figure out what the bits are
                   value = 0;
@@ -1896,7 +1896,7 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line)
                   {
                       int iy;
                       for (iy=0; iy < DEH_MOBJFLAG2MAX; iy++)
-                        if (!strcasecmp(strval,deh_mobjflags2[iy].name))
+                        if (!stricmp(strval,deh_mobjflags2[iy].name))
                         {
                             if (fpout)
                               fprintf(fpout, "ORed value 0x%08lx %s\n",
