@@ -808,8 +808,8 @@ boolean G_Responder(event_t* ev)
          else
          {
             return false;
-         }
-      }
+         } 
+      } 
    }
 
    if(gamestate == GS_FINALE && F_Responder(ev))
@@ -1195,7 +1195,7 @@ static void G_DoPlayDemo(void)
   lumpnum = W_CheckNumForName(basename);
   if(lumpnum < 0)
     {
-      usermsg("Demo lump not found: %.8s", basename);
+      C_Printf("%s: demo not found\n", name);
       gameaction = ga_nothing;
       return;
     }

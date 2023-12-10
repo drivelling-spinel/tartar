@@ -406,7 +406,7 @@ int C_Responder(event_t* ev)
       return true;
     }
   
-  return false;   // dont care about this event
+  return true;   // eat all events while active
 }
 
 

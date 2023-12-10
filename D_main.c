@@ -243,28 +243,20 @@ void D_ProcessEvents (void)
     {
       if((events+eventtail)->type == ev_keydown && (events+eventtail)->data1 == KEYD_ENTER)
         i = 0;
-        
-      if(menuactive) 
-      {
-        if (!MN_Responder(events+eventtail))
-          if (!C_Responder(events+eventtail))
+      if (automapactive && !menuactive)
+        {
+          if (consoleactive ? !C_Responder(events+eventtail) : !ST_Responder(events+eventtail))
+            if (!G_Responder(events+eventtail))
+              if (!MN_Responder(events+eventtail))
+                 C_Responder(events+eventtail);
+        }
+      else
+        {
+          if (consoleactive  ? !C_Responder(events+eventtail) : !MN_Responder(events+eventtail))
             if (!ST_Responder(events+eventtail))
-              G_Responder(events+eventtail);
-      } 
-      else if(automapactive)
-      {
-        if (!G_Responder(events+eventtail))
-          if (!MN_Responder(events+eventtail))
-            if (!C_Responder(events+eventtail))
-              ST_Responder(events+eventtail);
-      } 
-      else 
-      {
-        if (!C_Responder(events+eventtail))
-          if (!ST_Responder(events+eventtail))
-            if (!MN_Responder(events+eventtail))
-              G_Responder(events+eventtail);
-      }
+              if (gamestate == GS_DEMOSCREEN ? !C_Responder(events+eventtail) : !G_Responder(events+eventtail))
+                 gamestate == GS_DEMOSCREEN ? G_Responder(events+eventtail) : C_Responder(events+eventtail);
+        }
     }  
 }
 
@@ -366,9 +358,9 @@ void D_Display (void)
   if (inwipe)
       Wipe_Drawer();
 
-  C_Drawer();
   // menus go directly to the screen
   MN_Drawer();         // menu is drawn even on top of everything
+  C_Drawer();          // but not over console
   NetUpdate();         // send out any new accumulation
 
     //sf : now system independent
@@ -596,7 +588,6 @@ void D_DoAdvanceDemo(void)
   demostates[demosequence][gamemode].func
     (demostates[demosequence][gamemode].name);
 
-  C_InstaPopup();       // make console go away
 }
 
 //
@@ -607,7 +598,6 @@ void D_StartTitle (void)
   gameaction = ga_nothing;
   demosequence = -1;
   D_AdvanceDemo();
-  C_InstaPopup();       // pop up the console straight away
 }
 
 #ifdef GAMEBAR
@@ -1947,6 +1937,8 @@ void D_DoomMain(void)
   if(!textmode_startup && !devparm)
     for(p=0; p<10; p++)
           C_Update();
+
+  C_InstaPopup();
 
   DEBUGMSG("start main loop\n");
 

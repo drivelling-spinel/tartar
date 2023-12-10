@@ -415,8 +415,8 @@ boolean G_KeyCmdResponder(event_t *ev)
             {
               keybindings[key].keydown = true;
               C_RunTextCmd(keybindings[key].binding->name);
-              return true;
             }
+          return true;
         }
       if(ev->type == ev_keyup)
         {
@@ -458,8 +458,12 @@ boolean G_KeyNonCmdResponder(event_t *ev)
 	  ctrldown = false;
 	  return true;
 	}
+  
+  // there's a separate proc for commands now
+  if(keybindings[key].binding && keybindings[key].binding->type == at_conscmd)
+    return false;
       
-      if(!keybindings[key].keydown)
+  if(!keybindings[key].keydown)
 	{
 	  keybindings[key].keydown = true;
 	  
