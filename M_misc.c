@@ -125,7 +125,7 @@ default_t defaults[] = {
   { // jff 3/24/98 allow default skill setting
     "default_skill",
     &defaultskill, NULL,
-    3, {1,5}, dt_number, ss_none, wad_no,
+    4, {1,5}, dt_number, ss_none, wad_no,
     "selects default skill 1=TYTD 2=NTR 3=HMP 4=UV 5=NM"
   },
 
@@ -150,21 +150,21 @@ default_t defaults[] = {
   {
     "s_precache",
     &s_precache, NULL,
-    0, {0,1}, dt_number, ss_gen, wad_no,
+    1, {0,1}, dt_number, ss_gen, wad_no,
     "precache sounds at startup"
   },
 #ifdef DJGPP
   { // jff 3/4/98 detect # voices
     "detect_voices",
     &detect_voices, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
+    0, {0,1}, dt_number, ss_gen, wad_no,
     "1 enables voice detection prior to calling install sound"
   },
 #endif
   {
     "textmode_startup",
     &textmode_startup, NULL,
-    0, {0,1}, dt_number, ss_gen, wad_no,
+    1, {0,1}, dt_number, ss_gen, wad_no,
     "start up ETERNITY in text mode"
   },
 #ifdef DJGPP
@@ -177,7 +177,7 @@ default_t defaults[] = {
   {
     "show_fps",
     &show_fps, NULL,
-    0, {0,1}, dt_number, ss_gen, wad_no,
+    1, {0,1}, dt_number, ss_gen, wad_no,
     "1 to show frames per second and video mode on screen"
   },
   {
@@ -195,7 +195,7 @@ default_t defaults[] = {
   {
     "hires",
     &hires, NULL,
-    0, {0,2}, dt_number, ss_gen, wad_no,
+    1, {0,2}, dt_number, ss_gen, wad_no,
     "1 to enable high resolution mode, 2 to try LCD mode"
   },
   {
@@ -214,14 +214,14 @@ default_t defaults[] = {
   {
     "update_after_tic",
     &update_after_tic, NULL,
-    0, {0,1}, dt_number, ss_gen, wad_no,
+    1, {0,1}, dt_number, ss_gen, wad_no,
     "Set to 1 to require at least 1 tic before updating audio/video"
   },
 #ifdef DJGPP
   { // killough 10/98
     "disk_icon",
     &disk_icon, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
+    0, {0,1}, dt_number, ss_gen, wad_no,
     "1 to enable flashing icon during disk IO"
   },
 #endif
@@ -241,7 +241,7 @@ default_t defaults[] = {
   { // phares
     "translucency",
     &general_translucency, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_yes,
+    0, {0,1}, dt_number, ss_gen, wad_yes,
     "1 to enable translucency for some things"
   },
   { 
@@ -280,7 +280,7 @@ default_t defaults[] = {
   { // killough 10/98
     "flashing_hom",
     &flashing_hom, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_yes,
+    0, {0,1}, dt_number, ss_gen, wad_yes,
     "1 to enable flashing HOM indicator"
   },
 
@@ -466,14 +466,14 @@ default_t defaults[] = {
   { //jff 4/3/98 allow unlimited sensitivity
     "mouse_sensitivity_horiz",
     &mouseSensitivity_horiz, NULL,
-    5, {0,UL}, dt_number, ss_none, wad_no,
+    64, {0,UL}, dt_number, ss_none, wad_no,
     "adjust horizontal (x) mouse sensitivity"
   },
 
   { //jff 4/3/98 allow unlimited sensitivity
     "mouse_sensitivity_vert",
     &mouseSensitivity_vert, NULL,
-    5, {0,UL}, dt_number, ss_none, wad_no,
+    0, {0,UL}, dt_number, ss_none, wad_no,
     "adjust vertical (y) mouse sensitivity"
   },
 
@@ -531,7 +531,7 @@ default_t defaults[] = {
   { //jff 3/6/98 fix erroneous upper limit in range
     "usegamma",
     &usegamma, NULL,
-    0, {0,4}, dt_number, ss_none, wad_no,
+    1, {0,4}, dt_number, ss_none, wad_no,
     "screen brightness (gamma correction)"
   },
 
@@ -1007,21 +1007,21 @@ default_t defaults[] = {
   {
     "automlook",
     &automlook, NULL,
-    0, {0,1}, dt_number, ss_gen, wad_no,
+    1, {0,1}, dt_number, ss_gen, wad_no,
     "set to 1 to always mouselook"
   },
 
   {
     "invert_mouse",
     &invert_mouse, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
+    0, {0,1}, dt_number, ss_gen, wad_no,
     "set to 1 to invert mouse during mouselooking"
   },
 
   { // jff 3/30/98 add ability to take screenshots in BMP format
     "screenshot_pcx",
     &screenshot_pcx, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
+    0, {0,1}, dt_number, ss_gen, wad_no,
     "1 to take a screenshot in PCX format, 0 for BMP"
   },
 
@@ -1565,14 +1565,14 @@ default_t defaults[] = {
   {
     "blood_particles",
     &bloodsplat_particle, NULL,
-    0, {0,1}, dt_number, ss_none, wad_yes,
+    1, {0,1}, dt_number, ss_none, wad_yes,
     "use sprites or particles for blood (sprites = 0)"
   },
 
   {
     "bullet_particles",
     &bulletpuff_particle, NULL,
-    0, {0,1}, dt_number, ss_none, wad_yes,
+    1, {0,1}, dt_number, ss_none, wad_yes,
     "use sprites or particles for bullet puffs (sprites = 0)"
   },
 
@@ -1607,14 +1607,14 @@ default_t defaults[] = {
   {
     "comp_clighting",
     &default_comp[comp_clighting], &comp[comp_clighting],
-    0, {0,1}, dt_number, ss_comp, wad_yes,
+    1, {0,1}, dt_number, ss_comp, wad_yes,
     "Switch SMMU coloured lighting off by default for compatibility"
   },
 
   {
     "comp_talltex",
     &default_comp[comp_talltex], &comp[comp_talltex],
-    1, {0,1}, dt_number, ss_comp, wad_yes,
+    0, {0,1}, dt_number, ss_comp, wad_yes,
     "Workaround for rendering single patch textures more than 255 pixels high"
   },
 

@@ -765,6 +765,10 @@ void S_StartTitleMusic(int m_id)
   if(!title_mus_tampered)
     {
       S_StopMusic();
+      if(m_id == mus_intro && I_IsMusicCardOPL())
+        {
+          m_id = mus_introa;
+        }
       S_StartMusic(m_id);
     }
 }

@@ -112,6 +112,10 @@ extern  int snd_card; //, default_snd_card;  // killough 10/98: add default_*
 extern  int mus_card; //, default_mus_card;
 extern  int detect_voices; // jff 3/4/98 option to disable voice detection
 
+#ifdef DJGPP
+boolean I_IsMusicCardOPL(void);
+#endif
+
 #endif
 
 //----------------------------------------------------------------------------

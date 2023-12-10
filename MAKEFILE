@@ -47,8 +47,7 @@ LDFLAGS_DEBUG=
 # optimized (release) options
 CFLAGS_RELEASE=-O3 -ffast-math -fomit-frame-pointer -m486 -mreg-alloc=adcbSDB
 # -DRANGECHECK -DZONEIDCHECK
-LDFLAGS_RELEASE=
-# -s
+LDFLAGS_RELEASE=-s
        
 # libraries to link in
 LIBS=-lalleg -lm -lemu

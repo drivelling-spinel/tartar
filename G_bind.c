@@ -644,7 +644,7 @@ void G_LoadDefaults()
   {
      sprintf(temp, "%s%s", D_DoomExeDir(), "keys.csc");
      if((len = M_ReadFile(temp, &cfg_data)) <= 0) {
-        len = W_LumpLength("KEYDEFS");
+        len = W_LumpLength(W_GetNumForName("KEYDEFS"));
         cfg_data = W_CacheLumpName("KEYDEFS", PU_STATIC);
      }
   }

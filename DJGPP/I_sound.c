@@ -458,6 +458,11 @@ void I_LoadSoundBank(void *bank)
   } 
 }
 
+boolean I_IsMusicCardOPL(void)
+{
+  return midi_card > 0 && midi_card < MIDI_SB_OUT;
+}
+
 
 ///
 // MUSIC API.
