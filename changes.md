@@ -7,21 +7,25 @@ made available as COD10SRC.ZIP.
 
 ## Menu 
 
-- Features menu item has been moved from main menu into Options
+### Features menu item has been moved from main menu into Options
+  
   This was done because vanilla TCs and Chex do not provide a patch
   for Features, and it looks very out of place as a result
 
-- Currently selected item in options menu is now flashing
+### Currently selected item in options menu is now flashing
+  
   Again, vanilla TCs and Chex use colored images for font glyphs 
   that dont's translate into one of the CR_... colors
   which makes selected menu item in Eternity options indistinguishable
   from other items
 
-- Bugfix: entry of special characters in menus is no longer possible
+### Bugfix: entry of special characters in menus is no longer possible
+
   This was especially apparent if one used Shift when entering savegame
   name
 
-- New entry "Load WAD" added to Episode selection menu
+### New entry "Load WAD" added to Episode selection menu
+
   By default Eternity would start new game not from E1M1 or MAP01
   but from the first changed map it detects if pwads with maps are 
   loaded. This means that loading Tech Gone Bad would result new
@@ -38,8 +42,9 @@ made available as COD10SRC.ZIP.
 
 ## Sound 
 
-- Updated Alegro library and sound routines 
-  [alegro.h] in Tartar comes from the version of Allegro found in 
+### Updated Alegro library and sound routines 
+
+  [allegro.h](/allegro.h) in Tartar comes from the version of Allegro found in 
   [MBF 2.0.4](https://www.vogons.org/viewtopic.php?f=24&t=40857), and Tartar
   binaries are linked with liballegro produced from the sources that 
   the author of MBF 2.0.4 has shared. System dependent sound code has been
@@ -57,7 +62,8 @@ made available as COD10SRC.ZIP.
   Allegro changes. Tartar source code does not include modified Allegro 
   sources.
 
-- Sound and MIDI card options have been removed from Sound options
+### Sound and MIDI card options have been removed from Sound options
+
   Following the "change in policy" from MBF 2.0.4 inclusion it is no
   longer possible to select sound card in Tartar options menu. Instead
   player should use a separate SETUP.EXE configuration utility. This is
@@ -71,7 +77,8 @@ made available as COD10SRC.ZIP.
 
 ## Video
 
-- VESA-based lowlevel routines replace Allegro ones for video
+### VESA-based lowlevel routines replace Allegro ones for video
+
   Low-level system video routines have been replaced by those by author  
   of [MBF 2.0.4](https://www.vogons.org/viewtopic.php?f=24&t=40857).
   The new routines use VESA API calls instead of Allegro and for improved
@@ -83,14 +90,16 @@ made available as COD10SRC.ZIP.
   video card by Intel that he had on the target system, which did not work
   with the DOS source ports he had previously tried. 
 
-- Video mode selection options are gone
+### Video mode selection options are gone
+
   It is no longer possible to directly select video mode in the options menu.
   Instead following MBF 2.0.4 example, video mode selection is done based
   on the set of options that player sets in options menu. These options are
   described in this section, and there is also a separate section of this 
   file with the list option combinations suitable for some specific cases.
 
-- C Video, screenshots, renderer and graphics routines have been generalized
+### C Video, screenshots, renderer and graphics routines have been generalized
+
   All the routines that supported high resolution modes (i.e. 640x400 resolution
   in addition to 320x200) have been updated to support any resolution that
   is a power of 2 multiple of 320x200. In practical terms this means 1280x800
@@ -101,7 +110,8 @@ made available as COD10SRC.ZIP.
   for the newly introduced 1280x800 renderer resolution. So adding new hi-res
   modes is sadly not just a matter of extending available configuration options. 
 
-- Renderer resolution option has been added
+### Renderer resolution option has been added
+
   Player can choose to render to 320x200, 640x400 and 1280x800
 
   - 320x200   rendered image will be output in 320x200 resolution
@@ -114,7 +124,8 @@ made available as COD10SRC.ZIP.
   The following CVAR values are supported for selecting resolution v_hires: 0, 1, 2.
   The same can be setup with hires configuration file option.
 
-- Option for scaling to higher resolution has been added
+### Option for scaling to higher resolution has been added
+  
   If activated the following scaling will be performed:
 
   - 320x200   rendered image will be scaled to 640x400 
@@ -139,7 +150,7 @@ made available as COD10SRC.ZIP.
   CVAR to enable/disable scaling is v_scale_hi or with scale_to_hires
   option in the configuration file.
 
-- Option for scaling to a 4:3 resolition has been added
+### Option for scaling to a 4:3 resolition has been added
   
   If activated without scaling to higher resolution being on:
   - 320x200   rendered image will not be changed
@@ -161,27 +172,32 @@ made available as COD10SRC.ZIP.
   CVAR controlling this is v_scale_aspect, and this can be also set
   with scale_aspect option of the configuration file.
 
-- Screenshot functions respect video scaling options
+### Screenshot functions respect video scaling options
+  
   Saving a screenshot will result in the same image as being output to the screen,
   as screenshot functions will perform the same scaling as screen output functions
   do.
 
-- Video page flipping can be explicitly set in Video options
+### Video page flipping can be explicitly set in Video options
+  
   As in MBF 2.0.4, the option to enable page flipping via VESA API call in 
   low-level vieo routines (taken from MBF 2.0.4) has been added. CVAR v_page_flip and 
   configuration file option page_flip can be used to control it. 
 
-- Waiting for retrace now follows MBF 2.0.4 logic 
+### Waiting for retrace now follows MBF 2.0.4 logic 
+  
   Waiting for retrace (vsync) will be attempted in page flipped modes only,
   as this is the behaviour of the incorporated MBF 2.0.4 low level video routines.
 
-- Option to show flashing disk icon when loading has been removed
+### Option to show flashing disk icon when loading has been removed
+  
   Unlike Allegro counterparts, MBF 2.0.4 low level vide routines do not have 
   generic purpose blitting functions, so rendring sprites at arbitrary moment in game 
   life cycle is no longer possible. One such case was the flashing disk/CD-ROM icon,
   and as it's no longer supported, option is gone for it from the menu.
 
-- Option to show FPS counter has been added to Video options
+### Option to show FPS counter has been added to Video options
+  
   Low-level video routines from MBF 2.0.4 include code for FPS measurement.
   Unike MBF 2.0.4, Tartar uses SMMU HUD widget to render FPS values,
   so even if option is active, FPS counter will only be visible in game 
@@ -194,24 +210,28 @@ made available as COD10SRC.ZIP.
   or for a few seconds after new level is started or saved game is loaded.
   These will also be shown in game only.
 
-- Timed demo benchmarks have been removed from Video options menu 
+### Timed demo benchmarks have been removed from Video options menu 
+  
   On one hand author has never been able to get them working, on the other
   these were referring to the benchmark scores tied to a certain set of 
   video modes which no longer made sense with the changes described above. 
   This change has only removed timed demos from Options menu. Running with 
   command line arguments should still be possible. 
 
-- Command line options from MBF 2.0.4 have been added
+### Command line options from MBF 2.0.4 have been added
+  
   - -nolfb   avoid using LFB modes with VESA routines 
   - -nopm    avoid using PM VESA functions
   - -safe    try the most compatible settings for video card
   - -asmp6   choose P6-specific assembler optimized memory copy code 
              regardless of the detected CPU family
 
-- Option to stretch skies is now persisted in configuration file
+### Option to stretch skies is now persisted in configuration file
+  
   Configuration file option stretchsky has been added to store it.
 
-- Experimental "checkered translucency" has been added
+### Experimental "checkered translucency" has been added
+  
   New translucency mode has been added that does not use tranmap file.
   Instead it renders either odd or even pixel of sprites and textures,
   depending on the number of line being drawn. This results in 50%
@@ -240,7 +260,8 @@ made available as COD10SRC.ZIP.
   menus, and then either set r_fauxtrans CVAR or change faux_translucency
   option in the configuration file.
 
-- Experimental "water transluency" code has been compiled in
+### Experimental "water transluency" code has been compiled in
+
   The TRANWATER preprocessor define is set to On for compiling Tartar,
   which causes experimental ("no feature") code for rendering Boom-style  
   (i.e. line type 242) deep water surface as translucent to be called.
@@ -289,7 +310,7 @@ CRT display but their videocard only supports 640x480 and not 640x400
 
 ![usecase3.png](usecase3.png)
 
-### 4. Gaming system with an "classic" LCD monitor attached
+### 4. Gaming system with a "classic" LCD monitor attached
 
 Player has a "classic" 1280x1024 display with 5:4 aspect ratio and
 hadrware that is fast enough and has enough memory to handle this 
@@ -321,15 +342,18 @@ look in a graphical editor had they loaded them.
 
 ## Mouse changes
 
-- Option to enable turning smoothing with mouse is now persisted
+### Option to enable turning smoothing with mouse is now persisted
+  
   Configuration file option for it is smooth_turning, same name as for CVAR.
 
-- _Experimental_ smoother mouse turning
+### _Experimental_ smoother mouse turning
+  
   Mouse turning smoothing takes 4 samples into account for _extra_
   smooth turning when smooth turning is activated in options menu.
   Previously 2 samples were used.
 
-- _Experimental_ filtering of mouse movement
+### _Experimental_ filtering of mouse movement
+  
   Historically Eternity had been suffering from "jerky" mouse turning, as sharp 
   turns by the player could easily result in 360 (or more) degree turns in game. 
   Rather than fixing this at the source as SoM has done 
@@ -341,11 +365,16 @@ look in a graphical editor had they loaded them.
 
 ## System
 
+### Tartar always loads _eternity.wad_ as resource wad
+
+  
+
 ## WADS compatibility
 
 ## Gameplay changes
 
-- Option for blood re-coloring including "intelligent" mode has bee added
+### Option for blood re-coloring including "intelligent" mode has bee added
+  
   Enemies menu in Tartar has option to enable re-coloring of blood splats into 
   other colors from the default red. Color can be set to blue, yellow or green.
   This will affect all blood splats and particle blood, but not gore, corpses,
@@ -364,3 +393,4 @@ look in a graphical editor had they loaded them.
 
 ## New CVARS
 
+This section lists all the new console variables introduced in Tartar.
