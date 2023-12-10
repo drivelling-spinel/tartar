@@ -233,7 +233,6 @@ byte *dascreen;
 int use_vsync;     // killough 2/8/98: controls whether vsync is called
 int page_flip;     // killough 8/15/98: enables page flipping
 int hires;
-int lcdres;
 int show_fps;
 
 int in_graphics_mode;
@@ -542,7 +541,7 @@ static void I_InitGraphicsMode(void)
   if (hires && !in_hires)  
   {  // GB 2014: Used to just try mode 100h and then 101h, but intel graphics gives trouble if 100h was tried first.
 	 if (vesa_version<1) {hiresfail=1;}
-         else if (lcdres && vesa_mode_1280x1024>0) 
+         else if (hires == 2 && vesa_mode_1280x1024>0) 
      {
         if (vesa_set_mode(vesa_mode_1280x1024)!=-1)      
 		{                       
@@ -550,7 +549,6 @@ static void I_InitGraphicsMode(void)
                   screen_w=1280; // Necessary for when mode 13h/X has overwritten them.
                   screen_h=1024;
                   blackband=112;
-                  hires=2;
 	 	}
 		else hiresfail=1;
      }
@@ -729,15 +727,17 @@ void I_InitGraphics(void)
  ************************/
 
 
+char *hiresmodes[] =
+   {"no","yes", "with LCD mode"};
+
+
 VARIABLE_BOOLEAN(use_vsync, NULL,  yesno);
 
 VARIABLE_BOOLEAN(show_fps, NULL,  yesno);
 
 VARIABLE_BOOLEAN(page_flip, NULL,  yesno);
 
-VARIABLE_BOOLEAN(hires, NULL,  yesno);
-
-VARIABLE_BOOLEAN(lcdres, NULL,  yesno);
+VARIABLE_INT(hires, NULL, 0, 2, hiresmodes);
 
 CONSOLE_VARIABLE(v_retrace, use_vsync, 0)
 {
@@ -750,11 +750,6 @@ CONSOLE_VARIABLE(v_page_flip, page_flip, 0)
 }
 
 CONSOLE_VARIABLE(v_hires, hires, 0)
-{
-  V_ResetMode();
-}
-
-CONSOLE_VARIABLE(v_lcdres, lcdres, 0)
 {
   V_ResetMode();
 }
@@ -780,7 +775,6 @@ void I_Video_AddCommands()
   C_AddCommand(v_retrace);
   C_AddCommand(v_page_flip);
   C_AddCommand(v_hires);
-  C_AddCommand(v_lcdres);
   C_AddCommand(v_show_fps);
 }
 

@@ -1173,7 +1173,6 @@ menu_t menu_video =
     {it_gap},
     {it_info,         FC_GOLD "mode"},
     {it_toggle,       "high resolution",              "v_hires"},
-    {it_toggle,       "try LCD resolution first",     "v_lcdres"},
     {it_toggle,       "use page-flipping",            "v_page_flip"},
     {it_toggle,       "wait for retrace",             "v_retrace"},
     {it_toggle,       "show fps",                     "v_show_fps"},
@@ -1199,7 +1198,7 @@ menu_t menu_video =
   mf_background,        // full-screen menu
   MN_VideoModeDrawer
 };
-
+                 
 void MN_VideoModeDrawer()
 {
   int lump;

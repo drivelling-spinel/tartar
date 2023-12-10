@@ -169,31 +169,25 @@ default_t defaults[] = {
   {
     "use_vsync",
     &use_vsync, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
+    0, {0,1}, dt_number, ss_gen, wad_no,
     "1 to enable wait for vsync to avoid display tearing"
   },
   {
     "show_fps",
     &show_fps, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
+    0, {0,1}, dt_number, ss_gen, wad_no,
     "1 to show frames per second and video mode on screen"
   },
   {
     "hires",
     &hires, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
-    "1 to enable high resolution mode"
-  },
-  {
-    "lcdres",
-    &lcdres, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
-    "1 to enable legacy LCD resolutions when in hi-res"
+    0, {0,1,2}, dt_number, ss_gen, wad_no,
+    "1 to enable high resolution mode, 2 to try LCD mode"
   },
   {
     "page_flip",
     &page_flip, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
+    0, {0,1}, dt_number, ss_gen, wad_no,
     "1 to enable page flipping"
   },
 #endif

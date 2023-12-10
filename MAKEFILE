@@ -29,7 +29,7 @@ RM=del
 CP=copy /y
         
 # the exe file name -sf
-EXE=$(O)/doom2.exe
+EXE=$(O)/doom.exe
         
 # options common to all builds
 CFLAGS_COMMON=-Wall
