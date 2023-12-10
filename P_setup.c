@@ -697,7 +697,7 @@ byte * P_LoadSegsExtended(byte * data)
       li->v2 = &vertexes[LONG(*(long *)data)];
       data += sizeof(long);
       // compute them?
-      li->angle = 0;
+      li->angle = -1;
       li->offset = 0;
       
       linedef = (unsigned short)SHORT(*(short *)data);

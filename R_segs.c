@@ -239,6 +239,8 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
 #define HEIGHTBITS 12
 #define HEIGHTUNIT (1<<HEIGHTBITS)
 
+char * msgbuf[256];
+
 static void R_RenderSegLoop (void)
 {
   fixed_t  texturecolumn = 0;   // shut up compiler warning
@@ -246,10 +248,22 @@ static void R_RenderSegLoop (void)
   for ( ; rw_x < rw_stopx ; rw_x ++)
     {
       // mark floor / ceiling areas
-      int yh, yl = (topfrac+HEIGHTUNIT-1)>>HEIGHTBITS;
+      int yh = bottomfrac>>HEIGHTBITS, yl = (topfrac+HEIGHTUNIT-1)>>HEIGHTBITS;
 
       // no space above wall?
-      int bottom, top = ceilingclip[rw_x]+1;
+      int bottom = floorclip[rw_x]-1, top = ceilingclip[rw_x]+1;
+
+      // falls outside the view, so not rendering
+      if(yl > viewheight || yh < 0)
+        {
+          rw_scale += rw_scalestep;
+          topfrac += topstep;
+          bottomfrac += bottomstep;
+#ifdef TRANWATER
+          bottomfrac2 += bottomstep2;
+#endif
+          continue;
+        }
 
       if (yl < top)
         yl = top;
@@ -267,8 +281,6 @@ static void R_RenderSegLoop (void)
               ceilingplane->bottom[rw_x] = bottom;
             }
         }
-
-      yh = bottomfrac>>HEIGHTBITS;
 
       bottom = floorclip[rw_x]-1;
       if (yh > bottom)
@@ -407,7 +419,9 @@ static void R_RenderSegLoop (void)
                         floorclip2[rw_x] = mid;
                 }
               else
-                floorclip[rw_x] = yh+1;
+                {
+                  floorclip[rw_x] = yh+1;
+                }
             }
           else
           {        // no bottom wall
@@ -498,7 +512,7 @@ void R_StoreWallRange(const int start, const int stop)
   // calculate rw_distance for scale calculation
   // TODO: hopefully R_PointToAngle2 func does what I think
   rw_normalangle = curline->angle;
-  if(!rw_normalangle) rw_normalangle = R_PointToAngle2(curline->v1->x, curline->v1->y, curline->v2->x, curline->v2->y);
+  if(rw_normalangle == -1) rw_normalangle = R_PointToAngle2(curline->v1->x, curline->v1->y, curline->v2->x, curline->v2->y);
   rw_normalangle += ANG90;
   offsetangle = abs(rw_normalangle-rw_angle1);
 
@@ -744,7 +758,7 @@ void R_StoreWallRange(const int start, const int stop)
       if (rw_normalangle-rw_angle1 < ANG180)
         rw_offset = -rw_offset;
       // hoping R_PointToDist2 does what I think
-      rw_offset += sidedef->textureoffset + (curline->offset ? curline->offset : R_PointToDist2(curline->v1->x, curline->v1->y, curline->linedef->v1->x, curline->linedef->v1->y));
+      rw_offset += sidedef->textureoffset + (curline->offset ? curline->offset : R_PointToDist2(curline->linedef->v1->x, curline->linedef->v1->y, curline->v1->x, curline->v1->y));
 
       rw_centerangle = ANG90 + viewangle - rw_normalangle;
 
