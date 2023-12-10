@@ -97,6 +97,20 @@ int info_bossaction_tag;
 int info_bossaction_linespecial;
 #endif
 
+#ifdef EPISINFO
+char ** info_epis_name = 0;
+int * info_epis_num = 0;
+char ** info_epis_pic = 0;
+char ** info_epis_start = 0;
+int info_epis_count = 0;
+
+static char * curr_epis_name = 0;
+static int curr_epis_num = 0;
+static char * curr_epis_pic = 0;
+static char * curr_epis_start = 0;
+#endif
+
+
 int info_enterpictime;
 
 void P_LowerCase(char *line);
@@ -105,7 +119,7 @@ static void P_RemoveEqualses(char *line);
 static void P_RemoveComments(char *line);
 
 void P_ParseInfoCmd(char *line);
-void P_ParseLevelVar(char *cmd);
+void P_ParseLevelVar(char *cmd, boolean epis);
 void P_ParseInfoCmd(char *line);
 void P_ParseScriptLine(char *line);
 void P_ClearLevelVars();
@@ -117,6 +131,9 @@ enum
 {
   RT_LEVELINFO,
   RT_SCRIPT,
+#ifdef EPISINFO
+  RT_EPISINFO,
+#endif
   RT_OTHER,
 // haleyjd 12/13/01
 //  RT_INTERTEXT
@@ -176,7 +193,10 @@ void P_ParseInfoCmd(char *line)
    if(*line == '[')                // a new section seperator
    {
       line++;
-      
+#ifdef EPISINFO
+      if(!strncmp(line, "episode info", 12))
+         readtype = RT_EPISINFO;
+#endif
       if(!strncmp(line, "level info", 10))
 	 readtype = RT_LEVELINFO;
       
@@ -194,9 +214,14 @@ void P_ParseInfoCmd(char *line)
    switch(readtype)
    {
    case RT_LEVELINFO:
-      P_ParseLevelVar(line);
+      P_ParseLevelVar(line, false);
       break;
-      
+
+#ifdef EPISINFO
+   case RT_EPISINFO:
+      P_ParseLevelVar(line, true);
+      break;
+#endif
    case RT_SCRIPT:
       P_ParseScriptLine(line);
       break;
@@ -278,12 +303,18 @@ levelvar_t levelvars[]=
   {IVT_INT,       "wolfcolor",    &info_wolfcolor},
   {IVT_INT,       "ghostskull",   &info_ghostskull},
   {IVT_INT,       "enterpictime", &info_enterpictime},
+#ifdef EPISINFO
+  {IVT_STRING,    "episfirstmap", &curr_epis_start},
+  {IVT_INT,       "episnum",      &curr_epis_num},
+  {IVT_STRING,    "epispic",      &curr_epis_pic},
+  {IVT_STRING,    "episname",     &curr_epis_name},
+#endif
   {IVT_END,       0,              0}
 
 
 };
 
-void P_ParseLevelVar(char *cmd)
+void P_ParseLevelVar(char *cmd, boolean epis)
 {
   char varname[50];
   char *equals;
@@ -308,7 +339,8 @@ void P_ParseLevelVar(char *cmd)
       if(!strcmp(current->name, varname))
 	{
           // seemingly valid levelinfo found, so reset detected finallevel
-          finallevel[0] = 0;
+          if(!epis)
+            finallevel[0] = 0;
           switch(current->type)
 	    {
 	    case IVT_STRING:
@@ -540,5 +572,75 @@ void P_InitWeapons()
       s++;
     }
 }
+
+#ifdef EPISINFO
+static int epis_num_allocated = 0;
+
+static int P_EnsureEpisBuffer()
+{
+   while(info_epis_count >= epis_num_allocated)
+   {
+      int sz = epis_num_allocated * 2;      
+      if(sz == 0)
+        sz = 1;
+
+      info_epis_name = realloc(info_epis_name, sizeof(*info_epis_name) * sz);
+      info_epis_num = realloc(info_epis_num, sizeof(*info_epis_num) * sz);
+      info_epis_pic = realloc(info_epis_pic, sizeof(*info_epis_pic) * sz);
+      info_epis_start = realloc(info_epis_start, sizeof(*info_epis_start) * sz);
+
+      epis_num_allocated = sz;
+   }
+
+   return epis_num_allocated;
+}
+
+void P_LoadEpisodeInfo(int lumpnum)
+{
+  char *lump;
+  char *rover;
+  char *startofline;
+
+  readtype = RT_OTHER;
+
+  lump = W_CacheLumpNum(lumpnum, PU_STATIC);
+
+  curr_epis_name = "";
+  curr_epis_num = 0;
+  curr_epis_pic = "";
+  curr_epis_start = "";
+  
+  rover = startofline = lump;
+
+  while(rover < lump+lumpinfo[lumpnum]->size)
+    {
+      if(*rover == '\n') // end of line
+	{
+	  *rover = 0;               // make it an end of string (0)
+	  P_ParseInfoCmd(startofline);
+	  startofline = rover+1; // next line
+	  *rover = '\n';            // back to end of line
+	}
+      rover++;
+    }
+  Z_Free(lump);
+
+
+  if(curr_epis_num > 0 && *curr_epis_name && *curr_epis_pic && *curr_epis_start)
+    {
+      P_EnsureEpisBuffer();
+      info_epis_num[info_epis_count] = curr_epis_num;
+      info_epis_pic[info_epis_count] = curr_epis_pic;
+      info_epis_start[info_epis_count] = curr_epis_start;
+      info_epis_name[info_epis_count] = curr_epis_name;
+      info_epis_count += 1;
+
+      usermsg("Episode %s(%d) definition found", curr_epis_name, curr_epis_num);
+    }
+
+}
+
+
+#endif
 
 // EOF

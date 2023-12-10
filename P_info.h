@@ -28,6 +28,10 @@ void P_LoadLevelInfo(int lumpnum);
 
 void P_CleanLine(char *line);
 
+#ifdef EPISINFO
+void P_LoadEpisodeInfo(int lumpnum);
+#endif
+
 extern char *info_interpic;
 extern char *info_levelname;
 extern char *info_levelpic;
@@ -82,6 +86,15 @@ extern int info_ghostskull;
 
 extern int info_enterpictime;
 
+#endif
+
+
+#ifdef EPISINFO
+extern char ** info_epis_name;
+extern int * info_epis_num;
+extern char ** info_epis_pic;
+extern char ** info_epis_start;
+extern int info_epis_count;
 #endif
 
 // EOF

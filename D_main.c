@@ -2166,6 +2166,13 @@ void D_NewWadLumps(int handle, extra_file_t extra)
 	{
 	  D_ProcessDehInWad(i, extra);
 	}
+
+#ifdef EPISINFO
+      if(!strncmp(lumpinfo[i]->name, "EPISINFO", 8))
+	{
+          P_LoadEpisodeInfo(i);
+	}
+#endif
     } 
   
   if(*wad_firstlevel) // a new first level?
