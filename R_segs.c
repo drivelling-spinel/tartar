@@ -577,6 +577,7 @@ void R_StoreWallRange(const int start, const int stop)
   fixed_t hyp;
   fixed_t sineval;
   angle_t distangle, offsetangle;
+  int skipmid;
 
   if (ds_p == drawsegs+maxdrawsegs)   // killough 1/98 -- fix 2s line HOM
     {
@@ -609,6 +610,10 @@ void R_StoreWallRange(const int start, const int stop)
   hyp = R_PointToDist (curline->v1->x, curline->v1->y);  
   sineval = finesine[distangle>>ANGLETOFINESHIFT];
   rw_distance = FixedMul(hyp, sineval);
+
+  distangle += ANGLE_1;
+  skipmid = distangle > 0 && distangle < (ANGLE_1 << 1);
+
 
   ds_p->x1 = rw_x = start;
   ds_p->x2 = stop;
@@ -818,7 +823,7 @@ void R_StoreWallRange(const int start, const int stop)
       }
 
       // allocate space for masked texture tables
-      if (sidedef->midtexture)    // masked midtexture
+      if (sidedef->midtexture && !skipmid)    // masked midtexture
         {
           maskedtexture = true;
           ds_p->maskedtexturecol = maskedtexturecol = lastopening - rw_x;
