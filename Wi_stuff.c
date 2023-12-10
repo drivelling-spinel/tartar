@@ -845,7 +845,7 @@ static void WI_drawLF(void)
 static void WI_drawEL(void)
 {
 // joel - don't show next level's graphic if it's end of game
-  if (strcmp(info_endofgame, "true") && !*info_endpic)
+  if (strcmp(info_endofgame, "true") && !*info_endpic && info_enterpictime)
     {
       int y = WI_TITLEY;
       
@@ -1264,7 +1264,7 @@ static void WI_initNoState(void)
 {
   state = NoState;
   acceleratestage = 0;
-  cnt = 10;
+  cnt = (info_enterpictime > 0 ? info_enterpictime * TICRATE : 10);
   WI_DrawBackground(0);
 }
 
@@ -1291,8 +1291,7 @@ static void WI_initSkipState(void)
 static void WI_updateNoState(void) 
 {
   WI_updateAnimatedBack();
-
-  if (!--cnt)
+  if (!--cnt || acceleratestage)
     {
       WI_End();
       G_WorldDone();
@@ -1312,7 +1311,8 @@ static void WI_initShowNextLoc(void)
 {
   state = ShowNextLoc;
   acceleratestage = 0;
-  cnt = SHOWNEXTLOCDELAY * TICRATE;
+  cnt = (info_enterpictime > 0 ? info_enterpictime : SHOWNEXTLOCDELAY)
+          * TICRATE;
   
   WI_DrawBackground(0);
   WI_initAnimatedBack();
@@ -1379,7 +1379,7 @@ static void WI_drawShowNextLoc(void)
     }
 
   // draws which level you are entering..
-  if ( (gamemode != commercial) || strcmp(info_endofgame, "true")) // check for MAP30 end game
+  if ( (gamemode != commercial) || strcmp(info_endofgame, "true") || !info_enterpictime) // check for MAP30 end game
     WI_drawEL();  
 }
 
@@ -1556,7 +1556,7 @@ static void WI_updateDeathmatchStats(void)
           {   
             S_StartSound(0, sfx_slop);
 
-            if (!strcmp(info_endofgame, "true"))
+            if (!strcmp(info_endofgame, "true") || !info_enterpictime)
               WI_initSkipState();
             else if ( wbs2->epsd < 0)
               WI_initNoState();
@@ -1869,7 +1869,7 @@ static void WI_updateNetgameStats(void)
               if (acceleratestage)
                 {
                   S_StartSound(0, sfx_sgcock);
-                  if (!strcmp(info_endofgame, "true"))
+                  if (!strcmp(info_endofgame, "true") || !info_enterpictime)
                     WI_initSkipState();
                   else if ( wbs2->epsd < 0)
                     WI_initNoState();
@@ -2078,7 +2078,7 @@ static void WI_updateStats(void)
                 {
                   S_StartSound(0, sfx_sgcock);
 
-                  if (!strcmp(info_endofgame, "true"))
+                  if (!strcmp(info_endofgame, "true") || !info_enterpictime)
                     WI_initSkipState();
                   else if (wbs2->epsd < 0)
                     WI_initNoState();
