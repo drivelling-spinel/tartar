@@ -43,6 +43,7 @@
 #include "z_zone.h"
 #include "w_wad.h"
 #include "m_argv.h"
+#include "ex_wad.h"
 
 
 #define plyr (&players[consoleplayer])     /* the console player */
@@ -50,7 +51,6 @@
 
 boolean selfieMode = false;
 boolean commercialWiMaps;
-
 
 static char *Ex_tape(void)
 {
@@ -79,6 +79,9 @@ static char *Ex_fixes(void)
 static char filestr[PATH_MAX+1];
 static char tapestr[PATH_MAX+1];
 
+static int        tapehandle = 0;
+extern int        hashnumlumps;
+
 int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
 {
   if(*Ex_tape()) 
@@ -86,7 +89,7 @@ int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
       assert(strlen(Ex_tape()) < sizeof(tapestr));
       strcat(tapestr, Ex_tape());
       AddDefaultExtension(tapestr, ".wad");
-      if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
+      if(!Ex_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
     }
   
   while(*filenames && autoload)
@@ -97,7 +100,7 @@ int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
       sprintf(tapestr, "%stape/%s", D_DoomExeDir(), filestr);
       AddDefaultExtension(tapestr, ".wad");
       if (!stat(tapestr, &sbuf)) 
-        if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
+        if(!Ex_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
       filenames++;
     }
     
@@ -176,7 +179,7 @@ int Ex_DetectAndLoadFilters()
 
   for(i = 0 ; i < numfilters ; i += 1)
     {
-      if(!W_AddExtraFile(fnames[i], EXTRA_FILTERS))
+      if(!Ex_AddExtraFile(fnames[i], EXTRA_FILTERS))
         {
           if(!loaded) ExtractFileBase(fnames[i], filestr, sizeof(filestr) -1);
           loaded += 1;
@@ -272,7 +275,7 @@ int Ex_DetectAndLoadSelfie()
       memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
       memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
     }
-  if(W_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
+  if(Ex_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
   // another hack - we just happen to know that selfie overrides BFG sprites
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {
@@ -301,7 +304,7 @@ int Ex_DetectAndLoadJumpwad()
       memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
       memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
     }
-  if(W_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
+  if(Ex_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {
       if(states2[1][i].sprite == SPR_PISF) states2[1][i].sprite = SPR_JMPF;
@@ -325,7 +328,7 @@ int Ex_LoadWiMapsWad(const char *fname)
 
   *filestr = 0;
   sprintf(filestr, "%s%s", D_DoomExeDir(), fname);
-  if(!stat(filestr, &sbuf) && !W_AddExtraFile(filestr, EXTRA_WIMAPS)) 
+  if(!stat(filestr, &sbuf) && !Ex_AddExtraFile(filestr, EXTRA_WIMAPS)) 
     {
       C_Printf("Intermission maps loaded from %s\n", fname);
       return 1;
@@ -400,4 +403,268 @@ void Ex_AddCommands()
 {
    C_AddCommand(selfie);   
    C_AddCommand(pogo);   
+}
+
+
+int Ex_CheckNumForNameOnTape(register const char *name)
+{
+  if(!tapehandle) return -1;
+  else 
+    {
+      register int i = lumpinfo[W_LumpNameHash(name) % (unsigned) hashnumlumps]->index;
+      while (i >= 0 && (strncasecmp(lumpinfo[i]->name, name, 8) ||
+                        lumpinfo[i]->handle != tapehandle))
+        i = lumpinfo[i]->next;
+      return i;
+    }
+}
+
+// W_CacheDynamicLumpName
+// fetches a lump from an arbitrary loaded wad,
+// rather then using the latest one
+// uses a simple lookup table for actual lumpnum
+
+int playpal_wad;         
+int playpal_wads_count;  
+int default_playpal_wad; 
+int * dyna_playpal_nums;
+int * dyna_colormap_nums;
+int * dyna_tranmap_nums;
+char ** dyna_playpal_wads;
+
+int * dyna_lump_nums[DYNA_TOTAL];
+
+void Ex_InitDynamicLumpNames()
+{
+  default_playpal_wad = playpal_wad = -1;
+  playpal_wads_count = 0;
+  dyna_colormap_nums = dyna_tranmap_nums = dyna_playpal_nums = 0;
+  memset(dyna_lump_nums, 0xff, sizeof(int *) * DYNA_TOTAL);
+}
+
+
+int Ex_SetDefaultDynamicLumpNames()
+{
+  int was = playpal_wad;
+  playpal_wad = default_playpal_wad;
+  if(playpal_wad < 0 && playpal_wads_count > 0) playpal_wad = 0;
+  was = was != playpal_wad;
+
+  return was;
+}
+
+int Ex_DynamicNumForName(dyna_lumpname_t name)
+{
+  assert(name >= 0);
+  assert(name < DYNA_TOTAL);
+
+  if(playpal_wads_count <= 0 || playpal_wad < 0) return -1;
+  return dyna_lump_nums[name][playpal_wad];
+}
+
+
+void * Ex_CacheDynamicLumpName(dyna_lumpname_t name, int tag)
+{
+  static char * names[] = { "PLAYPAL", "TRANMAP", "COLORMAP" };
+  int num = Ex_DynamicNumForName(name);
+
+  // if no wads detected with PLAYPAL just crash
+  if(num < 0)
+    {
+      W_GetNumForName(names[name]);
+    }
+
+  return W_CacheLumpNum(num, tag);
+}
+
+int Ex_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_t extra)
+{
+  if(extra == EXTRA_FILTERS)
+    {
+      static char * names[] = { "PLAYPAL", "TRANMAP", "COLORMAP" };
+      int i = 0;
+
+      for(i = 0 ; i < 3 ; i += 1)
+        if(!strnicmp(names[i], lump->name, 8)) return 1;
+
+      return 0;
+    }
+    
+  if(extra == EXTRA_SELFIE)
+    {
+      static char * names[] = { "SELF", "DSBFG", "SS_START", "S_END", "S_START", "DEHACKED" };
+      int i = 0;
+
+      for(i = 0 ; i < 6 ; i += 1)
+        {
+          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
+        }
+      return 0;
+    }
+  
+  if(extra == EXTRA_WIMAPS)
+    {
+      static char * names[] = { "WI2MAP", "NRLMAP", "EVIMAP", "PLUMAP", "WISP", "WIUR" };
+      int i = 0;
+
+      for(i = 0 ; i < (gamemode == commercial ? 6 : 4); i += 1)
+        {
+          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
+        }
+      return 0;
+    }
+
+  if(extra == EXTRA_JUMP)
+    {
+      static char * names[] = { "PISF", "PISG", "PLSS", "SS_START", "S_END", "S_START", "DEHACKED", "DSFIRXPL" };
+      int i = 0;
+
+      for(i = 0 ; i < 8 ; i += 1)
+        {
+          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
+        }
+      return 0;
+    }
+
+  return 1;
+}
+
+int Ex_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, const extra_file_t extra)
+{
+  char * tmpname;
+
+  if(!Ex_ShouldKeepLump(lump, lumpnum, wadname, extra)) return 0;
+  
+  if(extra != EXTRA_TAPE)
+    {      
+      int sticky = Ex_CheckNumForNameOnTape(lump->name);
+      if(sticky >= 0)
+        {
+          lump->handle = lumpinfo[sticky]->handle;
+          lump->size = lumpinfo[sticky]->size;
+          lump->position = lumpinfo[sticky]->position;
+          lump->data = lumpinfo[sticky]->data;
+          lump->cache = lumpinfo[sticky]->cache;
+        }
+    }
+
+  if(extra == EXTRA_SELFIE && !strnicmp(lump->name, "DSBFG", 8))
+    {
+      char *c = lump->name;
+      c[2] = 'S'; c[3] = 'L'; c[4] = 'F';
+      return 1;  
+    }
+    
+  if(extra == EXTRA_JUMP)
+    {
+      if(!strnicmp(lump->name, "PISG", 4) || !strnicmp(lump->name, "PISF", 4) || !strnicmp(lump->name, "PLSS", 4))
+        {
+          char *c = lump->name;
+          c[0] = 'J'; c[1] = 'M'; c[2] = 'P';
+          return 1;
+        }
+      if(!strnicmp(lump->name, "DSFIRXPL", 8))
+        {
+          char *c = lump->name;
+          c[2] = 'J'; c[3] = 'M'; c[4] = 'P';
+          return 1;
+        }
+    }
+  
+
+  if(extra == EXTRA_TAPE)
+    {
+      tapehandle = lump->handle;
+      return 1;
+    }
+
+  if(strnicmp(lump->name, "PLAYPAL", 8)) return 1;
+
+  tmpname = strcpy(malloc(strlen(wadname) + 1), wadname);
+  dyna_lump_nums[DYNA_PLAYPAL] = dyna_playpal_nums =
+    realloc(dyna_playpal_nums, sizeof(int) * (playpal_wads_count + 1));
+  dyna_lump_nums[DYNA_COLORMAP] = dyna_colormap_nums =
+    realloc(dyna_colormap_nums, sizeof(int) * (playpal_wads_count + 1));
+  dyna_lump_nums[DYNA_TRANMAP] = dyna_tranmap_nums =
+    realloc(dyna_tranmap_nums, sizeof(int) * (playpal_wads_count + 1));
+  dyna_playpal_wads = realloc(dyna_playpal_wads, sizeof(char *) * (playpal_wads_count + 1));
+  if(extra != EXTRA_NONE)
+    {
+      dyna_colormap_nums[playpal_wads_count] = 0;
+      dyna_tranmap_nums[playpal_wads_count] = 0;
+      dyna_playpal_wads[playpal_wads_count] = tmpname;
+      dyna_playpal_nums[playpal_wads_count++] = lumpnum;
+    }
+  else
+    {
+      int i;
+      for(i = playpal_wads_count ; i > default_playpal_wad + 1 ; i -= 1)
+        {
+          dyna_playpal_nums[i] = dyna_playpal_nums[i - 1];
+          dyna_playpal_wads[i] = dyna_playpal_wads[i - 1];
+        }
+      dyna_playpal_nums[++default_playpal_wad] = lumpnum;
+      dyna_playpal_wads[default_playpal_wad] = tmpname;
+      dyna_colormap_nums[default_playpal_wad] = -1;
+      dyna_tranmap_nums[default_playpal_wad] = -1;
+      playpal_wads_count += 1;
+    }
+
+  return 1;
+}
+
+void Ex_DynamicLumpCoalesceProc(lumpinfo_t * lump, int oldnum, int newnum)
+{
+  int i = 0;
+
+  for(i = 0 ; i < playpal_wads_count ; i += 1)
+    {
+      int j = 0;
+      for(j = 0 ; j < DYNA_TOTAL ; j += 1)
+        {
+          if(dyna_lump_nums[j][i] == oldnum)
+            {
+              dyna_lump_nums[j][i] = newnum;
+              return;
+            }
+         }
+    }
+}
+
+
+void Ex_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
+{
+  int i;
+  int playpal = -1, colormap = -1, tranmap = -1;
+
+  for(i = 0 ; i < count ; i += 1)
+    {
+      if(!strnicmp(lumpinfo[i + start]->name, "PLAYPAL", 8)) playpal = i + start;
+      else if(!strnicmp(lumpinfo[i + start]->name, "COLORMAP", 8)) colormap = i + start;
+      else if(!strnicmp(lumpinfo[i + start]->name, "TRANMAP", 8)) tranmap = i + start;
+    }
+
+  if(playpal >= 0)
+    {
+      for(i = 0 ; i < playpal_wads_count && dyna_playpal_nums[i] != playpal ; i += 1);
+      if(i < playpal_wads_count)
+        {
+          if(colormap >= 0) dyna_colormap_nums[i] = colormap;
+          else dyna_colormap_nums[i] = dyna_colormap_nums[0];
+
+          if(tranmap >= 0) dyna_tranmap_nums[i] = tranmap;
+          else dyna_tranmap_nums[i] = dyna_tranmap_nums[0];
+        }
+    }
+
+  D_NewWadLumps(handle, extra);
+}
+
+int Ex_AddExtraFile(char *filename, extra_file_t extra)
+{
+  W_AddPredefines();
+  if(W_AddFile(filename, extra)) return true;
+  W_InitResources();              // reinit lump lookups etc
+  Ex_SetDefaultDynamicLumpNames();
+  return false;
 }

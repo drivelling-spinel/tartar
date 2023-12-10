@@ -43,7 +43,7 @@ static const char rcsid[] = "$Id: r_main.c,v 1.13 1998/05/07 00:47:52 killough E
 #include "r_sky.h"
 #include "s_sound.h"
 #include "v_video.h"
-#include "w_wad.h"
+#include "ex_stuff.h"
 #include "c_io.h"
 #include "hu_stuff.h"
 

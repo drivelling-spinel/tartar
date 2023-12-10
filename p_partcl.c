@@ -36,8 +36,8 @@
 #include "r_main.h"
 #include "r_things.h"
 #include "v_video.h"
-#include "w_wad.h"
 #include "p_mobj.h"
+#include "ex_stuff.h"
 
 // static integers to hold particle color values
 static int grey1, grey2, grey3, grey4, red, green, blue, yellow, black,
@@ -82,7 +82,7 @@ void P_InitParticleEffects(void)
    byte *palette;
    struct particleColorList *pc = particleColors;
 
-   palette = W_CacheDynamicLumpName(DYNA_PLAYPAL, PU_STATIC);
+   palette = Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_STATIC);
 
    // match particle colors to best fit and write back to
    // static variables

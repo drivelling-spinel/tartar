@@ -44,6 +44,7 @@ rcsid[] = "$Id: st_stuff.c,v 1.46 1998/05/06 16:05:40 jim Exp $";
 #include "s_sound.h"
 #include "sounds.h"
 #include "dstrings.h"
+#include "ex_stuff.h"
 
 //
 // STATUS BAR DATA
@@ -1056,7 +1057,7 @@ void ST_Stop(void)
   if (st_stopped)
     return;
   st_palette = -1;
-  I_SetPalette (W_CacheDynamicLumpName(DYNA_PLAYPAL, PU_CACHE));
+  I_SetPalette (Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_CACHE));
   st_stopped = true;
 }
 

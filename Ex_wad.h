@@ -20,37 +20,21 @@
 //--------------------------------------------------------------------------
 //
 // DESCRIPTION:
-//      Extra stuff.
+//      Service interface for W_Wad.
 //
 //-----------------------------------------------------------------------------
 
-#ifndef __EX_STUFF__
-#define __EX_STUFF__
-
-void Ex_DetectAndLoadExtras(void);
-int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload);
-int Ex_InsertFixes(char * iwadfile, int autoload);
-void Ex_ListTapeWad();
-
-// load a specialy treated wad file that if game detects it 
-
-typedef enum {
-  DYNA_PLAYPAL,
-  DYNA_TRANMAP,
-  DYNA_COLORMAP,
-  DYNA_TOTAL
-} dyna_lumpname_t;
+#ifndef __EX_WAD__
+#define __EX_WAD__
 
 
-int Ex_AddExtraFile(char *filename, extra_file_t extra);
-void * Ex_CacheDynamicLumpName(dyna_lumpname_t name, int tag);
-int Ex_DynamicNumForName(dyna_lumpname_t name);
+int Ex_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, const extra_file_t extra);
+void Ex_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra);
+void Ex_DynamicLumpCoalesceProc(lumpinfo_t * lump, int oldnum, int newnum);
+void Ex_InitDynamicLumpNames();
+int Ex_SetDefaultDynamicLumpNames();
 
-
-// Reloads palette lump before applying
-#define I_ResetPalette() { byte * pal = Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_CACHE); I_SetPalette(pal + 768*(st_palette > 0 ? st_palette : 0)); }
-// and as sad as it is, modules calling this need the below
-extern int st_palette;
-
+int W_AddFile(const char *name, const extra_file_t extra);
+void W_InitResources();
 
 #endif

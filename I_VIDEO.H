@@ -51,14 +51,6 @@ void I_ShutdownGraphics(void);
 // Takes full 8 bit values.
 void I_SetPalette (byte* palette);
 
-// Reloads palette lump before applying
-// Have not found better place to put this,
-// however using macro as the function is not in fact platform specific
-#define I_ResetPalette() { byte * pal = W_CacheDynamicLumpName(DYNA_PLAYPAL, PU_CACHE); I_SetPalette(pal + 768*(st_palette > 0 ? st_palette : 0)); }
-// and as sad as it is, modules calling this need the below
-extern int st_palette;
-
-
 void I_UpdateNoBlit (void);
 void I_FinishUpdate (void);
 

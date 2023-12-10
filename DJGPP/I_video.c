@@ -49,6 +49,7 @@ static const char rcsid[] = "$Id: i_video.c,v 1.3 2000-08-12 21:29:28 fraggle Ex
 #include "../m_misc.h"   // for M_DrawText, GB 2014
 #include "i_vgavbe.h" // Graphics routines replacements, GB 2014
 #include "../i_video.h" 
+#include "../ex_stuff.h" 
 
 /////////////////////////////////////////////////////////////////////////////
 //

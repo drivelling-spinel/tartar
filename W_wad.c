@@ -36,6 +36,8 @@ rcsid[] = "$Id: w_wad.c,v 1.20 1998/05/06 11:32:00 jim Exp $";
 #include "p_skin.h"
 #include "w_wad.h"
 
+#include "ex_wad.h"
+
 //
 // GLOBALS
 //
@@ -50,9 +52,6 @@ lumpinfo_t **lumpinfo;  //sf : array of ptrs
 int        numlumps;         // killough
 int        hashnumlumps;
 int        iwadhandle = 0;                  // sf: the handle of the main iwad
-int        tapehandle = 0;
-
-int W_CheckNumForNameOnTape(register const char *name);
 
 static int W_FileLength(int handle)
 {
@@ -131,250 +130,6 @@ void NormalizeSlashes(char *str)
 // LUMP BASED ROUTINES.
 //
 
-
-// W_CacheDynamicLumpName
-// fetches a lump from an arbitrary loaded wad,
-// rather then using the latest one
-// uses a simple lookup table for actual lumpnum
-
-int playpal_wad;         
-int playpal_wads_count;  
-int default_playpal_wad; 
-int * dyna_playpal_nums;
-int * dyna_colormap_nums;
-int * dyna_tranmap_nums;
-char ** dyna_playpal_wads;
-
-int * dyna_lump_nums[DYNA_TOTAL];
-
-void W_InitDynamicLumpNames()
-{
-  default_playpal_wad = playpal_wad = -1;
-  playpal_wads_count = 0;
-  dyna_colormap_nums = dyna_tranmap_nums = dyna_playpal_nums = 0;
-  memset(dyna_lump_nums, 0xff, sizeof(int *) * DYNA_TOTAL);
-}
-
-
-int W_SetDefaultDynamicLumpNames()
-{
-  int was = playpal_wad;
-  playpal_wad = default_playpal_wad;
-  if(playpal_wad < 0 && playpal_wads_count > 0) playpal_wad = 0;
-  was = was != playpal_wad;
-
-  return was;
-}
-
-int W_DynamicNumForName(dyna_lumpname_t name)
-{
-  assert(name >= 0);
-  assert(name < DYNA_TOTAL);
-
-  if(playpal_wads_count <= 0 || playpal_wad < 0) return -1;
-  return dyna_lump_nums[name][playpal_wad];
-}
-
-
-void * W_CacheDynamicLumpName(dyna_lumpname_t name, int tag)
-{
-  static char * names[] = { "PLAYPAL", "TRANMAP", "COLORMAP" };
-  int num = W_DynamicNumForName(name);
-
-  // if no wads detected with PLAYPAL just crash
-  if(num < 0)
-    {
-      W_GetNumForName(names[name]);
-    }
-
-  return W_CacheLumpNum(num, tag);
-}
-
-int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_t extra)
-{
-  if(extra == EXTRA_FILTERS)
-    {
-      static char * names[] = { "PLAYPAL", "TRANMAP", "COLORMAP" };
-      int i = 0;
-
-      for(i = 0 ; i < 3 ; i += 1)
-        if(!strnicmp(names[i], lump->name, 8)) return 1;
-
-      return 0;
-    }
-    
-  if(extra == EXTRA_SELFIE)
-    {
-      static char * names[] = { "SELF", "DSBFG", "SS_START", "S_END", "S_START", "DEHACKED" };
-      int i = 0;
-
-      for(i = 0 ; i < 6 ; i += 1)
-        {
-          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
-        }
-      return 0;
-    }
-  
-  if(extra == EXTRA_WIMAPS)
-    {
-      static char * names[] = { "WI2MAP", "NRLMAP", "EVIMAP", "PLUMAP", "WISP", "WIUR" };
-      int i = 0;
-
-      for(i = 0 ; i < (gamemode == commercial ? 6 : 4); i += 1)
-        {
-          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
-        }
-      return 0;
-    }
-
-  if(extra == EXTRA_JUMP)
-    {
-      static char * names[] = { "PISF", "PISG", "PLSS", "SS_START", "S_END", "S_START", "DEHACKED", "DSFIRXPL" };
-      int i = 0;
-
-      for(i = 0 ; i < 8 ; i += 1)
-        {
-          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
-        }
-      return 0;
-    }
-
-  return 1;
-}
-
-int W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, const extra_file_t extra)
-{
-  char * tmpname;
-
-  if(!W_ShouldKeepLump(lump, lumpnum, wadname, extra)) return 0;
-  
-  if(extra != EXTRA_TAPE)
-    {      
-      int sticky = W_CheckNumForNameOnTape(lump->name);
-      if(sticky >= 0)
-        {
-          lump->handle = lumpinfo[sticky]->handle;
-          lump->size = lumpinfo[sticky]->size;
-          lump->position = lumpinfo[sticky]->position;
-          lump->data = lumpinfo[sticky]->data;
-          lump->cache = lumpinfo[sticky]->cache;
-        }
-    }
-
-  if(extra == EXTRA_SELFIE && !strnicmp(lump->name, "DSBFG", 8))
-    {
-      char *c = lump->name;
-      c[2] = 'S'; c[3] = 'L'; c[4] = 'F';
-      return 1;  
-    }
-    
-  if(extra == EXTRA_JUMP)
-    {
-      if(!strnicmp(lump->name, "PISG", 4) || !strnicmp(lump->name, "PISF", 4) || !strnicmp(lump->name, "PLSS", 4))
-        {
-          char *c = lump->name;
-          c[0] = 'J'; c[1] = 'M'; c[2] = 'P';
-          return 1;
-        }
-      if(!strnicmp(lump->name, "DSFIRXPL", 8))
-        {
-          char *c = lump->name;
-          c[2] = 'J'; c[3] = 'M'; c[4] = 'P';
-          return 1;
-        }
-    }
-  
-
-  if(extra == EXTRA_TAPE)
-    {
-      tapehandle = lump->handle;
-      return 1;
-    }
-
-  if(strnicmp(lump->name, "PLAYPAL", 8)) return 1;
-
-  tmpname = strcpy(malloc(strlen(wadname) + 1), wadname);
-  dyna_lump_nums[DYNA_PLAYPAL] = dyna_playpal_nums =
-    realloc(dyna_playpal_nums, sizeof(int) * (playpal_wads_count + 1));
-  dyna_lump_nums[DYNA_COLORMAP] = dyna_colormap_nums =
-    realloc(dyna_colormap_nums, sizeof(int) * (playpal_wads_count + 1));
-  dyna_lump_nums[DYNA_TRANMAP] = dyna_tranmap_nums =
-    realloc(dyna_tranmap_nums, sizeof(int) * (playpal_wads_count + 1));
-  dyna_playpal_wads = realloc(dyna_playpal_wads, sizeof(char *) * (playpal_wads_count + 1));
-  if(extra != EXTRA_NONE)
-    {
-      dyna_colormap_nums[playpal_wads_count] = 0;
-      dyna_tranmap_nums[playpal_wads_count] = 0;
-      dyna_playpal_wads[playpal_wads_count] = tmpname;
-      dyna_playpal_nums[playpal_wads_count++] = lumpnum;
-    }
-  else
-    {
-      int i;
-      for(i = playpal_wads_count ; i > default_playpal_wad + 1 ; i -= 1)
-        {
-          dyna_playpal_nums[i] = dyna_playpal_nums[i - 1];
-          dyna_playpal_wads[i] = dyna_playpal_wads[i - 1];
-        }
-      dyna_playpal_nums[++default_playpal_wad] = lumpnum;
-      dyna_playpal_wads[default_playpal_wad] = tmpname;
-      dyna_colormap_nums[default_playpal_wad] = -1;
-      dyna_tranmap_nums[default_playpal_wad] = -1;
-      playpal_wads_count += 1;
-    }
-
-  return 1;
-}
-
-void W_DynamicLumpCoalesceProc(lumpinfo_t * lump, int oldnum, int newnum)
-{
-  int i = 0;
-
-  for(i = 0 ; i < playpal_wads_count ; i += 1)
-    {
-      int j = 0;
-      for(j = 0 ; j < DYNA_TOTAL ; j += 1)
-        {
-          if(dyna_lump_nums[j][i] == oldnum)
-            {
-              dyna_lump_nums[j][i] = newnum;
-              return;
-            }
-         }
-    }
-}
-
-void D_NewWadLumps(int handle, extra_file_t extra);
-
-
-void W_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
-{
-  int i;
-  int playpal = -1, colormap = -1, tranmap = -1;
-
-  for(i = 0 ; i < count ; i += 1)
-    {
-      if(!strnicmp(lumpinfo[i + start]->name, "PLAYPAL", 8)) playpal = i + start;
-      else if(!strnicmp(lumpinfo[i + start]->name, "COLORMAP", 8)) colormap = i + start;
-      else if(!strnicmp(lumpinfo[i + start]->name, "TRANMAP", 8)) tranmap = i + start;
-    }
-
-  if(playpal >= 0)
-    {
-      for(i = 0 ; i < playpal_wads_count && dyna_playpal_nums[i] != playpal ; i += 1);
-      if(i < playpal_wads_count)
-        {
-          if(colormap >= 0) dyna_colormap_nums[i] = colormap;
-          else dyna_colormap_nums[i] = dyna_colormap_nums[0];
-
-          if(tranmap >= 0) dyna_tranmap_nums[i] = tranmap;
-          else dyna_tranmap_nums[i] = dyna_tranmap_nums[0];
-        }
-    }
-
-  D_NewWadLumps(handle, extra);
-}
-
 //
 // W_AddFile
 // All files are optional, but at least one file must be
@@ -388,7 +143,7 @@ void W_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
 //
 
         // sf: made int
-static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/31/98: static, const
+int W_AddFile(const char *name, const extra_file_t extra) // killough 1/31/98: static, const
 {
   wadinfo_t   header;
   lumpinfo_t* lump_p;
@@ -487,7 +242,7 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
       lump_p->data = lump_p->cache = NULL;         // killough 1/31/98
       lump_p->namespace = ns_global;              // killough 4/17/98
       strncpy (lump_p->name, fileinfo->name, 8);
-      if(!W_DynamicLumpFilterProc(lump_p, i, basename, extra))
+      if(!Ex_DynamicLumpFilterProc(lump_p, i, basename, extra))
         {
           i--;
           numlumps--;
@@ -497,7 +252,7 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
   
   free(fileinfo2free);      // killough
   
-  W_DynamicLumpsInWad(handle, startlump, (numlumps - startlump), extra);
+  Ex_DynamicLumpsInWad(handle, startlump, (numlumps - startlump), extra);
 
   return false;       // no error
 }
@@ -567,7 +322,7 @@ static void W_CoalesceMarkedResource(const char *start_marker,
 	    {
               //TODO: retaining dynamic lump switching is currently
               // limited to lumps outside of markers 
-              W_DynamicLumpCoalesceProc(lump, i, num_unmarked);
+              Ex_DynamicLumpCoalesceProc(lump, i, num_unmarked);
 	      lumpinfo[num_unmarked] = lump;       // else move down THIS list
 	      num_unmarked++;
 	    }
@@ -651,18 +406,6 @@ int (W_CheckNumForName)(register const char *name, register int namespace)
   return i;
 }
 
-int W_CheckNumForNameOnTape(register const char *name)
-{
-  if(!tapehandle) return -1;
-  else 
-    {
-      register int i = lumpinfo[W_LumpNameHash(name) % (unsigned) hashnumlumps]->index;
-      while (i >= 0 && (strncasecmp(lumpinfo[i]->name, name, 8) ||
-                        lumpinfo[i]->handle != tapehandle))
-        i = lumpinfo[i]->next;
-      return i;
-    }
-}
 
 //
 // killough 1/31/98: Initialize lump hash table
@@ -704,7 +447,7 @@ int W_GetNumForName (const char* name)     // killough -- const added
   return i;
 }
 
-static void W_InitResources()          // sf
+void W_InitResources()          // sf
 {
   //jff 1/23/98
   // get all the sprites and flats into one marked block each
@@ -753,7 +496,7 @@ void W_AddPredefines()
 
 void W_InitMultipleFiles(char *const *filenames)
 {
-  W_InitDynamicLumpNames();
+  Ex_InitDynamicLumpNames();
 
   // killough 1/31/98: add predefined lumps first
 
@@ -769,23 +512,14 @@ void W_InitMultipleFiles(char *const *filenames)
 
   W_InitResources();
 
-  W_SetDefaultDynamicLumpNames();
-}
-
-int W_AddExtraFile(char *filename, extra_file_t extra)
-{
-  W_AddPredefines();
-  if(W_AddFile(filename, extra)) return true;
-  W_InitResources();              // reinit lump lookups etc
-  W_SetDefaultDynamicLumpNames();
-  return false;
+  Ex_SetDefaultDynamicLumpNames();
 }
 
 int W_AddNewFile(char *filename)
 {
   if(W_AddFile(filename, EXTRA_NONE)) return true;
   W_InitResources();              // reinit lump lookups etc
-  W_SetDefaultDynamicLumpNames();
+  Ex_SetDefaultDynamicLumpNames();
   return false;
 }
 

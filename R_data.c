@@ -43,6 +43,7 @@ rcsid[] = "$Id: r_data.c,v 1.23 1998/05/23 08:05:57 killough Exp $";
 #include "v_video.h"
 #include "p_info.h" // haleyjd
 #include "d_io.h" // SoM 3/14/2002: strncasecmp
+#include "ex_stuff.h"
 
 
 static void R_LoadDoom1();
@@ -817,7 +818,7 @@ void R_InitColormaps(void)
 
 void R_ReInitColormaps2(void)
 {
-  int num = W_DynamicNumForName(DYNA_COLORMAP);
+  int num = Ex_DynamicNumForName(DYNA_COLORMAP);
   if(num >= 0)
     {
       Z_Free(colormaps[0]);
@@ -891,15 +892,15 @@ int tran_filter_pct = 50;       // filter percent
 
 void R_InitTranMap(int progress)
 {
-  int lump = W_DynamicNumForName(DYNA_TRANMAP);
+  int lump = Ex_DynamicNumForName(DYNA_TRANMAP);
 
   // If a tranlucency filter map lump is present, use it
 
   if (lump != -1)  // Set a pointer to the translucency filter maps.
-    main_tranmap = W_CacheDynamicLumpName(DYNA_TRANMAP, PU_STATIC);   // killough 4/11/98
+    main_tranmap = Ex_CacheDynamicLumpName(DYNA_TRANMAP, PU_STATIC);   // killough 4/11/98
   else
     {   // Compose a default transparent filter map based on PLAYPAL.
-      unsigned char *playpal = W_CacheDynamicLumpName(DYNA_PLAYPAL, PU_STATIC);
+      unsigned char *playpal = Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_STATIC);
       char fname[PATH_MAX+1], *D_DoomExeDir(void);
       struct {
         unsigned char pct;
@@ -1008,13 +1009,13 @@ void R_InitTranMap(int progress)
 
 void R_ReInitTranMap(int progress)
 {
-  int lump = W_DynamicNumForName(DYNA_TRANMAP);
+  int lump = Ex_DynamicNumForName(DYNA_TRANMAP);
   // If a tranlucency filter map lump is present, use it
   if (lump != -1)  // Set a pointer to the translucency filter maps.
-    main_tranmap = W_CacheDynamicLumpName(DYNA_TRANMAP, PU_STATIC);   // killough 4/11/98
+    main_tranmap = Ex_CacheDynamicLumpName(DYNA_TRANMAP, PU_STATIC);   // killough 4/11/98
   else 
     {
-      unsigned char *playpal = W_CacheDynamicLumpName(DYNA_PLAYPAL, PU_STATIC);
+      unsigned char *playpal = Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_STATIC);
       char fname[PATH_MAX+1], *D_DoomExeDir(void);
       struct {
         unsigned char pct;

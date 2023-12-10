@@ -50,6 +50,7 @@ rcsid[] = "$Id: m_misc.c,v 1.60 1998/06/03 20:32:12 jim Exp $";
 #include "c_io.h"
 #include "c_net.h"
 #include "d_io.h"  // SoM 3/12/2002: moved unistd stuff into d_io.h
+#include "ex_stuff.h"
 
 #include <errno.h>
 
@@ -2313,7 +2314,7 @@ void M_ScreenShot (void)
 	  // killough 4/18/98: make palette stay around
 	  // (PU_CACHE could cause crash)
 
-          byte *pal = W_CacheDynamicLumpName (DYNA_PLAYPAL, PU_STATIC);
+          byte *pal = Ex_CacheDynamicLumpName (DYNA_PLAYPAL, PU_STATIC);
           byte *linear = screens[2];
           int scale = RESULTING_SCALE;
 
