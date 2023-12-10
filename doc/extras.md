@@ -10,7 +10,7 @@ Included in DEMOS\CHEX is a bundle of Tartar binaries and Chex Quest 1 and
 Chex Quest 2 games. The demo allows anyone to appreciate Tartar in action
 without even loading any of Doom assets (i.e. one does not need to own Doom),
 and without a risk of displaying content not suitable for minors, like gore
-on the walls or demon heads being split blown into smithereens, or other
+on the walls or demon heads being blown into smithereens, or other
 "nasty" things found in ID games. The configuration is adjusted so that 
 included Dehacked patch by Simon Howard is loaded.
 
@@ -42,21 +42,19 @@ To play the maps:
 2. Run SETUP.EXE included in TARTAR subdirectory and follow on-screen 
    instructions to configure sound and music card
 
-3. To run the maps DOOM2.WAD is be required, except for map ETC21.WAD
+3. To run the maps DOOM2.WAD is required, except for map ETC21.WAD
    DOOM.WAD is required instead. For fast and easy start copy either DOOM2.WAD
    or both DOOM2.WAD and DOOM.WAD into the directory containing ETC.WAD 
 
-4. Under MS-DOS or Windows 9X CD into the directory with ETC.WAD and
+4. In MS-DOS or Windows 9X change into the directory with ETC.WAD and
    run LAUNCH.BAT. This will list the available maps and provide further
    instructions
 
 5. In DOSBox, FreeDOS or elsewhere, or if using an alternative command shell,
-   please use a command similar to the below to run a map:  
+   use a command similar to the below to run a map:  
 
    TARTAR\TARTAR.EXE -file ETC.WAD LEVLES\ETC01.WAD  
-
-   or
-
+   or  
    TARTAR\TARTAR.EXE -iwad DOOM.WAD -file ETCGFX1.WAD LEVELS\ETC21.WAD  
 
 ## Extras
@@ -93,11 +91,11 @@ Eternity TC assets demo pack.
 
 ### Edited Eternal Doom shell 
 
-Eternal Doom by Team TNT has a wonderfull shell executable that unfortunatelly 
+Eternal Doom by Team TNT has a powerfull shell executable that unfortunatelly 
 requires that player's Doom source port file is named DOOM2.EXE. Provided in 
 EXTRAS\ETERNAL is a hex-edited copy of the shell that calls ETERNITY.EXE instead,
 so that players wishing to play Eternal Doom via Eternity Engine can do so 
-from the shell, enjoying all of the extras, like simple level (and extra level) 
+from the shell, enjoying all of the extras: simple level (and extra level) 
 selection, WAD patching and the like.
 
 ### MAPINFO lumps for No Rest for the Living
@@ -106,9 +104,9 @@ By version 3.29db5-joel2 Eternity Engine had developed support for advanced feat
 via MAPINFO files, allowing for example exiting to secret levels or ending the game 
 from arbitrary maps. Unlike other ports, SMMU and older versions of Eternity did not
 keep all MAPINFO details in a single lump, and instead looked for these details 
-in the index entries of the each maps itself (e.g. MAPINFO for MAP01 would be 
-in the lump MAP01, MAPINFO for MAP02 - in the lump MAP01 of the same wad file, etc.). 
+in the index entries of the each map itself (e.g. MAPINFO for MAP01 would be 
+in the lump MAP01, MAPINFO for MAP02 - in the lump MAP02 of the same wad file, etc.). 
 In EXTRAS\NERVE one can find a set of such lumps that, if incorporated into NERVE.WAD 
-(player has to do that on their own) allows for No Rest for the Living 
+(players would have to do that on their own) allows for No Rest for the Living 
 to be played via Tartar with intended map names, music tracks and end game text.
 
