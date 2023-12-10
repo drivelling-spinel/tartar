@@ -31,3 +31,4 @@
 - Switching weapons while shooting crashes game
 - Original 1st encounter Wolfendoom sounds are played at incorrect sampling rate
 - Weapon in SSG slot has glitchy animation in Rheingold and (original) Arctic Wolf 
+- Loading from empty slot crashes the game
