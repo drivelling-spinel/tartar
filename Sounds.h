@@ -417,7 +417,10 @@ typedef enum {
   sfx_drauto,
   sfx_drspwn,
   sfx_thunr,
-  
+
+  // lp: the famous smmutest sound
+  sfx_wank,
+
   NUMSFX
 } sfxenum_t;
 

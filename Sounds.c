@@ -334,8 +334,10 @@ sfxinfo_t S_sfx[] = {
   { "crash",  sg_none,  100, 0, -1, -1, 0 },
   { "drauto",  sg_none,  100, 0, -1, -1, 0 },
   { "drspwn",  sg_none,  100, 0, -1, -1, 0 },
-  { "thunr",  sg_none,  100, 0, -1, -1, 0 }
-  
+  { "thunr",  sg_none,  100, 0, -1, -1, 0 },
+
+  // LP: smmutest wank
+  { "wank",  sg_none,  100, 0, -1, -1, 0 }
   
 };
 sfxinfo_t chgun=

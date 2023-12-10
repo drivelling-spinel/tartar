@@ -294,9 +294,17 @@ void setvariablevalue(svariable_t *v, svalue_t newvalue)
       if(v->type == svt_string)   // static incase a global_script var
 	v->value.s = Z_Malloc(256, PU_STATIC, 0);
     }
-  
+
   if(v->type == svt_int)
-    v->value.i = intvalue(newvalue);
+    {
+      int ival = intvalue(newvalue);
+      if(!strcmp(v->name, "zoom"))
+      {
+        if(ival < 1)
+          ival = 1;
+      }
+      v->value.i = ival;
+    }
 
   if(v->type == svt_string)
     strcpy(v->value.s, stringvalue(newvalue));

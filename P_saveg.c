@@ -1626,6 +1626,7 @@ runningscript_t *P_UnArchiveRunningScript()
   int i;
   int scriptnum;
   int num_variables;
+  int *int_p;
   runningscript_t *rs;
 
   // create a new runningscript
@@ -1649,7 +1650,7 @@ runningscript_t *P_UnArchiveRunningScript()
     
     // get number of variables
     num_variables = *short_p++;
-
+    
     save_p = (unsigned char*) short_p;      // restore save_p
   }
   
@@ -1669,7 +1670,9 @@ runningscript_t *P_UnArchiveRunningScript()
       sv->name = Z_Strdup(save_p, PU_LEVEL, 0);
       save_p += strlen(sv->name) + 1;
       
-      sv->type = *save_p++;
+      int_p = (int *)save_p;
+      sv->type = *int_p++;
+      save_p = (unsigned char *)int_p;
       
       switch(sv->type)        // read depending on type
 	{
@@ -1759,7 +1762,7 @@ void P_ArchiveRunningScripts()
   long_p = (long *) save_p;
   *long_p++ = num_runningscripts;
   save_p = (unsigned char *)long_p;        
-  
+
   // now archive them
   rs = runningscripts.next;
   while(rs)
