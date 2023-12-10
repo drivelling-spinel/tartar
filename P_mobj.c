@@ -45,6 +45,7 @@ rcsid[] = "$Id: p_mobj.c,v 1.26 1998/05/16 00:24:12 phares Exp $";
 #include "wi_stuff.h"
 #include "p_spec.h" // haleyjd 04/05/99: TerrainTypes
 #include "p_partcl.h"
+#include "d_deh.h"
 
 #ifdef MONSTER_FALLING_DMG
 void P_MonsterFallingDamage(mobj_t *);
@@ -1486,6 +1487,8 @@ void P_SpawnBlood2(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage, mob
            break;
         case 4:
            if(gamemission == chex) bcolor = 2;
+           else if(source->player && source->player->cheats & CF_GODMODE)
+              bcolor = 3;
            else
               switch(source->type)
               {
@@ -1497,6 +1500,10 @@ void P_SpawnBlood2(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage, mob
                  case MT_CKNIGHT:
                  case MT_CBRUISER:
                     bcolor = 2;
+                    break;
+                 case MT_TROOP:
+                    // good chances we have author's self titled wad loaded
+                    if(!strcmp(s_CC_IMP, "ROACH")) bcolor = 2;
                     break;
                  default:
                     bcolor = 0;
