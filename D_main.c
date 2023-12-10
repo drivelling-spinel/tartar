@@ -1371,10 +1371,20 @@ void D_DoomMain(void)
     sprintf(filestr, "%s%s.wad", D_DoomExeDir(), D_DoomExeName());
     if(WadFileStatus(filestr, &isdir))
     {
-      D_AddFile(filestr);
+        int i;
+        for(i=0; i<numwadfiles; i++)
+          {
+           if(!strcmp(wadfiles[i], filestr)) break;
+          }
+        if(i == numwadfiles) D_AddFile(filestr); 
     } else {
-      sprintf(filestr, "%s.wad", D_DoomExeName());
-      D_AddFile(filestr);
+      int i;
+      sprintf(filestr, "./%s.wad", D_DoomExeName());
+      for(i=0; i<numwadfiles; i++)
+        {
+         if(!strcmp(wadfiles[i], filestr)) break;
+        }
+      if(i == numwadfiles) D_AddFile(filestr); 
     }
     sprintf(codlevstr,"%scodlev.wad", D_DoomExeDir());
     D_AddFile(codlevstr); // joel - add codlevel wad too

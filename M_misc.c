@@ -160,13 +160,6 @@ default_t defaults[] = {
   },
 #endif
   {
-    "v_mode",
-    &v_mode, NULL,
-    0, {0,32}, dt_number, ss_gen, wad_no,
-    "graphics mode"
-  },
-
-  {
     "textmode_startup",
     &textmode_startup, NULL,
     0, {0,1}, dt_number, ss_gen, wad_no,
@@ -178,6 +171,24 @@ default_t defaults[] = {
     &use_vsync, NULL,
     1, {0,1}, dt_number, ss_gen, wad_no,
     "1 to enable wait for vsync to avoid display tearing"
+  },
+  {
+    "show_fps",
+    &show_fps, NULL,
+    1, {0,1}, dt_number, ss_gen, wad_no,
+    "1 to show frames per second and video mode on screen"
+  },
+  {
+    "hires",
+    &hires, NULL,
+    1, {0,1}, dt_number, ss_gen, wad_no,
+    "1 to enable high resolution mode"
+  },
+  {
+    "page_flip",
+    &page_flip, NULL,
+    1, {0,1}, dt_number, ss_gen, wad_no,
+    "1 to enable page flipping"
   },
 #endif
   {

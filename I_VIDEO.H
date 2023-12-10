@@ -1,7 +1,9 @@
 // Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2000 James Haley
+// $Id: i_video.h,v 1.2 2000-08-12 21:29:28 fraggle Exp $
+//
+// Copyright (C) 1993-1996 by id Software, Inc.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +19,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-//--------------------------------------------------------------------------
-//
 // DESCRIPTION:
 //      System specific interface stuff.
 //
@@ -27,11 +27,10 @@
 #ifndef __I_VIDEO__
 #define __I_VIDEO__
 
-#ifdef DJGPP
-  #include "allegro.h" // joel - quotes instead
-#endif
+#include <allegro.h>
 
 #include "doomtype.h"
+#include "m_misc.h" // GB 2014: for M_DrawText
 
 // Called by D_DoomMain,
 // determines the hardware configuration
@@ -54,40 +53,27 @@ void I_ReadScreen (byte* scr);
 int I_DoomCode2ScanCode(int);   // killough
 int I_ScanCode2DoomCode(int);   // killough
 
-void I_ResetVidMode();
+void I_ResetScreen(void);   // killough 10/98
 
-#ifdef DJGPP
- extern int use_vsync;  // killough 2/8/98: controls whether vsync is called
- extern int page_flip;  // killough 8/15/98: enables page flipping (320x200)
- extern int disk_icon;  // killough 10/98
- extern int vesamode;
- extern int hires;      // killough 11/98
- extern BITMAP *screens0_bitmap;   // killough 12/98
-#endif
-
-// video modes
-
-typedef struct videomode_s
-{
-//#ifdef DJGPP
-  boolean hires;
-  boolean pageflip;
-  boolean vesa;
-//#endif
-  char *description;
-} videomode_t;
-
-extern videomode_t videomodes[];
-
-void I_CheckVESA();
-void I_SetMode(int i);
-
+extern int show_fps;   // GB 2014
+extern int use_vsync;  // killough 2/8/98: controls whether vsync is called
+extern int page_flip; 
+extern int hires;  
+extern int disk_icon;  // killough 10/98
+extern int in_graphics_mode; // GB 2014: share
+extern boolean nolfbparm; // checkparm of -noLFB GB 2014
 
 #endif
 
 //----------------------------------------------------------------------------
 //
 // $Log: i_video.h,v $
+// Revision 1.2  2000-08-12 21:29:28  fraggle
+// change license header
+//
+// Revision 1.1.1.1  2000/07/29 13:20:41  fraggle
+// imported sources
+//
 // Revision 1.4  1998/05/03  22:40:58  killough
 // beautification
 //

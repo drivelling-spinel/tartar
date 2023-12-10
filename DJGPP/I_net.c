@@ -1,7 +1,9 @@
 // Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2000 James Haley
+// $Id: i_net.c,v 1.2 2000-08-12 21:29:28 fraggle Exp $
+//
+// Copyright (C) 1993-1996 by id Software, Inc.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +19,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-//----------------------------------------------------------------------------
-//
 // DESCRIPTION:
-//
-//  Mid-level network code
 //
 //-----------------------------------------------------------------------------
 
 #include "../z_zone.h"  /* memory allocation wrappers -- killough */
 
 static const char
-rcsid[] = "$Id: i_net.c,v 1.4 1998/05/16 09:41:03 jim Exp $";
+rcsid[] = "$Id: i_net.c,v 1.2 2000-08-12 21:29:28 fraggle Exp $";
 
 #include "../doomstat.h"
 #include "../i_system.h"
@@ -78,16 +76,7 @@ void PacketGet (void)
 void I_InitNetwork (void)
 {
   int                 i,j;
-
-  // set up the singleplayer doomcom
-
-  singleplayer.id = DOOMCOM_ID;
-  singleplayer.numplayers = singleplayer.numnodes = 1;
-  singleplayer.deathmatch = false;
-  singleplayer.consoleplayer = 0;
-  singleplayer.extratics=0;
-  singleplayer.ticdup=1;
- 
+      
   // set up for network
                           
   // parse network game options,
@@ -96,8 +85,16 @@ void I_InitNetwork (void)
   if (!i)
   {
     // single player game
-    doomcom = &singleplayer;
+    doomcom = malloc (sizeof (*doomcom) );
+    memset (doomcom, 0, sizeof(*doomcom) );
+
     netgame = false;
+    doomcom->id = DOOMCOM_ID;
+    doomcom->numplayers = doomcom->numnodes = 1;
+    doomcom->deathmatch = false;
+    doomcom->consoleplayer = 0;
+    doomcom->extratics=0;
+    doomcom->ticdup=1;
     return;
   }
 
@@ -146,6 +143,12 @@ void I_NetCmd (void)
 //----------------------------------------------------------------------------
 //
 // $Log: i_net.c,v $
+// Revision 1.2  2000-08-12 21:29:28  fraggle
+// change license header
+//
+// Revision 1.1.1.1  2000/07/29 13:20:41  fraggle
+// imported sources
+//
 // Revision 1.4  1998/05/16  09:41:03  jim
 // formatted net files, installed temp switch for testing Stan/Lee's version
 //

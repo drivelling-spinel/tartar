@@ -1171,11 +1171,11 @@ menu_t menu_video =
   {
     {it_title,        FC_GOLD "video",                NULL, "m_video"},
     {it_gap},
-    {it_runcmd,       "set video mode",               "mn_vidmode"},
-    {it_gap},
     {it_info,         FC_GOLD "mode"},
+    {it_toggle,       "high resolution",              "v_hires"},
+    {it_toggle,       "use page-flipping",            "v_page_flip"},
     {it_toggle,       "wait for retrace",             "v_retrace"},
-    {it_runcmd,       "test framerate..",             "timedemo demo2; mn_clearmenus"},
+    {it_toggle,       "show fps",                     "v_show_fps"},
     {it_slider,       "gamma correction",             "gamma"},
     
     {it_gap},
@@ -1215,8 +1215,8 @@ void MN_VideoModeDrawer()
 
   patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
   
-  V_DrawBox(270, 110, 20, 20);
-  V_DrawPatchTL(282, 122, 0, patch, NULL);
+  V_DrawBox(269, 116, 20, 20);
+  V_DrawPatchTL(281, 129, 0, patch, NULL);
 }
 
 CONSOLE_COMMAND(mn_video, 0)
@@ -1248,65 +1248,6 @@ CONSOLE_COMMAND(mn_particle, 0)
    MN_StartMenu(&menu_particles);
 }
 
-/////////////////////////////////////////////////////////////////
-//
-// Set vid mode
-
-void MN_VidModeDrawer();
-
-menu_t menu_vidmode =
-  {
-    {
-      {it_title,        FC_GOLD "video",                NULL, "m_video"},
-      {it_gap},
-      {it_info,         FC_GOLD "current mode:"},
-      {it_info,         "(current mode)"},
-      {it_gap},
-      {it_info,         FC_GOLD "select video mode:"},
-      // .... video modes filled in by console cmd function ......
-      {it_end},
-    },
-    50, 15,              // x,y offset
-    7,                    // start on first selectable
-    mf_leftaligned|mf_background,        // full-screen menu
-    MN_VidModeDrawer,
-  };
-
-void MN_VidModeDrawer()
-{
-  menu_vidmode.menuitems[3].description = videomodes[v_mode].description;
-}
-
-CONSOLE_COMMAND(mn_vidmode, 0)
-{
-  static boolean menu_built = false;
-  
-  // dont build multiple times
-  if(!menu_built)
-    {
-      int menuitem, vidmode;
-      char tempstr[20];
-      
-      // start on item 6
-      
-      for(menuitem=6, vidmode=0; videomodes[vidmode].description;
-	  menuitem++, vidmode++)
-	{
-	  menu_vidmode.menuitems[menuitem].type = it_runcmd;
-	  menu_vidmode.menuitems[menuitem].description =
-	    videomodes[vidmode].description;
-	  sprintf(tempstr, "v_mode %i", vidmode);
-	  menu_vidmode.menuitems[menuitem].data = strdup(tempstr);
-	}
-     
-      menu_vidmode.menuitems[menuitem].type = it_end; // mark end
-
-      menu_built = true;
-    }
-
-  MN_StartMenu(&menu_vidmode);
-}
-
 
 /////////////////////////////////////////////////////////////////
 //
@@ -1318,19 +1259,18 @@ menu_t menu_sound =
   {
     {it_title,      FC_GOLD "sound",                NULL, "m_sound"},
     {it_gap},
+    {it_info,       FC_GOLD "use setup.exe to select" },
+    {it_info,       FC_GOLD "digi and midi cards"},
+    {it_gap},
     {it_info,       FC_GOLD "volume"},
     {it_slider,     "sfx volume",                   "sfx_volume"},
     {it_slider,     "music volume",                 "music_volume"},
     {it_gap},
     {it_info,       FC_GOLD "setup"},
-    {it_toggle,     "sound card",                   "snd_card"},
-    {it_toggle,     "music card",                   "mus_card"},
-    {it_toggle,     "autodetect voices",            "detect_voices"},
     {it_toggle,     "sound channels",               "snd_channels"},
     {it_toggle,     "force reverse stereo",         "s_flippan"},
     {it_gap},
     {it_info,       FC_GOLD "misc"},
-    {it_toggle,     "precache sounds",              "s_precache"},
     {it_toggle,     "pitched sounds",               "s_pitched"},
     {it_end},
   },
@@ -1694,7 +1634,7 @@ void MN_FrameRateDrawer()
   MN_WriteText(tempstr, 50, 80);
   
   y = 93 << hires;
-  linelength = (3 * scrwidth * this_framerate) / (4 * framerates[v_mode]);
+  linelength = (3 * scrwidth * this_framerate) / (4 * framerates[0]);
   if(linelength > scrwidth) linelength = scrwidth-2;
  
   // draw your computers framerate
@@ -1706,7 +1646,7 @@ void MN_FrameRateDrawer()
     }
 
   sprintf(tempstr, "fast computer (k6-2 450): %i.%i fps",
-	  framerates[v_mode]/10, framerates[v_mode]%10);
+          framerates[0]/10, framerates[0]%10);
   MN_WriteText(tempstr, 50, 110);
 
   y = 103 << hires;
@@ -1875,7 +1815,6 @@ void MN_AddMenus()
   C_AddCommand(mn_mouse);
   C_AddCommand(mn_video);
   C_AddCommand(mn_particle);  // haleyjd: particle options menu
-  C_AddCommand(mn_vidmode);
   C_AddCommand(mn_sound);
   C_AddCommand(mn_weapons);
   C_AddCommand(mn_compat);

@@ -34,6 +34,7 @@
 
 #include "allegro.h"
 #include "internal.h"
+#include "string.h" // GB 2014
 
 #include "emu8k.h"
 

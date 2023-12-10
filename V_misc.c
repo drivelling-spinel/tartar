@@ -47,35 +47,10 @@ extern int gamma_correct;
 // contain a member of type char* called description:
 // see i_video.c for more info
 
-int v_mode = 0;
-static int prevmode = 0;
-
-int NumModes()
-{
-  int count=0;
-
-  while(videomodes[count].description)
-    count++;
-
-  return count;
-}
-
-// v_resetmode is called after changing vid mode
 
 void V_ResetMode()
 {
-  // check for invalid mode
-
-  if(v_mode >= NumModes() || v_mode < 0)
-    {
-      C_Printf("invalid mode %i", v_mode);
-      v_mode = prevmode;
-      return;
-    }
-  
-  prevmode = v_mode;
-  
-  I_SetMode(v_mode);
+  I_ResetScreen();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -501,26 +476,16 @@ void V_ClassicFPSDrawer()
 
 void V_Init(void)
 {
-  int size = hires ? SCREENWIDTH*SCREENHEIGHT*4 : SCREENWIDTH*SCREENHEIGHT;
+  int size = (hires ? SCREENWIDTH*SCREENHEIGHT*4 : SCREENWIDTH*SCREENHEIGHT);
   static byte *s;
 
-#ifdef DJGPP
-  if (s)
-    free(s), destroy_bitmap(screens0_bitmap);
-#endif
+  if (s) free(s);
+  if (screens[0]) free(screens[0]);
 
   screens[3] = (screens[2] = (screens[1] = s = calloc(size,3)) + size) + size;
 
-#ifdef DJGPP
-  screens0_bitmap = 
-    create_bitmap_ex(8, SCREENWIDTH << hires, SCREENHEIGHT << hires);
-  memset(screens[0] = screens0_bitmap->line[0], 0, size);
-#elif defined(_MSC_VER)
-  screens[0] = NULL;
-#else
-  screens[0] = malloc(size);
-#endif
-
+  screens[0] = calloc(size,1);
+  memset(screens[0], 0, size);
 }
 
 /////////////////////////////
@@ -608,36 +573,13 @@ void V_InitMisc()
 // Console Commands
 //
 
-VARIABLE_INT(v_mode, NULL,              0, 10, NULL);
-
 char *str_ticker[]={"off", "chart", "classic"};
 VARIABLE_INT(v_ticker, NULL,            0, 2, str_ticker);
-
-CONSOLE_VARIABLE(v_mode, v_mode, cf_buffered)
-{
-  V_ResetMode();
-}
-
-CONSOLE_COMMAND(v_modelist, 0)
-{
-  videomode_t* videomode = videomodes;
-  
-  C_Printf(FC_GRAY "video modes:\n" FC_RED);
-  
-  while(videomode->description)
-    {
-      C_Printf("%i: %s\n",(int)(videomode-videomodes),
-	       videomode->description);
-      videomode++;
-    }
-}
 
 CONSOLE_VARIABLE(v_ticker, v_ticker, 0) {}
 
 void V_AddCommands()
 {
-  C_AddCommand(v_mode);
-  C_AddCommand(v_modelist);
   C_AddCommand(v_ticker);
 }
 

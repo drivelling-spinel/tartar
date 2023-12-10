@@ -1,7 +1,9 @@
 // Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2000 James Haley
+// $Id: i_system.c,v 1.3 2000-08-12 21:29:28 fraggle Exp $
+//
+// Copyright (C) 1993-1996 by id Software, Inc.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,43 +19,33 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-//----------------------------------------------------------------------------
-//
 // DESCRIPTION:
-//
-//   General-purpose system-specific routines, including timer
-//   installation, keyboard, mouse, and joystick code.
 //
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c,v 1.14 1998/05/03 22:33:13 killough Exp $";
+rcsid[] = "$Id: i_system.c,v 1.3 2000-08-12 21:29:28 fraggle Exp $";
 
 #include <stdio.h>
 
-
-// Julian: 6/6/2001: replaced by local inclusion
-#include "allegro.h"
-
+#include <allegro.h>
 extern void (*keyboard_lowlevel_callback)(int);  // should be in <allegro.h>
 #include <stdarg.h>
 #include <gppconio.h>
 #include <sys/nearptr.h>
 
-#include "ser_main.h"
+// fraggle 29/7/2000: keyboard.h: avoid name conflicts with allegro functions
+#include "keyboard.h"
 
 #include "../c_runcmd.h"
 #include "../i_system.h"
 #include "../i_sound.h"
-#include "../i_video.h"
 #include "../doomstat.h"
 #include "../m_misc.h"
 #include "../g_game.h"
 #include "../w_wad.h"
 #include "../v_video.h"
 #include "../m_argv.h"
-
-#include "../g_bind.h"
 
 ticcmd_t *I_BaseTiccmd(void)
 {
@@ -84,22 +76,12 @@ int  I_GetTime_RealTime (void)
   return realtic;
 }
 
-void I_SetTime(int newtime)
-{
-  asm("cli");
-  realtic = newtime;
-  asm("sti");
-}
-
-        //sf: made a #define, changed to 16
-#define CLOCK_BITS 16
-
 // killough 4/13/98: Make clock rate adjustable by scale factor
 int realtic_clock_rate = 100;
-static long long I_GetTime_Scale = 1<<CLOCK_BITS;
+static long long I_GetTime_Scale = 1<<24;
 int I_GetTime_Scaled(void)
 {
-  return (long long) realtic * I_GetTime_Scale >> CLOCK_BITS;
+  return (long long) realtic * I_GetTime_Scale >> 24;
 }
 
 static int  I_GetTime_FastDemo(void)
@@ -144,7 +126,6 @@ void I_Shutdown(void)
   key_shifts = orig_key_shifts;
 
   remove_keyboard();
-  keyboard_installed = false;
 
   remove_timer();
 }
@@ -159,8 +140,33 @@ void I_ResetLEDs(void)
   set_leds(leds_always_off ? 0 : -1);
 }
 
-void I_InitKeyboard()
+void I_Init(void)
 {
+  extern int key_autorun;
+  int clock_rate = realtic_clock_rate, p;
+
+  if ((p = M_CheckParm("-speed")) && p < myargc-1 &&
+      (p = atoi(myargv[p+1])) >= 10 && p <= 1000)
+    clock_rate = p;
+    
+  //init timer
+  LOCK_VARIABLE(realtic);
+  LOCK_FUNCTION(I_timer);
+  install_timer();
+  install_int_ex(I_timer,BPS_TO_TIMER(TICRATE));
+
+  // killough 4/14/98: Adjustable speedup based on realtic_clock_rate
+  if (fastdemo)
+    I_GetTime = I_GetTime_FastDemo;
+  else
+    if (clock_rate != 100)
+      {
+        I_GetTime_Scale = ((long long) clock_rate << 24) / 100;
+        I_GetTime = I_GetTime_Scaled;
+      }
+    else
+      I_GetTime = I_GetTime_RealTime;
+
   // killough 3/21/98: Install handler to handle interrupt-driven keyboard IO
   LOCK_VARIABLE(keyboard_queue);
   LOCK_FUNCTION(keyboard_handler);
@@ -190,33 +196,6 @@ void I_InitKeyboard()
       }
 
   I_ResetLEDs();
-}
-
-void I_Init(void)
-{
-  int clock_rate = realtic_clock_rate, p;
-
-  if ((p = M_CheckParm("-speed")) && p < myargc-1 &&
-      (p = atoi(myargv[p+1])) >= 10 && p <= 1000)
-    clock_rate = p;
-    
-  //init timer
-  LOCK_VARIABLE(realtic);
-  LOCK_FUNCTION(I_timer);
-  install_timer();
-  install_int_ex(I_timer,BPS_TO_TIMER(TICRATE));
-
-  // killough 4/14/98: Adjustable speedup based on realtic_clock_rate
-  if (fastdemo)
-    I_GetTime = I_GetTime_FastDemo;
-  else
-    if (clock_rate != 100)
-      {
-        I_GetTime_Scale = ((long long) clock_rate << CLOCK_BITS) / 100;
-        I_GetTime = I_GetTime_Scaled;
-      }
-    else
-      I_GetTime = I_GetTime_RealTime;
 
   // killough 3/6/98: end of keyboard / autorun state changes
 
@@ -242,10 +221,6 @@ void I_Init(void)
     if (!(nomusicparm && nosfxparm))
       I_InitSound();
   }
-
-  // get modem cfg
-
-  Ser_Init();
 }
 
 //
@@ -258,19 +233,16 @@ static int has_exited;
 
 void I_Quit (void)
 {
-  has_exited = 1;   /* Prevent infinitely recursive exits -- killough */
+  has_exited=1;   /* Prevent infinitely recursive exits -- killough */
 
   if (demorecording)
     G_CheckDemoStatus();
+  M_SaveDefaults ();
 
-        // sf : rearrange this so the errmsg doesn't get messed up
   if (*errmsg)
     puts(errmsg);   // killough 8/8/98
   else
     I_EndDoom();
-
-  M_SaveDefaults();
-  G_SaveDefaults(); // haleyjd
 }
 
 //
@@ -294,22 +266,7 @@ void I_Error(const char *error, ...) // killough 3/20/98: add const
     }
 }
 
-// killough 2/22/98: Add support for ENDBOOM, which is PC-specific
-// killough 8/1/98: change back to ENDOOM
-
-void I_EndDoom(void)
-{
-  int lump;
-
-  if (lumpinfo && (lump = W_CheckNumForName("ENDOOM")) != -1) // killough 10/98
-    {  // killough 8/19/98: simplify
-      memcpy(0xb8000 + (byte *) __djgpp_conventional_base,
-	     W_CacheLumpNum(lump, PU_CACHE), 0xf00);
-      gotoxy(1,24);
-    }
-}
-
-        // check for ESC button pressed, regardless of keyboard handler
+// check for ESC button pressed, regardless of keyboard handler
 int I_CheckAbort()
 {
   if(keyboard_installed)
@@ -336,6 +293,21 @@ int I_CheckAbort()
   return false;
 }
 
+
+// killough 2/22/98: Add support for ENDBOOM, which is PC-specific
+// killough 8/1/98: change back to ENDOOM
+
+void I_EndDoom(void)
+{
+  int lump;
+  if (lumpinfo && (lump = W_CheckNumForName("ENDOOM")) != -1) // killough 10/98
+    {  // killough 8/19/98: simplify
+      memcpy(0xb8000 + (byte *) __djgpp_conventional_base,
+	     W_CacheLumpNum(lump, PU_CACHE), 0xf00);
+      gotoxy(0,24);
+    }
+}
+
 /*************************
         CONSOLE COMMANDS
  *************************/
@@ -345,15 +317,8 @@ VARIABLE_INT(realtic_clock_rate, NULL,  0, 500, NULL);
 
 CONSOLE_VARIABLE(i_gamespeed, realtic_clock_rate, 0)
 {
-  if (realtic_clock_rate != 100)
-    {
-      I_GetTime_Scale = ((long long) realtic_clock_rate << CLOCK_BITS) / 100;
-      I_GetTime = I_GetTime_Scaled;
-    }
-  else
-    I_GetTime = I_GetTime_RealTime;
-  
-  ResetNet();         // reset the timers and stuff
+  // do nothing for now - need a restart
+  // ResetNet();         // reset the timers and stuff
 }
 
 CONSOLE_VARIABLE(i_ledsoff, leds_always_off, 0)
@@ -377,9 +342,19 @@ void I_AddCommands()
   Ser_AddCommands();
 }
 
+
 //----------------------------------------------------------------------------
 //
 // $Log: i_system.c,v $
+// Revision 1.3  2000-08-12 21:29:28  fraggle
+// change license header
+//
+// Revision 1.2  2000/07/29 22:48:22  fraggle
+// fix for allegro v3.12
+//
+// Revision 1.1.1.1  2000/07/29 13:20:39  fraggle
+// imported sources
+//
 // Revision 1.14  1998/05/03  22:33:13  killough
 // beautification
 //

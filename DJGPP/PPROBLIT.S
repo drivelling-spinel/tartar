@@ -233,7 +233,6 @@ L3:
         movb  8(%esi),%bl
         movb 16(%esi),%cl
         movb 24(%esi),%dl
-
         movb  4(%esi),%ah
         movb 12(%esi),%bh
         movb 20(%esi),%ch
@@ -538,10 +537,498 @@ L3p:
         ret
 
 //----------------------------------------------------------------------------
-// $Id: pproblit.s,v 1.4 1998/02/23 04:53:25 killough Exp $
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+
+// GB 2014: below is modified to draw without the status bar, see values at 'leal'
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// killough 8/15/98:
+//
+// Blasts the framebuffer to a 320x200 planar screen. Used for page-flipping.
+//
+
+        .align 8
+.globl _blast_nobar
+_blast_nobar:
+        pushl %ebp
+        pushl %edi
+        pushl %esi
+        pushl %ebx
+
+// Index 2
+        movl $0x3c4,%edx
+        movb $2,%al
+        outb %al,%dx
+        incl %edx
+
+// Plane #0
+
+        movl 20(%esp),%edi
+        movb $1,%al
+        movl 24(%esp),%esi
+        outb %al,%dx
+        movl $1000,%ebp
+        .align 8,0x90
+L0n:
+        movb  0(%esi),%al
+        movb  8(%esi),%bl
+        movb 16(%esi),%cl
+        movb 24(%esi),%dl
+
+        movb  4(%esi),%ah
+        movb 12(%esi),%bh
+        movb 20(%esi),%ch
+        movb 28(%esi),%dh
+
+        movw %ax,0(%edi)
+        movw %bx,2(%edi)
+        movw %cx,4(%edi)
+        movw %dx,6(%edi)
+
+        decl %ebp
+
+        movb 32(%esi),%al
+        movb 40(%esi),%bl
+        movb 48(%esi),%cl
+        movb 56(%esi),%dl
+        movb 36(%esi),%ah
+        movb 44(%esi),%bh
+        movb 52(%esi),%ch
+        movb 60(%esi),%dh
+
+        leal 56(%esi),%esi
+
+        movw %ax,8(%edi)
+        movw %bx,10(%edi)
+        movw %cx,12(%edi)
+        movw %dx,14(%edi)
+
+        leal 14(%edi),%edi
+        jne L0n
+
+// Plane #1
+
+        movl $0x3c5,%edx
+        movl 20(%esp),%edi
+        movb $2,%al
+        movl 24(%esp),%esi
+        incl %esi
+        outb %al,%dx
+        movl $1000,%ebp
+        .align 8,0x90
+L1n:
+        movb  0(%esi),%al
+        movb  8(%esi),%bl
+        movb 16(%esi),%cl
+        movb 24(%esi),%dl
+
+        movb  4(%esi),%ah
+        movb 12(%esi),%bh
+        movb 20(%esi),%ch
+        movb 28(%esi),%dh
+
+        movw %ax,0(%edi)
+        movw %bx,2(%edi)
+        movw %cx,4(%edi)
+        movw %dx,6(%edi)
+
+        decl %ebp
+
+        movb 32(%esi),%al
+        movb 40(%esi),%bl
+        movb 48(%esi),%cl
+        movb 56(%esi),%dl
+        movb 36(%esi),%ah
+        movb 44(%esi),%bh
+        movb 52(%esi),%ch
+        movb 60(%esi),%dh
+
+        leal 56(%esi),%esi
+
+        movw %ax,8(%edi)
+        movw %bx,10(%edi)
+        movw %cx,12(%edi)
+        movw %dx,14(%edi)
+
+        leal 14(%edi),%edi
+        jne L1n
+
+// Plane #2
+
+        movl $0x3c5,%edx
+        movl 20(%esp),%edi
+        movb $4,%al
+        movl 24(%esp),%esi
+        addl $2,%esi
+        outb %al,%dx
+        movl $1000,%ebp
+        .align 8,0x90
+L2n:
+        movb  0(%esi),%al
+        movb  8(%esi),%bl
+        movb 16(%esi),%cl
+        movb 24(%esi),%dl
+
+        movb  4(%esi),%ah
+        movb 12(%esi),%bh
+        movb 20(%esi),%ch
+        movb 28(%esi),%dh
+
+        movw %ax,0(%edi)
+        movw %bx,2(%edi)
+        movw %cx,4(%edi)
+        movw %dx,6(%edi)
+
+        decl %ebp
+
+        movb 32(%esi),%al
+        movb 40(%esi),%bl
+        movb 48(%esi),%cl
+        movb 56(%esi),%dl
+        movb 36(%esi),%ah
+        movb 44(%esi),%bh
+        movb 52(%esi),%ch
+        movb 60(%esi),%dh
+
+        leal 56(%esi),%esi
+
+        movw %ax,8(%edi)
+        movw %bx,10(%edi)
+        movw %cx,12(%edi)
+        movw %dx,14(%edi)
+
+        leal 14(%edi),%edi
+        jne L2n
+
+// Plane #3
+
+        movl $0x3c5,%edx
+        movl 20(%esp),%edi
+        movb $8,%al
+        movl 24(%esp),%esi
+        addl $3,%esi
+        outb %al,%dx
+        movl $1000,%ebp
+        .align 8,0x90
+L3n:
+        movb  0(%esi),%al
+        movb  8(%esi),%bl
+        movb 16(%esi),%cl
+        movb 24(%esi),%dl
+        movb  4(%esi),%ah
+        movb 12(%esi),%bh
+        movb 20(%esi),%ch
+        movb 28(%esi),%dh
+
+        movw %ax,0(%edi)
+        movw %bx,2(%edi)
+        movw %cx,4(%edi)
+        movw %dx,6(%edi)
+
+        decl %ebp
+
+        movb 32(%esi),%al
+        movb 40(%esi),%bl
+        movb 48(%esi),%cl
+        movb 56(%esi),%dl
+        movb 36(%esi),%ah
+        movb 44(%esi),%bh
+        movb 52(%esi),%ch
+        movb 60(%esi),%dh
+
+        leal 56(%esi),%esi
+
+        movw %ax,8(%edi)
+        movw %bx,10(%edi)
+        movw %cx,12(%edi)
+        movw %dx,14(%edi)
+
+        leal 14(%edi),%edi
+        jne L3n
+
+        popl %ebx
+        popl %esi
+        popl %edi
+        popl %ebp
+        ret
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// killough 8/15/98:
+//
+// Same, but optimized for Pentium Pro, to avoid partial stalls and limit
+// memory acesses, by dealing only with whole doublewords.
+//
+
+        .align 8
+.globl _ppro_blast_nobar
+_ppro_blast_nobar:
+        pushl %ebp
+        pushl %edi
+        pushl %esi
+        pushl %ebx
+
+// Index 2
+        movl $0x3c4,%edx
+        movb $2,%al
+        outb %al,%dx
+        incl %edx
+
+// Plane #0
+
+        movl 20(%esp),%edi
+        movb $1,%al
+        movl 24(%esp),%esi
+        outb %al,%dx
+        movl $1000,%ebp
+        .align 8,0x90
+L0pn:
+        movzbl 12(%esi),%eax
+        shll   $8,%eax
+        movzbl  8(%esi),%ebx
+        addl   %ebx,%eax
+        movzbl  4(%esi),%ecx
+        shll   $8,%eax
+        movzbl  0(%esi),%edx
+        addl   %ecx,%eax
+        movzbl 28(%esi),%ebx
+        shll   $8,%eax
+        movzbl 24(%esi),%ecx
+        shll   $8,%ebx
+        addl   %edx,%eax
+        movzbl 20(%esi),%edx
+        addl   %ecx,%ebx
+        movl   %eax,0(%edi)
+        movzbl 16(%esi),%eax
+        shll   $8,%ebx
+        addl   %edx,%ebx
+        movzbl 44(%esi),%ecx
+        shll   $8,%ebx
+        movzbl 40(%esi),%edx
+        addl   %eax,%ebx
+        shll   $8,%ecx
+        movzbl 36(%esi),%eax
+        addl   %edx,%ecx
+        movl   %ebx,4(%edi)
+        shll   $8,%ecx
+        movzbl 32(%esi),%ebx
+        addl   %eax,%ecx
+        shll   $8,%ecx
+        movzbl 60(%esi),%edx
+        addl   %ebx,%ecx
+        movl   %ecx,8(%edi)
+        shll   $8,%edx
+        movzbl 56(%esi),%eax
+        addl   %eax,%edx
+        movzbl 52(%esi),%ebx
+        shll   $8,%edx
+        movzbl 48(%esi),%ecx
+        addl   %ebx,%edx
+        leal 56(%esi),%esi
+        shll   $8,%edx
+        addl   %ecx,%edx
+        movl   %edx,12(%edi)
+        decl %ebp
+        leal 14(%edi),%edi
+        jne L0pn
+
+// Plane #1
+
+        movl $0x3c5,%edx
+        movl 20(%esp),%edi
+        movb $2,%al
+        movl 24(%esp),%esi
+        incl %esi
+        outb %al,%dx
+        movl $1000,%ebp
+        .align 8,0x90
+L1pn:
+        movzbl 12(%esi),%eax
+        shll   $8,%eax
+        movzbl  8(%esi),%ebx
+        addl   %ebx,%eax
+        movzbl  4(%esi),%ecx
+        shll   $8,%eax
+        movzbl  0(%esi),%edx
+        addl   %ecx,%eax
+        movzbl 28(%esi),%ebx
+        shll   $8,%eax
+        movzbl 24(%esi),%ecx
+        shll   $8,%ebx
+        addl   %edx,%eax
+        movzbl 20(%esi),%edx
+        addl   %ecx,%ebx
+        movl   %eax,0(%edi)
+        movzbl 16(%esi),%eax
+        shll   $8,%ebx
+        addl   %edx,%ebx
+        movzbl 44(%esi),%ecx
+        shll   $8,%ebx
+        movzbl 40(%esi),%edx
+        addl   %eax,%ebx
+        shll   $8,%ecx
+        movzbl 36(%esi),%eax
+        addl   %edx,%ecx
+        movl   %ebx,4(%edi)
+        shll   $8,%ecx
+        movzbl 32(%esi),%ebx
+        addl   %eax,%ecx
+        shll   $8,%ecx
+        movzbl 60(%esi),%edx
+        addl   %ebx,%ecx
+        movl   %ecx,8(%edi)
+        shll   $8,%edx
+        movzbl 56(%esi),%eax
+        addl   %eax,%edx
+        movzbl 52(%esi),%ebx
+        shll   $8,%edx
+        movzbl 48(%esi),%ecx
+        addl   %ebx,%edx
+        leal 56(%esi),%esi
+        shll   $8,%edx
+        addl   %ecx,%edx
+        movl   %edx,12(%edi)
+        decl %ebp
+        leal 14(%edi),%edi
+        jne L1pn
+
+// Plane #2
+
+        movl $0x3c5,%edx
+        movl 20(%esp),%edi
+        movb $4,%al
+        movl 24(%esp),%esi
+        addl $2,%esi
+        outb %al,%dx
+        movl $1000,%ebp
+        .align 8,0x90
+L2pn:
+        movzbl 12(%esi),%eax
+        shll   $8,%eax
+        movzbl  8(%esi),%ebx
+        addl   %ebx,%eax
+        movzbl  4(%esi),%ecx
+        shll   $8,%eax
+        movzbl  0(%esi),%edx
+        addl   %ecx,%eax
+        movzbl 28(%esi),%ebx
+        shll   $8,%eax
+        movzbl 24(%esi),%ecx
+        shll   $8,%ebx
+        addl   %edx,%eax
+        movzbl 20(%esi),%edx
+        addl   %ecx,%ebx
+        movl   %eax,0(%edi)
+        movzbl 16(%esi),%eax
+        shll   $8,%ebx
+        addl   %edx,%ebx
+        movzbl 44(%esi),%ecx
+        shll   $8,%ebx
+        movzbl 40(%esi),%edx
+        addl   %eax,%ebx
+        shll   $8,%ecx
+        movzbl 36(%esi),%eax
+        addl   %edx,%ecx
+        movl   %ebx,4(%edi)
+        shll   $8,%ecx
+        movzbl 32(%esi),%ebx
+        addl   %eax,%ecx
+        shll   $8,%ecx
+        movzbl 60(%esi),%edx
+        addl   %ebx,%ecx
+        movl   %ecx,8(%edi)
+        shll   $8,%edx
+        movzbl 56(%esi),%eax
+        addl   %eax,%edx
+        movzbl 52(%esi),%ebx
+        shll   $8,%edx
+        movzbl 48(%esi),%ecx
+        addl   %ebx,%edx
+        leal 56(%esi),%esi
+        shll   $8,%edx
+        addl   %ecx,%edx
+        movl   %edx,12(%edi)
+        decl %ebp
+        leal 14(%edi),%edi
+        jne L2pn
+
+// Plane #3
+
+        movl $0x3c5,%edx
+        movl 20(%esp),%edi
+        movb $8,%al
+        movl 24(%esp),%esi
+        addl $3,%esi
+        outb %al,%dx
+        movl $1000,%ebp
+        .align 8,0x90
+L3pn:
+        movzbl 12(%esi),%eax
+        shll   $8,%eax
+        movzbl  8(%esi),%ebx
+        addl   %ebx,%eax
+        movzbl  4(%esi),%ecx
+        shll   $8,%eax
+        movzbl  0(%esi),%edx
+        addl   %ecx,%eax
+        movzbl 28(%esi),%ebx
+        shll   $8,%eax
+        movzbl 24(%esi),%ecx
+        shll   $8,%ebx
+        addl   %edx,%eax
+        movzbl 20(%esi),%edx
+        addl   %ecx,%ebx
+        movl   %eax,0(%edi)
+        movzbl 16(%esi),%eax
+        shll   $8,%ebx
+        addl   %edx,%ebx
+        movzbl 44(%esi),%ecx
+        shll   $8,%ebx
+        movzbl 40(%esi),%edx
+        addl   %eax,%ebx
+        shll   $8,%ecx
+        movzbl 36(%esi),%eax
+        addl   %edx,%ecx
+        movl   %ebx,4(%edi)
+        shll   $8,%ecx
+        movzbl 32(%esi),%ebx
+        addl   %eax,%ecx
+        shll   $8,%ecx
+        movzbl 60(%esi),%edx
+        addl   %ebx,%ecx
+        movl   %ecx,8(%edi)
+        shll   $8,%edx
+        movzbl 56(%esi),%eax
+        addl   %eax,%edx
+        movzbl 52(%esi),%ebx
+        shll   $8,%edx
+        movzbl 48(%esi),%ecx
+        addl   %ebx,%edx
+        leal 56(%esi),%esi
+        shll   $8,%edx
+        addl   %ecx,%edx
+        movl   %edx,12(%edi)
+        decl %ebp
+        leal 14(%edi),%edi
+        jne L3pn
+
+        popl %ebx
+        popl %esi
+        popl %edi
+        popl %ebp
+        ret
+
+//----------------------------------------------------------------------------
+// $Id: pproblit.s,v 1.1.1.1 2000-07-29 13:20:41 fraggle Exp $
 //----------------------------------------------------------------------------
 //
 // $Log: pproblit.s,v $
+// Revision 1.1.1.1  2000-07-29 13:20:41  fraggle
+// imported sources
+//
 // Revision 1.4  1998/02/23  04:53:25  killough
 // Performance tuning, add Pentium routine
 //

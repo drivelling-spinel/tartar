@@ -1,7 +1,9 @@
 // Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2000 James Haley
+// $Id: i_sound.c,v 1.3 2000-08-12 21:29:34 fraggle Exp $
+//
+// Copyright (C) 1993-1996 by id Software, Inc.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,32 +19,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-//----------------------------------------------------------------------------
-//
 // DESCRIPTION:
 //      System interface for sound.
 //
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c,v 1.15 1998/05/03 22:32:33 killough Exp $";
+rcsid[] = "$Id: i_sound.c,v 1.3 2000-08-12 21:29:34 fraggle Exp $";
 
 #include <stdio.h>
-
-// Julian: 6/6/2001: replaced by local inclusion
-#include "allegro.h"
-
-#include "mmus2mid.h"   //jff 1/16/98 declarations for MUS->MIDI converter
+#include <allegro.h>
+#include <gppconio.h>  // gotoxy, textcolor GB 2014
 
 #include "../c_runcmd.h"
 #include "../doomstat.h"
+#include "mmus2mid.h"   //jff 1/16/98 declarations for MUS->MIDI converter
 #include "../i_sound.h"
-#include "../i_system.h"
 #include "../w_wad.h"
-#include "../g_game.h"     //jff 1/21/98 added to use dprintf in I_RegisterSong
+#include "../g_game.h"     //jff 1/21/98 added to use dmprintf in I_RegisterSong
 #include "../d_main.h"
-
-void I_CacheSound(sfxinfo_t *sound);
 
 // Needed for calling the actual sound output.
 #define SAMPLECOUNT             512
@@ -50,21 +45,27 @@ void I_CacheSound(sfxinfo_t *sound);
 // Factor volume is increased before sending to allegro
 #define VOLSCALE                16
 
-        // sf: adjust temp when changing gamespeed
-extern int realtic_clock_rate;
-
 int snd_card;   // default.cfg variables for digi and midi drives
 int mus_card;   // jff 1/18/98
 
-        // sf: default_snd_card and default_mus_card removed (purpose?)
+//int default_snd_card;  // killough 10/98: add default_ versions
+//int default_mus_card;
+
 
 int detect_voices; //jff 3/4/98 enables voice detection prior to install_sound
+// not usable, just left out for linkage
 //jff 1/22/98 make these visible here to disable sound/music on install err
 
 static SAMPLE *raw2SAMPLE(unsigned char *rawdata, int len)
 {
   SAMPLE *spl = malloc(sizeof(SAMPLE));
   spl->bits = 8;
+
+  // comment out this line for allegro pre-v3.12
+//#if(ALLEGRO_VERSION>=3 && ALLEGRO_SUB_VERSION>=10)
+//  spl->stereo = 0;
+//#endif
+
   // killough 1/22/98: Get correct frequency
   spl->freq = (rawdata[3]<<8)+rawdata[2];
   spl->len = len;
@@ -93,7 +94,6 @@ static void *getsfx(char *sfxname, int *len)
   // Get the sound data from the WAD, allocate lump
   //  in zone memory.
   sprintf(name, "ds%s", sfxname);
-
   // Now, there is a severe problem with the
   //  sound handling, in it is not (yet/anymore)
   //  gamemode aware. That means, sounds from
@@ -208,7 +208,6 @@ static SAMPLE channel[NUM_CHANNELS];
 int I_StartSound(sfxinfo_t *sound, int vol, int sep, int pitch, int pri)
 {
   static int handle;
-  int correctSep;
 
   // move up one slot, with wraparound
   if (++handle >= NUM_CHANNELS)
@@ -217,24 +216,12 @@ int I_StartSound(sfxinfo_t *sound, int vol, int sep, int pitch, int pri)
   // destroy anything still in the slot
   stop_sample(&channel[handle]);
 
-  if(!sound->data) I_CacheSound(sound);
-
   // Copy the sound's data into the sound sample slot
   memcpy(&channel[handle], sound->data, sizeof(SAMPLE));
 
-  // haleyjd 12/08/01: range-check panning value and possibly
-  // force a swap from left to right, right to left based on
-  // a user variable
-  if(sep < 1) 
-     sep = 1;
-  else if(sep > 256) 
-     sep = 256;
-
-  correctSep = forceFlipPan ? sep - 1 : 256 - sep;
-  
   // Start the sound
-  play_sample(&channel[handle],vol*VOLSCALE+VOLSCALE-1,correctSep,
-          PITCH(pitch),0);
+//  play_sample(&channel[handle],vol*VOLSCALE+VOLSCALE-1,256-sep,PITCH(pitch),0);
+  play_sample(&channel[handle],vol*VOLSCALE+VOLSCALE-1,sep,PITCH(pitch),0); // GB 2017, stereo was reversed. sep=0..255
 
   // Reference for s_sound.c to use when calling functions below
   return handle;
@@ -253,19 +240,9 @@ void I_StopSound (int handle)
 
 void I_UpdateSoundParams(int handle, int vol, int sep, int pitch)
 {
-   int correctSep;
+//  adjust_sample(&channel[handle], vol*VOLSCALE+VOLSCALE-1, 256-sep, PITCH(pitch), 0);
+  adjust_sample(&channel[handle], vol*VOLSCALE+VOLSCALE-1, sep, PITCH(pitch), 0); // GB 2017, stereo was reversed. sep=0..255
 
-   // haleyjd: range check panning value and force a flip pan
-   // based on user-specified value
-   if(sep < 1)
-      sep = 1;
-   else if(sep > 256)
-      sep = 256;
-
-   correctSep = forceFlipPan ? sep - 1 : 256 - sep;
-
-   adjust_sample(&channel[handle], vol*VOLSCALE+VOLSCALE-1,
-                 correctSep, PITCH(pitch), 0);
 }
 
 // We can pretend that any sound that we've associated a handle
@@ -308,42 +285,69 @@ void I_ShutdownSound(void)
   remove_sound();
 }
 
-// sf: dynamic sound resource loading
-void I_CacheSound(sfxinfo_t *sound)
-{
-  if(sound->data) return;     // already cached
-  
-  // sf: changed
-  if(sound->link)
-    I_CacheSound(sound->link);
-  else
-    sound->data = getsfx(sound->name, &sound->length);
-}
+//int snd_card_new;
+//int mus_card_new;
+//char midi_desc[160];
+//char digi_desc[160];
+
 
 void I_InitSound(void)
 {
+  int lengths[NUMSFX];  // The actual lengths of all sound effects. -- killough
+  int i;  // killough 10/98: eliminate snd_c since we use default_snd_card now
+
+  snd_card=1;
+  mus_card=1;
+
   // Secure and configure sound device first.
-  
-  if (detect_voices && snd_card>=0 && mus_card>=0)
+  fputs("I_InitSound: ", stdout);
+
+  // GB 2014: In practice, Allegro 3.12 legacy audio selection does not work...
+  // Here is the manual conversion from 3.00 to 3.12 device IDs.
+/*
+  snd_card_new=snd_card;
+  mus_card_new=mus_card;
+  #if(ALLEGRO_VERSION>=3 && ALLEGRO_SUB_VERSION>=10)
+    switch (snd_card) {
+        case 1: snd_card_new=DIGI_SB;         break; 
+        case 2: snd_card_new=DIGI_SB10;		  break;
+        case 3: snd_card_new=DIGI_SB15;		  break;
+        case 4: snd_card_new=DIGI_SB20;		  break;
+        case 5: snd_card_new=DIGI_SBPRO;	  break;
+        case 6: snd_card_new=DIGI_SB16;       break;
+        case 7: snd_card_new=DIGI_WSS;        break;
+    }					
+    switch (mus_card) {
+        case 1: mus_card_new=MIDI_ADLIB;      break;
+        case 2: mus_card_new=MIDI_OPL2;       break;
+        case 3: mus_card_new=MIDI_2XOPL2;     break;
+        case 4: mus_card_new=MIDI_OPL3;       break;
+        case 5: mus_card_new=MIDI_SB_OUT;     break;
+        case 6: mus_card_new=MIDI_MPU;        break;
+        case 8: mus_card_new=MIDI_DIGMID;     break;
+        case 9: mus_card_new=MIDI_AWE32;      break;
+    }
+  #endif
+*/
+/*// GB 2016 Policy change: Use setup.exe + setup.cfg
+  if (detect_voices && snd_card_new>=0 && mus_card_new>=0)
     {
       int mv;                          //jff 3/3/98 try it according to Allegro
-      int dv = detect_digi_driver(snd_card); // detect the digital sound driver
-      if (dv == 0)
-        snd_card = 0;
-      mv = detect_midi_driver(mus_card);     // detect the midi driver
-      if (mv == -1)
-        dv = mv = dv/2;          //note stealing driver, uses digital voices
-      if (mv == 0xffff)
-        mv = -1;               //extern MPU-401 - unknown use default voices
+      int dv = detect_digi_driver(snd_card_new); // detect the digital sound driver
+      if (dv==0)
+        snd_card_new=0;
+      mv = detect_midi_driver(mus_card_new);     // detect the midi driver
+      if (mv==-1)
+        dv=mv=dv/2;          //note stealing driver, uses digital voices
+      if (mv==0xffff)
+        mv=-1;               //extern MPU-401 - unknown use default voices
       reserve_voices(dv,mv); // reserve the number of voices detected
     }                                  //jff 3/3/98 end of sound init changes
-
-
-  //jff 1/18/98 autodect MIDI
-  
-  if (install_sound(snd_card, mus_card, "none") == -1)
+*/
+//  if (install_sound(snd_card_new, mus_card_new, "none")!=0) //jff 1/18/98 autodect MIDI
+    if (install_sound(DIGI_AUTODETECT+nosfxparm , MIDI_AUTODETECT+nomusicparm, "none")!=0) // GB 2016 Policy change: Use setup.exe + setup.cfg
     {
-      usermsg("\tSound init error: %s", allegro_error); // killough 8/8/98
+      printf("ALLEGRO SOUND INIT ERROR!\n%s\n", allegro_error); // killough 8/8/98
       //jff 1/22/98 on error, disable sound this invocation
       //in future - nice to detect if either sound or music might be ok
       nosfxparm = true;
@@ -352,14 +356,57 @@ void I_InitSound(void)
     }
   else //jff 1/22/98 don't register I_ShutdownSound if errored
     {
-      // killough 2/7/98: prevent VM swapping of sfx
-      LOCK_VARIABLE(channel); 
+      //puts("configured audio device");  // killough 8/8/98
+      //GB 2014, show sound driver:
+      snd_card=1;
+	  mus_card=1;
+	  textcolor(WHITE);  // GB 2014
+	  cprintf("\n");
+	  gotoxy(1,wherey());
+	  cprintf(" Sound: %s\n",digi_driver->desc);
+	  gotoxy(1,wherey());
+      cprintf(" Music: %s\n",midi_driver->desc);
+	  gotoxy(1,wherey());
+	  textcolor(LIGHTGRAY);  // GB 2014
+	  LOCK_VARIABLE(channel);  // killough 2/7/98: prevent VM swapping of sfx
       atexit(I_ShutdownSound); // killough
+
+      if (!strcmp(digi_driver->name,"No sound")) {snd_card=0;} 
+      if (!strcmp(midi_driver->name,"No sound")) {mus_card=0;}
     }
 
-  // Finished initialization.
-}
+  // Initialize external data (all sounds) at start, keep static.
+  fputs("I_InitSound: Load sound data",stdout); // killough 8/8/98 // GB 2014 added suffix
 
+  for (i=1; i<NUMSFX; i++) 
+    if (!S_sfx[i].link)   // Load data from WAD file.
+      S_sfx[i].data = getsfx(S_sfx[i].name, &lengths[i]);
+    else
+      { // Alias? Example is the chaingun sound linked to pistol.
+        // Previously loaded already?
+        S_sfx[i].data = S_sfx[i].link->data;
+        lengths[i] = lengths[(S_sfx[i].link - S_sfx)/sizeof(sfxinfo_t)];
+      }
+
+  // GB 2014
+  // Allegro load_ibk: Reads in a .IBK patch set file, for use by the Adlib driver.
+  // Returns non-zero on error. 
+  // int load_ibk(char *filename, int drums)
+  if (mus_card>0)
+  {
+    if (gamemission==doom2 || gamemission==pack_tnt || gamemission==pack_plut) 
+    {	
+	   if (load_ibk("MBF_D2GM.IBK",0)==0) fputs(" - MBF_D2GM.IBK loaded", stdout);
+	   else                               fputs(" - failed to load MBF_D2GM.IBK", stdout); 
+       //load_ibk("drum.ibk",1);
+    }	
+  }
+  // Finished initialization.
+  puts("\nI_InitSound: sound module ready");    // killough 8/8/98
+
+  //rest(4000);
+  //sleep(8); //uncomment for debugging
+}
 
 ///
 // MUSIC API.
@@ -440,8 +487,7 @@ int I_RegisterSong(void *data)
   if    //jff 02/08/98 add native midi support
     (
      (err=MidiToMIDI(data, &mididata)) &&       // try midi first
-              // now try mus    sf: change tempo with gamespeed
-     (err=mmus2mid(data, &mididata, 89*realtic_clock_rate/100, 1))
+     (err=mmus2mid(data, &mididata, 89, 1))     // now try mus
      )
     {
       handle=-1;
@@ -491,9 +537,21 @@ void I_Sound_AddCommands()
 }
 
 
+
 //----------------------------------------------------------------------------
 //
+// GB 2015: Renamed dprintf to dmprintf, for DJGPP 2.05 compatibility
+//
 // $Log: i_sound.c,v $
+// Revision 1.3  2000-08-12 21:29:34  fraggle
+// change license header
+//
+// Revision 1.2  2000/08/01 20:23:05  fraggle
+// stereo fix for allegro v3.12
+//
+// Revision 1.1.1.1  2000/07/29 13:20:39  fraggle
+// imported sources
+//
 // Revision 1.15  1998/05/03  22:32:33  killough
 // beautification, use new headers/decls
 //

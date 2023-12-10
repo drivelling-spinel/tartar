@@ -707,10 +707,7 @@ void S_Start(void)
 
 void S_PreCacheAllSounds()
 {
-  int i;
-  
-  for(i=1; i<NUMSFX; i++)
-    I_CacheSound(&S_sfx[i]);
+ // Nope
 }
 
 //

@@ -29,7 +29,7 @@ RM=del
 CP=copy /y
         
 # the exe file name -sf
-EXE=$(O)/eternity.exe
+EXE=$(O)/doom2.exe
         
 # options common to all builds
 CFLAGS_COMMON=-Wall
@@ -59,6 +59,7 @@ PLATOBJS =                  \
 	$(O)/i_system.o     \
 	$(O)/i_sound.o      \
 	$(O)/i_video.o      \
+	$(O)/i_vgavbe.o      \
 	$(O)/i_net.o        \
 	$(O)/ser_main.o     \
 	$(O)/ser_port.o     \
@@ -103,59 +104,6 @@ clean:
 	if exist $(O_DEBUG)\*.exe del $(O_DEBUG)\*.exe
 	if exist $(O_RELEASE)\*.o del $(O_RELEASE)\*.o
 	if exist $(O_DEBUG)\*.o del $(O_DEBUG)\*.o
-
-endif
-
-################################# LINUX #####################################
-
-# nb. linux support not yet finished :(
-
-ifdef LINUX
-
-PLATFORM = linux
-# compiler
-CC = gcc
-        
-# the command you use to delete files
-RM = rm
-# the command you use to copy files
-CP = cp
-                
-# options common to all builds
-CFLAGS_COMMON = -Wall
-        
-# new features; comment out what you don't want at the moment
-CFLAGS_NEWFEATURES = -DDOGS
-        
-# debug options
-CFLAGS_DEBUG = -g -O2 -DRANGECHECK -DINSTRUMENTED
-LDFLAGS_DEBUG =
-        
-# optimized (release) options
-CFLAGS_RELEASE = -O2 -DRANGECHECK
-LDFLAGS_RELEASE = 
-# -s
-        
-# this selects flags based on debug and release tagets
-CFLAGS =  $(CFLAGS_COMMON)  $(CFLAGS_$(MODE)) $(CFLAGS_NEWFEATURES)
-LDFLAGS = $(LDFLAGS_COMMON) $(LDFLAGS_$(MODE))
-        
-# system-specific object files
-PLATOBJS =                  \
-	$(O)/i_main.o       \
-	$(O)/i_sound.o      \
-	$(O)/i_system.o     \
-	$(O)/i_net.o
-
-build : xsmmu ssmmu
-
-# X version doesn't work on my pc currently
-# please email me if you have any success
-xsmmu: $(OBJS) $(O)/i_xwin.o $(O)/version.o
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(O)/i_xwin.o $(O)/version.o -o $@ -L/usr/X11/lib -lX11 -lXext
-
-ssmmu: $(OBJS) $(O)/i_svga.o $(O)/version.o
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(O)/i_svga.o $(O)/version.o -o $@  -lvga
 
 endif
 
@@ -284,7 +232,8 @@ ifdef DEPENDENCIES
 $(O)/version.o: version.c $(OBJS)
 
 $(O)/i_system.o: $(PLATFORM)/i_system.c $(PLATFORM)/ser_main.h c_runcmd.h \
- i_system.h d_ticcmd.h doomtype.h i_sound.h sounds.h i_video.h \
+ i_system.h d_ticcmd.h doomtype.h i_sound.h sounds.h \
+ i_video.h $(PLATFORM)/i_vgavbe.h $(PLATFORM)/keyboard.h \
  doomstat.h doomdata.h d_net.h d_player.h d_items.h \
  doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
  m_fixed.h tables.h info.h d_think.h p_mobj.h \
@@ -298,7 +247,17 @@ $(O)/i_video.o: $(PLATFORM)/i_video.c z_zone.h doomstat.h doomdata.h \
  d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h \
  am_map.h c_io.h v_video.h r_data.h r_state.h \
- p_chase.h v_misc.h c_runcmd.h d_main.h i_video.h \
+ p_chase.h v_misc.h c_runcmd.h d_main.h i_video.h $(PLATFORM)/i_vgavbe.h \
+ m_argv.h m_bbox.h mn_engin.h r_draw.h w_wad.h \
+ wi_stuff.h
+
+$(O)/i_vgavbe.o: $(PLATFORM)/i_vgavbe.c z_zone.h doomstat.h doomdata.h \
+ doomtype.h d_net.h d_player.h d_items.h doomdef.h \
+ m_swap.h version.h p_pspr.h m_fixed.h i_system.h \
+ d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
+ p_skin.h sounds.h st_stuff.h d_event.h r_defs.h \
+ am_map.h c_io.h v_video.h r_data.h r_state.h \
+ p_chase.h v_misc.h c_runcmd.h d_main.h i_video.h $(PLATFORM)/i_vgavbe.h \
  m_argv.h m_bbox.h mn_engin.h r_draw.h w_wad.h \
  wi_stuff.h
 
@@ -332,7 +291,7 @@ $(O)/ser_main.o: $(PLATFORM)/ser_main.c doomdef.h z_zone.h m_swap.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h \
  $(PLATFORM)/ser_main.h c_io.h v_video.h r_data.h r_state.h \
  p_chase.h v_misc.h c_runcmd.h c_net.h d_main.h \
- g_game.h m_random.h i_video.h mn_engin.h
+ g_game.h m_random.h i_video.h $(PLATFORM)/i_vgavbe.h mn_engin.h
  
 $(O)/ser_port.o: $(PLATFORM)/ser_port.c $(PLATFORM)/ser_main.h d_main.h \
  d_event.h doomtype.h p_chase.h p_mobj.h tables.h m_fixed.h \
@@ -363,7 +322,7 @@ $(O)/c_io.o: c_io.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h v_video.h r_data.h \
  r_state.h p_chase.h v_misc.h c_runcmd.h c_net.h d_main.h g_game.h \
- hu_stuff.h hu_over.h i_video.h w_wad.h s_sound.h g_bind.h
+ hu_stuff.h hu_over.h i_video.h $(PLATFORM)/i_vgavbe.h w_wad.h s_sound.h g_bind.h
  
 $(O)/c_net.o: c_net.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
@@ -394,7 +353,7 @@ $(O)/d_main.o: d_main.c doomdef.h z_zone.h m_swap.h version.h doomstat.h \
  sounds.h st_stuff.h d_event.h r_defs.h dstrings.h d_englsh.h \
  c_runcmd.h c_io.h v_video.h r_data.h r_state.h p_chase.h v_misc.h \
  c_net.h w_wad.h s_sound.h f_finale.h f_wipe.h m_argv.h m_misc.h \
- mn_engin.h i_sound.h i_video.h g_game.h hu_stuff.h wi_stuff.h \
+ mn_engin.h i_sound.h i_video.h $(PLATFORM)/i_vgavbe.h g_game.h hu_stuff.h wi_stuff.h \
  am_map.h p_setup.h r_draw.h r_main.h d_main.h d_deh.h t_script.h \
  t_parse.h t_vari.h t_prepro.h g_bind.h d_dialog.h
  
@@ -403,7 +362,7 @@ $(O)/d_net.o: d_net.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h v_video.h r_data.h \
  r_state.h p_chase.h v_misc.h c_net.h c_runcmd.h d_main.h d_englsh.h \
- f_wipe.h m_random.h mn_engin.h i_video.h i_net.h r_draw.h g_game.h
+ f_wipe.h m_random.h mn_engin.h i_video.h $(PLATFORM)/i_vgavbe.h i_net.h r_draw.h g_game.h
  
 $(O)/doomdef.o: doomdef.c doomdef.h z_zone.h m_swap.h version.h
 
@@ -425,7 +384,7 @@ $(O)/f_wipe.o: f_wipe.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
  m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h v_video.h r_data.h \
- r_state.h p_chase.h v_misc.h d_main.h i_video.h m_random.h f_wipe.h
+ r_state.h p_chase.h v_misc.h d_main.h i_video.h $(PLATFORM)/i_vgavbe.h m_random.h f_wipe.h
  
 $(O)/g_bind.o: g_bind.c doomdef.h z_zone.h m_swap.h version.h doomstat.h \
  doomdata.h doomtype.h d_net.h d_player.h d_items.h p_pspr.h m_fixed.h \
@@ -496,7 +455,7 @@ $(O)/m_misc.o: m_misc.c doomstat.h doomdata.h doomtype.h d_net.h d_player.h \
  d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h m_fixed.h \
  i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h p_skin.h \
  sounds.h st_stuff.h d_event.h r_defs.h m_argv.h g_game.h mn_engin.h \
- c_runcmd.h am_map.h w_wad.h i_sound.h i_video.h v_video.h r_data.h \
+ c_runcmd.h am_map.h w_wad.h i_sound.h i_video.h $(PLATFORM)/i_vgavbe.h v_video.h r_data.h \
  r_state.h p_chase.h v_misc.h hu_stuff.h dstrings.h d_englsh.h \
  m_misc.h s_sound.h d_main.h r_draw.h c_io.h c_net.h
  
@@ -510,7 +469,7 @@ $(O)/mn_engin.o: mn_engin.c doomdef.h z_zone.h m_swap.h version.h \
  p_pspr.h m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h \
  p_mobj.h p_skin.h sounds.h st_stuff.h d_event.h r_defs.h c_io.h \
  v_video.h r_data.h r_state.h p_chase.h v_misc.h c_runcmd.h d_main.h \
- g_game.h hu_over.h i_video.h mn_engin.h mn_menus.h mn_misc.h r_draw.h \
+ g_game.h hu_over.h i_video.h $(PLATFORM)/i_vgavbe.h mn_engin.h mn_menus.h mn_misc.h r_draw.h \
  s_sound.h w_wad.h g_bind.h
  
 $(O)/mn_menus.o: mn_menus.c doomdef.h z_zone.h m_swap.h version.h \
@@ -518,7 +477,7 @@ $(O)/mn_menus.o: mn_menus.c doomdef.h z_zone.h m_swap.h version.h \
  p_pspr.h m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h \
  p_mobj.h p_skin.h sounds.h st_stuff.h d_event.h r_defs.h c_io.h \
  v_video.h r_data.h r_state.h p_chase.h v_misc.h c_runcmd.h d_deh.h \
- d_main.h dstrings.h d_englsh.h g_game.h hu_over.h i_video.h \
+ d_main.h dstrings.h d_englsh.h g_game.h hu_over.h i_video.h $(PLATFORM)/i_vgavbe.h \
  m_random.h mn_engin.h mn_misc.h r_draw.h s_sound.h w_wad.h d_dialog.h
  
 $(O)/mn_misc.o: mn_misc.c doomstat.h doomdata.h doomtype.h d_net.h \
@@ -730,7 +689,7 @@ $(O)/r_draw.o: r_draw.c doomstat.h doomdata.h doomtype.h d_net.h d_player.h \
 $(O)/r_main.o: r_main.c doomstat.h doomdata.h doomtype.h d_net.h d_player.h \
  d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h m_fixed.h \
  i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h p_skin.h \
- sounds.h st_stuff.h d_event.h r_defs.h i_video.h c_runcmd.h g_game.h \
+ sounds.h st_stuff.h d_event.h r_defs.h i_video.h $(PLATFORM)/i_vgavbe.h c_runcmd.h g_game.h \
  mn_engin.h r_main.h r_data.h r_state.h p_chase.h r_things.h r_plane.h \
  r_ripple.h r_bsp.h r_draw.h m_bbox.h r_sky.h s_sound.h v_video.h \
  v_misc.h w_wad.h
@@ -789,7 +748,7 @@ $(O)/st_stuff.o: st_stuff.c doomdef.h z_zone.h m_swap.h version.h \
  doomstat.h doomdata.h doomtype.h d_net.h d_player.h d_items.h \
  p_pspr.h m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h \
  p_mobj.h p_skin.h sounds.h st_stuff.h d_event.h r_defs.h c_runcmd.h \
- d_main.h p_chase.h m_random.h i_video.h w_wad.h st_lib.h v_video.h \
+ d_main.h p_chase.h m_random.h i_video.h $(PLATFORM)/i_vgavbe.h w_wad.h st_lib.h v_video.h \
  r_data.h r_state.h v_misc.h r_main.h am_map.h m_cheat.h s_sound.h \
  dstrings.h d_englsh.h
  
@@ -847,14 +806,14 @@ $(O)/v_misc.o: v_misc.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
  m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h v_video.h r_data.h \
- r_state.h p_chase.h v_misc.h c_runcmd.h i_video.h w_wad.h
+ r_state.h p_chase.h v_misc.h c_runcmd.h i_video.h $(PLATFORM)/i_vgavbe.h w_wad.h
  
 $(O)/v_video.o: v_video.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
  m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h v_video.h r_data.h \
  r_state.h p_chase.h v_misc.h r_main.h m_bbox.h r_draw.h w_wad.h \
- i_video.h
+ i_video.h $(PLATFORM)/i_vgavbe.h
  
 $(O)/w_wad.o: w_wad.c doomstat.h doomdata.h doomtype.h d_net.h d_player.h \
  d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h m_fixed.h \
@@ -902,11 +861,11 @@ $(O)/p_partcl.o: p_partcl.c p_partcl.h d_main.h doomstat.h doomtype.h p_setup.h 
 
 # Allegro patches required to function satisfactorily
 
-$(O)/emu8kmid.o: $(PLATFORM)/emu8kmid.c djgpp/emu8k.h djgpp/internal.h \
-  djgpp/interndj.h djgpp/allegro.h
+$(O)/emu8kmid.o: $(PLATFORM)/emu8kmid.c $(PLATFORM)/emu8k.h djgpp/internal.h \
+  $(PLATFORM)/interndj.h $(PLATFORM)/allegro.h
 
-$(O)/keyboard.o: $(PLATFORM)/keyboard.c djgpp/internal.h  \
-  djgpp/interndj.h djgpp/allegro.h
+$(O)/keyboard.o: $(PLATFORM)/keyboard.c $(PLATFORM)/internal.h $(PLATFORM)/keyboard.h \
+  $(PLATFORM)/interndj.h $(PLATFORM)/allegro.h
 	$(CC) $(CFLAGS_COMMON) -O $(CFLAGS_NEWFEATURES) -c $< -o $@
 
 endif

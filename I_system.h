@@ -1,7 +1,9 @@
 // Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2000 James Haley
+// $Id: i_system.h,v 1.2 2000-08-12 21:29:28 fraggle Exp $
+//
+// Copyright (C) 1993-1996 by id Software, Inc.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +18,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-//
-//--------------------------------------------------------------------------
 //
 // DESCRIPTION:
 //      System specific interface stuff.
@@ -36,10 +36,9 @@ void I_Init(void);
 // returns current time in tics.
 // int I_GetTime (void);
 
-extern int (*I_GetTime)();           // killough
+int (*I_GetTime)();           // killough
 int I_GetTime_RealTime();     // killough
 int I_GetTime_Adaptive(void); // killough 4/10/98
-void I_SetTime(int newtime);
 extern int GetTime_Scale;
 
 //
@@ -59,7 +58,7 @@ void I_StartFrame (void);
 // Quick syncronous operations are performed here.
 // Can call D_PostEvent.
 
-void I_StartTic(void);
+void I_StartTic (void);
 
 // Asynchronous interrupt functions should maintain private queues
 // that are read by the synchronous functions
@@ -83,25 +82,16 @@ void I_Quit (void);
 
 // killough 3/20/98: add const
 // killough 4/25/98: add gcc attributes
-#ifdef _MSC_VER
-void I_Error(const char *error, ...); //SoM 3/14/2002: vc++ 
-#else
 void I_Error(const char *error, ...) __attribute__((format(printf,1,2)));
-#endif
 
 extern int mousepresent;                // killough
 
-#ifdef DJGPP
+extern int leds_always_off;   // killough 10/98
 
-  extern int leds_always_off;   // killough 10/98
-  void I_ResetLEDs(void);       // killough 10/98
-
-#endif
+void I_ResetLEDs(void);       // killough 10/98
 
 void I_EndDoom(void);         // killough 2/22/98: endgame screen
 
-// SoM 3/14/2002: Gyah!
-#ifdef DJGPP
 // killough 3/21/98: keyboard queue
 
 #define KQSIZE 256
@@ -109,15 +99,18 @@ void I_EndDoom(void);         // killough 2/22/98: endgame screen
 extern struct keyboard_queue_s {
   volatile int head,tail,queue[KQSIZE];
 } keyboard_queue;
-#endif
-
-int I_CheckAbort();
 
 #endif
 
 //----------------------------------------------------------------------------
 //
 // $Log: i_system.h,v $
+// Revision 1.2  2000-08-12 21:29:28  fraggle
+// change license header
+//
+// Revision 1.1.1.1  2000/07/29 13:20:41  fraggle
+// imported sources
+//
 // Revision 1.7  1998/05/03  22:33:43  killough
 // beautification, remove unnecessary #includes
 //

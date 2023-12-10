@@ -45,7 +45,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <dos.h>
-#include <conio.h>
+#include <gppconio.h>
 #include <dpmi.h>
 #include <dir.h>
 #include <sys/movedata.h>

@@ -21,7 +21,7 @@
 //  Much of the code here is thanks to S. Bacquet's source for QMUS2MID.C
 //
 //-----------------------------------------------------------------------------
-static const char rcsid[] = "$Id: mmus2mid.c,v 1.10 1998/05/10 23:00:43 jim Exp $";
+static const char rcsid[] = "$Id: mmus2mid.c,v 1.1.1.1 2000-07-29 13:20:39 fraggle Exp $";
 
 #include <ctype.h>
 #include <stdio.h>
@@ -30,10 +30,7 @@ static const char rcsid[] = "$Id: mmus2mid.c,v 1.10 1998/05/10 23:00:43 jim Exp 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <malloc.h>
-
-// Julian: 6/6/2001: replaced by local inclusion
-#include "allegro.h"
-
+#include <allegro.h>
 #include "mmus2mid.h"
 
 //#define STANDALONE  /* uncomment this to make MMUS2MID.EXE */
@@ -812,6 +809,9 @@ int main(int argc,char **argv)
 //----------------------------------------------------------------------------
 //
 // $Log: mmus2mid.c,v $
+// Revision 1.1.1.1  2000-07-29 13:20:39  fraggle
+// imported sources
+//
 // Revision 1.10  1998/05/10  23:00:43  jim
 // formatted/documented mmus2mid
 //

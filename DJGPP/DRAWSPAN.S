@@ -88,10 +88,13 @@ _R_DrawSpan:
 // %ebp  frac
  
 // begin calculating third pixel (y units)
- shldl $22,%ebp,%ecx
-
+// shldl $22,%ebp,%ecx
 // begin calculating third pixel (x units)
- shldl $6,%ebp,%ecx
+// shldl $6,%ebp,%ecx
+//GB 2014, replace SHLDL 2x:
+     movl    %ebp,%ecx
+     shrw    $10,%cx
+     roll    $6,%ecx
 
 // advance frac pointer
  addl  %ebx,%ebp
@@ -100,10 +103,13 @@ _R_DrawSpan:
  andl  $4095,%ecx
 
 // begin calculating fourth pixel (y units)
- shldl $22,%ebp,%edx
-
+// shldl $22,%ebp,%edx
 // begin calculating fourth pixel (x units)
- shldl $6,%ebp,%edx
+// shldl $6,%ebp,%edx
+//GB 2014, replace SHLDL 2x:
+     movl    %ebp,%edx
+     shrw    $10,%dx
+     roll    $6,%edx
 
 // advance frac pointer
  addl %ebx,%ebp
@@ -141,10 +147,14 @@ _R_DrawSpan:
 
 hdoubleloop:
 // begin calculating third pixel (y units)
- shldl $22,%ebp,%ecx
-
+// shldl $22,%ebp,%ecx
 // begin calculating third pixel (x units)
- shldl $6,%ebp,%ecx
+// shldl $6,%ebp,%ecx
+//GB 2014, replace SHLDL 2x:
+     movl    %ebp,%ecx
+     shrw    $10,%cx
+     roll    $6,%ecx
+
 
 // advance frac pointer
  addl (%esp),%ebp
@@ -156,10 +166,14 @@ hdoubleloop:
  andl $4095,%ecx
 
 // begin calculating fourth pixel (y units)
- shldl $22,%ebp,%edx
-
+// shldl $22,%ebp,%edx
 // begin calculating fourth pixel (x units)
- shldl $6,%ebp,%edx
+// shldl $6,%ebp,%edx
+//GB 2014, replace SHLDL 2x:
+     movl    %ebp,%edx
+     shrw    $10,%dx
+     roll    $6,%edx
+
 
 // advance frac pointer
  addl (%esp),%ebp
@@ -212,11 +226,18 @@ hdone:
  popl %ebp
  ret
 
+
 //----------------------------------------------------------------------------
-// $Id: drawspan.s,v 1.2 1998/02/23 04:18:51 killough Exp $
+// $Id: drawspan.s,v 1.1.1.1 2000-07-29 13:20:41 fraggle Exp $
 //----------------------------------------------------------------------------
 //
+// GB 2014, replaced SHLDL instructions, as done in Duke3D / Doom Legacy. 
+// Gives 20% more FPS on Pentiums
+//
 // $Log: drawspan.s,v $
+// Revision 1.1.1.1  2000-07-29 13:20:41  fraggle
+// imported sources
+//
 // Revision 1.2  1998/02/23  04:18:51  killough
 // Performance tuning
 //
