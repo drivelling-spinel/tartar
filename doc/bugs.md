@@ -28,3 +28,4 @@ The following bugs are expected to be fixed in the third maintenance release of 
 - Tartar crashes when loading Avactor MAP09.
 - Switching weapons while shooting crashes game
 - Loading from empty slot crashes the game
+- Saving game crashes Tartar on MAP04 of BOOMER.WAD
