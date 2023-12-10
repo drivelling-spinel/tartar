@@ -558,7 +558,7 @@ boolean MN_TempResponder(int key)
 boolean MN_Responder (event_t *ev)
 {
   char tempstr[128];
-  char ch;
+  unsigned char ch;
 
   // we only care about key presses
 
@@ -576,7 +576,7 @@ boolean MN_Responder (event_t *ev)
   
   if(input_command)
     {
-      char ch = ev->data1;
+      unsigned char ch = ev->data1;
       variable_t *var = input_command->variable;
       
       if(ev->data1 == KEYD_ESCAPE)        // cancel input
@@ -610,9 +610,13 @@ boolean MN_Responder (event_t *ev)
       // dont allow too many characters on one command line
 
       if(ch > 31 && ch < 127
-	 && strlen(input_buffer) <=
-	 var->type == vt_string ? var->max :
-	 var->type == vt_int ? 10 : 20)
+         && (strlen(input_buffer) <=
+           (var->type == vt_string ?
+             var->max :
+               (var->type == vt_int ? 10 : 20)
+           )
+         )
+      )
 	 {
 	   input_buffer[strlen(input_buffer) + 1] = 0;
 	   input_buffer[strlen(input_buffer)] = ch;

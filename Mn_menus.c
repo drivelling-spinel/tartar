@@ -158,16 +158,10 @@ CONSOLE_COMMAND(mn_newgame, 0)
     }
   else
     {
-      if(modifiedgame)
-	MN_StartMenu(&menu_newgame);
-      else
-	{
-	  // hack -- cut off thy flesh consumed if not retail
-	  if(gamemode != retail)
-	    menu_episode.menuitems[5].type = it_end;
-
-	  MN_StartMenu(&menu_episode);
-	}
+      // hack -- cut off thy flesh consumed if not retail
+      if(gamemode != retail)
+        menu_episode.menuitems[5].type = it_end;
+      MN_StartMenu(&menu_episode);
     }
 }
 
@@ -206,6 +200,8 @@ menu_t menu_episode =
   {
     {it_title, "which episode?",             NULL,           "M_EPISOD"},
     {it_gap},
+    {it_runcmd, "auto",     "mn_episode 0",  "M_WAD"},
+    {it_gap},
     {it_runcmd, "knee deep in the dead",     "mn_episode 1",  "M_EPI1"},
     {it_runcmd, "the shores of hell",        "mn_episode 2",  "M_EPI2"},
     {it_runcmd, "inferno!",                  "mn_episode 3",  "M_EPI3"},
@@ -228,6 +224,11 @@ CONSOLE_COMMAND(mn_episode, cf_notnet)
     }
 
   start_episode = atoi(c_argv[0]);
+
+  if(!modifiedgame && !start_episode)
+    {
+      start_episode = 1;
+    }
 
   if(gamemode == shareware && start_episode > 1)
     {
@@ -270,7 +271,7 @@ CONSOLE_COMMAND(newgame, cf_notnet)
   
   if(c_argc) skill = atoi(c_argv[0]);
 
-  if(gamemode == commercial || modifiedgame)
+  if(gamemode == commercial || (!start_episode && modifiedgame))
     {
       // start on newest level from wad
       G_DeferedInitNew(skill, firstlevel);

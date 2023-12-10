@@ -1360,15 +1360,24 @@ void D_DoomMain(void)
     }
   
   {
-    char filestr[128];
+    char filestr[256];
+    char codlevstr[256];
+    boolean isdir;
     // get smmu.wad from the same directory as smmu.exe
     // 25/10/99: use same name as exe
 
     // haleyjd: merged smmu.wad and eternity.wad
 
     sprintf(filestr, "%s%s.wad", D_DoomExeDir(), D_DoomExeName());
-    D_AddFile(filestr);
-    D_AddFile("codlev.wad"); // joel - add codlevel wad too
+    if(WadFileStatus(filestr, &isdir))
+    {
+      D_AddFile(filestr);
+    } else {
+      sprintf(filestr, "%s.wad", D_DoomExeName());
+      D_AddFile(filestr);
+    }
+    sprintf(codlevstr,"%scodlev.wad", D_DoomExeDir());
+    D_AddFile(codlevstr); // joel - add codlevel wad too
   }
 
   modifiedgame = false;         // reset, ignoring smmu.wad etc.
