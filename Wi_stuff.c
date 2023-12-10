@@ -62,9 +62,11 @@ extern boolean deh_pars;
 // This is supposedly ignored for commercial
 //  release (aka DOOM II), which had 34 maps
 //  in one episode. So there.
-#define NUMEPISODES 4
-#define NUMMAPS     9
-
+#define NUMEPISODES       (/*Ultimate Doom*/ 4 + /*Sigil*/ 1 + /*DOOM II*/ 4)
+#define NUMMAPS           9
+// DOOM II (commercial) has up to 10 maps in each "episode"
+#define NUMMAPS2          10
+#define COMMERCIAL_IDX    5
 
 // Not used
 // in tics
@@ -173,7 +175,7 @@ typedef struct
 } anim_t;
 
 
-static point_t lnodes[NUMEPISODES][NUMMAPS] =
+static point_t lnodes[NUMEPISODES][NUMMAPS2] =
 {
   // Episode 0 World Map
   {
@@ -212,6 +214,57 @@ static point_t lnodes[NUMEPISODES][NUMMAPS] =
     { 198, 48 },  // location of level 6 (CJ)
     { 140, 25 },  // location of level 7 (CJ)
     { 281, 136 }  // location of level 8 (CJ)
+  },
+  
+  // Retail dummy entry
+  {
+  },
+  
+  // Sigil dummy entry
+  {
+  },
+  
+  // Doom 2 (commercial) "episodes"
+  {
+    { 156, 168 }, // location of level 0 (CJ)
+    { 48, 154 },  // location of level 1 (CJ)
+    { 174, 95 },  // location of level 2 (CJ)
+    { 265, 75 },  // location of level 3 (CJ)
+    { 130, 48 },  // location of level 4 (CJ)
+    { 279, 23 },  // location of level 5 (CJ)
+  },
+
+  {
+    { 156, 168 }, // location of level 0 (CJ)
+    { 48, 154 },  // location of level 1 (CJ)
+    { 174, 95 },  // location of level 2 (CJ)
+    { 265, 75 },  // location of level 3 (CJ)
+    { 279, 23 },  // location of level 5 (CJ)
+  },
+  
+  {
+    { 156, 168 }, // location of level 0 (CJ)
+    { 48, 154 },  // location of level 1 (CJ)
+    { 174, 95 },  // location of level 2 (CJ)
+    { 265, 75 },  // location of level 3 (CJ)
+    { 130, 48 },  // location of level 4 (CJ)
+    { 279, 23 },  // location of level 5 (CJ)
+    { 279, 23 },  // location of level 5 (CJ)
+    { 279, 23 },  // location of level 5 (CJ)
+    { 279, 23 },  // location of level 5 (CJ)
+  },
+  
+  {
+    { 156, 168 }, // location of level 0 (CJ)
+    { 48, 154 },  // location of level 1 (CJ)
+    { 174, 95 },  // location of level 2 (CJ)
+    { 265, 75 },  // location of level 3 (CJ)
+    { 130, 48 },  // location of level 4 (CJ)
+    { 279, 23 },  // location of level 5 (CJ)
+    { 156, 168 }, // location of level 0 (CJ)
+    { 156, 168 }, // location of level 0 (CJ)
+    { 156, 168 }, // location of level 0 (CJ)
+    { 156, 168 }, // location of level 0 (CJ)
   }
 };
 
@@ -310,6 +363,8 @@ static stateenum_t  state;
 // contains information passed into intermission
 static wbstartstruct_t* wbs;
 
+static wbstartstruct_t wbs2;
+
 static wbplayerstruct_t* plrs;  // wbs->plyr[]
 
 // used for general timing
@@ -392,6 +447,8 @@ static patch_t*   bp[MAXPLAYERS];
 
 // Name graphics of each level (centered)
 static patch_t**  lnames;
+
+wbstartstruct_t* WI_CommercialWbs(wbstartstruct_t * wbs, int lastnext);
 
 //
 // CODE
@@ -901,6 +958,11 @@ static void WI_unloadData(void)
   for (i=0 ; i<10 ; i++)
     Z_ChangeTag(num[i], PU_CACHE);
     
+  Z_ChangeTag(yah[0], PU_CACHE);
+  Z_ChangeTag(yah[1], PU_CACHE);
+
+  Z_ChangeTag(splat, PU_CACHE);
+
   if (gamemode == commercial)
     {
       for (i=0 ; i<NUMCMAPS ; i++)
@@ -908,11 +970,6 @@ static void WI_unloadData(void)
     }
   else
     {
-      Z_ChangeTag(yah[0], PU_CACHE);
-      Z_ChangeTag(yah[1], PU_CACHE);
-
-      Z_ChangeTag(splat, PU_CACHE);
-
       for (i=0 ; i<NUMMAPS ; i++)
         Z_ChangeTag(lnames[i], PU_CACHE);
   
@@ -979,6 +1036,7 @@ static void WI_initNoState(void)
   state = NoState;
   acceleratestage = 0;
   cnt = 10;
+  WI_DrawBackground(0);
 }
 
 
@@ -1013,7 +1071,8 @@ static void WI_initShowNextLoc(void)
   state = ShowNextLoc;
   acceleratestage = 0;
   cnt = SHOWNEXTLOCDELAY * TICRATE;
-
+  
+  WI_DrawBackground(0);
   WI_initAnimatedBack();
 }
 
@@ -1924,11 +1983,17 @@ void WI_Ticker(void)
 // killough 11/98:
 // Moved to separate function so that i_video.c could call it
 
-void WI_DrawBackground(void)
+void WI_DrawBackground(int lastnext)
 {
   char  name[9];  // limited to 8 characters
 
-  if (gamemode == commercial || (gamemode == retail && wbs->epsd == 3))
+  if (gamemode == commercial)
+  {
+    wbstartstruct_t * wbs2 = WI_CommercialWbs(wbs, lastnext);
+    if(wbs2->epsd < 0) strcpy(name, info_interpic);
+    else sprintf(name, "WI2MAP%d", (wbs2->epsd - COMMERCIAL_IDX + 1));
+  }
+  else if(gamemode == retail && wbs->epsd == 3)
     strcpy(name, info_interpic);
   else 
     sprintf(name, "WIMAP%d", wbs->epsd);
@@ -1950,7 +2015,7 @@ static void WI_loadData(void)
   int   i,j;
   char name[9];
 
-  WI_DrawBackground();         // killough 11/98
+  WI_DrawBackground(1);         // killough 11/98
 
 #if 0
   // UNUSED
@@ -1964,6 +2029,15 @@ static void WI_loadData(void)
 
   // killough 4/26/98: free lnames here (it was freed too early in Doom)
   Z_Free(lnames);
+
+  // you are here
+  yah[0] = W_CacheLumpName("WIURH0", PU_STATIC);
+
+  // you are here (alt.)
+  yah[1] = W_CacheLumpName("WIURH1", PU_STATIC);
+
+  // splat
+  splat = W_CacheLumpName("WISPLAT", PU_STATIC); 
 
   if (gamemode == commercial)
     {
@@ -1987,15 +2061,6 @@ static void WI_loadData(void)
           lnames[i] = W_CacheLumpName(name, PU_STATIC);
         }
 
-      // you are here
-      yah[0] = W_CacheLumpName("WIURH0", PU_STATIC);
-
-      // you are here (alt.)
-      yah[1] = W_CacheLumpName("WIURH1", PU_STATIC);
-
-      // splat
-      splat = W_CacheLumpName("WISPLAT", PU_STATIC); 
-  
       if (wbs->epsd < 3)
         {
           for (j=0;j<NUMANIMS[wbs->epsd];j++)
@@ -2209,6 +2274,40 @@ void WI_Start(wbstartstruct_t* wbstartstruct)
       WI_initNetgameStats();
     else
       WI_initStats();
+}
+
+wbstartstruct_t* WI_CommercialWbs(wbstartstruct_t * wbs, int lastnext)
+{
+  int e = wbs->epsd, l = lastnext ? wbs->last : wbs->next;
+  memcpy(&wbs2, wbs, sizeof(wbs2));
+  if(gamemode == commercial)
+  {
+    if(commercialWiMaps)
+    {
+      if(l < 0) wbs2.epsd = -1;
+      else if(l <= 5) wbs2.epsd = 0 + COMMERCIAL_IDX;
+      else if(l <= 10)
+      {
+        wbs2.epsd = 1 + COMMERCIAL_IDX;
+        l -= 6;
+      }
+      else if(l <= 19) 
+      {
+        wbs2.epsd = 2 + COMMERCIAL_IDX;
+        l -= 11;
+      }
+      else if(l <= 29)
+      {
+        wbs2.epsd = 3 + COMMERCIAL_IDX;
+        l -= 20;
+      }
+      else wbs2.epsd = -1;
+    } 
+    else wbs2.epsd = -1;
+    if(lastnext) wbs2.last = l;
+    else wbs2.next = l;
+  }
+  return &wbs2; 
 }
 
 //----------------------------------------------------------------------------

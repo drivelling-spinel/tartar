@@ -56,7 +56,7 @@ void WI_Start(wbstartstruct_t*   wbstartstruct);
 
 void WI_checkForAccelerate(void);      // killough 11/98
 
-void WI_DrawBackground(void);          // killough 11/98
+void WI_DrawBackground(int);          // killough 11/98
 
 void WI_AddCamera(mapthing_t *mthing);
 void WI_StopCamera();

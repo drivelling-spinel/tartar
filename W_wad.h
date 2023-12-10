@@ -91,7 +91,8 @@ int W_AddNewFile(char *filename);
 typedef enum {
   EXTRA_NONE,
   EXTRA_FILTERS,
-  EXTRA_SELFIE
+  EXTRA_SELFIE,
+  EXTRA_WIMAPS
 } extra_file_t; 
 
 // load a specialy treated wad file that if game detects it 

@@ -79,6 +79,7 @@ void ProcessDehFile(char *filename, char *outfilename, int lump);
 
 void ProcessExtraDehFile(extra_file_t extra, char *filename, char *outfilename, int lump);
 boolean selfieMode;
+boolean commercialWiMaps;
 
 // killough 10/98: support -dehout filename
 static char *D_dehout(void)
@@ -1033,6 +1034,7 @@ void IdentifyVersion (void)
 
 	    case doom2:
 	    default:
+	      commercialWiMaps = true;
 
 	      i = strlen(iwad);
 	      if (i>=10 && !strnicmp(iwad+i-10,"doom2f.wad",10))
@@ -1205,7 +1207,10 @@ static void D_ProcessWadPreincludes(void)
 		char file[PATH_MAX+1];
 		AddDefaultExtension(strcpy(file, s), ".wad");
 		if (!access(file, R_OK))
-		  D_AddFile(file);
+		  {
+		    D_AddFile(file);
+		    modifiedgame = true;
+		  }
 		else
 		  printf("\nWarning: could not open %s\n", file);
 	      }
@@ -1659,6 +1664,8 @@ void D_DoomMain(void)
 
 //  D_AddFile(NULL);           // killough 11/98
 
+  commercialWiMaps = (commercialWiMaps && !modifiedgame) || !M_CheckParm("-wimaps");
+
   startupmsg("W_Init", "Init WADfiles.");
   W_InitMultipleFiles(wadfiles);
   usermsg("");  // gap
@@ -2028,6 +2035,7 @@ void D_NewWadLumps(int handle)
 
 }
 
+static char filestr[256];
 
 int D_FindAllWads(char * dir, char *** fnames)
 {
@@ -2070,7 +2078,6 @@ int D_FindAllWads(char * dir, char *** fnames)
 int D_FindFilterWads(char *** fnames)
 {
   struct stat sbuf;
-  char filestr[256];
   *filestr = 0;
   sprintf(filestr, "%sfilters", D_DoomExeDir());
 
@@ -2087,24 +2094,23 @@ int D_DetectAndLoadFilters()
 {
   char **fnames;
   int numfilters, loaded = 0;
-  char one_name[257];
   int i;
 
   numfilters = D_FindFilterWads(&fnames);
-  memset(one_name, 0, sizeof(one_name));
+  *filestr = 0;
 
   for(i = 0 ; i < numfilters ; i += 1)
     {
       if(!W_AddExtraFile(fnames[i], EXTRA_FILTERS))
         {
-          if(!loaded) ExtractFileBase(fnames[i], one_name, sizeof(one_name) -1);
+          if(!loaded) ExtractFileBase(fnames[i], filestr, sizeof(filestr) -1);
           loaded += 1;
         }
     }
 
-  if(loaded == 1) usermsg("%s filter loaded", one_name);
+  if(loaded == 1) usermsg("%s filter loaded", filestr);
   if(loaded > 1) usermsg("%s and %d other filter%s loaded",
-    one_name, loaded, loaded == 2 ? "" : "s");
+    filestr, loaded, loaded == 2 ? "" : "s");
 
   if(numfilters)
     {
@@ -2159,9 +2165,24 @@ int D_DetectAndLoadSelfie()
   return 1;
 }
 
+int D_DetectAndLoadWiMaps()
+{
+  const char * fname = "d2intmap.wad";
+  struct stat sbuf;
+  *filestr = 0;
+  sprintf(filestr, "%s%s", D_DoomExeDir(), fname);
+  if(!stat(filestr, &sbuf) && !W_AddExtraFile(filestr, EXTRA_WIMAPS)) 
+    {
+      C_Printf("Intermission maps loaded from %s\n", fname);
+      return 1;
+    }  
+  commercialWiMaps = false;
+  return 0;
+}
+
 void D_DetectAndLoadExtras(void)
 {
-  if(D_DetectAndLoadFilters() + D_DetectAndLoadSelfie())
+  if(D_DetectAndLoadFilters() + D_DetectAndLoadSelfie() + D_DetectAndLoadWiMaps())
     D_ReInitWadfiles();
 }
 

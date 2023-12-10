@@ -920,7 +920,7 @@ void I_ResetScreen(void)
 
   if (gamestate == GS_INTERMISSION)
     {
-      WI_DrawBackground();
+      WI_DrawBackground(1);
       V_CopyRect(0, 0, 1, SCREENWIDTH, EFFECTIVE_HEIGHT, 0, 0, 0);
     }
 
