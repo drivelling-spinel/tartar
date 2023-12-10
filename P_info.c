@@ -75,6 +75,7 @@ char *info_endofgame;
 int  info_nobloodcolor;
 
 char * info_intermusic;
+char * info_endpic;
 
 char *info_sound_swtchn; // haleyjd: environment sounds
 char *info_sound_swtchx;
@@ -261,6 +262,7 @@ levelvar_t levelvars[]=
   {IVT_STRING,    "intertext",    &info_intertext}, // haleyjd 12/13/01
   {IVT_INT,       "nobloodcolor", &info_nobloodcolor},
   {IVT_STRING,    "intermusic",   &info_intermusic}, 
+  {IVT_STRING,    "endpic",       &info_endpic}, 
 #ifdef BOSSACTION
   {IVT_INT,       "bossaction-thingtype",       &info_bossaction_thingtype},
   {IVT_INT,       "bossaction-tag",             &info_bossaction_tag},
@@ -336,6 +338,7 @@ void P_ClearLevelVars()
   info_levelname = info_skyname = info_levelpic = "";
   info_music = "";
   info_intermusic = "";
+  info_endpic = "";
   info_creator = "unknown";
   info_interpic = "INTERPIC";
   info_partime = -1;

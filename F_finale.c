@@ -251,8 +251,8 @@ void F_Ticker(void)
       // killough 3/28/98: check for acceleration
       WI_checkForAccelerate();
    }
-   else if(gamemode == commercial && finalecount > 50)
-   {  
+   if((demo_compatibility || (*info_endpic && finalestage)) && gamemode == commercial && finalecount > 50)
+   {
       // check for skipping
       for(i=0; i<MAXPLAYERS; i++)
 	 if(players[i].cmd.buttons)
@@ -264,7 +264,7 @@ void F_Ticker(void)
    
    if(finalestage == 2)
       F_CastTicker();
-
+      
    if(!finalestage)
    {
       float speed = demo_compatibility ? TEXTSPEED : Get_TextSpeed();
@@ -273,7 +273,7 @@ void F_Ticker(void)
 	 (midstage ? NEWTEXTWAIT : TEXTWAIT) ||   // killough 2/28/98:
 	 (midstage && acceleratestage))           // changed to allow acceleration
       {
-	 if(gamemode != commercial) // Doom 1 / Ultimate Doom episode end
+	 if(gamemode != commercial || *info_endpic) // Doom 1 / Ultimate Doom episode end
 	 {                          // with enough time, it's automatic
             finalecount = 0;
             finalestage = 1;
@@ -784,7 +784,10 @@ void F_Drawer (void)
 
   if (!finalestage)
     F_TextWrite ();
-  else
+  else if(*info_endpic)
+    V_DrawPatch (0,0,0,
+      W_CacheLumpName(info_endpic,PU_CACHE));
+  else 
   {
     switch (gameepisode)
     {

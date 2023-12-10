@@ -845,7 +845,7 @@ static void WI_drawLF(void)
 static void WI_drawEL(void)
 {
 // joel - don't show next level's graphic if it's end of game
-  if (strcmp(info_endofgame, "true"))
+  if (strcmp(info_endofgame, "true") && !*info_endpic)
     {
       int y = WI_TITLEY;
       

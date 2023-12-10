@@ -121,6 +121,8 @@ static void C_InitBackdrop()
    }
    
    // allow for custom console background graphic
+   if(W_CheckNumForName("CONBACK") >= 0)
+      lumpname = "CONBACK";
    if(W_CheckNumForName("CONSOLE") >= 0)
       lumpname = "CONSOLE";
    

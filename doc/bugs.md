@@ -14,6 +14,9 @@
 - ChexQuest demos go out of sync.
 - With FILTERS directory filled with InstaDoom WAD-s Tartar exhausts DOS
   file handles very quickly, suggested CONFIG.SYS setting being FILES=70
+- Loading a game saved on E1-type exit special sector crahses Tartar
+- Before showing outtro or character cast intermission background is
+  first show for a second or so
 
 The following bugs are expected to be fixed in the third maintenance release of Stage 3:
 

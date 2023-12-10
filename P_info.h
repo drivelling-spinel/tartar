@@ -53,6 +53,7 @@ extern char *info_endofgame;
 extern int info_nobloodcolor;
 
 extern char * info_intermusic;
+extern char * info_endpic;
 
 // map sound replacements
 
