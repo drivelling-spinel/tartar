@@ -19,7 +19,8 @@ machines for retro gaming.
 ## Documentation
 
 1. [CHANGES](doc/chng2022.md) - comprehensive list of changes in Tartar 
-                                compared to the version released for Christmas 2021
+                                compared to the version released during 
+                                Christmas period of 2021
 2. [AUTHORS](doc/authors.md)  - acknowledgements for authors of the ports Tartar 
                                 is based on and their work
 3. [README](doc/TARTAR.TXT)   - templated readme one would expect to accompany 
