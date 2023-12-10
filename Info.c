@@ -2675,12 +2675,12 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     sfx_None,   // attacksound
     S_KEENPAIN,   // painstate
     256,    // painchance
-    sfx_None,   // joel - suffer in silence little man
+    sfx_keenpn,   // painsound
     S_NULL,   // meleestate
     S_NULL,   // missilestate
     S_COMMKEEN,   // deathstate
     S_NULL,   // xdeathstate
-    sfx_None,   // joel - keep him quiet on death too
+    sfx_keendt,   // deathsound
     0,    // speed
     16*FRACUNIT,    // radius
     72*FRACUNIT,    // height
