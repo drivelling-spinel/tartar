@@ -778,8 +778,7 @@ VARIABLE_INT(playpal_wad, NULL, 0, MAXINT, NULL);
 CONSOLE_COMMAND(pal_next, 0)
 {
     int next = playpal_wad + 1;
-    char msg[20];
-    *msg = 0;
+    char * msg = 0;
     if (playpal_wads_count <= 1) return;
 
     if (next < 0 || next >= playpal_wads_count)
@@ -789,15 +788,16 @@ CONSOLE_COMMAND(pal_next, 0)
 
     playpal_wad = next;
     reinitneeded = true;
+    msg = calloc(1, 20 + strlen(dyna_playpal_wads[playpal_wad]));
     sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
     HU_PlayerMsg(msg);
+    free(msg);
 }
 
 CONSOLE_COMMAND(pal_prev, 0)
 {
     int next = playpal_wad - 1;
-    char msg[20];
-    *msg = 0;
+    char *msg = 0;
     if (playpal_wads_count <= 1) return;
 
     if (next < 0 || next >= playpal_wads_count)
@@ -807,15 +807,16 @@ CONSOLE_COMMAND(pal_prev, 0)
 
     playpal_wad = next;
     reinitneeded = true;
+    msg = calloc(1, 20 + strlen(dyna_playpal_wads[playpal_wad]));
     sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
     HU_PlayerMsg(msg);
+    free(msg);
 }
 
 CONSOLE_VARIABLE(pal_curr, playpal_wad, 0)
 {
     int next = playpal_wad;
-    char msg[20];
-    *msg = 0;
+    char * msg = 0;
 
     if (playpal_wads_count <= 1)
       {
@@ -830,8 +831,10 @@ CONSOLE_VARIABLE(pal_curr, playpal_wad, 0)
 
     playpal_wad = next;
     reinitneeded = true;
+    msg = calloc(1, 20 + strlen(dyna_playpal_wads[playpal_wad]));
     sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
     HU_PlayerMsg(msg);
+    free(msg);
 }
 
 extern int * dyna_lump_nums[];

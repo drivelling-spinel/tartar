@@ -360,7 +360,7 @@ void G_BuildTiccmd(ticcmd_t* cmd)
    if((!demo_compatibility && players[consoleplayer].attackdown &&
        !P_CheckAmmo(&players[consoleplayer])) || action_nextweapon)
    {
-      newweapon = P_SwitchWeapon(&players[consoleplayer]); // phares
+      newweapon = P_SwitchWeapon2(&players[consoleplayer], action_nextweapon); // phares
    }
    else
    {                                 // phares 02/26/98: Added gamemode checks

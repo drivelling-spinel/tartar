@@ -449,7 +449,7 @@ void P_PlayerThink (player_t* player)
       player->psprites[ps_weapon].state = &states[S_BFGDOWN];
       player->psprites[ps_flash].state = NULL;      
       player->cheats &= ~CF_SELFIE;
-      player->pendingweapon = P_SwitchWeapon(player);
+      player->pendingweapon = P_SwitchWeapon2(player, true);
     }
 
   if((player->cheats & CF_JUMP) && !IS_EXTRA_LOADED(EXTRA_JUMP))
@@ -457,7 +457,7 @@ void P_PlayerThink (player_t* player)
       player->psprites[ps_weapon].state = &states[S_PISTOLDOWN];
       player->psprites[ps_flash].state = NULL;      
       player->cheats &= ~CF_JUMP;
-      player->pendingweapon = P_SwitchWeapon(player);
+      player->pendingweapon = P_SwitchWeapon2(player, true);
     }
 
   P_MovePsprites (player);

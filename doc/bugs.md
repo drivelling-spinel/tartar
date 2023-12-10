@@ -17,8 +17,13 @@
 - Map30 in Eviternity has some visual glitches (HOM) at the beginning 
 - Jumping in Jumpwad loaded as PWAD results in red screen fade sometimes 
 - Switching between palettes on the fly causes garbage colors on the screen 
-  bor a brief moment if status bar logic causes palete to be changed
+  for a brief moment if status bar logic causes palete to be changed
 - Moving from map to map with MAP CCMD sometimes does not cause screen wipe,
   which leaves garbage on screen borders when view size is not covering all screen
-- Switching to the "extra" screen size makes non-ingured mugshot to show for a 
-  short period of time in status bar
+- Changing the view size to the new extra size shows doomguy mugshot at
+  maximum health for a brief moment, and not at actual health
+- After option for random music is switched off while in game, restarting 
+  current level is not sufficient to go back to the original track. 
+  In case of the first level, starting new game is not sufficuent either. 
+  To go back to the original track warping to another level and warping back 
+  or restarting the game executable is nceessary

@@ -486,6 +486,9 @@ extern int debugcolumn;
 extern int def_hide_weapon_on_flash;
 extern int hide_weapon_on_flash;
 
+extern boolean keep_preferred_weapon;
+extern boolean keep_fist_berserk;
+
 #endif
 
 

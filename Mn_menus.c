@@ -326,10 +326,9 @@ CONSOLE_VARIABLE(use_startmap, use_startmap, 0) {}
 menu_t menu_tartar_more =
 {
   {
-    {it_title,      FC_GOLD "More Tartar options",     NULL,             },
-    {it_gap},
+    {it_title, FC_GOLD "eternity options", NULL, "M_ETCOPT"},
+    {it_info, FC_GOLD "                        More Tartar options",     NULL,             },
     {it_variable,   "     Set message for tip command",          "settip"},
-    {it_gap},
     {it_end},    
   },
   8, 1,                               // x,y
@@ -341,17 +340,24 @@ menu_t menu_tartar_more =
 menu_t menu_tartar =
 {
   {
-    {it_title,      FC_GOLD "Tartar options",     NULL,               },
-    {it_gap},
+    {it_title, FC_GOLD "eternity options", NULL, "M_ETCOPT"},
+    {it_info, FC_GOLD "Compatibility options",   NULL, },
+    {it_toggle,   "MBF mushroom explosion frame in DEH",    "comp_mushroom"},
+    {it_toggle,   "Exhaustive line specials check",         "comp_everyline"},   
+    {it_toggle,   "Disable SMMU coloured lighting",         "comp_clighting"},   
+    {it_toggle,   "Disable support for tall textures",      "comp_talltex"},   
+    {it_toggle,   "Remove slime trails (Firelines way)",    "p_rmslime"},
+    {it_info, FC_GOLD "Tartar options",   NULL, },
     {it_toggle,     "End game after the last custom map",    "detectfinal"},
     {it_toggle,     "Wait for game tic to refresh screen",   "i_ticwait"},
     {it_toggle,     "With translucency on use grille mode",  "r_fauxtrans"},
-    {it_togglehint, "Armor for score only and no infights",  "wolfendoom", "hint_wolfendoom"},
-    {it_toggle,     "Wolf3D look and feel mode",             "wolflooks"},
     {it_toggle,     "Play random music at map start",        "randmus"},
     {it_toggle,     "Doom version which colors to imitate",  "v_gammastyle"},
+    {it_info, FC_GOLD "Wolfendoom options",   NULL, },
+    {it_togglehint, "Armor for score only and no infights",  "wolfendoom", "hint_wolfendoom"},
+    {it_toggle,     "Wolf3D look and feel mode",             "wolflooks"},
     {it_gap},
-    {it_runcmd,     "More...", "mn_tartar_more"},
+    {it_runcmd,     "More tartar options...", "mn_tartar_more"},
     {it_end},    
   },
   233, 1,                               // x,y
@@ -386,7 +392,6 @@ menu_t menu_features =
     {it_runcmd, "demos",                "mn_demos" },
     {it_gap},
     {it_runcmd, "Start in arcade mode", "use_continue 1; mn_newgame"},
-    {it_runcmd, "Tartar options",       "mn_tartar" },
     {it_runcmd, "Restart level",        "mn_reborn" },
     {it_gap},
     {it_runcmd, "about",                "credits" },
@@ -1527,8 +1532,9 @@ menu_t menu_weapons =
     {it_toggle,     "bfg type",                       "bfgtype"},
     {it_toggle,     "bobbing",                        "bobbing"},
     {it_toggle,     "recoil",                         "recoil"},
-    {it_info,       FC_BRICK "fist/chainsaw switch"},
-    {it_gap},
+    {it_toggle,     "Fist/chainsaw switch",           "weaptoggles"},
+    {it_toggle,     "Keep fist when berserk",         "weapkeepbz"},
+    {it_toggle,     "Always keep top preferred",      "weapkeeppr"},
     {it_info,       FC_GOLD "weapon prefs."},
     {it_variable,   "1st choice",                     "weappref_1"},
     {it_variable,   "2nd choice",                     "weappref_2"},
@@ -1541,7 +1547,7 @@ menu_t menu_weapons =
     {it_variable,   "9th choice",                     "weappref_9"},
     {it_end},
   },
-  150, 1,                              // x,y offset
+  180, 1,                              // x,y offset
   2,                                   // starting item
   mf_background,                       // full screen
 };
@@ -1629,11 +1635,8 @@ menu_t menu_etccompat =
     {it_toggle, "falling damage inactive",                  "comp_fallingdmg"},
     {it_toggle, "colormaps applied unevenly to some walls", "comp_evenlight"},
     {it_toggle, "272 line type is WR Start Script",	        "comp_smmuline"},
-    {it_toggle,   "MBF mushroom explosion frame in DEH",    "comp_mushroom"},   
-    {it_toggle,   "Exhaustive line specials check",         "comp_everyline"},   
-    {it_toggle,   "Disable SMMU coloured lighting",         "comp_clighting"},   
-    {it_toggle,   "Disable support for tall textures",      "comp_talltex"},   
-    {it_toggle,   "Remove slime trails (Firelines way)",    "p_rmslime"},
+    {it_gap},
+    {it_runcmd,     "Tartar options...", "mn_tartar"},
     {it_end},
   },
   270, 1,               // x, y

@@ -442,7 +442,7 @@ void G_SetWeapPref(int prefnum, int newvalue)
   // find the pref which has the new value
   
   // haleyjd: ignore new weapons when appropriate
-  if(prefnum >= wp_grenade && !EternityMode)
+  if(newvalue - 1 >= wp_grenade && !EternityMode)
   {
 	  C_Printf("Preference change ignored\n");
 	  return;
@@ -457,7 +457,7 @@ void G_SetWeapPref(int prefnum, int newvalue)
 
 char *weapon_str[NUMWEAPONS] =
 {"fist", "pistol", "shotgun", "chaingun", "rocket launcher", "plasma gun",
- "bfg", "chainsaw", "double shotgun", "grenade launcher"}; // haleyjd
+ "bfg", "chainsaw", "double shotgun", "grenade launcher", "holy cross"}; // haleyjd
 
 void G_WeapPrefHandler()
 {
@@ -499,6 +499,14 @@ void G_AddWeapPrefs()
     }
 }
 
+VARIABLE_BOOLEAN(keep_preferred_weapon, NULL, yesno);
+CONSOLE_VARIABLE(weapkeeppr, keep_preferred_weapon, 0) {}
+
+VARIABLE_BOOLEAN(keep_fist_berserk, NULL, yesno);
+CONSOLE_VARIABLE(weapkeepbz, keep_fist_berserk, 0) {}
+
+VARIABLE_BOOLEAN(doom_weapon_toggles, NULL, onoff);
+CONSOLE_VARIABLE(weaptoggles, doom_weapon_toggles, 0) {}
 
 ///////////////////////////////////////////////////////////////
 //
@@ -618,6 +626,9 @@ void G_AddCommands()
 
   C_AddCommand(reborn);
   C_AddCommand(detectfinal);
+  C_AddCommand(weapkeeppr);
+  C_AddCommand(weapkeepbz);
+  C_AddCommand(weaptoggles);
 
   G_AddChatMacros();
   G_AddWeapPrefs();

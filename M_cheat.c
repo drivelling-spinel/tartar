@@ -554,7 +554,7 @@ char buf[3];
           int P_SwitchWeapon(player_t *player);
           doom_printf("Weapon Removed"); // Ty 03/27/98 - *not* externalized
           if (w==plyr->readyweapon)         // maybe switch if weapon removed
-            plyr->pendingweapon = P_SwitchWeapon(plyr);
+            plyr->pendingweapon = P_SwitchWeapon2(plyr, true);
         }
 }
 

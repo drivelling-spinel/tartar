@@ -59,6 +59,9 @@ int default_weapon_speed = 6;
 extern void P_Thrust(player_t *, angle_t, fixed_t);
 int weapon_recoil;      // weapon recoil
 
+boolean keep_preferred_weapon;
+boolean keep_fist_berserk;
+
 // The following array holds the recoil values         // phares
 
 static const int recoil_values[] = {    // phares
@@ -238,6 +241,37 @@ int P_SwitchWeapon(player_t *player)
       }
   while (newweapon==currentweapon && --i);          // killough 5/2/98
   return newweapon;
+}
+
+boolean P_ShouldKeepWeapon(player_t *player)
+{
+  int *prefer = weapon_preferences[demo_compatibility!=0]; // killough 3/22/98
+  int currentweapon = player->readyweapon;
+
+  if(!demo_compatibility && keep_fist_berserk)
+  {
+    if(player->powers[pw_strength] && currentweapon == wp_fist)
+      return true;
+  }
+
+  if(!demo_compatibility && keep_preferred_weapon)
+  {
+    if(*prefer == currentweapon + 1) return true;
+    if(!*prefer && currentweapon == wp_fist) return true;
+  }
+
+  return false;
+}
+
+int P_SwitchWeapon2(player_t *player, boolean voluntary_switch)
+{
+  if(voluntary_switch)
+  {
+    return P_SwitchWeapon(player);
+  }
+
+  return P_ShouldKeepWeapon(player) ?
+    player->readyweapon : P_SwitchWeapon(player);
 }
 
 // killough 5/2/98: whether consoleplayer prefers weapon w1 over weapon w2.

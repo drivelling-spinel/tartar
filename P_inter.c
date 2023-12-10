@@ -127,9 +127,11 @@ boolean P_GiveAmmo(player_t *player, ammotype_t ammo, int num)
   if (oldammo)
     return true;
 
+  if (P_ShouldKeepWeapon(player))
+    return true;
+
   // We were down to zero, so select a new weapon.
   // Preferences are not user selectable.
-
   switch (ammo)
     {
     case am_clip:
@@ -196,6 +198,7 @@ boolean P_GiveWeapon(player_t *player, weapontype_t weapon, boolean dropped)
 
       P_GiveAmmo(player, weaponinfo[weapon].ammo, deathmatch ? 5 : 2);
 
+      // LP: not checking if P_ShouldKeepWeapon in netgames on purpose
       player->pendingweapon = weapon;
       S_StartSound(player->mo, sfx_wpnup); // killough 4/25/98, 12/98
       return false;
@@ -205,8 +208,16 @@ boolean P_GiveWeapon(player_t *player, weapontype_t weapon, boolean dropped)
   gaveammo = weaponinfo[weapon].ammo != am_noammo &&
     P_GiveAmmo(player, weaponinfo[weapon].ammo, dropped ? 1 : 2);
 
-  return !player->weaponowned[weapon] ?
-    player->weaponowned[player->pendingweapon = weapon] = true : gaveammo;
+  if(!player->weaponowned[weapon])
+    {
+      player->weaponowned[weapon] = true;
+      if(!P_ShouldKeepWeapon(player)) {
+        player->pendingweapon = weapon;
+      }
+      return true;
+    }
+
+  return gaveammo;
 }
 
 //
@@ -450,7 +461,7 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
       if (!P_GivePower (player, pw_strength))
         return;
       message = s_GOTBERSERK; // Ty 03/22/98 - externalized
-      if (player->readyweapon != wp_fist)
+      if (!P_ShouldKeepWeapon(player) && player->readyweapon != wp_fist)
         // sf: removed beta
 	  player->pendingweapon = wp_fist;
       sound = sfx_getpow;

@@ -1660,6 +1660,20 @@ default_t defaults[] = {
     "When set imitate colors of earlier versions of Doom"
   },
 
+  {
+    "keep_preferred_weapon",
+    &keep_preferred_weapon, NULL,
+    0, {0, 1}, dt_number, ss_none, wad_no,
+    "Don't switch away from preferred weapon when ammo is gone"
+  },
+
+  {
+    "keep_fist_berserk",
+    &keep_fist_berserk, NULL,
+    0, {0, 1}, dt_number, ss_none, wad_no,
+    "Don't switch away from fist when berserk"
+  },
+
   {NULL}         // last entry
 };
 
