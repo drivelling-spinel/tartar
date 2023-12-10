@@ -1,10 +1,10 @@
-Recent brilliant Knee Deep in Knee Deep in ZDoom has inspired me to blow off the dust of Stage 3 and prepare a maintenance release for Stage 3 that mostly addresses issues with the new mod (all that while Stage 4 has been put on hiatus somewhat and none of Stage 4 commits have made it through into the trunk yet).
+Recent brilliant Knee Deep in Knee Deep in ZDoom has inspired me to blow off the dust from Tartar code and prepare a maintenance release of Stage 3 that mostly addresses issues with the new mod (all that while Stage 4 has been put on hiatus somewhat and none of Stage 4 commits have made it through into the trunk yet).
 
-The release will contain:
+The release in the works now will contain:
 
 ###### New Tartat build that:
 
-1. No longer detects Freedoom Phase II as being TNT Eviution, outputs Feedoom Phase I or Freedoom Phase II as the name of the game at the start and treats Freedoom as a game mission pack internally
+1. No longer detects Freedoom Phase II as being TNT Evilution, outputs Feedoom Phase I or Freedoom Phase II as the name of the game at the start and treats Freedoom as a game mission pack internally
 2. Inverts the logic for SMMU coloured lightning and tall textures support compatibility flags to bring them in line with how compatibility flags work, all this for better demo compatibility (flag on means feature off)
 3. Does not corrupt recoloring tables after blood recoloring is switched off - at least KDiKDiZD was sensitive to this resulting in sprite artifacts
 4. Supports new option in SMMU-style map information to signal that blood recoloring is not recommended in a map. Loading such map will suppress blood recoloring for the duration of the map, but not change any of the game options, allowing the player to switch between, say KDiKDiZD and some less palette-hacks-intense other mod, without the hassle of going into game options each time. 
@@ -22,7 +22,7 @@ Loook for the WAD named KDiKDi_A.WAD in GOODIES\TAPE and put it into TAPE direct
 
 ###### New kind of distribution package for Tartar
 
-For the maintenance release I am introducing an experimental package that includes Tartar preconfigured and bundled with DosBOX for Windows and all the goodies and extras, all as a single ZIP file. Freedoom Phase II is included as IWAD and Community Chest 2 as a sample PWAD - drag it onto DOOM2.CMD provided to start playing immediately. This package includes works by other autors that are provided unmodified with readme-s and licence files available in COPYRGHT directory (provided these were part of the said works). Look for Tartar-portable.zip in the binary distribution directory to try it out.
+For the maintenance release I am introducing an experimental package that includes Tartar preconfigured and bundled with DosBOX for Windows and all the goodies and extras, all as a single ZIP file. Freedoom Phase II is included as IWAD and Community Chest 2 as a sample PWAD - drag it onto DOOM2.CMD to start playing immediately. This package includes works by other authors that are provided unmodified with readme and licence files available in COPYRGHT directory (provided these were part of the said works). Look for Tartar-portable.zip in the binary distribution directory to try it out.
 
 Note that:
 I. None of the commerically available IWAD-s or PWAD-s are included.
@@ -33,4 +33,4 @@ II. An alternative build of Tartar is included in the portable package that does
 
    TARTAR -file KDiKDi_A KDiKDi_B KDiKDiM1 -warp 1
 
-Be mindful of playing too much with that UAC terminal found in the map - you have been warned.
+Be mindful of playing too much with that UAC terminal found in the map - _you have been warned_.
