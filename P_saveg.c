@@ -172,6 +172,8 @@ void P_UnArchivePlayers (void)
     	  players[i].skin = &marine;  // reset skin
     	  players[i].attackdown = players[i].usedown = false;  // sf
     	  players[i].cmd.buttons = 0;    // sf
+
+          if(i == consoleplayer) default_skin = players[i].skin->skinname;
      }
 }
 

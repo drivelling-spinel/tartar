@@ -137,6 +137,7 @@ int wolfendoom;
 int wolf3dmode;
 int wolflooks;
 char * hint_wolfendoom = "";
+char * hint_bjskin = "";
 
 //----------------------------------------------------------------------------
 //

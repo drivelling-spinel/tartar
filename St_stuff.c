@@ -330,7 +330,8 @@ void ST_refreshBackground(void)
       V_CopyRect(ST_X, 0, BG, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, FG);
 
           // faces
-      STlib_initMultIcon(&w_faces,  ST_FACESX, ST_FACESY, //default_faces,
+      STlib_initMultIcon(&w_faces,  ST_FACESX, ST_FACESY, 
+       players[displayplayer].skin->from_extras ? default_faces :
        players[displayplayer].skin->faces, &st_faceindex, &st_statusbaron);
     }
 }

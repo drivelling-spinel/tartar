@@ -724,7 +724,7 @@ menu_t menu_player =
     {it_title,  FC_GOLD "player setup",           NULL,           "M_PLAYER"},
     {it_variable,       "player name",          "name"},
     {it_toggle,         "player colour",        "colour"},
-    {it_toggle,         "player skin",          "skin"},
+    {it_togglehint,     "player skin",          "skin",   "hint_bjskin"},
     {it_toggle,         "handedness",           "lefthanded"},
     {it_end}
   },

@@ -51,10 +51,12 @@ struct skin_s
         char      *sounds[NUMSKINSOUNDS];
         char      *facename;         // statusbar face
         patch_t   **faces;
+        boolean   from_extras;
 };
 
 #define MAXSKINS 256
 
+extern char *default_skin;
 extern skin_t marine;
 extern skin_t **skins;
 extern char **spritelist;       // new spritelist, same format as sprnames

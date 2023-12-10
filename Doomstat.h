@@ -443,7 +443,7 @@ enum {
 };
 
 extern char * hint_wolfendoom;
-
+extern char * hint_bjskin;
 
 //=======================================================
 

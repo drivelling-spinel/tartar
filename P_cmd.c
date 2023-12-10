@@ -92,6 +92,10 @@ CONSOLE_CONST(hint_bloodcolor, hint_bloodcolor);
 CONST_STRING(hint_wolfendoom);
 CONSOLE_CONST(hint_wolfendoom, hint_wolfendoom);
 
+CONST_STRING(hint_bjskin);
+CONSOLE_CONST(hint_bjskin, hint_bjskin);
+
+
 /*************************************************************************
                 Game variables
  *************************************************************************/
@@ -276,6 +280,7 @@ void P_AddCommands()
 
   C_AddCommand(hint_bloodcolor);
   C_AddCommand(hint_wolfendoom);
+  C_AddCommand(hint_bjskin);
   
   C_AddCommand(colour);
   C_AddCommand(deathmatch);

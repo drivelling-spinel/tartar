@@ -1825,12 +1825,13 @@ void P_ApplyPersistentOptions(void)
       {
         T_EnsureGlobalIntVar("_private_wolfendoom", wolfvar);
       }
-
-
+  
+    hint_bjskin = "";
     bjvar = T_GetGlobalIntVar("_private_bjskin", -1);
-    if(bjvar < 0 && info_wolf3d)
+    if(bjvar < 0 && wolf3dmode)
       {
-        Ex_SetWolfendoomSkin();
+        if(Ex_SetWolfendoomSkin())
+          hint_bjskin = "Using BJ sprite from map defaults.\nToggle to override.";
       }
     if(bjvar >= 0)
       {

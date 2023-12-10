@@ -768,11 +768,12 @@ void Ex_ResetExtraStatus()
 // WolfenDoom stuff
 ////////////////////////////////////////////////////////////////////////////////////
 
-void Ex_SetWolfendoomSkin()
+int Ex_SetWolfendoomSkin()
 {
   skin_t * skin = P_SkinForName("BJ");
   if(skin)
-    P_SetSkin(skin, consoleplayer);
+    P_SetSkinEx(skin, consoleplayer, true);
+  return !!skin;
 }
 
 #ifdef ARCTIC_STUFF

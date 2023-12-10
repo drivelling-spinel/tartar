@@ -237,6 +237,7 @@ void P_ParseSkin(int lumpnum)
         newskin->spritename[4] = 0;
         newskin->facename = "STF";      // default status bar face
         newskin->faces = 0;
+        newskin->from_extras = 0;
         
         for(i=0; i<NUMSKINSOUNDS; i++)
                 newskin->sounds[i] = NULL;       // init to NULL
@@ -311,7 +312,7 @@ skin_t *P_SkinForName(char *s)
         return NULL;
 }
 
-void P_SetSkin(skin_t *skin, int playernum)
+void P_SetSkinEx(skin_t *skin, int playernum, boolean extras)
 {
         if(!playeringame[playernum]) return;
 
@@ -322,7 +323,13 @@ void P_SetSkin(skin_t *skin, int playernum)
                 players[playernum].mo->sprite = skin->sprite;
         }
 
+        skin->from_extras = extras;
         if(playernum == consoleplayer) default_skin = skin->skinname;
+}
+
+void P_SetSkin(skin_t *skin, int playernum)
+{
+        P_SetSkinEx(skin, playernum, false);
 }
 
         // change to previous skin
@@ -424,9 +431,9 @@ CONSOLE_NETVAR(skin, default_skin, cf_handlerset, netcmd_skin)
         P_SetSkin(skin, cmdsrc);
         // wake up status bar for new face
         redrawsbar = true;
-
         if(defaults_loaded)
-          T_EnsureGlobalIntVar("_private_bjskin", 0);
+          T_EnsureGlobalIntVar("_private_bjskin", 1);
+        hint_bjskin = "";
 }
 
 void P_Skin_AddCommands()
