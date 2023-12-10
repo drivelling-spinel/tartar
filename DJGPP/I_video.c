@@ -324,10 +324,11 @@ void I_FinishUpdate(void)
   // int c=I_GetTime_RealTime();
   // int d=I_GetTime_RealTime();
 
-   int ymax=CORRECT_ASPECT(EFFECTIVE_HEIGHT), size;
    int res_scale = RESULTING_SCALE;
+   int ymax=CORRECT_ASPECT(EFFECTIVE_HEIGHT), size;
    byte * swap = screens[0];
    int effective_band = blackband;
+   int effective_h = EFFECTIVE_HEIGHT<<res_scale;
    if (noblit || !in_graphics_mode) return;
      
  //if (v12_compat)    M_DrawText2(1,10,CR_BLUE,true,"V12_COMPAT");   // debug
@@ -349,7 +350,7 @@ void I_FinishUpdate(void)
 
    // GB 2014, code to check if statusbar needs to be drawn (e.g. has anything changed, e.g. is dirty?): 
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
-   size = in_hires ? (SCREENWIDTH<<res_scale)*(ymax<<res_scale) : SCREENWIDTH*ymax;
+   size = in_hires ? (SCREENWIDTH<<res_scale)*(CORRECT_ASPECT(effective_h)) : SCREENWIDTH*ymax;
 
    if(screenSize > 8) effective_band = 0;
 
@@ -440,7 +441,6 @@ void I_FinishUpdate(void)
      }
 }
 
-
 //-----------------------------------------------------------------------------
 // blitScreenAspectScaled
 void blitScreenAspectScaled(const byte * scr)
@@ -453,7 +453,7 @@ void blitScreenAspectScaled(const byte * scr)
    byte z = 2;
    while (h > 0)
      {
-       for ( q = 0; q < z ; q ++ )
+       for ( q = 0; q < z && h > 0; q ++ )
          {
            register int count = w;
            register byte *dest2 = dest + (w << 1);
@@ -492,6 +492,7 @@ void blitScreenAspectScaled(const byte * scr)
            dest += (w << 1);
            h--;
          }
+       if(q < z) break;
        z ^= 1;
        memcpy(dest, dest - (w << 1), (w << 1));
        dest += (w << 1);
@@ -504,11 +505,12 @@ void blitScreenAspectCorrected(const byte * scr)
 {
     int i;
     int w = (SCREENWIDTH << RESULTING_SCALE);
-    int sz = (EFFECTIVE_HEIGHT << RESULTING_SCALE);
+    int sz = (EFFECTIVE_HEIGHT << RESULTING_SCALE) - 10;
     const byte * restore = screens[0];
-    for ( i = 0 ; i < sz ; i += 10 )
+    const byte * old_scr = scr;
+    int z = 6;
+    for ( i = 0 ; i <= sz ; i += 10 )
       {
-        int z = 6;
         int q;
         if (cpu_family >= 6 || asmp6parm)       // PPro or PII
           {
@@ -571,20 +573,23 @@ void blitScreenAspectCorrected(const byte * scr)
             scr += w;
           }
       }
-      
-    if(i -= sz) 
+    
+    sz %= 10;
+    if(sz < 0) sz = -sz;
+    
+    if(sz) 
       {
         if (cpu_family >= 6 || asmp6parm)       // PPro or PII
           {
-            ppro_blit(scr, (10 - i) * w);
+            ppro_blit(scr, sz * w);
           }
         else if (cpu_family >= 5)  // Pentium
           {
-            pent_blit(scr, (10 - i) * w);
+            pent_blit(scr, sz * w);
           }
         else                       // Others
           {
-            memcpy(scr, *screens, (10 - i) * w);
+            memcpy(scr, *screens, sz * w);
           }      
        }
     

@@ -418,12 +418,13 @@ int mmus2mid(UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
           break;
 
         case SYS_EVENT:
-          if (!(NewEvent=MidiEvent(mididata,0xB0,MIDIchannel,MIDItrack,nocomp)))
-            return MEMALLOC;
-
           data = *musptr++;
           if (data<10 || data>14)
-            return BADSYSEVT;
+            break;
+            //return BADSYSEVT;
+
+          if (!(NewEvent=MidiEvent(mididata,0xB0,MIDIchannel,MIDItrack,nocomp)))
+            return MEMALLOC;
 
           if (TWriteByte(mididata, MIDItrack, MUS2MIDcontrol[data]))
             return MEMALLOC;
@@ -440,7 +441,11 @@ int mmus2mid(UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
         case CNTL_CHANGE:
           data = *musptr++;
           if (data>9)
-            return BADCTLCHG;
+            {
+              data = *musptr++;
+              break;
+              //return BADCTLCHG;
+            }
 
           if (data)
             {
@@ -461,8 +466,12 @@ int mmus2mid(UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
           break;
 
         case UNKNOWN_EVENT1:   // mus events 5 and 7
+          data = *musptr++;
+          break;
+          
         case UNKNOWN_EVENT2:   // meaning not known
-          return BADMUSCTL;
+          break;
+        //  return BADMUSCTL;
 
         case SCORE_END:
           break;

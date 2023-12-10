@@ -477,8 +477,8 @@ void V_ClassicFPSDrawer()
 
 void V_Init(void)
 {
-  int known_height = SCREEN_LOWEST > 0 ? SCREEN_LOWEST : SCREENHEIGHT;
-  int size = (SCREENWIDTH << hires) * (CORRECT_ASPECT(known_height) << hires);
+  int known_height = (SCREEN_LOWEST > 0 ? SCREEN_LOWEST : SCREENHEIGHT) << hires;
+  int size = (SCREENWIDTH << hires) * CORRECT_ASPECT(known_height);
   int rsize = RESULTING_SCALE - hires;
 
   if (screens[0]) free(screens[0]);
@@ -486,10 +486,10 @@ void V_Init(void)
   if (screens[2]) free(screens[2]);
 //  if (screens[3]) free(screens[3]);
 
-  screens[0] = malloc(size);
-  screens[1] = malloc(size);
-  screens[2] = malloc(size <<rsize << rsize);
-//  screens[3] = malloc(size);
+  screens[0] = calloc(size, 1);
+  screens[1] = calloc(size, 1);
+  screens[2] = calloc(size, 1 <<rsize << rsize);
+//  screens[3] = calloc(size, 1);
 }
 
 /////////////////////////////

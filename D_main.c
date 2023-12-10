@@ -1728,6 +1728,7 @@ void D_DoomMain(void)
     {
       startupmsg("D_SetGraphicsMode", "Set graphics mode");
       D_SetGraphicsMode();
+      V_FillScreen(BG_COLOR, FG);
     }
   
   startupmsg("R_Init","Init DOOM refresh daemon");
@@ -1766,7 +1767,10 @@ void D_DoomMain(void)
     
   // check
   if(in_textmode)
-    D_SetGraphicsMode();
+    {
+      D_SetGraphicsMode();
+      V_FillScreen(BG_COLOR, FG);
+    }
 
   // haleyjd: updated for eternity
   C_Printf("\n");

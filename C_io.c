@@ -59,6 +59,8 @@
 #define C_SCREENHEIGHT (SCREENHEIGHT<<hires)
 #define C_SCREENWIDTH (SCREENWIDTH<<hires)
 
+#define C_LINE (10)
+
 extern const char* shiftxform;
 void Egg();
 
@@ -441,7 +443,7 @@ void C_Drawer()
   
   // offset starting point up by 8 if we are showing input prompt
   
-  y = current_height - ((c_showprompt && message_pos==message_last) ? 8 : 0);
+  y = current_height - ((c_showprompt && message_pos==message_last) ? C_LINE : 0);
 
   // start at our position in the message history
   count = message_pos;
@@ -450,7 +452,7 @@ void C_Drawer()
     {
       // move up one line on the screen
       // back one line in the history
-      y -= 8;
+      y -= C_LINE;
       
       if(--count < 0) break;    // end of message history?
       if(y < 0) break;        // past top of screen?
@@ -465,7 +467,7 @@ void C_Drawer()
   
   // input line on screen, not scrolled back in history?
   
-  if(current_height > 8 && c_showprompt && message_pos == message_last)
+  if(current_height > C_LINE && c_showprompt && message_pos == message_last)
     {
       char *a_prompt;
       unsigned char tempstr[LINELENGTH];
@@ -481,7 +483,7 @@ void C_Drawer()
 	sprintf(tempstr, "%s%s_", a_prompt, input_point);
       }
       
-      V_WriteText(tempstr, 0, current_height-8);
+      V_WriteText(tempstr, 0, current_height-C_LINE);
     }
 }
 
@@ -705,6 +707,7 @@ void C_SetConsole()
    S_StopMusic();                  // stop music if any
    S_StopSounds();                 // and sounds
    G_StopDemo();                   // stop demo playing
+   V_FillScreen(BG_COLOR, FG);
 }
 
 // make the console go up

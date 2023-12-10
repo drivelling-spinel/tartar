@@ -1299,7 +1299,10 @@ void A_CPosAttack(mobj_t *actor)
 
   if (!actor->target)
     return;
-  S_StartSound(actor, sfx_chgun); //shotgn
+  if(gamemission == cod || EternityMode)
+    S_StartSound(actor, sfx_chgun); //shotgn
+  else
+    S_StartSound(actor, sfx_shotgn);
   A_FaceTarget(actor);
   bangle = actor->angle;
   slope = P_AimLineAttack(actor, bangle, MISSILERANGE, 0); // killough 8/2/98
