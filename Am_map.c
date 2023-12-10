@@ -243,8 +243,6 @@ static fixed_t  min_y;
 static fixed_t  max_x;
 static fixed_t  max_y;
 
-static fixed_t  max_w;          // max_x-min_x,
-static fixed_t  max_h;          // max_y-min_y
 
 // based on player size
 static fixed_t  min_w;
@@ -407,8 +405,10 @@ void AM_addMark(void)
 void AM_findMinMaxBoundaries(void)
 {
   int i;
-  fixed_t a;
-  fixed_t b;
+  Long64 a;
+  Long64 b;
+  fixed_t  max_w;          // max_x-min_x,
+  fixed_t  max_h;          // max_y-min_y  Long64 a;
 
   min_x = min_y =  D_MAXINT;
   max_x = max_y = -D_MAXINT;
@@ -426,16 +426,16 @@ void AM_findMinMaxBoundaries(void)
       max_y = vertexes[i].y;
   }
 
-  max_w = max_x - min_x;
-  max_h = max_y - min_y;
+  max_w = (max_x >> FRACBITS) - (min_x >> FRACBITS);
+  max_h = (max_y >> FRACBITS) - (min_y >> FRACBITS);
 
   min_w = 2*PLAYERRADIUS; // const? never changed?
   min_h = 2*PLAYERRADIUS;
 
-  a = FixedDiv(f_w<<FRACBITS, max_w);
-  b = FixedDiv(f_h<<FRACBITS, max_h);
-
-  min_scale_mtof = a > b ? a : b;
+  a = (((Long64) f_w << FRACBITS) << FRACBITS) / ((Long64) max_w);
+  b = (((Long64) f_h << FRACBITS) << FRACBITS) / ((Long64) max_h);
+  min_scale_mtof = (a > b ? a : b) >> FRACBITS;
+  if(min_scale_mtof < (FRACUNIT >> 5)) min_scale_mtof = FRACUNIT >> 5;
   max_scale_mtof = FixedDiv(f_h<<FRACBITS, 2*PLAYERRADIUS);
 }
 

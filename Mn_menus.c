@@ -960,6 +960,28 @@ CONSOLE_COMMAND(mn_load, 0)
    MN_ClearMenus();
 }
 
+CONSOLE_COMMAND(force_load, 0)
+{
+   char name[PATH_MAX+1];     // killough 3/22/98
+   int slot;
+   
+   if(c_argc < 1)
+      return;
+   
+   slot = atoi(c_argv[0]);
+   MN_ReadSaveStrings();
+   
+   if(!savegamestates[slot])
+      return;     // empty slot
+   
+   G_SaveGameName(name, slot);
+   G_LoadGame(name, slot, false);
+   G_ForcedLoadGame();
+   
+   MN_ClearMenus();
+}
+
+
 // haleyjd 02/23/02: Quick Load -- restored from MBF and converted
 // to use console commands
 CONSOLE_COMMAND(quickload, 0)
@@ -1861,6 +1883,8 @@ void MN_AddMenus()
   C_AddCommand(quickload);
   C_AddCommand(qsave);
   C_AddCommand(qload);
+  
+  C_AddCommand(force_load);
 
   MN_CreateSaveCmds();
 }
