@@ -2076,7 +2076,6 @@ void D_DetectAndLoadExtras(void)
 {
   D_DetectAndLoadFilters();
   D_DetectAndLoadSelfie();
-  D_ReInitWadfiles();  
 }
 
 void usermsg(char *s, ...)
