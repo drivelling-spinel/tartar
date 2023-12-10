@@ -891,10 +891,13 @@ static void G_ReadDemoTiccmd(ticcmd_t *cmd)
       G_CheckDemoStatus();      // end of demo data stream
    }
    else
-   {
+   {  
+      unsigned short a = 0;
       cmd->forwardmove = ((signed char)*demo_p++);
       cmd->sidemove = ((signed char)*demo_p++);
-      cmd->angleturn = ((unsigned char)*demo_p++)<<8;
+      if(demo_version < 329 && demo_version > 204)
+        a = (unsigned char)*demo_p++;
+      cmd->angleturn = (a) | (((unsigned char)*demo_p++) << 8);
       cmd->buttons = (unsigned char)*demo_p++;
       
       // haleyjd: this is stored in demos starting with version
@@ -903,6 +906,7 @@ static void G_ReadDemoTiccmd(ticcmd_t *cmd)
 	 cmd->updownangle = ((signed char)*demo_p++);
       else
 	 cmd->updownangle = 0;
+
       
       // killough 3/26/98, 10/98: Ignore savegames in demos 
       if(demoplayback && 
@@ -1179,6 +1183,10 @@ static void G_DoWorldDone(void)
    }
    
    hub_changelevel = false;
+
+   random_mus_num = randomize_music ?
+     S_PreselectRandomMusic(randomize_music == randm_no_runnin): -1;
+
    G_DoLoadLevel();
    P_ApplyPersistentOptions();
    gameaction = ga_nothing;
@@ -1377,6 +1385,8 @@ static void G_DoPlayDemo(void)
   if (playeringame[1])
     netgame = netdemo = true;
 
+
+
   // don't spend a lot of time in loadlevel
 
   if (gameaction != ga_loadgame)      // killough 12/98: support -loadgame
@@ -1384,6 +1394,8 @@ static void G_DoPlayDemo(void)
       // killough 2/22/98:
       // Do it anyway for timing demos, to reduce timing noise
       precache = timingdemo;
+
+      if(randomize_music) idmusnum = -1;
   
       // haleyjd: choose appropriate G_InitNew based on version
       if(demo_version > 329 ||
@@ -1416,6 +1428,10 @@ static void G_DoPlayDemo(void)
       starttime = I_GetTime_RealTime();
       startgametic = gametic;
     }
+
+  if(demo_version > 204 && demo_version < 329)
+    doom_printf("Unsupported demo version %d", demo_version);
+
 }
 
 #define VERSIONSIZE   16
@@ -2594,6 +2610,11 @@ void G_DoNewGame (void)
      }
    use_continue = 0;
 
+   if(randomize_music)
+     {
+       idmusnum = -1;
+     }
+
    G_InitNew(d_skill, d_mapname);
    gameaction = ga_nothing;
 }
@@ -2671,8 +2692,12 @@ void G_InitNew(skill_t skill, char *name)
    G_SetFastParms(fastparm || skill == sk_nightmare);  // killough 4/10/98
 
    // LP: Select random tune before rebooting the RNG; decide whether to use later
-   random_mus_num = randomize_music ?
-     S_PreselectRandomMusic(randomize_music == randm_no_runnin): -1;
+   if(idmusnum == -1)
+     {
+       S_InsertSomeRandomness();
+       random_mus_num = randomize_music ?
+         S_PreselectRandomMusic(randomize_music == randm_no_runnin): -1;
+     }     
 
    M_ClearRandom();
    

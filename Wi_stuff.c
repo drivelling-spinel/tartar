@@ -812,7 +812,7 @@ static void WI_drawLF(void)
   int y = WI_TITLEY;
   patch_t *patch=NULL;
   
-  if(wbs->last>=0 && wbs->last < NUMCMAPS)
+  if(wbs->last>=0 && wbs->last < gamemode == commercial ? NUMCMAPS : NUMMAPS)
     {
       patch=lnames[wbs->last];
     }
@@ -852,7 +852,7 @@ static void WI_drawEL(void)
       // draw "Entering"
       V_DrawPatch((SCREENWIDTH - SHORT(entering->width))/2,
                   y, FB, entering);
-      if(wbs->next>=0 && wbs->next < NUMCMAPS)
+      if(wbs->next>=0 && wbs->next < gamemode == commercial ? NUMCMAPS : NUMMAPS)
         {
           // draw level
           y += (5*SHORT(lnames[wbs->next]->height))/4;

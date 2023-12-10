@@ -623,6 +623,7 @@ char * S_ChangeToPreselectedMusic(int i)
       static char name[7];
       name[0] = 0;
       strncpy(name, mus_playing->name, 6);
+      idmusnum = i;
       return name;
     }
 
@@ -642,6 +643,7 @@ char * S_ChangeToRandomMusic()
       static char name[7];
       name[0] = 0;
       strncpy(name, mus_playing->name, 6);
+      idmusnum = i;
       title_mus_tampered = true;
       return name;
     }
@@ -674,6 +676,7 @@ char * S_ChangeToNextMusic(boolean next)
           else if(m < min) m = max;
 
           music = &S_music[m];
+          i = m;
           break;
         }
     }
@@ -686,6 +689,7 @@ char * S_ChangeToNextMusic(boolean next)
       name[0] = 0;
       strncpy(name, mus_playing->name, 6);
       title_mus_tampered = true;
+      idmusnum = i;
       return name;
     }
 

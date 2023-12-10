@@ -1734,6 +1734,7 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
         player_printf(&players[consoleplayer], "%cNow playing %c%s",
            128+mess_colour, 128 + CR_GOLD, mus);      
     }
+  random_mus_num = -1;
 }
 
 void P_InitEternityVars(void);
