@@ -110,6 +110,9 @@ void HU_End()
 {
 }
 
+static char * tip_str;
+static char * tip_tip = NULL;
+
 void HU_Init()
 {
   shiftxform = english_shiftxform;
@@ -120,6 +123,8 @@ void HU_Init()
   HU_WarningsInit();
   HU_WidgetsInit();
   HU_LoadFont();
+
+  tip_str = Z_Strdup("", PU_STATIC, 0);
 }
 
 void HU_Drawer()
@@ -961,6 +966,22 @@ CONSOLE_VARIABLE(mess_timer, message_timer, 0) {}
 extern void HU_FragsAddCommands();
 extern void HU_OverAddCommands();
 
+CONSOLE_COMMAND(tip, 0)
+{
+   if(!tip_tip || !*tip_tip)
+      HU_CentreMsg("Set tip to show in Features > Tartar menu");
+   else
+      HU_CentreMsgTimed(tip_tip, 500);
+}
+
+VARIABLE_STRING(tip_str, NULL, 255);
+CONSOLE_VARIABLE(settip, tip_str, 0)
+{
+  tip_tip = strdup(tip_str);
+  free(tip_str);
+  tip_str = strdup("");
+}
+
 void HU_AddCommands()
 {
   C_AddCommand(obituaries);
@@ -974,7 +995,10 @@ void HU_AddCommands()
   C_AddCommand(mess_lines);
   C_AddCommand(mess_scrollup);
   C_AddCommand(mess_timer);
-  
+
+  C_AddCommand(tip);
+  C_AddCommand(settip);
+
   HU_FragsAddCommands();
   HU_OverAddCommands();
 }

@@ -60,6 +60,10 @@ void S_ChangeMusicNum(int music_id, int looping);
 void S_ChangeMusicName(char *name, int looping);
 void S_ChangeMusic(musicinfo_t *music, int looping);
 
+// Change to next music; return music name
+char * S_ChangeToNextMusic(boolean next);
+
+
 // Stops the music fer sure.
 void S_StopMusic(void);
 void S_StopSounds();

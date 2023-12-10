@@ -327,13 +327,15 @@ menu_t menu_tartar =
 {
   {
     {it_title,      FC_GOLD "Tartar options",     NULL,               "M_ETCOPT"},
-    {it_togglehint, "Gameplay changes for Wolfendoom",       "wolfendoom", "hint_wolfendoom"},
-    {it_toggle,     "Wolf3D look and feel mode",             "wolflooks"},   
+    {it_togglehint, "     Armor for score only and no infights",       "wolfendoom", "hint_wolfendoom"},
+    {it_toggle,     "     Wolf3D look and feel mode               ",             "wolflooks"},
+    {it_gap},
+    {it_variable,   "     Set message for tip command",          "settip"},
     {it_end},
   },
-  270, 1,                               // x,y
+  20, 1,                               // x,y
   1,                                    // start item
-  mf_background 
+  mf_background  | mf_leftaligned | mf_collapsedescr
 };
 
 CONSOLE_COMMAND(mn_tartar, 0)
@@ -1845,7 +1847,10 @@ menu_t menu_extrabindings =
         {it_binding,      "selfie stick",          "selfie"},
         {it_binding,      "screenshot",            "screenshot"},
         {it_binding,      "pogo stick",            "pogo"},
-	{it_end},
+        {it_binding,      "next music",            "nextmus"},
+        {it_binding,      "prev music",            "nextmus 0"},
+        {it_binding,      "shot tip",              "tip"},
+        {it_end},
     },
     150, 1,                        // x,y offsets
     1,

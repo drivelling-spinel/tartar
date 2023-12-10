@@ -553,6 +553,48 @@ void S_ChangeMusicNum(int musnum, int looping)
   S_ChangeMusic(music, looping);
 }
 
+char * S_ChangeToNextMusic(boolean next)
+{
+  int i;
+  musicinfo_t * music = NULL;
+
+  for(i = mus_None + 1 ; i < NUMMUSIC ; i += 1)
+    {
+      if(mus_playing == &S_music[i])
+        {
+          int min = mus_None + 1;
+          int max = mus_runnin - 1;
+          int m = i + (next ? 1 : -1);
+
+
+          if(gamemode == commercial)
+            {
+              min = mus_runnin;
+              max = NUMMUSIC - 1;
+            }
+
+
+          if(m > max) m = min;
+          else if(m < min) m = max;
+
+          music = &S_music[m];
+          break;
+        }
+    }
+
+  if(music) S_ChangeMusic(music, 1);
+
+  if(mus_playing)
+    {
+      static char name[7];
+      name[0] = 0;
+      strncpy(name, mus_playing->name, 6);
+      return name;
+    }
+
+  return NULL;
+}
+
 // change by name
 void S_ChangeMusicName(char *name, int looping)
 {
@@ -578,7 +620,7 @@ void S_ChangeMusicName(char *name, int looping)
       S_StopMusic(); // stop music anyway
     }
 }
-
+               
 void S_ChangeMusic(musicinfo_t *music, int looping)
 {
   int lumpnum;

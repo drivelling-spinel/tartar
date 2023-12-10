@@ -40,6 +40,8 @@ rcsid[] = "$Id: m_cheat.c,v 1.7 1998/05/12 12:47:00 phares Exp $";
 #include "dstrings.h"
 #include "d_deh.h"  // Ty 03/27/98 - externalized strings
 #include "d_io.h" // SoM 3/14/2002: strncasecmp
+#include "v_video.h"
+#include "hu_stuff.h"
 
 
 #define plyr (&players[consoleplayer])     /* the console player */
@@ -783,11 +785,22 @@ CONSOLE_NETCMD(nuke, cf_server|cf_level, netcmd_nuke)
                (killcount == 1) ? "" : "s");   
 }
 
+CONSOLE_COMMAND(nextmus, cf_notnet)
+{
+   const char * mus =
+      S_ChangeToNextMusic(!c_argv[0] || *(c_argv[0]) != '0');
+   if(mus)
+      player_printf(&players[consoleplayer], "%cNow playing %c%s",
+         128+mess_colour, 128 + CR_GOLD, mus);
+}
+
+
 void Cheat_AddCommands()
 {
    C_AddCommand(god);
    C_AddCommand(noclip);
    C_AddCommand(nuke);
+   C_AddCommand(nextmus);
 }
 
 //----------------------------------------------------------------------------
