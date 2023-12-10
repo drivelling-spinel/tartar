@@ -300,7 +300,6 @@ int Ex_DetectAndLoadSelfie()
   sprintf(filestr, "%sselfie.wad", D_DoomExeDir());
   if(stat(filestr, &sbuf)) return 0;
 
-  INIT_EXTRA_STATES(EXTRA_SELFIE);
   if(W_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
   // another hack - we just happen to know that selfie overrides BFG sprites
   for(i = 0 ; i < NUMSTATES ; i += 1)
@@ -325,7 +324,6 @@ int Ex_DetectAndLoadJumpwad()
   sprintf(filestr, "%sjumpwad.wad", D_DoomExeDir());
   if(stat(filestr, &sbuf)) return 0;
   
-  INIT_EXTRA_STATES(EXTRA_JUMP);
   if(W_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {
@@ -474,6 +472,10 @@ void Ex_InitDynamicLumpNames()
   playpal_wads_count = 0;
   dyna_colormap_nums = dyna_tranmap_nums = dyna_playpal_nums = 0;
   memset(dyna_lump_nums, 0xff, sizeof(int *) * DYNA_TOTAL);
+  
+  //initializing state tables here to avoid setting up a separate method for this
+  INIT_EXTRA_STATES(EXTRA_JUMP);
+  INIT_EXTRA_STATES(EXTRA_SELFIE);
 }
 
 
