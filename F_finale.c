@@ -341,7 +341,7 @@ void F_TextWrite (void)
     }
 
   // draw some of the text onto the screen
-  cx = 10;
+  cx = 4;
   cy = 10;
   ch = finaletext;
       
@@ -356,7 +356,7 @@ void F_TextWrite (void)
       break;
     if (c == '\n')
     {
-      cx = 10;
+      cx = 4;
       cy += 11;
       continue;
     }
@@ -370,8 +370,6 @@ void F_TextWrite (void)
     }
               
     w = SHORT(v_font[c]->width);
-    if (cx+w > SCREENWIDTH)
-      break;
     V_DrawPatch(cx, cy, 0, v_font[c]);
     cx+=w;
   }
