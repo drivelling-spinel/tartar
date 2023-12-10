@@ -466,6 +466,29 @@ void R_ExecuteSetViewSize (void)
 }
 
 
+void R_Free(void)
+{
+  int i;
+
+  R_FreeData();
+
+  Z_Free(translationtables);
+  translationtables = 0;
+
+  Z_Free(c_scalelight);
+  c_scalelight = 0;
+  Z_Free(c_zlight);
+  c_zlight = 0;
+  scalelight = 0;
+  zlight = 0;
+  fullcolormap = 0;
+  colormaps = 0;
+
+  for (i=0 ; sprites && i<numsprites ; i++) Z_Free(sprites[i].spriteframes);
+  Z_Free(sprites);
+  sprites = 0;
+}
+
 //
 // R_Init
 //
@@ -691,16 +714,30 @@ void R_HOMdrawer()
 
 void R_ResetTrans()
 {
-  if (general_translucency)
+  if (general_translucency
+#ifdef FAUXTRAN
+  && !faux_translucency
+#endif
+  )
     R_ReInitTranMap(0);
 }
 
-void R_ReInit(void)
+int reinitneeded;
+
+void R_ReInitIfNeeded(void)
 {
-  R_ReInitColormaps2();
-  R_ReInitLightTables();
-  R_SetViewSize(screenSize+3);
-  R_ResetTrans();
+  int was_needed = reinitneeded;
+  reinitneeded = false;
+
+  if(was_needed)
+    {
+      R_ReInitColormaps2();
+      R_ReInitLightTables();
+      R_SetViewSize(screenSize+3);
+      R_ResetTrans();
+      P_InitParticleEffects(); 
+      I_ResetPalette();
+    }
 }
 
 //
@@ -742,8 +779,7 @@ CONSOLE_COMMAND(pal_next, 0)
       }
 
     playpal_wad = next;
-    R_ReInit();
-    I_ResetPalette();
+    reinitneeded = true;
     sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
     HU_PlayerMsg(msg);
 }
@@ -761,8 +797,7 @@ CONSOLE_COMMAND(pal_prev, 0)
       }
 
     playpal_wad = next;
-    R_ReInit();
-    I_ResetPalette();
+    reinitneeded = true;
     sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
     HU_PlayerMsg(msg);
 }
@@ -785,8 +820,7 @@ CONSOLE_VARIABLE(pal_curr, playpal_wad, 0)
     if(next < 0) next = 0;
 
     playpal_wad = next;
-    R_ReInit();
-    I_ResetPalette();
+    reinitneeded = true;
     sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
     HU_PlayerMsg(msg);
 }

@@ -125,6 +125,11 @@ CONSOLE_COMMAND(quit, 0)
   exit(0);
 }
 
+CONSOLE_COMMAND(screenshot, 0)
+{
+  M_ScreenShot();
+}
+
 CONSOLE_COMMAND(animshot, 0)
 {
   if(!c_argc)
@@ -560,6 +565,7 @@ void G_AddCommands()
   C_AddCommand(pause);
   C_AddCommand(quit);
   C_AddCommand(animshot);
+  C_AddCommand(screenshot);
   C_AddCommand(shot_type);
   C_AddCommand(alwaysmlook);
   C_AddCommand(bobbing);

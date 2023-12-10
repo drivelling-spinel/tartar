@@ -743,7 +743,11 @@ void V_DrawPatchTL(int x, int y, int scrn, patch_t *patch,
 
   if(!outr) outr = cr_red;
 
-  if(!general_translucency)
+  if(!general_translucency
+#ifdef FAUXTRAN
+  || faux_translucency
+#endif
+  )
     {
       V_DrawPatchTranslated(x, y, scrn, patch, outr, 0);
       return;

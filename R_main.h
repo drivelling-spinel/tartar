@@ -107,6 +107,7 @@ void R_SectorColormap(sector_t *s);
                 // sf: camera point added
 void R_RenderPlayerView(player_t *player, camera_t *viewcamera); // Called by G_Drawer.
                                 // sf: G_Drawer???
+void R_Free(void);
 void R_Init(void);                           // Called by startup code.
 void R_SetViewSize(int blocks);              // Called by M_Responder.
 
@@ -116,6 +117,8 @@ extern boolean setsizeneeded;
 void R_ExecuteSetViewSize(void);
 
 angle_t R_WadToAngle(int wadangle);
+
+void R_ReInitIfNeeded(void);
 
 extern int flatskip;
 extern int viewdir;

@@ -756,7 +756,6 @@ boolean G_Responder(event_t* ev)
    // killough 9/29/98: reformatted
    if(gamestate == GS_LEVEL && 
       (HU_Responder(ev) ||  // chat ate the event
-       ST_Responder(ev) ||  // status window ate it
        AM_Responder(ev)))   // automap ate it
    {
       return true;
@@ -774,11 +773,11 @@ boolean G_Responder(event_t* ev)
       // killough 9/29/98: allow user to pause demos during playback
       if (ev->type == ev_keydown && ev->data1 == key_pause)
       {
-	 if (paused ^= 2)
-	    S_PauseSound();
-	 else
-	    S_ResumeSound();
-	 return true;
+        if (paused ^= 2)
+           S_PauseSound();
+        else
+           S_ResumeSound();
+        return true;
       }
 
       // killough 10/98:
@@ -792,20 +791,20 @@ boolean G_Responder(event_t* ev)
 
       if(!walkcam_active) // if so, we need to go on below
       {
-	 if(gamestate == GS_DEMOSCREEN && !(paused & 2) && 
-	    !automapactive &&
-	    ((ev->type == ev_keydown) ||
-	     (ev->type == ev_mouse && ev->data1) ||
-	     (ev->type == ev_joystick && ev->data1)))
-	 {
-	    // popup menu
-	    MN_StartControlPanel();
-	    return true;
-	 }
-	 else
-	 {
-	    return false;
-	 }
+         if(gamestate == GS_DEMOSCREEN && !(paused & 2) &&
+            !automapactive &&
+            ((ev->type == ev_keydown) ||
+             (ev->type == ev_mouse && ev->data1) ||
+             (ev->type == ev_joystick && ev->data1)))
+         {
+            // popup menu
+            MN_StartControlPanel();
+            return true;
+         }
+         else
+         {
+            return false;
+         }
       }
    }
 
@@ -831,14 +830,14 @@ boolean G_Responder(event_t* ev)
 	 if(ev->data1 < NUMKEYS)
 	    gamekeydown[ev->data1] = true;
 	 
-	 G_KeyResponder(ev); // haleyjd
+         G_KeyNonCmdResponder(ev); // haleyjd
       }
       return true;    // eat key down events
       
    case ev_keyup:
       if(ev->data1 < NUMKEYS)
 	 gamekeydown[ev->data1] = false;
-      G_KeyResponder(ev);   // haleyjd
+      G_KeyNonCmdResponder(ev);   // haleyjd
       return false;   // always let key up events filter down
       
    case ev_mouse:
@@ -1188,6 +1187,7 @@ static void G_DoPlayDemo(void)
   if (gameaction != ga_loadgame)      // killough 12/98: support -loadgame
     basetic = gametic;  // killough 9/29/98
       
+  basename[8] = 0;
   ExtractFileBase(defdemoname,basename,sizeof(basename) - 1);           // killough
   
   demobuffer = demo_p = W_CacheLumpName (basename, PU_STATIC);  // killough

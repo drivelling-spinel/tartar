@@ -750,7 +750,11 @@ void R_InitColormaps(void)
 void R_ReInitColormaps2(void)
 {
   int num = W_DynamicNumForName(DYNA_COLORMAP);
-  if(num >= 0) colormaps[0] = W_CacheLumpNum(num, PU_STATIC);
+  if(num >= 0)
+    {
+      Z_Free(colormaps[0]);
+      colormaps[0] = W_CacheLumpNum(num, PU_STATIC);
+    }
 }
 
 
@@ -1044,8 +1048,12 @@ void R_InitData(void)
   R_InitTextures();
   R_InitFlats();
   R_InitSpriteLumps();
-  if (general_translucency)             // killough 3/1/98, 10/98
-    R_InitTranMap(1);          // killough 2/21/98, 3/6/98
+  if (general_translucency
+#ifdef FAUXTRAN
+  && !faux_translucency
+#endif
+  )  // killough 3/1/98, 10/98
+    R_ReInitTranMap(1);          // killough 2/21/98, 3/6/98
   else
     {
       // sf: fill in dots missing from no translucency build
@@ -1234,10 +1242,10 @@ void R_FreeData()
 {
   int i;
 
-  //  for(i=0;i<numcolormaps;i++)
-  //    Z_Free(colormaps[i]);
-
-  //  Z_Free(colormaps);
+  for(i=0;i<numcolormaps;i++)
+    Z_Free(colormaps[i]);
+  Z_Free(colormaps);
+  colormaps = 0;
   
   for(i=0;i<numtextures;i++)
     {
@@ -1246,21 +1254,34 @@ void R_FreeData()
       Z_Free(texturecolumnlump[i]);
     }
   Z_Free(textures);
+  textures = 0;
   Z_Free(texturecolumnofs);
+  texturecolumnofs = 0;
   Z_Free(texturecolumnlump);
+  texturecolumnlump = 0;
   Z_Free(texturecomposite);
+  texturecomposite = 0;
   Z_Free(texturecompositesize);
+  texturecompositesize = 0;
   Z_Free(textureheight);
+  textureheight = 0;
   Z_Free(texturetranslation);
+  texturetranslation = 0;
   Z_Free(texturewidthmask);
+  texturewidthmask = 0;
 	
   Z_Free(spritewidth);
+  spritetopoffset = 0;
   Z_Free(spriteoffset);
+  spritetopoffset = 0;
   Z_Free(spritetopoffset);
+  spritetopoffset = 0;
   
   Z_Free(flattranslation);
+  flattranslation;
   
   Z_Free(main_tranmap);
+  main_tranmap = 0;
 }
 
 /********************************

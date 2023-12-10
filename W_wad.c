@@ -69,10 +69,11 @@ void ExtractFileBase(const char *path, char *dest, int dlength)
          && *(src-1) != '/')
     src--;
 
+  memset(dest, 0, dlength);
   length = 0;
 
   while (*src && *src != '.')
-    if (++length == dlength)
+    if (++length == dlength + 1)
       I_Error ("Filename base of %s >%d chars",path,dlength);
     else
       *dest++ = toupper(*src++);

@@ -399,11 +399,42 @@ char *G_BoundKeys(char *action)
 }
 
 //
-// G_KeyResponder
+// G_KeyCmdResponder
+//
+// Simplified driver function that only executes console commands
+//
+boolean G_KeyCmdResponder(event_t *ev)
+{
+  int key = tolower(ev->data1);
+  if(keybindings[key].binding->type == at_conscmd)
+    {
+      if(ev->type == ev_keydown)
+        {
+          if(!keybindings[key].keydown)
+            {
+              keybindings[key].keydown = true;
+              C_RunTextCmd(keybindings[key].binding->name);
+              return true;
+            }
+        }
+      if(ev->type == ev_keyup)
+        {
+           keybindings[key].keydown = false;
+           return true;
+        }
+    }
+
+  return false;
+}
+
+
+//
+// G_KeyNonCmdResponder
 //
 // The main driver function for the entire key binding system
+// with console command stripped out
 //
-boolean G_KeyResponder(event_t *ev)
+boolean G_KeyNonCmdResponder(event_t *ev)
 {
   static boolean ctrldown;
 
@@ -441,10 +472,6 @@ boolean G_KeyResponder(event_t *ev)
 
 		  case at_function:
 		    keybindings[key].binding->value.Handler();
-		    break;
-
-		  case at_conscmd:
-		    C_RunTextCmd(keybindings[key].binding->name);
 		    break;
 		    
 		  default:

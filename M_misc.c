@@ -2250,13 +2250,13 @@ boolean WriteBMPfile(char *filename, byte *data, int width,
 void M_ScreenShot (void)
 {
   boolean success = false;
+  char lbmname[PATH_MAX+1];
 
   errno = 0;
 
   if (!access(".",2))
     {
       static int shot;
-      char lbmname[PATH_MAX+1];
       int tries = 10000;
 
       do
@@ -2297,6 +2297,7 @@ void M_ScreenShot (void)
 
   // 1/18/98 killough: replace "SCREEN SHOT" acknowledgement with sfx
   // players[consoleplayer].message = "screen shot"
+  if(success) usermsg("screenshot taken: %s", lbmname);
 
   // killough 10/98: print error message and change sound effect if error
   S_StartSound(NULL, !success ? doom_printf(errno ? strerror(errno) :

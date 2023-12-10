@@ -1681,6 +1681,7 @@ menu_t menu_keybindings =
 	{it_gap},
 	{it_runcmd,       "weapon keys",           "mn_weaponkeys"},
 	{it_runcmd,       "environment",           "mn_envkeys"},
+        {it_runcmd,       "extra keys",            "mn_extrakeys"},
 	{it_gap},
 	{it_info, FC_GOLD "basic movement"},
 	{it_binding,      "move forward",          "forward"},
@@ -1781,6 +1782,35 @@ CONSOLE_COMMAND(mn_envkeys, 0)
   MN_StartMenu(&menu_envbindings);
 }
 
+
+//------------------------------------------------------------------------
+//
+// Key Bindings: Environment
+//
+
+menu_t menu_extrabindings =
+  {
+    {
+      {it_title,  FC_GOLD "key bindings",          NULL,        "M_KEYBND"},
+	{it_gap},
+        {it_info,         FC_GOLD "extras"},
+        {it_binding,      "next palette",          "pal_next"},
+        {it_binding,      "prev palette",          "pal_prev"},
+	{it_gap},
+        {it_binding,      "selfie stick",          "selfie"},
+        {it_binding,      "screenshot",            "screenshot"},
+	{it_end},
+    },
+    150, 5,                        // x,y offsets
+    3,
+    mf_background,  // draw background: not a skull menu
+  };
+
+CONSOLE_COMMAND(mn_extrakeys, 0)
+{
+  MN_StartMenu(&menu_extrabindings);
+}
+
 void MN_AddMenus()
 {
   C_AddCommand(mn_newgame);
@@ -1829,6 +1859,7 @@ void MN_AddMenus()
   C_AddCommand(mn_keybindings);
   C_AddCommand(mn_weaponkeys);
   C_AddCommand(mn_envkeys);
+  C_AddCommand(mn_extrakeys);
 
   C_AddCommand(newgame);
 

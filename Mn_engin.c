@@ -563,7 +563,7 @@ boolean MN_Responder (event_t *ev)
   // we only care about key presses
 
   if(ev->type != ev_keydown)
-    return false;
+    return G_KeyCmdResponder(ev);
 
   // are we displaying a widget?
 
@@ -648,7 +648,7 @@ boolean MN_Responder (event_t *ev)
   if(MN_TempResponder(ev->data1)) return true;
   
   // not interested in keys if not in menu
-  if(!menuactive) return false;
+  if(!menuactive) return G_KeyCmdResponder(ev);
 
   if(ev->data1 == key_menu_up)
     {
@@ -838,8 +838,8 @@ boolean MN_Responder (event_t *ev)
 	      }
       	} while(n != current_menu->selected);
     }
-  
-  return false;
+
+  return G_KeyCmdResponder(ev);
 }
 
 ///////////////////////////////////////////////////////////////////////////

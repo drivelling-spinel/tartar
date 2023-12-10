@@ -212,9 +212,11 @@ void D_ProcessEvents (void)
     {
       if((events+eventtail)->type == ev_keydown && (events+eventtail)->data1 == KEYD_ENTER)
         i = 0;
-      if (!MN_Responder(events+eventtail))
-	if(!C_Responder(events+eventtail))
-	  G_Responder(events+eventtail);
+     
+      if(!C_Responder(events+eventtail))
+        if(!ST_Responder(events+eventtail))
+          if (!MN_Responder(events+eventtail))
+            G_Responder(events+eventtail);
     }
 }
 
@@ -238,6 +240,8 @@ void D_Display (void)
 {
   if (nodrawers)                    // for comparative timing / profiling
     return;
+
+  R_ReInitIfNeeded();
 
   if (setsizeneeded)                // change the view size if needed
     {
@@ -1903,7 +1907,7 @@ void D_DoomMain(void)
 
 void D_ReInitWadfiles()
 {
-  R_FreeData();
+  R_Free();
   R_Init();
   P_Init();
 }
@@ -2030,7 +2034,7 @@ int D_FindFilterWads(char *** fnames)
   return 0;  
 }
 
-void D_DetectAndLoadFilters()
+int D_DetectAndLoadFilters()
 {
   char **fnames;
   int numfilters, loaded = 0;
@@ -2053,29 +2057,25 @@ void D_DetectAndLoadFilters()
   if(loaded > 1) usermsg("%s and %d other filter%s loaded",
     one_name, loaded, loaded == 2 ? "" : "s");
 
-  if(loaded)
-    {
-      R_FreeData();
-      R_Init();
-    }
-
   if(numfilters)
     {
       for(i = 0 ; i < numfilters ; i += 1) free(fnames[i]);
       free(fnames);
     }
+
+  return loaded;
 }
 
 
-void D_DetectAndLoadSelfie()
+int D_DetectAndLoadSelfie()
 {
-
+  return 0;
 }
 
 void D_DetectAndLoadExtras(void)
 {
-  D_DetectAndLoadFilters();
-  D_DetectAndLoadSelfie();
+  if(D_DetectAndLoadFilters() + D_DetectAndLoadSelfie())
+    D_ReInitWadfiles();
 }
 
 void usermsg(char *s, ...)

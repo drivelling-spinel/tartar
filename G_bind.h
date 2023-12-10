@@ -26,7 +26,8 @@
 #define __G_BIND_H__
 
 void G_InitKeyBindings();
-boolean G_KeyResponder(event_t *ev);
+boolean G_KeyNonCmdResponder(event_t *ev);
+boolean G_KeyCmdResponder(event_t *ev);
 
 void G_EditBinding(char *action);
 char *G_BoundKeys(char *action);

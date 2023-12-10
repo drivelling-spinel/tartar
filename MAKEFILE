@@ -1,7 +1,8 @@
 ############################################################################
 # Eternity Makefile
-
-MODE = RELEASE
+ 
+#MODE = RELEASE
+MODE = DEBUG
 O = $(O_$(MODE))
 O_RELEASE = obj
 O_DEBUG = objdebug
