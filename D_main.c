@@ -969,13 +969,13 @@ char *FindIWADFile(void)
 	  if (!isdir)
 	    {
 	      if (!*customiwad)
-		return printf("Looking for %s\n",iwad), iwad; // killough 8/8/98
+                return usermsg("Looking for %s",iwad), iwad; // killough 8/8/98
 	      else
 		if ((p = strrchr(iwad,'/')))
 		  {
 		    *p=0;
 		    strcat(iwad,customiwad);
-		    printf("Looking for %s\n",iwad);  // killough 8/8/98
+                    usermsg("Looking for %s",iwad);  // killough 8/8/98
 		    if (WadFileStatus(iwad,&isdir) && !isdir)
 		      return iwad;
 		  }
@@ -1055,7 +1055,7 @@ void IdentifyVersion (void)
 
   if (iwad && *iwad)
     {
-      printf("IWAD found: %s\n",iwad); //jff 4/20/98 print only if found
+      usermsg("IWAD found: %s",iwad); //jff 4/20/98 print only if found
 
       CheckIWAD(iwad,
 		&gamemode,
@@ -1134,10 +1134,10 @@ void IdentifyVersion (void)
 	  break;
 	}
 
-      puts(game_name);
+      usermsg(game_name);
 
       if (gamemode == indetermined)
-	puts("Unknown Game Version, may not work");  // killough 8/8/98
+        usermsg(game_name = "Unknown Game Version, may not work");  // killough 8/8/98
 
       D_AddFile(iwad);
     }
@@ -1180,7 +1180,7 @@ void FindResponseFile (void)
 	if (!handle)
 	  I_Error("No such response file!");          // killough 10/98
 
-	printf("Found response file %s!\n",filename);
+        usermsg("Found response file %s!",filename);
 	free(filename);
 
 	fseek(handle,0,SEEK_END);
@@ -1219,9 +1219,9 @@ void FindResponseFile (void)
 	myargc = indexinfile;
 
 	// DISPLAY ARGS
-	printf("%d command-line args:\n",myargc-1); // killough 10/98
+        usermsg("%d command-line args:",myargc-1); // killough 10/98
 	for (k=1;k<myargc;k++)
-	  printf("%s\n",myargv[k]);
+          usermsg("%s",myargv[k]);
 	break;
       }
 }
@@ -1304,7 +1304,7 @@ static void D_ProcessWadPreincludes(void)
 		    modifiedgame = true;
 		  }
 		else
-		  printf("\nWarning: could not open %s\n", file);
+                  usermsg("Warning: could not open %s", file);
 	      }
 	  }
     }
@@ -1335,7 +1335,7 @@ static void D_ProcessDehPreincludes(void)
 		    if (!access(file, R_OK))
 		      ProcessDehFile(file, D_dehout(), 0);
 		    else
-		      printf("\nWarning: could not open %s .deh or .bex\n", s);
+                      usermsg("Warning: could not open %s .deh or .bex", s);
 		  }
 	      }
 	  }
@@ -1362,7 +1362,7 @@ static void D_AutoExecScripts(void)
 	       if (!access(file, R_OK))
 		  C_RunScriptFromFile(file);
 	       else
-		  usermsg("\nWarning: could not open console script %s\n", s);
+                  usermsg("Warning: could not open console script %s", s);
 	    }
 	 }
    }
@@ -1394,9 +1394,16 @@ static void D_ProcessDehInWad(int i, extra_file_t extra)
 void startupmsg(char *func, char *desc)
 {
   DEBUGMSG(func); DEBUGMSG(": "); DEBUGMSG(desc); DEBUGMSG("\n");
+  if(in_textmode)
+  {
+     printf("%s: %s\n", func, desc);
+  }
   // add colours in console mode
-  usermsg(in_textmode ? "%s: %s" : FC_GRAY "%s: " FC_RED "%s",
-	  func, desc);
+  C_Printf(FC_GRAY "%s: " FC_RED "%s\n", func, desc);
+  if(!in_textmode)
+  {
+     C_Update();
+  }
 }
 
 // sf: this is really part of D_DoomMain but I made it into
@@ -1415,10 +1422,11 @@ void D_SetGraphicsMode()
   gamestate = GS_CONSOLE; 
   current_height = SCREENHEIGHT;
   c_showprompt = false;
-  
+#ifdef 0                // LP: these just clutter console now
   C_Puts(game_name);    // display description of gamemode
   D_ListWads();         // list wads to the console
   C_Printf("\n");       // leave a gap
+#endif
 }
 
 //
@@ -1480,7 +1488,6 @@ void D_DoomMain(void)
   modifiedgame = false;
 
   IdentifyVersion();
-  printf("\n"); // gap
 
   D_BuildBEXTables(); // haleyjd
 
@@ -1547,7 +1554,7 @@ void D_DoomMain(void)
          version_time);    // killough 2/1/98
 #else
   // haleyjd: always provide version date/time
-  printf("\nBuilt on %s at %s\n", version_date, version_time);
+  printf("Built on %s at %s\n", version_date, version_time);
 #endif /* GAMEBAR */
     
   if (devparm)
@@ -1558,7 +1565,7 @@ void D_DoomMain(void)
   
   if (M_CheckParm("-cdrom"))
     {
-      printf(D_CDROM);
+      usermsg(D_CDROM);
 #ifdef _MSC_VER
       mkdir("c:/doomdata");
 #else
@@ -1582,7 +1589,7 @@ void D_DoomMain(void)
         turbo_scale = 10;
       if (turbo_scale > 400)
         turbo_scale = 400;
-      printf ("turbo scale: %i%%\n",turbo_scale);
+      usermsg ("turbo scale: %i%%",turbo_scale);
       forwardmove[0] = forwardmove[0]*turbo_scale/100;
       forwardmove[1] = forwardmove[1]*turbo_scale/100;
       sidemove[0] = sidemove[0]*turbo_scale/100;
@@ -1637,7 +1644,7 @@ void D_DoomMain(void)
       strcpy(file,myargv[p+1]);
       AddDefaultExtension(file,".lmp");     // killough
       D_AddFile(file);
-      usermsg("Playing demo %s\n",file);
+      usermsg("Playing demo %s",file);
     }
 
   // get skill / episode / map from parms
@@ -1666,7 +1673,7 @@ void D_DoomMain(void)
       int time = atoi(myargv[p+1]);
       extern int levelTimeLimit;
 
-      usermsg("Levels will end after %d minute%s.\n", time, time>1 ? "s" : "");
+      usermsg("Levels will end after %d minute%s.", time, time>1 ? "s" : "");
       levelTimeLimit = time;
     }
 
@@ -1724,13 +1731,13 @@ void D_DoomMain(void)
   {
      char filename[20];
      sprintf(filename, "debug%i.txt", consoleplayer);
-     usermsg("debug output to: %s\n", filename);
+     usermsg("debug output to: %s", filename);
      debugfile = fopen(filename, "w");
   }
 
   if(M_CheckParm("-debugstd"))
   {
-     usermsg("debug output to stdout\n");
+     usermsg("debug output to stdout");
      debugfile = stdout;
   }
   
@@ -1897,8 +1904,9 @@ void D_DoomMain(void)
 	   FC_GRAY "THE ETERNITY ENGINE" FC_RED " by James Haley\n"
 	   "Based on SMMU by Simon 'Fraggle' Howard\n"
 	   "http://doomworld.com/eternity/ \n"
-	   "version %i.%02i '%s' \n\n",
+           "version %i.%02i '%s' \n",
 	   VERSION/100, VERSION%100, version_name);
+  usermsg("Built on %s at %s\n", version_date, version_time);
 
   // haleyjd: if we didn't do textmode startup, these didn't show up
   //  earlier, so now is a cool time to show them :)
@@ -2180,11 +2188,11 @@ void usermsg(char *s, ...)
 
   if(in_textmode)
   {
-     puts(msg);
+     printf("%s\n", msg);
   }
-  else
+  C_Printf("%s\n", msg);
+  if(!in_textmode)
   {
-     C_Puts(msg);
      C_Update();
   }
 }

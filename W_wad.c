@@ -183,8 +183,7 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
 	}
     }
   
-  if(in_textmode)
-    printf(" adding %s\n",filename);   // killough 8/8/98
+  usermsg(" adding %s",filename);   // killough 8/8/98
   startlump = numlumps;
 
   if (strlen(filename) > 4 && 

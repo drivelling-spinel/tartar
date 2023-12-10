@@ -245,8 +245,8 @@ static int Ex_DetectAndLoadSubdirWads(const char * kind, const char * subdir, ex
         }
     }
 
-  if(loaded == 1) usermsg("%s %s loaded", filestr, kind);
-  if(loaded > 1) usermsg("%s and %d other %s%s loaded",
+  if(loaded == 1) usermsg(FC_GRAY "%s %s loaded", filestr, kind);
+  if(loaded > 1) usermsg(FC_GRAY "%s and %d other %s%s loaded",
     filestr, loaded, kind, loaded == 2 ? "" : "s");
 
   if(numwads)
@@ -280,8 +280,8 @@ int Ex_DetectAndAddSkins()
       loaded += 1;
     }
 
-  if(loaded == 1) usermsg("%s skin added", filestr);
-  if(loaded > 1) usermsg("%s and %d other skin%s added",
+  if(loaded == 1) usermsg(FC_GRAY "%s skin added", filestr);
+  if(loaded > 1) usermsg(FC_GRAY "%s and %d other skin%s added",
     filestr, loaded, loaded == 2 ? "" : "s");
 
   if(numwads)
@@ -380,7 +380,7 @@ int Ex_DetectAndLoadSelfie()
     }
   weaponinfo3[EXTRA_STATES_INDEX(EXTRA_SELFIE)][wp_bfg].ammo = am_noammo;
   MARK_EXTRA_LOADED(EXTRA_SELFIE, true);
-  C_Printf("%s\n",s_GOTSELFIE);
+  C_Printf(FC_GRAY "%s\n",s_GOTSELFIE);
   
   return 1;
 }
@@ -420,7 +420,7 @@ int Ex_LoadWiMapsWad(const char *fname)
   sprintf(filestr, "%s%s", D_DoomExeDir(), fname);
   if(!stat(filestr, &sbuf) && !W_AddExtraFile(filestr, EXTRA_WIMAPS)) 
     {
-      C_Printf("Intermission maps loaded from %s\n", fname);
+      C_Printf(FC_GRAY "Intermission maps loaded from %s\n", fname);
       return 1;
     }
 
@@ -832,19 +832,19 @@ void Ex_EnsureCorrectArcticPart(int lev)
   if(lev < 20 && IS_EXTRA_LOADED(EXTRA_ARCTIC))
     {
       if(Ex_LoadArcticPart1())
-        C_Printf("Loaded Arctic part 1 wads\n%s\n%s",
+        C_Printf(FC_GRAY "Loaded Arctic part 1 wads\n%s\n%s",
           arctic_part1_wad, arctic_part1_deh);
       else
-        C_Printf("Failed to load Arctic part 1 wads\n%s\n%s",
+        C_Printf(FC_GRAY "Failed to load Arctic part 1 wads\n%s\n%s",
           arctic_part1_wad, arctic_part1_deh);
     }
   else if(lev >= 20 && !IS_EXTRA_LOADED(EXTRA_ARCTIC))
     {
       if(Ex_LoadArcticPart2())
-        C_Printf("Loaded Arctic part 2 wads\n%s\n%s",
+        C_Printf(FC_GRAY "Loaded Arctic part 2 wads\n%s\n%s",
           arctic_part2_wad, arctic_part2_deh);
       else
-        C_Printf("Failed to load Arctic part 2 wads\n%s\n%s",
+        C_Printf(FC_GRAY "Failed to load Arctic part 2 wads\n%s\n%s",
           arctic_part2_wad, arctic_part2_deh);
     }
 }
