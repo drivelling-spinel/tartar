@@ -395,7 +395,7 @@ void do_draw_newsky(visplane_t *pl)
         if ((dc_yl = pl->top[x]) <= (dc_yh = pl->bottom[x]))
         {
            dc_source =
-             R_GetColumn(skyTexture2,
+             R_GetColumn(skyTexture2,  
                (((an + xtoviewangle[x])) >> (ANGLETOSKYSHIFT))+offset2);
            colfunc();
         }
@@ -407,7 +407,7 @@ void do_draw_newsky(visplane_t *pl)
         if ((dc_yl = pl->top[x]) <= (dc_yh = pl->bottom[x]))
         {
            dc_source =
-             R_GetColumn(skyTexture,
+             R_GetColumn(skyTexture,  
                (((an + xtoviewangle[x])) >> (ANGLETOSKYSHIFT))+offset);
            R_DrawNewSkyColumn();
         }
@@ -430,7 +430,7 @@ void do_draw_newsky(visplane_t *pl)
         if ((dc_yl = pl->top[x]) <= (dc_yh = pl->bottom[x]))
         {
            dc_source =
-             R_GetColumn(skyTexture,
+             R_GetColumn(skyTexture,  
                (((an + xtoviewangle[x])) >> (ANGLETOSKYSHIFT))+offset);
            colfunc();
         }
@@ -518,7 +518,7 @@ static void do_draw_plane(visplane_t *pl)
         for (x = pl->minx; (dc_x = x) <= pl->maxx; x++)
           if ((dc_yl = pl->top[x]) <= (dc_yh = pl->bottom[x]))
           {
-            dc_source = R_GetColumn(texture,
+            dc_source = R_GetColumn(texture,   
              ((an + xtoviewangle[x])^flip) >> (ANGLETOSKYSHIFT));
             colfunc();
           }
@@ -543,7 +543,7 @@ static void do_draw_plane(visplane_t *pl)
         light = (pl->lightlevel >> LIGHTSEGSHIFT) + extralight;
 
 #ifdef TRANWATER
-        trans = pl->trans;
+        trans = general_translucency && water_translucency && pl->trans;
 #endif
 
         if (light >= LIGHTLEVELS)
@@ -596,7 +596,7 @@ void R_DrawPlanes (void)
         do_draw_plane(pl);
     }
 #ifdef TRANWATER
-  R_DrawTLPlanes();
+  if (general_translucency && water_translucency) R_DrawTLPlanes();
 #endif
 }
 

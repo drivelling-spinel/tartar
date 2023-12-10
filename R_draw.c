@@ -84,10 +84,11 @@ lighttable_t *dc_colormap;
 int     dc_x; 
 int     dc_yl; 
 int     dc_yh; 
-fixed_t dc_iscale; 
+fixed_t dc_iscale;
 fixed_t dc_texturemid;
 int     dc_texheight;    // killough
 byte    *dc_source;      // first pixel in a column (possibly virtual) 
+int     dc_faux;
 
 //
 // A column is a vertical slice/span from a wall texture that,
@@ -435,12 +436,62 @@ void R_DrawTranslatedColumn (void)
       //  is mapped to gray, red, black/indigo. 
       
       *dest = dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]];
-      dest += linesize;      // killough 11/98
+      dest += (SCREENWIDTH << hires);      // killough 11/98
         
       frac += fracstep; 
     }
   while (--count); 
 } 
+
+#ifdef FAUXTRAN
+void R_DrawTranslatedCheckers (void) 
+{ 
+  int      count; 
+  byte     *dest; 
+  fixed_t  frac;
+  fixed_t  fracstep;     
+ 
+  count = dc_yh - dc_yl; 
+  if (count < 0) 
+    return; 
+                                 
+#ifdef RANGECHECK 
+  if ((unsigned)dc_x >= MAX_SCREENWIDTH
+      || dc_yl < 0
+      || dc_yh >= MAX_SCREENHEIGHT)
+    I_Error ( "R_DrawColumn: %i to %i at %i",
+              dc_yl, dc_yh, dc_x);
+#endif 
+
+  // FIXME. As above.
+  dest = ylookup[dc_yl] + columnofs[dc_x];
+  dc_faux = dc_yl ^ dc_x;
+
+  // Looks familiar.
+  fracstep = dc_iscale; 
+  frac = dc_texturemid + (dc_yl-centery)*fracstep; 
+
+  count++;        // killough 1/99: minor tuning
+
+  // Here we do an additional index re-mapping.
+  do 
+    {
+      // Translation tables are used
+      //  to map certain colorramps to other ones,
+      //  used with PLAY sprites.
+      // Thus the "green" ramp of the player 0 sprite
+      //  is mapped to gray, red, black/indigo. 
+
+      if (dc_faux & 1)
+         *dest = dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]];
+      dest += (SCREENWIDTH << hires);      // killough 11/98
+        
+      frac += fracstep;
+      dc_faux ++;
+    }
+  while (--count); 
+} 
+#endif
 
 //
 // R_InitTranslationTables
@@ -596,6 +647,106 @@ void R_DrawSpan (void)
 #endif
 
 
+#ifdef FAUXTRAN
+void drawCheckeredSpan (void)
+{ 
+  register unsigned position;
+  unsigned step;
+
+  byte *source;
+  byte *colormap;
+  byte *dest;
+    
+  unsigned count;
+  unsigned spot; 
+  unsigned xtemp;
+  unsigned ytemp;
+                
+  position = ((ds_xfrac<<10)&0xffff0000) | ((ds_yfrac>>6)&0xffff);
+  step = ((ds_xstep<<10)&0xffff0000) | ((ds_ystep>>6)&0xffff);
+                
+  source = ds_source;
+  colormap = ds_colormap;
+  dest = ylookup[ds_y] + columnofs[ds_x1];       
+  count = ds_x2 - ds_x1 + 1;
+
+  dc_faux = ds_x1 ^ ds_y;
+
+  if(dc_faux) 
+    while (count >= 4)
+      { 
+        ytemp = position>>4;
+        ytemp = ytemp & 4032;
+        xtemp = position>>26;
+        position += step;
+        position += step;
+        if((xtemp ^ (ytemp >> 6)) & 1)
+          {
+            spot = xtemp | ytemp;
+            dest[0] = colormap[source[spot]]; 
+          }
+
+        ytemp = position>>4;
+        ytemp = ytemp & 4032;
+        xtemp = position>>26;
+        position += step;
+        position += step;
+        if((xtemp ^ (ytemp >> 6)) & 1)
+          {
+            spot = xtemp | ytemp;
+            dest[2] = colormap[source[spot]]; 
+          }
+                
+        dest += 4;
+        count -= 4;
+      }
+  else
+    while (count >= 4)
+      { 
+        position += step;
+        ytemp = position>>4;
+        ytemp = ytemp & 4032;
+        xtemp = position>>26;
+        position += step;
+        if((xtemp ^ (ytemp >> 6)) & 1)
+          {
+            spot = xtemp | ytemp;
+            dest[1] = colormap[source[spot]]; 
+          }
+
+        
+        position += step;
+        ytemp = position>>4;
+        ytemp = ytemp & 4032;
+        xtemp = position>>26;
+        position += step;
+        if((xtemp ^ (ytemp >> 6)) & 1)
+          {
+            spot = xtemp | ytemp;
+            dest[3] = colormap[source[spot]]; 
+          }
+                
+        dest += 4;
+        count -= 4;
+      }
+
+  while (count)
+    { 
+      ytemp = position>>4;
+      ytemp = ytemp & 4032;
+      xtemp = position>>26;
+      position += step;
+      if(dc_faux & 1)
+        {
+          spot = xtemp | ytemp;
+          *dest++ = colormap[source[spot]];
+        }
+      dc_faux++;
+      count--;
+    } 
+}
+#endif
+
         // sf: 
 void R_DrawTLSpan (void)
 { 
@@ -610,7 +761,15 @@ void R_DrawTLSpan (void)
   unsigned spot; 
   unsigned xtemp;
   unsigned ytemp;
-                
+
+#ifdef FAUXTRAN
+  if(faux_translucency)
+    {
+      drawCheckeredSpan();
+      return;
+    }
+#endif
+  
   position = ((ds_xfrac<<10)&0xffff0000) | ((ds_yfrac>>6)&0xffff);
   step = ((ds_xstep<<10)&0xffff0000) | ((ds_ystep>>6)&0xffff);
                 

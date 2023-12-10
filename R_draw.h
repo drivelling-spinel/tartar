@@ -41,6 +41,10 @@ extern int      dc_texheight;    // killough
 extern int      linesize;        // killough 11/98
 extern int      hires;           // killough 11/98
 
+#ifdef FAUXTRAN
+extern int      dc_faux;
+#endif
+
 // first pixel in a column
 extern byte     *dc_source;         
 
@@ -55,11 +59,17 @@ void R_DrawFuzzColumn(void);    // The Spectre/Invisibility effect.
 void R_DrawColumn2(void);
 void R_DrawTLColumn2(void);      // drawing translucent textures // phares
 
-
 // Draw with color translation tables, for player sprite rendering,
 //  Green/Red/Blue/Indigo shirts.
 
 void R_DrawTranslatedColumn(void);
+
+// checkered version
+#ifdef FAUXTRAN
+void R_DrawTranslatedCheckers(void);
+void R_DrawCheckers(void);
+void R_DrawCheckers2(void);
+#endif
 
 void R_VideoErase(unsigned ofs, int count);
 

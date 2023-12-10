@@ -678,6 +678,8 @@ VARIABLE_BOOLEAN(showpsprites, NULL,                yesno);
 VARIABLE_BOOLEAN(stretchsky, NULL,                  onoff);
 VARIABLE_BOOLEAN(r_swirl, NULL,                     onoff);
 VARIABLE_BOOLEAN(general_translucency, NULL,        onoff);
+VARIABLE_BOOLEAN(faux_translucency, NULL,           onoff);
+VARIABLE_BOOLEAN(water_translucency, NULL,           onoff);
 VARIABLE_INT(tran_filter_pct, NULL,             0, 100, NULL);
 VARIABLE_BOOLEAN(autodetect_hom, NULL,              yesno);
 VARIABLE_INT(screenSize, NULL,                  0, 8, NULL);
@@ -703,6 +705,14 @@ CONSOLE_VARIABLE(r_showhom, autodetect_hom, 0)
 }
 CONSOLE_VARIABLE(r_stretchsky, stretchsky, 0) {}
 CONSOLE_VARIABLE(r_swirl, r_swirl, 0) {}
+CONSOLE_VARIABLE(r_fauxtrans, faux_translucency, 0)
+{
+  R_ResetTrans();
+}
+CONSOLE_VARIABLE(r_watertrans, water_translucency, 0)
+{
+  R_ResetTrans();
+}
 CONSOLE_VARIABLE(r_trans, general_translucency, 0)
 {
   R_ResetTrans();

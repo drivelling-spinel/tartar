@@ -55,6 +55,8 @@ int demo_subversion;        // haleyjd 06/17/01: subversion for betas
 int pitched_sounds;  // killough 10/98
 
 int general_translucency;    // killough 10/98
+int faux_translucency;
+int water_translucency;
 
 int demo_insurance, default_demo_insurance;        // killough 1/16/98
 

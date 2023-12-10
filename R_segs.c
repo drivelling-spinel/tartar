@@ -1,5 +1,5 @@
 // Emacs style mode select   -*- C++ -*-
-//-----------------------------------------------------------------------------
+//--- --------------------------------------------------------------------------
 //
 // Copyright(C) 2000 James Haley
 //
@@ -111,7 +111,11 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
   colfunc = hires == 2 ? R_DrawColumn2 : R_DrawColumn;
   if (curline->linedef->tranlump >= 0 && general_translucency)
     {
-      colfunc = hires == 2 ? R_DrawTLColumn2 : R_DrawTLColumn;
+#ifdef FAUXTRAN
+      if(faux_translucency) colfunc = hires == 2 ? R_DrawCheckers2 : R_DrawCheckers;
+      else
+#endif
+           colfunc = hires == 2 ? R_DrawTLColumn2 : R_DrawTLColumn;
       tranmap = main_tranmap;
       if (curline->linedef->tranlump > 0)
         tranmap = W_CacheLumpNum(curline->linedef->tranlump-1, PU_STATIC);
@@ -215,7 +219,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
 
         // draw the texture
         col = (column_t *)((byte *)
-                           R_GetColumn(texnum,maskedtexturecol[dc_x]) - 3);
+                           R_GetColumn(texnum, maskedtexturecol[dc_x]) - 3);
         R_DrawMaskedColumn (col);
         maskedtexturecol[dc_x] = D_MAXSHORT;
       }
@@ -364,7 +368,7 @@ static void R_RenderSegLoop (void)
                   dc_yl = yl;
                   dc_yh = mid;
                   dc_texturemid = rw_toptexturemid;
-                  dc_source = R_GetColumn(toptexture,texturecolumn);
+                  dc_source = R_GetColumn(toptexture, texturecolumn);
                   dc_texheight = textureheight[toptexture]>>FRACBITS;//killough
                   colfunc ();
                   ceilingclip[rw_x] = mid;

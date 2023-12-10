@@ -357,7 +357,6 @@ void R_DrawMaskedColumn(column_t *column)
         {
           dc_source = (byte *) column + 3;
           dc_texturemid = basetexturemid - (column->topdelta<<FRACBITS);
-
           // Drawn by either R_DrawColumn
           //  or (SHADOW) R_DrawFuzzColumn.
           colfunc();
@@ -397,7 +396,19 @@ void R_DrawVisSprite(vissprite_t *vis, int x1, int x2)
 
   if(vis->mobjflags & MF_SHADOW)   // shadow draw
   {
-    colfunc = R_DrawFuzzColumn;    // killough 3/14/98
+#ifdef FAUXTRAN
+     if(general_translucency && faux_translucency)
+     {
+         colfunc = hires == 2 ? R_DrawCheckers2 : R_DrawCheckers;
+         if(vis->colour)
+         {
+              dc_translation = translationtables + vis->colour*256 - 256;
+              colfunc = R_DrawTranslatedCheckers;
+         }
+     }
+     else
+#endif
+       colfunc = R_DrawFuzzColumn;    // killough 3/14/98
   }
   else if(vis->colour)
   {
@@ -406,7 +417,11 @@ void R_DrawVisSprite(vissprite_t *vis, int x1, int x2)
   }
   else if(vis->mobjflags & MF_TRANSLUCENT && general_translucency) // phares
   {
-     colfunc = hires == 2 ? R_DrawTLColumn2 : R_DrawTLColumn;
+#ifdef FAUXTRAN
+     if(faux_translucency) colfunc = hires == 2 ? R_DrawCheckers2 : R_DrawCheckers;
+     else
+#endif
+       colfunc = hires == 2 ? R_DrawTLColumn2 : R_DrawTLColumn;
      tranmap = main_tranmap;       // killough 4/11/98
   }
   else
@@ -421,7 +436,6 @@ void R_DrawVisSprite(vissprite_t *vis, int x1, int x2)
   for (dc_x=vis->x1 ; dc_x<=vis->x2 ; dc_x++, frac += vis->xiscale)
     {
       texturecolumn = frac>>FRACBITS;
-
 #ifdef RANGECHECK
       if (texturecolumn < 0 || texturecolumn >= SHORT(patch->width))
         I_Error ("R_DrawSpriteRange: bad texturecolumn");
@@ -604,6 +618,7 @@ void R_ProjectSprite (mobj_t* thing)
         index = MAXLIGHTSCALE-1;
       vis->colormap = spritelights[index];
     }
+
 }
 
 //

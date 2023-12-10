@@ -679,7 +679,7 @@ static void R_Subsector(int num)
 
 #ifdef TRANWATER
                         // sf: translucent floor attempt
-  if(frontsector->heightsec != -1)
+  if(general_translucency && water_translucency && frontsector->heightsec != -1)
     {
       sector_t *pSec;
       

@@ -129,6 +129,7 @@ void MN_MainMenuDrawer()
 // starts menu
 // according to use_startmap, gametype and modifiedgame
 
+
 CONSOLE_COMMAND(mn_newgame, 0)
 {
   if(netgame && !demoplayback)
@@ -139,6 +140,7 @@ CONSOLE_COMMAND(mn_newgame, 0)
 
   if(gamemode == commercial || gamemission == chex)
     {
+       
       // dont use new game menu if not needed
       if(!modifiedgame && gamemode == commercial
 	 && W_CheckNumForName("START") >= 0
@@ -192,7 +194,7 @@ CONSOLE_COMMAND(mn_quit, 0)
 // Episode Selection
 //
 
-int start_episode;
+int start_episode = 1;
 
 menu_t menu_episode =
 {

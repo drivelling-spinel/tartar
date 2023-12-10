@@ -230,7 +230,18 @@ default_t defaults[] = {
     1, {0,1}, dt_number, ss_gen, wad_yes,
     "1 to enable translucency for some things"
   },
-
+  { 
+    "water_translucency",
+    &water_translucency, NULL,
+    0, {0,1}, dt_number, ss_gen, wad_yes,
+    "1 to render deep water with translucency effect"
+  },
+  { 
+    "faux_translucency",
+    &faux_translucency, NULL,
+    0, {0,1}, dt_number, ss_gen, wad_yes,
+    "1 to replace swirl and translucency with checkers effect"
+  },
   { // killough 2/21/98
     "tran_filter_pct",
     &tran_filter_pct, NULL,
