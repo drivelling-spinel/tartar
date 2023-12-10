@@ -448,7 +448,7 @@ void I_FinishUpdate(void)
 
 //-----------------------------------------------------------------------------
 // blitScreenAspectScaled
-void blitScreenAspectScaled(const byte * scr)
+void blitScreenAspectScaled(const byte * scr, int scale)
 {
    register byte *dest = scr;
    register const byte *source = *screens;
@@ -456,6 +456,7 @@ void blitScreenAspectScaled(const byte * scr)
    int h = EFFECTIVE_HEIGHT << hires;
    int q;
    byte z = 2;
+   assert(scale == 1);
    while (h > 0)
      {
        for ( q = 0; q < z && h > 0; q ++ )
@@ -603,12 +604,13 @@ void blitScreenAspectCorrected(const byte * scr)
 
 //-----------------------------------------------------------------------------
 // blitScreenScaled
-void blitScreenScaled(const byte * scr)
+void blitScreenScaled(const byte * scr, int scale)
 {
    register byte *dest = scr;
    register const byte *source = *screens;
    int w = SCREENWIDTH << hires;
    int h = EFFECTIVE_HEIGHT << hires;
+   assert(scale == 1);
    while (h > 0)
      {
        register int count = w;
@@ -656,11 +658,11 @@ void I_ReadScreen(byte *scr)
 {
   if (CORRECTING_ASPECT && SCALING_TO_HIRES)
     {
-      blitScreenAspectScaled(scr);
+      blitScreenAspectScaled(scr, SCALING_TO_HIRES);
     }
   else if (SCALING_TO_HIRES)
     {
-      blitScreenScaled(scr);
+      blitScreenScaled(scr, SCALING_TO_HIRES);
     }
   else if (CORRECTING_ASPECT)
     {
@@ -1028,6 +1030,9 @@ int I_ValidatePaletteFunc()
  ************************/
 
 
+char *scales[] =
+   {"off","2x", "4x"};
+
 char *hiresmodes[] =
    {"320x200","640x400", "1280x800"};
 
@@ -1040,7 +1045,7 @@ VARIABLE_BOOLEAN(show_fps, NULL,  yesno);
 
 VARIABLE_BOOLEAN(page_flip, NULL,  yesno);
 
-VARIABLE_BOOLEAN(scale_to_hires, NULL, yesno);
+VARIABLE_INT(scale_to_hires, NULL, 0, 2, scales);
 
 VARIABLE_BOOLEAN(scale_aspect, NULL, aspects);
 

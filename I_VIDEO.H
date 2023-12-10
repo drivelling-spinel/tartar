@@ -33,7 +33,7 @@
 #include "m_misc.h" // GB 2014: for M_DrawText
 
 #define RESULTING_SCALE ((hires + scale_to_hires) > 2 ? 2 : (hires + scale_to_hires))
-#define SCALING_TO_HIRES (scale_to_hires && (hires + scale_to_hires <= 2))
+#define SCALING_TO_HIRES (scale_to_hires && (hires + scale_to_hires) > 2 ? 2 - hires : scale_to_hires)
 #define CORRECTING_ASPECT (scale_aspect && screen_h != 200 && screen_h != 400)
 #define CORRECT_ASPECT(x) ( (CORRECTING_ASPECT) ? (x * 6 / 5) : (x) )
 // last line of the screen that is still visible

@@ -183,8 +183,8 @@ default_t defaults[] = {
   {
     "scale_to_hires",
     &scale_to_hires, NULL,
-    0, {0,1}, dt_number, ss_gen, wad_no,
-    "1 to scale renderer output to higer resolution"
+    0, {0,2}, dt_number, ss_gen, wad_no,
+    "times to scale renderer output to higer resolution"
   },
   {
     "scale_aspect",
