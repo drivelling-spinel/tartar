@@ -57,6 +57,7 @@ extern boolean nosfxparm;
 extern boolean nomusicparm;
 
 extern int use_startmap;
+extern int detect_finallevel;
 extern boolean redrawsbar, redrawborder, redrawdlgdone;
 
 

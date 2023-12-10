@@ -406,7 +406,8 @@ char *G_BoundKeys(char *action)
 boolean G_KeyCmdResponder(event_t *ev)
 {
   int key = tolower(ev->data1);
-  if(keybindings[key].binding->type == at_conscmd)
+
+  if(keybindings[key].binding && keybindings[key].binding->type == at_conscmd)
     {
       if(ev->type == ev_keydown)
         {

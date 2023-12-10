@@ -162,8 +162,9 @@ void P_RunEffects(void)
 	 if(mobj->effects)
 	 {
 	    // run only if possibly visible
-	    if(!(rejectmatrix[rnum>>3] & (1<<(rnum&7))))
-	       P_RunEffect(mobj, mobj->effects);
+            if(rejectmatrix)
+              if(!(rejectmatrix[rnum>>3] & (1<<(rnum&7))))
+                 P_RunEffect(mobj, mobj->effects);
 	 }
       }
    }

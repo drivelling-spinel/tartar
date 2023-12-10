@@ -584,6 +584,14 @@ default_t defaults[] = {
     "use start map instead of menu"
   },
 
+  {
+    "detect_finallevel",
+    &detect_finallevel, NULL,
+    1, {0, 1}, dt_number, ss_none, wad_no,
+    "if pwad(-s) is(are) loaded, end game at the final level of the pwad(-s)"
+  },
+
+
   // killough 10/98: compatibility vector:
 
   {

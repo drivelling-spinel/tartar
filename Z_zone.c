@@ -45,7 +45,7 @@ static const char rcsid[] = "$Id: z_zone.c,v 1.13 1998/05/12 06:11:55 killough E
 
 // Uncomment this to see real-time memory allocation
 // statistics, and to enable extra debugging features
-//#define INSTRUMENTED
+// #define INSTRUMENTED
 
 // Uncomment this to exhaustively run memory checks
 // while the game is running (this is EXTREMELY slow).
@@ -55,7 +55,7 @@ static const char rcsid[] = "$Id: z_zone.c,v 1.13 1998/05/12 06:11:55 killough E
 // Uncomment this to perform id checks on zone blocks,
 // to detect corrupted and illegally freed blocks
 // haleyjd: this should be defined for sake of our sanity, fraggle.
-#define ZONEIDCHECK
+// #define ZONEIDCHECK
 
 // Tunables
 

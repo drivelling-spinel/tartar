@@ -892,7 +892,6 @@ static void G_ReadDemoTiccmd(ticcmd_t *cmd)
 	 cmd->buttons & BT_SPECIAL && cmd->buttons & BTS_SAVEGAME)
       {
 	 cmd->buttons &= ~BTS_SAVEGAME;
-	 doom_printf("Game Saved (Suppressed)");
       }
    }
 }
@@ -2509,7 +2508,7 @@ void G_InitNewNum(skill_t skill, int episode, int map)
 void G_InitNew(skill_t skill, char *name)
 {
    int i;
-   
+
    R_ClearParticles(); // clear all particles
 
    // haleyjd 11/14/01: reset state of dialogue engine
@@ -2565,7 +2564,7 @@ void G_InitNew(skill_t skill, char *name)
       gamemapname[8] = '\0';
    }
    G_SetGameMap();  // sf
-  
+
    //jff 4/16/98 force marks on automap cleared every new level start
    AM_clearMarks();
 

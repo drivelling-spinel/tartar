@@ -151,7 +151,11 @@ char    baseiwad[PATH_MAX+1];      // jff 3/23/98: iwad directory
 char    basesavegame[PATH_MAX+1];  // killough 2/16/98: savegame directory
 
 // set from iwad: level to start new games from
-char firstlevel[9] = "";     
+char firstlevel[9] = "";
+
+// detecting
+char finallevel[9] = "";
+int detect_finallevel = 1;
 
 //jff 4/19/98 list of standard IWAD names
 const char *const standard_iwads[]=
@@ -727,7 +731,7 @@ static void CheckIWAD(const char *iwadname,
     cm >= 30 ? (*gmission = tnt >= 4 ? pack_tnt :
 		plut >= 8 ? pack_plut : doom2,
 		*hassec = sc >= 2, commercial) :
-    hacx ? (*gmission = cm <= 5 ? hacx_sw : hacx_reg , *hassec = sc > 0 , commercial) :
+    hacx ? (*gmission = cm <= 5 ? none : hacx_reg , *hassec = sc > 0 , commercial) :
     ud >= 9 ? retail :
     rg >= 18 ? registered :
     sw >= 9 ? shareware :
@@ -1005,10 +1009,6 @@ void IdentifyVersion (void)
 
             case hacx_reg:
               game_name = "HACX Registered version";
-              break;
-
-            case hacx_sw:
-              game_name = "HACX Shareware version";
               break;
 
 	    case doom2:
@@ -1920,6 +1920,7 @@ void D_NewWadLumps(int handle)
 {
   int i;
   char wad_firstlevel[9] = "";
+  char wad_finallevel[9] = "";
   
   for(i=0; i<numlumps; i++)
     {
@@ -1928,8 +1929,14 @@ void D_NewWadLumps(int handle)
       if(!strncmp(lumpinfo[i]->name, "THINGS", 8))    // a level
 	{
 	  char *name = lumpinfo[i-1]->name; // previous lump
+          *wad_finallevel = 0;
 	  
 	  // 'ExMy'
+          // TODO: for DOOM1 we don't actually detect final level of a pwad
+          if(isExMy(name))
+            {
+              finallevel[0] = 0;
+            }
 	  if(isExMy(name) && isExMy(wad_firstlevel))
 	    {
 	      if(name[1] < wad_firstlevel[1] ||       // earlier episode?
@@ -1943,6 +1950,16 @@ void D_NewWadLumps(int handle)
 		 // earlier in the same 10 levels?
                  (name[3] == wad_firstlevel[3] && name[4] < wad_firstlevel[4]))
 		strncpy(wad_firstlevel, name, 8);
+              if(name[3] == '3') // 31, 32
+                {
+                  if(name[4] == '1' || name[4] == '2') continue;
+                }
+              if(!*wad_finallevel ||
+                wad_finallevel[3] < name[3] ||
+                wad_finallevel[4] < name[4])
+                {
+                  strncpy(wad_finallevel, name, 8);
+                }
 	    }
 
 	  // none set yet
@@ -1950,6 +1967,9 @@ void D_NewWadLumps(int handle)
 	  // elsewhere (m_menu.c)
 	  if(!*wad_firstlevel && strcmp(name, "START") )
 	    strncpy(wad_firstlevel, name, 8);
+
+          if(*wad_finallevel)
+            strncpy(finallevel, wad_finallevel, 8);
 	}
       
       // new sound

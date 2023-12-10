@@ -763,7 +763,6 @@ enum
 // frags limit (-frags)
 //
 
-extern int             levelTime;
 extern int             levelTimeLimit;
 extern int             levelFragLimit;
 

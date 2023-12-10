@@ -105,6 +105,9 @@ enum
 //  RT_INTERTEXT
 } readtype;
 
+extern char * finallevel;
+extern int detect_finallevel;
+
 void P_LoadLevelInfo(int lumpnum)
 {
   char *lump;
@@ -272,7 +275,9 @@ void P_ParseLevelVar(char *cmd)
     {
       if(!strcmp(current->name, varname))
 	{
-	  switch(current->type)
+          // seemingly valid levelinfo found, so reset detected finallevel
+          finallevel[0] = 0;
+          switch(current->type)
 	    {
 	    case IVT_STRING:
 	      *(char**)current->variable         // +5 for safety
@@ -341,18 +346,20 @@ void P_ClearLevelVars()
      info_nextlevel = "";
      if(gamemode == commercial)
      {
-         switch(gamemission) {
-         case hacx_reg:
-             if(gamemap == 20) info_endofgame = "true";
-             break;
+        if(detect_finallevel && *finallevel)
+           {
+              info_endofgame = stricmp(levelmapname, finallevel) ? "false" : "true";
+           }
+        else
+           switch(gamemission)
+           {
+              case hacx_reg:
+                if(gamemap == 20) info_endofgame = "true";
+                break;
 
-         case hacx_sw:
-             if(gamemap == 5) info_endofgame = "true";
-             break;
-
-         default:
-             if(gamemap == 30) info_endofgame = "true";
-         }
+              default:
+                if(gamemap == 30) info_endofgame = "true";
+           }
      }
   }
   // haleyjd: always empty unless set by user

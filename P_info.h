@@ -64,7 +64,6 @@ extern char *info_sound_pstart;
 
 extern boolean default_weaponowned[NUMWEAPONS];
 
-
 #endif
 
 // EOF

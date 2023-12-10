@@ -577,7 +577,7 @@ void HU_LevelTimeHandler(struct textwidget_s *widget)
       return;
     }
   
-  seconds = levelTime / 35;
+  seconds = leveltime / 35;
   timestr[0] = 0;
   
   sprintf(timestr, "%02i:%02i:%02i", seconds/3600, (seconds%3600)/60,
