@@ -638,8 +638,8 @@ byte * P_LoadVerticesExtended(byte * data)
   vertexes = Z_Realloc(vertexes, (OrgVerts + NewVerts) * sizeof(vertex_t), PU_LEVEL, 0);
   for(i = 0 ; i < numlines ; i += 1)
     {
-       lines[i].v1 = vertexes + (lines[i].v1 - old);
-       lines[i].v2 = vertexes + (lines[i].v2 - old);
+       lines[i].v1 = &vertexes[lines[i].v1 - old];
+       lines[i].v2 = &vertexes[lines[i].v2 - old];
     }
   
   for(i = OrgVerts; i < numvertexes ; i += 1)
@@ -1330,8 +1330,6 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
 
   level_error = false;  // reset
 
-  numnodes = numsectors = numsubsectors = 0;
-
   P_LoadVertexes  (lumpnum+ML_VERTEXES);
   P_LoadSectors   (lumpnum+ML_SECTORS);
   P_LoadSideDefs  (lumpnum+ML_SIDEDEFS);             // killough 4/4/98
@@ -1351,6 +1349,7 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
     return;
   }
 
+  numnodes = numsegs = numsubsectors = 0;
   P_LoadExtended  (lumpnum+ML_NODES);  
   P_LoadBlockMap  (lumpnum+ML_BLOCKMAP);             // killough 3/1/98
   if (!numsubsectors) P_LoadSubsectors(lumpnum+ML_SSECTORS);

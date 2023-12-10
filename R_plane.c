@@ -352,6 +352,7 @@ visplane_t *R_CheckPlane(visplane_t *pl, int start, int stop)
 
 static void R_MakeSpans(int x, int t1, int b1, int t2, int b2)
 {
+  assert(b2<MAX_SCREENHEIGHT); 
   for (; t1 < t2 && t1 <= b1; t1++)
     R_MapPlane(t1, spanstart[t1], x-1);
   for (; b1 > b2 && b1 >= t1; b1--)
