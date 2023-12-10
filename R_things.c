@@ -353,7 +353,7 @@ void R_DrawMaskedColumn(column_t *column)
       bottomscreen = topscreen + spryscale*column->length;
 
       // Here's where "sparkles" come in -- killough:
-      dc_yl = (1 << hires /* wtf?? */) + ((topscreen + FRACUNIT - 1)>>FRACBITS);
+      dc_yl = (topscreen + FRACUNIT - 1)>>FRACBITS;
       dc_yh = (bottomscreen-1)>>FRACBITS;
 
       if (dc_yh >= mfloorclip[dc_x])

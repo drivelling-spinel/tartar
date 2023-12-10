@@ -946,7 +946,7 @@ CONSOLE_COMMAND(p_dumphubs, 0)
 
 #ifdef NORENDER
 VARIABLE_BOOLEAN(norender1, NULL, onoff);
-VARIABLE_INT(norender2, NULL, -1, 1024, NULL);
+VARIABLE_INT(norender2, NULL, -1, 1280, NULL);
 VARIABLE_BOOLEAN(norender3, NULL, onoff);
 VARIABLE_BOOLEAN(norender4, NULL, onoff);
 VARIABLE_BOOLEAN(norender5, NULL, onoff);
@@ -967,7 +967,7 @@ CONSOLE_VARIABLE(r_norender1, norender1, 0) {
 }
 CONSOLE_VARIABLE(r_norender2, norender2, 0) {
   char msg[32];
-  norender2 = norender2 % 1024;
+  norender2 = norender2 % 1280;
   if (!norenderparm)
     {
       norender2 = -1;

@@ -2344,6 +2344,10 @@ int D_DetectAndLoadWiMaps()
       loaded += D_LoadWiMapsWad("intmapev.wad");
       break;
 
+    case pack_plut:
+      loaded += D_LoadWiMapsWad("intmappl.wad");
+      break;
+
     default:
   }
 
