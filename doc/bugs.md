@@ -14,6 +14,9 @@
 - ChexQuest demos go out of sync.
 - With FILTERS directory filled with InstaDoom WAD-s Tartar exhausts DOS
   file handles very quickly, suggested CONFIG.SYS setting being FILES=70
+
+The following bugs are expected to be fixed in the third maintenance release of Stage 3:
+
 - Weird texturing effects have been noticed in some maps e.g. diamonds 
   at the start of Jumpwad MAP03 or huge chains in Eviternity MAP21 do not
   render right
