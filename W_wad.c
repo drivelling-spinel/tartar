@@ -139,20 +139,25 @@ int playpal_wad;
 int playpal_wads_count;  
 int default_playpal_wad; 
 int * dyna_playpal_nums;
+int * dyna_colormap_nums;
+int * dyna_tranmap_nums;
 char ** dyna_playpal_wads;
+
+int * dyna_lump_nums[DYNA_TOTAL];
 
 void W_InitDynamicLumpNames()
 {
   default_playpal_wad = playpal_wad = -1;
   playpal_wads_count = 0;
-  dyna_playpal_nums = 0;
+  dyna_colormap_nums = dyna_tranmap_nums = dyna_playpal_nums = 0;
+  memset(dyna_lump_nums, 0, sizeof(int *) * DYNA_TOTAL);
 }
 
 
-int W_SetDefaultDynamicLumpNames(int optional)
+int W_SetDefaultDynamicLumpNames()
 {
   int was = playpal_wad;
-  if(!optional) playpal_wad = default_playpal_wad;
+  playpal_wad = default_playpal_wad;
   if(playpal_wad < 0 && playpal_wads_count > 0) playpal_wad = 0;
   was = was != playpal_wad;
 
@@ -167,35 +172,60 @@ int W_SetDefaultDynamicLumpNames(int optional)
   return was;
 }
 
+int W_DynamicNumForName(dyna_lumpname_t name)
+{
+  assert(name >= 0);
+  assert(name < DYNA_TOTAL);
+
+  if(playpal_wads_count <= 0 || playpal_wad < 0) return -1;
+  return dyna_lump_nums[name][playpal_wad];
+}
+
 
 void * W_CacheDynamicLumpName(dyna_lumpname_t name, int tag)
 {
-  // for now let's check that this is only called for PLAYPAL
-  assert(name == DYNA_PLAYPAL);
+  static char * names[] = { "PLAYPAL", "TRANMAP", "COLORMAP" };
+  int num = W_DynamicNumForName(name);
 
   // if no wads detected with PLAYPAL just crash
-  if(playpal_wads_count <= 0 || playpal_wad < 0)
+  if(num < 0)
     {
-      W_GetNumForName("PLAYPAL");
+      W_GetNumForName(names[name]);
     }
 
-  return W_CacheLumpNum(dyna_playpal_nums[playpal_wad], tag);
+  return W_CacheLumpNum(num, tag);
 }
+
 
 
 // TODO: unlike D_NewWadLumps this is a funciton that works
 // on a per-lump basis and checks for particular lump names
 // Currently processes only PLAYPAL lumps
-
-void W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, const int optional)
+int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_t extra)
 {
-  char *tmpname = strcpy(malloc(strlen(wadname) + 1), wadname);
-  if(stricmp(lump->name, "PLAYPAL")) return;
-   
-  dyna_playpal_nums = realloc(dyna_playpal_nums, sizeof(int) * (playpal_wads_count + 1));
+  return 1;
+}
+
+int W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, const extra_file_t extra)
+{
+  char * tmpname;
+
+  if(!W_ShouldKeepLump(lump, lumpnum, wadname, extra)) return 0;
+
+  if(stricmp(lump->name, "PLAYPAL")) return 1;
+
+  tmpname = strcpy(malloc(strlen(wadname) + 1), wadname);
+  dyna_lump_nums[DYNA_PLAYPAL] = dyna_playpal_nums =
+    realloc(dyna_playpal_nums, sizeof(int) * (playpal_wads_count + 1));
+  dyna_lump_nums[DYNA_COLORMAP] = dyna_colormap_nums =
+    realloc(dyna_colormap_nums, sizeof(int) * (playpal_wads_count + 1));
+  dyna_lump_nums[DYNA_TRANMAP] = dyna_tranmap_nums =
+    realloc(dyna_tranmap_nums, sizeof(int) * (playpal_wads_count + 1));
   dyna_playpal_wads = realloc(dyna_playpal_wads, sizeof(char *) * (playpal_wads_count + 1));
-  if(optional)
+  if(extra != EXTRA_NONE)
     {
+      dyna_colormap_nums[playpal_wads_count] = 0;
+      dyna_tranmap_nums[playpal_wads_count] = 0;
       dyna_playpal_wads[playpal_wads_count] = tmpname;
       dyna_playpal_nums[playpal_wads_count++] = lumpnum;
     }
@@ -209,23 +239,61 @@ void W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, con
         }
       dyna_playpal_nums[++default_playpal_wad] = lumpnum;
       dyna_playpal_wads[default_playpal_wad] = tmpname;
+      dyna_colormap_nums[default_playpal_wad] = 0;
+      dyna_tranmap_nums[default_playpal_wad] = 0;
       playpal_wads_count += 1;
     }
+
+  return 1;
 }
 
 void W_DynamicLumpCoalesceProc(lumpinfo_t * lump, int oldnum, int newnum)
 {
   int i = 0;
-  if(stricmp(lump->name, "PLAYPAL")) return;
 
   for(i = 0 ; i < playpal_wads_count ; i += 1)
     {
-      if(dyna_playpal_nums[i] == oldnum)
+      int j = 0;
+      for(j = 0 ; j < DYNA_TOTAL ; j += 1)
         {
-          dyna_playpal_nums[i] = newnum;
-          return;
+          if(dyna_lump_nums[j][i] == oldnum)
+            {
+              dyna_lump_nums[j][i] = newnum;
+              return;
+            }
+         }
+    }
+}
+
+void D_NewWadLumps(int handle);
+
+
+void W_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
+{
+  int i;
+  int playpal = -1, colormap = -1, tranmap = -1;
+
+  for(i = 0 ; i < count ; i += 1)
+    {
+      if(!stricmp(lumpinfo[i + start]->name, "PLAYPAL")) playpal = i + start;
+      else if(!stricmp(lumpinfo[i + start]->name, "COLORMAP")) colormap = i + start;
+      else if(!stricmp(lumpinfo[i + start]->name, "TRANMAP")) tranmap = i + start;
+    }
+
+  if(playpal >= 0)
+    {
+      for(i = 0 ; i < playpal_wads_count && dyna_playpal_nums[i] != playpal ; i += 1);
+      if(i < playpal_wads_count)
+        {
+          if(colormap >= 0) dyna_colormap_nums[i] = colormap;
+          else dyna_colormap_nums[i] = dyna_colormap_nums[0];
+
+          if(tranmap >= 0) dyna_tranmap_nums[i] = tranmap;
+          else dyna_tranmap_nums[i] = dyna_tranmap_nums[0];
         }
     }
+
+  D_NewWadLumps(handle);
 }
 
 //
@@ -240,10 +308,8 @@ void W_DynamicLumpCoalesceProc(lumpinfo_t * lump, int oldnum, int newnum)
 // Reload hack removed by Lee Killough
 //
 
-void D_NewWadLumps(int handle);
-
         // sf: made int
-static int W_AddFile(const char *name, const int optional) // killough 1/31/98: static, const
+static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/31/98: static, const
 {
   wadinfo_t   header;
   lumpinfo_t* lump_p;
@@ -342,12 +408,18 @@ static int W_AddFile(const char *name, const int optional) // killough 1/31/98: 
       lump_p->data = lump_p->cache = NULL;         // killough 1/31/98
       lump_p->namespace = ns_global;              // killough 4/17/98
       strncpy (lump_p->name, fileinfo->name, 8);
-      W_DynamicLumpFilterProc(lump_p, i, basename, optional);
+      if(!W_DynamicLumpFilterProc(lump_p, i, basename, extra))
+        {
+          i--;
+          lump_p--;
+          numlumps--;
+          continue;
+        }
     }
   
   free(fileinfo2free);      // killough
   
-  D_NewWadLumps(handle);
+  W_DynamicLumpsInWad(handle, startlump, (numlumps - startlump), extra);
 
   return false;       // no error
 }
@@ -595,29 +667,29 @@ void W_InitMultipleFiles(char *const *filenames)
 
   // open all the files, load headers, and count lumps
   while (*filenames)
-    W_AddFile(*filenames++, 0);
+    W_AddFile(*filenames++, EXTRA_NONE);
 
   if (!numlumps)
     I_Error ("W_InitFiles: no files found");
 
   W_InitResources();
 
-  W_SetDefaultDynamicLumpNames(0);
+  W_SetDefaultDynamicLumpNames();
 }
 
-int W_AddExtraFile(char *filename)
+int W_AddExtraFile(char *filename, extra_file_t extra)
 {
-  if(W_AddFile(filename, 1)) return true;
+  if(W_AddFile(filename, extra)) return true;
   W_InitResources();              // reinit lump lookups etc
-  W_SetDefaultDynamicLumpNames(1);
+  W_SetDefaultDynamicLumpNames();
   return false;
 }
 
 int W_AddNewFile(char *filename)
 {
-  if(W_AddFile(filename, 0)) return true;
+  if(W_AddFile(filename, EXTRA_NONE)) return true;
   W_InitResources();              // reinit lump lookups etc
-  W_SetDefaultDynamicLumpNames(0);
+  W_SetDefaultDynamicLumpNames();
   return false;
 }
 

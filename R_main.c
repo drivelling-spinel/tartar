@@ -307,7 +307,11 @@ static void R_InitTextureMapping (void)
 void R_InitLightTables (void)
 {
   int i;
-    
+
+
+  if(c_zlight) free(c_zlight);
+  if(c_scalelight) free(c_scalelight);
+
   // killough 4/4/98: dynamic colormaps
   c_zlight = malloc(sizeof(*c_zlight) * numcolormaps);
   c_scalelight = malloc(sizeof(*c_scalelight) * numcolormaps);
@@ -435,6 +439,7 @@ void R_ExecuteSetViewSize (void)
         }
     }
 }
+
 
 //
 // R_Init
@@ -658,10 +663,19 @@ void R_HOMdrawer()
 //      if (gametic-lastshottic < TICRATE*2 && gametic-lastshottic > TICRATE/8);
 }
 
+
 void R_ResetTrans()
 {
   if (general_translucency)
     R_ReInitTranMap(0);
+}
+
+void R_ReInit(void)
+{
+  R_ReInitColormaps2();
+  R_SetViewSize(screenSize+3);
+  R_InitLightTables();
+  R_ResetTrans();
 }
 
 //
@@ -703,7 +717,7 @@ CONSOLE_COMMAND(pal_next, 0)
       }
 
     playpal_wad = next;
-    R_ResetTrans();
+    R_ReInit();
     I_ResetPalette();
     sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
     HU_PlayerMsg(msg);
@@ -722,7 +736,7 @@ CONSOLE_COMMAND(pal_prev, 0)
       }
 
     playpal_wad = next;
-    R_ResetTrans();
+    R_ReInit();
     I_ResetPalette();
     sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
     HU_PlayerMsg(msg);
@@ -746,11 +760,13 @@ CONSOLE_VARIABLE(pal_curr, playpal_wad, 0)
     if(next < 0) next = 0;
 
     playpal_wad = next;
-    R_ResetTrans();
+    R_ReInit();
     I_ResetPalette();
     sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
     HU_PlayerMsg(msg);
 }
+
+extern int * dyna_lump_nums[];
 
 
 CONSOLE_COMMAND(pal_list, 0)
@@ -760,8 +776,15 @@ CONSOLE_COMMAND(pal_list, 0)
     C_Printf("PLAYPALs loaded:\n");
     for(i = 0 ; i < playpal_wads_count ; i += 1)
       {
-        C_Printf("%s %d:%s\n", i == playpal_wad ? "*" :
+        C_Printf("%s %d:%s", i == playpal_wad ? "*" :
           i == default_playpal_wad ? "@" : "  ", i, dyna_playpal_wads[i]);
+        if(c_argc > 1)
+          {
+            int j;
+            for(j = 0 ; j < DYNA_TOTAL ; j += 1)
+              C_Printf(" %d", dyna_lump_nums[j][i]);
+          }
+        C_Printf("\n");
       }
 }
 

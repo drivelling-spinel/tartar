@@ -1090,8 +1090,6 @@ void P_RespawnSpecials (void)
   S_StartSound(mo, sfx_itmbk);
 
   // find which type to spawn
-
-  // killough 8/23/98: use table for faster lookup
   i = P_FindDoomedNum(mthing->type);
 
   // spawn it
@@ -1235,9 +1233,10 @@ mobj_t *P_SpawnMapThing (mapthing_t* mthing)
       return NULL; //sf
     }
 
-  if(mthing->type == 5003)
+  if(mthing->type == 5003 && gamemission != cod)
   {
         // save for intermissions
+        // except when COD is loaded spawn a monster instead
         WI_AddCamera(mthing);
         return NULL;
   }
@@ -1306,9 +1305,18 @@ mobj_t *P_SpawnMapThing (mapthing_t* mthing)
     return NULL;  // sf
 
   // find which type to spawn
-
-  // killough 8/23/98: use table for faster lookup
-  i = P_FindDoomedNum(mthing->type);
+  switch(mthing->type)
+  {
+    case 5003:
+      i = gamemission == cod ? MT_CPOSSESSED : MT_CAMERA;
+      break;
+    case 5004:
+      i = gamemission == cod ? MT_CSHOTGUY : MT_CAMERANODE;
+      break;
+    default:
+     // killough 8/23/98: use table for faster lookup
+     i = P_FindDoomedNum(mthing->type);
+  }
 
   // phares 5/16/98:
   // Do not abort because of an unknown thing. Ignore it, but post a

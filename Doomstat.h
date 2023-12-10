@@ -421,11 +421,11 @@ extern int forceFlipPan;
 
 //=======================================================
 
-extern int playpal_wad;            // idx of the wad that has selected PLAYPAL
-extern int playpal_wads_count;     // number of loaded wads with PLAYPAL lump
-extern int default_playpal_wad;    // idx of that last loaded wad with PLAYPAL lump
-                                   // preceding those autoloaded at the end
-extern char ** dyna_playpal_wads;  // names of the wad containing a PLAYPAL lump
+extern int playpal_wad;              // idx of the wad that has selected PLAYPAL
+extern int playpal_wads_count;       // number of loaded wads with PLAYPAL lump
+extern int default_playpal_wad;      // idx of that last loaded wad with PLAYPAL lump
+                                     // preceding those autoloaded at the end
+extern char ** dyna_playpal_wads;    // names of the wad containing a PLAYPAL lump
 
 #endif
 

@@ -374,7 +374,8 @@ void P_LoadThings(int lump)
    for(i = 0; i < numthings; i++)
    {
       mapthing_t *mt = (mapthing_t *) data + i;
-      
+      boolean dont_spawn = false;
+
       // Do not spawn cool, new monsters if !commercial
       if(gamemode != commercial)
       {
@@ -390,9 +391,25 @@ void P_LoadThings(int lump)
 	 case 65:  // Former Human Commando
 	 case 66:  // Revenant
 	 case 84:  // Wolf SS
-	    spawnedthings[i] = NULL; // haleyjd
-	    continue;
+            dont_spawn = true;
 	 }
+      }
+
+      // non SMMU stuff from Eternity or COD will
+      // only be loaded when appropriate
+      if(mt->type < 5001 || mt->type > 5004)
+      {
+         dont_spawn = dont_spawn || !(
+           mt->type < 4988 ||
+           (gamemission == cod && mt->type >= 4988) ||
+           (EternityMode && mt->type >= 6001) 
+         );
+      }
+
+      if(dont_spawn)
+      {
+         spawnedthings[i] = NULL; // haleyjd
+         continue;
       }
       
       // Do spawn all other stuff.
@@ -1095,9 +1112,9 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
   P_LoadLevelInfo (lumpnum);    // load level lump info(level name etc)
 
   if(!strcmp(info_colormap, "COLORMAP"))  // haleyjd
-    MapUseFullBright = true;
+      MapUseFullBright = true;
   else
-    MapUseFullBright = false;
+      MapUseFullBright = false;
 
   if(strcmp(info_sky2name, "-")) // haleyjd 11/14/00
      DoubleSky = true;

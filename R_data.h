@@ -55,6 +55,7 @@ void R_ReInitTranMap(int);
 int R_ColormapNumForName(const char *name);      // killough 4/4/98
 
 void R_InitColormaps(void);   // killough 8/9/98
+void R_ReInitColormaps2(void);   // killough 8/9/98
 
 // haleyjd: new global colormap method
 void R_SetGlobalLevelColormap(void);
