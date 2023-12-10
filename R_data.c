@@ -260,7 +260,7 @@ static void R_GenerateComposite(int texnum)
 
             if (j >= stop)           // if at end of column
               {
-                col->topdelta = -1;             // end-of-column marker
+                col->topdelta = 0xff;             // end-of-column marker
                 break;
               }
               
@@ -295,7 +295,7 @@ static void R_GenerateComposite(int texnum)
 
             if (j >= stop)           // if at end of column
               {
-                col->topdelta = -1;             // end-of-column marker
+                col->topdelta = 0xff;             // end-of-column marker
                 break;
               }
             
@@ -325,6 +325,7 @@ static void R_GenerateComposite(int texnum)
             col = (column_t *)((byte *) col + len + 4); // next post
           }          
       }
+      
   free(source);         // free temporary column
   free(marks);          // free transparency marks
 

@@ -243,18 +243,22 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
 
 #define THRESH (0x80 << HEIGHTBITS)
 
-#define DRAW_MASKED_ANYTHING(coord) \
+#define DRAW_MASKED_ANYTHING() \
 { \
-  int local_floor = floorclip[dc_x], local_ceiling = ceilingclip[dc_x]; \
-  sprtopscreen = coord; \
+  int local_floor = floorclip[rw_x], local_ceiling = ceilingclip[rw_x]; \
+  dc_x = rw_x; \
   spryscale = rw_scale; \
+  { \
+    Long64 t = ((Long64) centeryfrac << FRACBITS) - (Long64) dc_texturemid * spryscale; \
+    sprtopscreen = (long)(t >> FRACBITS); \
+  } \
   mfloorclip = floorclip; \
   mceilingclip = ceilingclip; \
   floorclip[dc_x] = dc_yh + 1; \
   ceilingclip[dc_x] = dc_yl - 1; \
-  R_DrawMaskedColumn((column_t *)((byte *)dc_source) - 3); \
-  floorclip[dc_x] = local_floor; \
-  ceilingclip[dc_x] = local_ceiling; \
+  R_DrawMaskedColumn((column_t *)((byte *)dc_source - 3)); \
+  floorclip[rw_x] = local_floor; \
+  ceilingclip[rw_x] = local_ceiling; \
 } \
 
 static void R_RenderSegLoop (void)
@@ -401,7 +405,7 @@ static void R_RenderSegLoop (void)
 #endif
             {
               if(comp[comp_talltex] && R_HasComposite(midtexture))
-                DRAW_MASKED_ANYTHING(dc_texturemid)
+                DRAW_MASKED_ANYTHING()
               else
                 colfunc ();
             }
@@ -432,7 +436,7 @@ static void R_RenderSegLoop (void)
 #endif
                     {
                       if(comp[comp_talltex] && R_HasComposite(toptexture))
-                        DRAW_MASKED_ANYTHING(dc_texturemid)
+                        DRAW_MASKED_ANYTHING()
                       else                    
                         colfunc ();
                     }
@@ -471,7 +475,7 @@ static void R_RenderSegLoop (void)
 #endif
                     {
                       if(comp[comp_talltex] && R_HasComposite(bottomtexture))
-                        DRAW_MASKED_ANYTHING(dc_texturemid)
+                        DRAW_MASKED_ANYTHING()
                       else   
                         colfunc ();
                     }
