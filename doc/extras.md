@@ -136,23 +136,24 @@ To try palette cycling in action:
 3. From InstaDoom distribution zip, extract FILTERS directory and place that directory
    (with all its contents) in the same directory as TARTAR.EXE.
 
-4. Run TARTAR.EXE as usual (no need for -file command line argument) and be on the lookout
-   for a message in the console mentioning the number of loaded filters.
-
-5. If in "real" DOS set FILES in CONFIG.SYS to a considerably big value, e.g. 
-   FILES=70
+4. If in "real" DOS set FILES in CONFIG.SYS to a considerably big value, e.g. 
+   FILES=70  
+   
+5. Run TARTAR.EXE as usual (no need for an additional -file command line argument to load
+   the filters) and be on the lookout for a message in the console mentioning 
+   the number of loaded filters.
 
 6. While in game (starting immediately from the title screen) use \[ and \] keys 
    to switch palettes.
 
 ### SELFIE
 
-In addition to **FILTERS** from InstaDoom Tartar has support for SELFIE.WAD 
-from the same mod. When SELFIE.WAD and SELFIE.DEH are found in the same directory as 
-TARTAR.EXE, they are loaded and players are given a selfie stick. Unlike the
-original SELFIE.WAD stick, the one in Tartar does not replace any of the players'
-weapons, nor does it require any ammo. Behaviour of plasma gun and BFG are unchanged
-when SELFIE.WAD is loaded as an extra. 
+In addition to the FILTERS from InstaDoom Tartar has support for SELFIE.WAD 
+from the same mod. When SELFIE.WAD and SELFIE.DEH both are found in the same 
+directory as TARTAR.EXE, they are loaded and players are given a selfie stick. 
+Unlike the original SELFIE.WAD stick, the one in Tartar does not replace any 
+of the players' weapons, nor does it require any ammo. Behaviour of plasma gun 
+and BFG are unchanged when SELFIE.WAD is loaded as an extra. 
 
 To activate the stick use SELFIE console command, by default bound to key L.
 To deactivate the stick select any weapon. With the stick out press Fire to 
@@ -167,8 +168,9 @@ To try Tartar with selfie extra:
 3. From InstaDoom distribution zip, extract SELFIE.WAD and SELFIE.DEH into the same 
    directory as TARTAR.EXE.
 
-4. Run TARTAR.EXE as usual (no need for -file or -deh command line argument) and be 
-   on the lookout for a message in the console mentioning the selfie stick.
+4. Run TARTAR.EXE as usual (no need for additional -file or -deh command line 
+   argument to load SELFIE.WAD or SELFIE.DEH) and be on the lookout for a message 
+   in the console mentioning the selfie stick.
 
 5. Play the game, take out the stick by pressing L whenever you want, remove it
    by switching to any weapon. Use Fire to take selfies.
@@ -184,10 +186,10 @@ To use Intermission Maps with Tartar:
 
 1. Install Tartar.
 
-2. Obtain D2INTMAP.WAD - _since mod's author is yet to release a version that uses 
-   Doom graphic format for images, and not PNGs, players may need to use DOOM 
-   editing tool (like Slade) to create the WAD with converted images_ - and
-   place it in the same directory as TARTAR.EXE.
+2. Obtain D2INTMAP.WAD - _since mod's author is still working on a version that uses 
+   Doom graphic format for images, players may need to use DOOM editing tool 
+   (like Slade) to create the WAD combining those with blood splats and arrows from
+   the GZDoom version of the mod_ - and place it in the same directory as TARTAR.EXE.
 
 3. Run TARTAR.EXE with DOOM2 IWAD. When running without PWAD-s no additional 
    arguments are required. When running with PWADS, enable the intermission maps 
