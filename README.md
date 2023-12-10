@@ -37,6 +37,43 @@ There, TARTAR directory contains the the port TARTAR.EXE and additional
 assets and files required to run it. EXTRAS document above describes the
 contents of DEMOS and EXTRAS directories.
 
+### Playing Doom with TARTAR
+
+1. Download TARTAR directory contents from the above link
+   (MEGA has means to download directory as a ZIP archive)
+
+2. For a quick and simple start either 
+
+   - put one of the supported WADs (e.g. DOOM.WAD, DOOM1.WAD,
+     DOOM2.WAD, PLUTONIA.WAD or TNT.WAD) into the directory
+     with TARTAR.EXE 
+   
+   - or put TARTAR.EXE and other files from the directory into 
+     a directory that has a Doom game installed  
+  
+3. Run SETUP.EXE from directory with TARTAR.EXE and follow
+   on screen instructions to configure sound and music card.
+
+4. Run TARTAR.EXE to play 
+
+### Playing Caverns of Darkness with Tartar
+
+1. Download Caverns of Darkness TC distribution and unzip
+   the contents into a separate directory
+
+2. Download TARTAR directory contents from the above link
+   (MEGA has means to download directory as a ZIP archive)
+   and copy eveything there to the same directory as COD
+   **except do not** copy KEYS.CSC and retain the one shipped 
+   with the TC.
+
+3. Copy DOOM2.WAD into the same directory as COD
+
+4. Run SETUP.EXE from the COD directory and follow
+   on screen instructions to configure sound and music card.
+
+5. Start TARTAR.EXE -file COD.WAD CODLEV.WAD to play
+
 ## On the name of the port
 
 I've been asked why Tartar refers to itself as Eternity Engine when
