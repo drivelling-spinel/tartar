@@ -395,9 +395,9 @@ void I_FinishUpdate(void)
           if (clearscreen)
           {
               clearscreen = 0;
-              if(blackband) vesa_clear_pages_banked(2, BG_COLOR);      
+              if(blackband) vesa_clear_pages_banked(in_page_flip ? 2 : 1, BG_COLOR);      
           }
-          vesa_blitscreen_banked(screens[0], size, scroll_offset); // VESA Banked (slower)
+          vesa_blitscreen_banked(screens[0], size, scroll_offset, effective_band); // VESA Banked (slower)
       }
           else dosmemput(screens[0], SCREENWIDTH*ymax, 0xA0000);    // Mode 13h without nearptr
    }
@@ -888,27 +888,28 @@ static void I_InitGraphicsMode(void)
      if (vesa_version<2 && page_flip)  {page_flip=0; MN_ErrorMsg(BADOPT);}  // won't work, would just be wasting frames
      if (use_vsync && !page_flip)      {use_vsync=0; MN_ErrorMsg(BADOPT);}
      if (vesa_version<2 && use_vsync)  {use_vsync=0; MN_ErrorMsg(BADOPT);}
+   
 	 if (vesa_version>=2)
 	 {
-     	if (in_page_flip && (!page_flip || safeparm)) vesa_set_displaystart(0,0,0); // we may still be at the second page, from before
-		else if (!in_page_flip && (page_flip && !safeparm))                          // we need to check success.                         
+		if (!in_page_flip && (page_flip && !safeparm))                          // we need to check success.                         
 		{
 		   if (page_flip)  status=vesa_set_displaystart(4,0,0);       // shake screen a little to verify. Voodoo 3: keep too multiples of 4, else fail.
                if (status==1) {page_flip=use_vsync=0; MN_ErrorMsg(BADOPT); } // function failed, cancel use
      	   rest(5);                                                               // show screen shake 
 		   vesa_set_displaystart(0,0,0);                                          // reset screen shake, even if fail.
 		}
-     }
+   }
+   vesa_set_displaystart(0,0,0); // we may still be at the second page, from before
 
 	 // Setup LFB access if available:
 	 if (safeparm || nolfbparm || vesa_version<2) linear=false; else linear=mode_LFB; // LFB wanted? and supported?
  	 if (linear) {if (vesa_get_screen_base_addr(0)==1) linear=false;} // Get LFB base address, should be available
-     if (blackband &&  linear) vesa_clear_pages_LFB   (page_flip ? 2 : 1, BG_COLOR);       // may be garbage left in video memory, 
-     if (blackband && !linear) vesa_clear_pages_banked(page_flip ? 2 : 1, BG_COLOR);      // which will otherwise be visible in the bars.
+     if (blackband &&  linear) vesa_clear_pages_LFB   ((page_flip && !safeparm) ? 2 : 1, BG_COLOR);       // may be garbage left in video memory, 
+     if (blackband && !linear) vesa_clear_pages_banked((page_flip && !safeparm) ? 2 : 1, BG_COLOR);      // which will otherwise be visible in the bars.
   }
 
   // CONTINUE TO PREPARE GENERAL STUFF
-  if (!in_graphics_mode || (hires && !in_hires)) V_Init(); // required buffer size has changed
+  V_Init(); // required buffer size has changed
   scroll_offset = 0;
   in_graphics_mode = 1;
   clearscreen = 0;
@@ -975,7 +976,7 @@ void I_InitGraphics(void)
 
   signal(SIGINT, SIG_IGN);  // ignore CTRL-C in graphics mode
 
-  in_page_flip = page_flip;
+  in_page_flip = page_flip && !safeparm;
 
   I_InitGraphicsMode();    // killough 10/98
 

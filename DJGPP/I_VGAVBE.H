@@ -12,7 +12,7 @@ void blast_C(void *dest, unsigned char *src, int ymax);
 int  vesa_get_mode_info(int mode);
 int  vesa_set_mode(int mode);
 void vesa_set_bank(int bank_number);
-void vesa_blitscreen_banked(unsigned char *memory_buffer, int size, int scroll_offset);
+void vesa_blitscreen_banked(unsigned char *memory_buffer, int size, int scroll_offset, int band_offset);
 int  vesa_set_displaystart(unsigned long pixel, unsigned long scanline, unsigned int waitVRT);
 void set_mode_13h();
 void set_mode_X();

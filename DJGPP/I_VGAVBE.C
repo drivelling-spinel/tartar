@@ -457,7 +457,7 @@ int vesa_get_screen_base_addr(int close)
 
 //-----------------------------------------------------------------------------
 // GB 2014: DOOM MBF specific, for 320x200 or 640x400, or else 640x480 with black bars
-void vesa_blitscreen_banked(unsigned char *memory_buffer, int size, int scroll_offset)
+void vesa_blitscreen_banked(unsigned char *memory_buffer, int size, int scroll_offset, int band_offset)
 {
    int offset, bank_number=0, copy_size=0;
 
@@ -472,7 +472,7 @@ void vesa_blitscreen_banked(unsigned char *memory_buffer, int size, int scroll_o
    // Preparation part 1, calculate offset:
    offset=mode_BPS*scroll_offset; 
    // Some cards have no 640x400 (Intel, Cirrus), use 640x480 with black bars on top and bottom:
-   if (screen_h>=480) offset+=mode_BPS*blackband;  
+   if (band_offset) offset+=mode_BPS*band_offset;  
 
    if (offset>0)
    {
