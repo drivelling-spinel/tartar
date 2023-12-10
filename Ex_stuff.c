@@ -866,30 +866,22 @@ int Ex_Check1stEncWads(const char * wadname, const int index)
     WOLFDOOM_RES_WADS, sizeof(WOLFDOOM_RES_WADS) / sizeof(*WOLFDOOM_RES_WADS));
 }
 
+static char * NOCT_PWADS[] = {"CONFRONT.WAD", "TRAIL.WAD", "SECRET.WAD"};
+static char * NOCT_RES_WADS[] = { "NOCTFX.WAD" };
+
 int Ex_CheckNoctWads(const char * wadname, const int index) 
 {
-  ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
-  assert(strlen(filestr) + 5 <= sizeof(filestr));
-  AddDefaultExtension(filestr, ".wad");
-  if(!stricmp(filestr, "NOCT.WAD"))
-    {
-      return Ex_InsertResWadIfMissing(wadname, index + 1, "NOCT15.WAD");
-    }
-
-  return 0;
+  return Ex_CheckWadsGeneralized(wadname, index, NOCT_PWADS, sizeof(NOCT_PWADS) / sizeof(*NOCT_PWADS),
+    NOCT_RES_WADS, sizeof(NOCT_RES_WADS) / sizeof(*NOCT_RES_WADS));
 }
+
+static char * ORG_PWADS[] = {"FUHRER.WAD", "FAUST.WAD", "ESCAPE.WAD"};
+static char * ORG_RES_WADS[] = { "ORGFX.WAD" };
 
 int Ex_CheckOriginalWads(const char * wadname, const int index) 
 {
-  ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
-  assert(strlen(filestr) + 5 <= sizeof(filestr));
-  AddDefaultExtension(filestr, ".wad");
-  if(!stricmp(filestr, "ORIGINAL.WAD"))
-    {
-      return Ex_InsertResWadIfMissing(wadname, index + 1, "ORIG15.WAD");
-    }
-
-  return 0;
+  return Ex_CheckWadsGeneralized(wadname, index, ORG_PWADS, sizeof(ORG_PWADS) / sizeof(*ORG_PWADS),
+    ORG_RES_WADS, sizeof(ORG_RES_WADS) / sizeof(*ORG_RES_WADS));
 }
 
 static char * ARCTIC_PWADS[] = { "GFX1.WAD", "GFX2.WAD"};
@@ -1023,7 +1015,7 @@ int Ex_CheckKDiKDiZDWads(const char * wadname, const int index)
       c = Ex_InsertResWadIfMissing(wadname, index + 1, cpy);
     }
   free(cpy);
-  return c;
+  return c;                         
 }
 
 
@@ -1031,7 +1023,8 @@ int Ex_CheckKDiKDiZDWads(const char * wadname, const int index)
 typedef int (related_wad_func_t)(const char *, const int);
 related_wad_func_t *related_wad_funcs[] = { Ex_Check1stEncWads,
   Ex_CheckArcticWads, Ex_CheckArcticSeWads,
-  Ex_CheckBTSXWads, Ex_CheckKDiKDiZDWads };
+  Ex_CheckBTSXWads, Ex_CheckKDiKDiZDWads,
+  Ex_CheckOriginalWads, Ex_CheckNoctWads };
 
 int Ex_InsertRelatedWads(const char * wadname, const int index)
 {
