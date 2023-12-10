@@ -430,8 +430,13 @@ static void R_GenerateLookup(int texnum, int *const errors)
 
 byte *R_GetColumn(int tex, int col)
 {
-  int lump = texturecolumnlump[tex][col &= texturewidthmask[tex]];
-  int ofs  = texturecolumnofs[tex][col];
+  int lump;
+  int ofs;
+
+  col = col % texturewidthmask[tex];
+  if(col < 0) col = texturewidthmask[tex] + col;
+  lump = texturecolumnlump[tex][col];
+  ofs  = texturecolumnofs[tex][col];
 
   if (lump > 0)
     return (byte *) W_CacheLumpNum(lump, PU_CACHE) + ofs;
@@ -615,9 +620,7 @@ void R_InitTextures (void)
       texturecolumnofs[i] =
         Z_Malloc(texture->width*sizeof**texturecolumnofs, PU_STATIC,0);
 
-      for (j=1; j*2 <= texture->width; j<<=1)
-        ;
-      texturewidthmask[i] = j-1;
+      texturewidthmask[i] = texture->width;
       textureheight[i] = texture->height<<FRACBITS;
     }
  

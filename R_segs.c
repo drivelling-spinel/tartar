@@ -251,18 +251,6 @@ static void R_RenderSegLoop (void)
       // no space above wall?
       int bottom = floorclip[rw_x]-1, top = ceilingclip[rw_x]+1;
 
-      // falls outside the view, so not rendering
-      if(yl > viewheight || yh < 0)
-        {
-          rw_scale += rw_scalestep;
-          topfrac += topstep;
-          bottomfrac += bottomstep;
-#ifdef TRANWATER
-          bottomfrac2 += bottomstep2;
-#endif
-          continue;
-        }
-
       if (yl < top)
         yl = top;
 
@@ -291,6 +279,8 @@ static void R_RenderSegLoop (void)
             {
               floorplane->top[rw_x] = top;
               floorplane->bottom[rw_x] = bottom;
+              // not clear how these end up being negative in the first place
+              if(floorplane->bottom[rw_x] < 1) floorplane->bottom[rw_x] = 1;
             }
         }
 
@@ -742,6 +732,7 @@ void R_StoreWallRange(const int start, const int stop)
 
   if (segtextured)
     {
+
       offsetangle = rw_normalangle-rw_angle1;
 
       if (offsetangle > ANG180)
@@ -751,14 +742,14 @@ void R_StoreWallRange(const int start, const int stop)
         offsetangle = ANG90;
 
       sineval = finesine[offsetangle >>ANGLETOFINESHIFT];
-      rw_offset = FixedMul (hyp, sineval);
+      rw_offset = FixedMul (hyp, sineval); 
 
       if (rw_normalangle-rw_angle1 < ANG180)
         rw_offset = -rw_offset;
-      // hoping R_PointToDist2 does what I think
-      rw_offset += sidedef->textureoffset + (curline->offset ? curline->offset : R_PointToDist2(curline->linedef->v1->x, curline->linedef->v1->y, curline->v1->x, curline->v1->y));
+      rw_offset += sidedef->textureoffset;
+      rw_offset += curline->offset;
 
-      rw_centerangle = ANG90 + viewangle - rw_normalangle;
+      rw_centerangle = ANG90 + viewangle - rw_normalangle; 
 
       // calculate light table
       //  use different light tables

@@ -66,7 +66,7 @@ static byte SLOPESHIFT[] =
 };
 
 
-int SlopeDiv(unsigned num, unsigned den)
+int SlopeDiv2(unsigned num, unsigned den)
 {
   unsigned ans;
   byte sh = SLOPESHIFT[num >> 28];
@@ -75,6 +75,17 @@ int SlopeDiv(unsigned num, unsigned den)
     return SLOPERANGE;
   
   ans = (num<<sh)/(den>>8) << (3-sh);
+  return ans <= SLOPERANGE ? ans : SLOPERANGE;
+}
+
+int SlopeDiv(unsigned num, unsigned den)
+{
+  unsigned ans;
+
+  if (den < 512)
+    return SLOPERANGE;
+  
+  ans = (num<<3)/(den>>8);
   return ans <= SLOPERANGE ? ans : SLOPERANGE;
 }
 

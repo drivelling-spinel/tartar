@@ -698,12 +698,18 @@ byte * P_LoadSegsExtended(byte * data)
       data += sizeof(long);
       // compute them?
       li->angle = -1;
-      li->offset = 0;
       
       linedef = (unsigned short)SHORT(*(short *)data);
       data += sizeof(short);
       ldef = &lines[linedef];
       li->linedef = ldef;
+
+      li->offset =  
+        R_PointToDist2(li->linedef->v1->x < li->linedef->v2->x ? li->linedef->v1->x : li->linedef->v2->x, 
+          li->linedef->v1->x < li->linedef->v2->x ? li->linedef->v1->y : li->linedef->v2->y, 
+          li->linedef->v1->x < li->linedef->v2->x ? li->v1->x : li->v2->x, 
+          li->linedef->v1->x < li->linedef->v2->x ? li->v1->y : li->v2->y);
+
       
       side = *(byte *)data;
       data += sizeof(byte);
