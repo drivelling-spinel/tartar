@@ -142,13 +142,11 @@ EXTRAS document above describes the contents of GOODIES directories.
 
 ### Playing Caverns of Darkness with Tartar
 
-1. Download Caverns of Darkness TC distribution and unzip the contents 
+1. Download Caverns of Darkness TC distribution and unzip the contents
    into a separate directory
 
-2. Download TARTAR directory contents from the above link (MEGA has means 
-   to download directory as a ZIP archive) and copy everything there 
-   to the same directory as COD **except do not** copy KEYS.CSC 
-   and retain the one shipped with the TC.
+2. Download TARTAR directory contents from the above link and copy
+   everything there to the same directory as COD.
 
 3. Copy DOOM2.WAD into the same directory as COD
 
@@ -164,6 +162,7 @@ to the installation. Suggested WAD-s to try out include:
   - [Doom Sound Bulb](https://www.doomworld.com/forum/topic/110822) by \@SeanTheBermanator
   - [Hi Res Doom Sound Effects Pack](https://www.perkristian.net/game_doom-sfx.shtml) by \@perkristian
   - [Doom 2 Minor Sprite Fixing Project](https://www.doomworld.com/forum/topic/62403) by \@revenant100
+  - [Doom 2 Minor Sprite Fixing Project](https://www.doomworld.com/forum/topic/62403) by \@revenant100
   - [DMXOPL](https://github.com/sneakernets/DMXOPL/releases/tag/v1.11-Final) by \@sneakernets
 
 Follow the below steps to have them installed with Tartar
@@ -174,7 +173,7 @@ Follow the below steps to have them installed with Tartar
 
 3. Or if Tartar will be used with multiple IWADs drop the WAD into
    a subdirectory of FIXES that has name matching the name of the IWAD
-   the fix pack is to be loaded with. For example:   
+   the fix pack is to be loaded with. For example:
    
    C:\GAMES\TARTAR\   
    C:\GAMES\TARTAR\TARTAR.EXE   
@@ -200,11 +199,11 @@ Follow the below steps to have them installed with Tartar
 
 2. Drop NERVE.WAD (e.g. from Doom 3 BFG Edition) into the same directory
 
-3. Drop NERVE.WAD (yes, the same name!) from GOODIES\SHIMS directory in the   
+3. Drop NERVE.WAD (yes, the same name!) from GOODIES\SHIMS directory in the
    distribution into SHIMS directory where TARTAR is found. 
    
-4. Drop INTMAPNR.WAD (required step!) found in GOODIES\OLIACYM directory   
-   of the distribution and place itnto the same same directory as TARTAR.EXE.   
+4. Drop INTMAPNR.WAD (required step!) found in GOODIES\OLIACYM directory
+   of the distribution and place itnto the same same directory as TARTAR.EXE.
    For example:
    
    C:\GAMES\TARTAR\   
@@ -244,18 +243,18 @@ Follow the below steps to have them installed with Tartar
 
 1. Install Tartar with DOOM2.WAD 
 
-2. Obtain classic Wolfendoom PWAD-s. The recommended way is by downloading   
+2. Obtain classic Wolfendoom PWAD-s. The recommended way is by downloading
    [WolfenDOOM Collection](https://www.macintoshrepository.org/9074-wolfendoom-collection) 
    for Mac (yes, Mac - WolfenDOOM was developed on Mac in the first place!)
 
-3. _Optionally_ get [Operation Arctic Wolf SE](https://www.doomworld.com/idgames/themes/wolf3d/arcticse)   
+3. _Optionally_ get [Operation Arctic Wolf SE](https://www.doomworld.com/idgames/themes/wolf3d/arcticse)
    and [Aftermath](https://www.doomworld.com/idgames/themes/wolf3d/aftermth) and its 
-   [prerequisites](https://www.doomworld.com/idgames/themes/wolf3d/wolfdoom).   
-   For playing classic Arctic Wolf the following updates may also be of interest:   
+   [prerequisites](https://www.doomworld.com/idgames/themes/wolf3d/wolfdoom).
+   For playing classic Arctic Wolf the following updates may also be of interest: 
    [arc_fix.zip](https://doomworld.com/3ddownloads/wolfendoom/arc_fix.zip) 
-   [Lrbjskin.zip](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip)   
+   [Lrbjskin.zip](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip) 
 
-4. Drop _shim_ WAD with the same name as the PWAD to be player from GOODIES\SHIMS directory   
+4. Drop _shim_ WAD with the same name as the PWAD to be player from GOODIES\SHIMS directory 
    in the ditribution to SHIMS directory where TARTAR is found. For example:
 
    C:\GAMES\TARTAR\   
@@ -271,8 +270,8 @@ Follow the below steps to have them installed with Tartar
    C:\GAMES\TARTAR\SHIMS\SECRET.WAD   
    C:\GAMES\TARTAR\SHIMS\TRAIL.WAD   
 
-5. Run TARTAR to play with _both_ PWAD and DEH patch provided via -file   
-   command line argument. For example, if the PWAD-s are in the same directory   
+5. Run TARTAR to play with _both_ PWAD and DEH patch provided via -file 
+   command line argument. For example, if the PWAD-s are in the same directory 
    as TARTAR.EXE:   
    
    TARTAR -FILE SOD SOD.DEH   
@@ -281,8 +280,8 @@ Follow the below steps to have them installed with Tartar
    TARTAR -FILE 2ND_ENC 2ND_ENC.DEH   
    TARTAR -FILE AFTERMTH   
 
-   _Note_ that Tartar will pull the other required WAD-s from the   
-   directory where the specified PWAD-s sit, so there's no need to   
+   _Note_ that Tartar will pull the other required WAD-s from the 
+   directory where the specified PWAD-s sit, so there's no need to 
    type all of them, as long as they have been copied there.
 
    For _original_ Operation Arctic Wolf:
@@ -291,19 +290,19 @@ Follow the below steps to have them installed with Tartar
    For Operation Arctic Wolf Special Edition:
    TARTAR -FILE ARCTGFX1 ARCTIC1.DEH
 
-   _Note_ that for Arctic Wolf there is no need to quit and change the way   
-   the game is launched midway though. Tartar will automatically reload   
+   _Note_ that for Arctic Wolf there is no need to quit and change the way 
+   the game is launched midway though. Tartar will automatically reload 
    the required PWAD/DEH combination based on the level being played.
 
-6. _Optionally_ add WOLFMIDI.WAD to play with original Wolfenstein music.   
-   The music tracks (courtesy of [VGMPF](https://www.vgmpf.com/Wiki/index.php?title=Wolfenstein_3D_(DOS))   
-   cand be found in GOODIES\WOLFMIDI directory of the distribution.
+6. _Optionally_ add WOLFMIDI.WAD to play with original Wolfenstein music. 
+   The music tracks (courtesy of [VGMPF](https://www.vgmpf.com/Wiki/index.php?title=Wolfenstein_3D_(DOS)) 
+   can be found in GOODIES\WOLFMIDI directory of the distribution.
 
    TARTAR -FILE HALTEN WOLFMIDI
    
-7. _Optionally_ Tartar will automatically load B J Blazkowicz skin   
-   with Wolfendoom if it is placed in SKINS directory where TARTAR is found.   
-   Obtain it [here](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip).   
+7. _Optionally_ Tartar will automatically load B J Blazkowicz skin  
+   with Wolfendoom if it is placed in SKINS directory where TARTAR is found. 
+   Obtain it [here](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip). 
    For example:
    
    C:\GAMES\TARTAR\   
@@ -320,12 +319,12 @@ Follow the below steps to have them installed with Tartar
 
 ### Want more? Try extras!
 
-Tartar offers first class support for some of the excellent mods by Doom community.   
+Tartar offers first class support for some of the excellent mods by Doom community. 
 Here's how to enable Doom 2 intermission screen maps created by \@olyacim.
 
 1. Install Tartar.
 
-2. Drop INTMAPD2.WAD found in GOODIES\OLIACYM directory of the distribution   
+2. Drop INTMAPD2.WAD found in GOODIES\OLIACYM directory of the distribution 
    and place itnto the same same directory as TARTAR.EXE. For example:
 
    C:\GAMES\TARTAR\   
@@ -333,11 +332,11 @@ Here's how to enable Doom 2 intermission screen maps created by \@olyacim.
    C:\GAMES\TARTAR\DOOM2.WAD   
    C:\GAMES\TARTAR\INTMAPD2.WAD   
 
-3. _Optional_ place INTMAPPL.WAD (for PLUTONIA.WAD), INTMAPEV.WAD (for TNT.WAD)   
+3. _Optional_ place INTMAPPL.WAD (for PLUTONIA.WAD), INTMAPEV.WAD (for TNT.WAD) 
    in the same directory as TARTAR.EXE.
 
-4. Run TARTAR.EXE. When running without PWAD-s no additional arguments   
-   are required. _When running with PWADS, enable the intermission_   
+4. Run TARTAR.EXE. When running without PWAD-s no additional arguments 
+   are required. _When running with PWADS, enable the intermission_ 
    _maps by adding -wimaps command line argument._
 
 Check out more guides and examples found in [EXTRAS](doc/extras.md).
