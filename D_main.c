@@ -1779,6 +1779,13 @@ void D_DoomMain(void)
   startupmsg("D_AutoExecScripts", "Executing console scripts.");
   D_AutoExecScripts();
 
+  // load all dymic extras before starting the game
+  if (!M_CheckParm ("-noload"))
+    {
+      startupmsg("Extras","Detecting extra WADs to autoload.");
+      Ex_DetectAndLoadExtras();
+    }
+
   //////////////////////////////////////////////////////////////////////
   //
   // Must be in Graphics mode by now!
@@ -1846,13 +1853,6 @@ void D_DoomMain(void)
 
   // sf: -blockmap option as a variable now
   if(M_CheckParm("-blockmap")) r_blockmap = true;
-
-  // load all dymic extras before starting the game
-  if (!M_CheckParm ("-noload"))
-    {
-      startupmsg("Extras","Detecting extra WADs to autoload.");
-      Ex_DetectAndLoadExtras();
-    }
 
   startupmsg("S_Init","Setting up sound.");
   S_Init(snd_SfxVolume, snd_MusicVolume);

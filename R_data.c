@@ -1468,7 +1468,8 @@ static void error_printf(char *s, ...)
   }
 
   fprintf(error_file, tmp);
-  if(devparm || !(ecount%5000)) usermsg(tmp);
+  if(devparm) usermsg(tmp);
+  else if(!(ecount%5000)) C_Puts(tmp);
   ecount += 1;
 }
 
