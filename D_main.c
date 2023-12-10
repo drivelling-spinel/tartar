@@ -33,6 +33,7 @@ static const char rcsid[] = "$Id: d_main.c,v 1.47 1998/05/16 09:16:51 killough E
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #include <fcntl.h>
 
 
@@ -1298,6 +1299,9 @@ void D_SetGraphicsMode()
   C_Printf("\n");       // leave a gap
 }
 
+void D_DetectAndLoadExtras(void);
+
+
 //
 // D_DoomMain
 //
@@ -1481,7 +1485,7 @@ void D_DoomMain(void)
   if (codfound && codlevfound)
      {
         gamemission = cod;
-        C_Printf("Caverns of Darkness compatibility activated\n");
+        usermsg("Caverns of Darkness compatibility activated\n");
      }
 
   else if (codfound)
@@ -1492,13 +1496,12 @@ void D_DoomMain(void)
   else
      {
         char filestr[256];
-        boolean isdir;
         // get smmu.wad from the same directory as smmu.exe
         // 25/10/99: use same name as exe
 
         // haleyjd: merged smmu.wad and eternity.wad
 
-        sprintf(filestr, "%seternity.wad", D_DoomExeDir(), D_DoomExeName());
+        sprintf(filestr, "%seternity.wad", D_DoomExeDir());
         D_InsertFile(filestr); 
      }
 
@@ -1781,8 +1784,11 @@ void D_DoomMain(void)
       usermsg("External statistics registered.");
     }
 
-        // sf: -blockmap option as a variable now
+  // sf: -blockmap option as a variable now
   if(M_CheckParm("-blockmap")) r_blockmap = true;
+
+  // load all dymic extras before starting the game
+  D_DetectAndLoadExtras();
 
   // start the appropriate game based on parms
 
@@ -1967,6 +1973,110 @@ void D_NewWadLumps(int handle)
   
   if(*wad_firstlevel) // a new first level?
     strcpy(firstlevel, wad_firstlevel);
+}
+
+
+int D_FindAllWads(char * dir, char *** fnames)
+{
+  DIR *dirp;
+  struct dirent * ent;
+  char ** nms;
+  int num = 0, i, l = strlen(dir) + 2;
+
+  dirp = opendir(dir);
+  while(dirp && (ent = readdir(dirp)))
+    {
+      if(ent->d_namlen >= 4 && !strnicmp(".wad", ent->d_name + ent->d_namlen - 4, 4))
+        num += 1;
+    }
+
+  if(num)
+    {
+      rewinddir(dirp);
+      nms = malloc(sizeof(char *) * num);
+      *fnames = nms;
+      i = num;
+
+      while(i && (ent = readdir(dirp)))
+        if(ent->d_namlen >= 4 && !strnicmp(".wad", ent->d_name + ent->d_namlen - 4, 4))
+          {
+            nms[num - i] = malloc(ent->d_namlen + l);
+            memset(nms[num - i], 0, ent->d_namlen + l);
+            strcpy(nms[num - i], dir);
+            nms[num-i][l - 2] = '/';
+            strncpy(nms[num - i] + l - 1, ent->d_name, ent->d_namlen);
+            i -= 1;
+          }
+    }
+
+  if(dirp) closedir(dirp);
+  return num;
+}
+
+
+int D_FindFilterWads(char *** fnames)
+{
+  struct stat sbuf;
+  char filestr[256];
+  *filestr = 0;
+  sprintf(filestr, "%sfilters", D_DoomExeDir());
+
+  if (!stat(filestr, &sbuf))      
+    {
+      if(!S_ISDIR(sbuf.st_mode)) return 0;
+      return D_FindAllWads(filestr, fnames);     
+    }
+
+  return 0;  
+}
+
+void D_DetectAndLoadFilters()
+{
+  char **fnames;
+  int numfilters, loaded = 0;
+  char one_name[257];
+  int i;
+
+  numfilters = D_FindFilterWads(&fnames);
+  memset(one_name, 0, sizeof(one_name));
+
+  for(i = 0 ; i < numfilters ; i += 1)
+    {
+      if(!W_AddExtraFile(fnames[i], EXTRA_FILTERS))
+        {
+          if(!loaded) ExtractFileBase(fnames[i], one_name, sizeof(one_name) -1);
+          loaded += 1;
+        }
+    }
+
+  if(loaded == 1) usermsg("%s filter loaded", one_name);
+  if(loaded > 1) usermsg("%s and %d other filter%s loaded",
+    one_name, loaded, loaded == 2 ? "" : "s");
+
+  if(loaded)
+    {
+      R_FreeData();
+      R_Init();
+    }
+
+  if(numfilters)
+    {
+      for(i = 0 ; i < numfilters ; i += 1) free(fnames[i]);
+      free(fnames);
+    }
+}
+
+
+void D_DetectAndLoadSelfie()
+{
+
+}
+
+void D_DetectAndLoadExtras(void)
+{
+  D_DetectAndLoadFilters();
+  D_DetectAndLoadSelfie();
+  D_ReInitWadfiles();  
 }
 
 void usermsg(char *s, ...)

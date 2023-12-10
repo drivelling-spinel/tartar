@@ -112,7 +112,7 @@ long    W_LumpCheckSum (int lumpnum);
 
 void NormalizeSlashes(char *);                    // killough 11/98
 char *AddDefaultExtension(char *, const char *);  // killough 1/18/98
-void ExtractFileBase(const char *, char *);       // killough
+void ExtractFileBase(const char *, char *, int);  // killough
 unsigned W_LumpNameHash(const char *s);           // killough 1/31/98
 void W_InitLumpHash(void);
 

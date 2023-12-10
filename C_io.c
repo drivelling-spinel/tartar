@@ -154,7 +154,7 @@ void C_Init()
    // sf: stupid american spellings =)
    C_NewAlias("color", "colour %opt");
    C_NewAlias("centermsg", "centremsg %opt");
-   
+
    C_AddCommands();
    C_UpdateInputPoint();
    

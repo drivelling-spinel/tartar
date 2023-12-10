@@ -33,7 +33,6 @@ rcsid[] = "$Id: w_wad.c,v 1.20 1998/05/06 11:32:00 jim Exp $";
 #include <sys/stat.h>
 
 #include "c_io.h"
-#include "c_runcmd.h"
 #include "p_skin.h"
 #include "w_wad.h"
 
@@ -59,7 +58,7 @@ static int W_FileLength(int handle)
   return fileinfo.st_size;
 }
 
-void ExtractFileBase(const char *path, char *dest)
+void ExtractFileBase(const char *path, char *dest, int dlength)
 {
   const char *src = path + strlen(path) - 1;
   int length;
@@ -70,13 +69,11 @@ void ExtractFileBase(const char *path, char *dest)
          && *(src-1) != '/')
     src--;
 
-  // copy up to eight characters
-  memset(dest,0,8);
   length = 0;
 
   while (*src && *src != '.')
-    if (++length == 9)
-      I_Error ("Filename base of %s >8 chars",path);
+    if (++length == dlength)
+      I_Error ("Filename base of %s >%d chars",path,dlength);
     else
       *dest++ = toupper(*src++);
 }
@@ -150,7 +147,7 @@ void W_InitDynamicLumpNames()
   default_playpal_wad = playpal_wad = -1;
   playpal_wads_count = 0;
   dyna_colormap_nums = dyna_tranmap_nums = dyna_playpal_nums = 0;
-  memset(dyna_lump_nums, 0, sizeof(int *) * DYNA_TOTAL);
+  memset(dyna_lump_nums, 0xff, sizeof(int *) * DYNA_TOTAL);
 }
 
 
@@ -160,14 +157,6 @@ int W_SetDefaultDynamicLumpNames()
   playpal_wad = default_playpal_wad;
   if(playpal_wad < 0 && playpal_wads_count > 0) playpal_wad = 0;
   was = was != playpal_wad;
-
-  if(was)
-    {
-       char cmd[20];
-       *cmd = 0;
-       sprintf(cmd, "pal_curr=%d", playpal_wad);      
-       C_RunTextCmd(cmd);
-    }
 
   return was;
 }
@@ -196,13 +185,19 @@ void * W_CacheDynamicLumpName(dyna_lumpname_t name, int tag)
   return W_CacheLumpNum(num, tag);
 }
 
-
-
-// TODO: unlike D_NewWadLumps this is a funciton that works
-// on a per-lump basis and checks for particular lump names
-// Currently processes only PLAYPAL lumps
 int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_t extra)
 {
+  if(extra == EXTRA_FILTERS)
+    {
+      static char * names[] = { "PLAYPAL", "TRANMAP", "COLORMAP" };
+      int i = 0;
+
+      for(i = 0 ; i < 3 ; i += 1)
+        if(!stricmp(names[i], lump->name)) return 1;
+
+      return 0;
+    }
+
   return 1;
 }
 
@@ -239,8 +234,8 @@ int W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, cons
         }
       dyna_playpal_nums[++default_playpal_wad] = lumpnum;
       dyna_playpal_wads[default_playpal_wad] = tmpname;
-      dyna_colormap_nums[default_playpal_wad] = 0;
-      dyna_tranmap_nums[default_playpal_wad] = 0;
+      dyna_colormap_nums[default_playpal_wad] = -1;
+      dyna_tranmap_nums[default_playpal_wad] = -1;
       playpal_wads_count += 1;
     }
 
@@ -321,7 +316,7 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
   filelump_t  singleinfo;
   char        *filename = strcpy(malloc(strlen(name)+5), name);
   lumpinfo_t* newlumps;
-  char        basename[9];
+  char        basename[257];
 
   NormalizeSlashes(AddDefaultExtension(filename, ".wad"));  // killough 11/98
 
@@ -359,7 +354,7 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
       fileinfo = &singleinfo;
       singleinfo.filepos = 0;
       singleinfo.size = LONG(W_FileLength(handle));
-      ExtractFileBase(filename, singleinfo.name);
+      ExtractFileBase(filename, singleinfo.name, sizeof(singleinfo.name));
       numlumps++;
     }
   else
@@ -379,7 +374,7 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
     }
 
   memset(basename, 0, sizeof(basename));
-  ExtractFileBase(filename, basename);
+  ExtractFileBase(filename, basename, sizeof(basename) - 1);
 
   free(filename);           // killough 11/98
   

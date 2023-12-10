@@ -308,11 +308,8 @@ void R_InitLightTables (void)
 {
   int i;
 
-
-  if(c_zlight) free(c_zlight);
-  if(c_scalelight) free(c_scalelight);
-
   // killough 4/4/98: dynamic colormaps
+
   c_zlight = malloc(sizeof(*c_zlight) * numcolormaps);
   c_scalelight = malloc(sizeof(*c_scalelight) * numcolormaps);
 
@@ -339,6 +336,34 @@ void R_InitLightTables (void)
         }
     }
 }
+
+void R_ReInitLightTables (void)
+{
+  int i;
+
+  // Calculate the light levels to use
+  //  for each level / distance combination.
+  for (i=0; i< LIGHTLEVELS; i++)
+    {
+      int j, startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
+      for (j=0; j<MAXLIGHTZ; j++)
+        {
+          int scale = FixedDiv ((SCREENWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
+          int t, level = startmap - (scale >>= LIGHTSCALESHIFT)/DISTMAP;
+
+          if (level < 0)
+            level = 0;
+          else
+            if (level >= NUMCOLORMAPS)
+              level = NUMCOLORMAPS-1;
+
+          // killough 3/20/98: Initialize multiple colormaps
+          level *= 256;
+          c_zlight[0][i][j] = colormaps[0] + level;
+        }
+    }
+}
+
 
 //
 // R_SetViewSize
@@ -673,8 +698,8 @@ void R_ResetTrans()
 void R_ReInit(void)
 {
   R_ReInitColormaps2();
+  R_ReInitLightTables();
   R_SetViewSize(screenSize+3);
-  R_InitLightTables();
   R_ResetTrans();
 }
 
@@ -778,7 +803,7 @@ CONSOLE_COMMAND(pal_list, 0)
       {
         C_Printf("%s %d:%s", i == playpal_wad ? "*" :
           i == default_playpal_wad ? "@" : "  ", i, dyna_playpal_wads[i]);
-        if(c_argc > 1)
+        if(c_argc)
           {
             int j;
             for(j = 0 ; j < DYNA_TOTAL ; j += 1)

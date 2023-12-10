@@ -1188,7 +1188,7 @@ static void G_DoPlayDemo(void)
   if (gameaction != ga_loadgame)      // killough 12/98: support -loadgame
     basetic = gametic;  // killough 9/29/98
       
-  ExtractFileBase(defdemoname,basename);           // killough
+  ExtractFileBase(defdemoname,basename,sizeof(basename) - 1);           // killough
   
   demobuffer = demo_p = W_CacheLumpName (basename, PU_STATIC);  // killough
   

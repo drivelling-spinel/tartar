@@ -750,7 +750,6 @@ void R_InitColormaps(void)
 void R_ReInitColormaps2(void)
 {
   int num = W_DynamicNumForName(DYNA_COLORMAP);
-  if(!colormaps) R_InitColormaps();
   if(num >= 0) colormaps[0] = W_CacheLumpNum(num, PU_STATIC);
 }
 
@@ -1040,6 +1039,7 @@ void R_ReInitTranMap(int progress)
 void R_InitData(void)
 {
   P_InitSkins();
+  R_InitColormaps();
   R_ReInitColormaps2();                 // killough 3/20/98
   R_InitTextures();
   R_InitFlats();
