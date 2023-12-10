@@ -172,61 +172,6 @@ Note that Tartar also has experimental support for actually playing JUMPWAD.
 For that players have to load JUMPWAD.WAD in "the conventional manner" 
 with -file command line argument when starting TARTAR.EXE .
 
-## Tartar demonstrations
-
-### Chex Quest
-
-Included in DEMOS\CHEX is a bundle of Tartar binaries and Chex Quest 1 and 
-Chex Quest 2 games. The demo allows anyone to appreciate Tartar in action
-without even loading any of Doom assets (i.e. one does not need to own Doom),
-and without a risk of displaying content not suitable for minors, like gore
-on the walls or demon heads being blown into smithereens, or other
-"nasty" things found in ID games. The configuration is adjusted so that 
-included Dehacked patch by Simon Howard is loaded.
-
-To install and play:
-
-1. Download the directory contents (MEGA has an option of downloading directory
-   as ZIP file) including subdirectories
-
-2. Run SETUP.EXE included in TARTAR subdirectory and follow on-screen 
-   instructions to configure sound and music card
-
-3. Run CHEX.BAT for Chex Quest 1 or CHEX2.BAT for Chex Quest 2
-
-### Cancelled Eternity TC content
-
-DEMOS\ETERNITY contains a package of maps and assets from the cancelled
-Eternity TC that Eternity Engine was originally built to run. Most files 
-included have been published by James Haley, with the exception of
-map "Fun in Dreadmere" that was "created" in 2021 by Tartar's author  
-using geometry from original "Dreadmere" map by James Haley to test
-Tartar's capability of loading Eternity TC resources. The "new" map
-file is TRIBUTE\SWMP2021.WAD. 
-
-To play the maps:
-
-1. Download the directory contents (MEGA has an option of downloading directory
-   as ZIP file) including subdirectories
-
-2. Run SETUP.EXE included in TARTAR subdirectory and follow on-screen 
-   instructions to configure sound and music card
-
-3. To run the maps DOOM2.WAD is required, except for map ETC21.WAD
-   DOOM.WAD is required instead. For fast and easy start copy either DOOM2.WAD
-   or both DOOM2.WAD and DOOM.WAD into the directory containing ETC.WAD 
-
-4. In MS-DOS or Windows 9X change into the directory with ETC.WAD and
-   run LAUNCH.BAT. This will list the available maps and provide further
-   instructions
-
-5. In DOSBox, FreeDOS or elsewhere, or if using an alternative command shell,
-   use a command similar to the below to run a map:  
-
-   TARTAR\TARTAR.EXE -file ETC.WAD LEVLES\ETC01.WAD  
-   or  
-   TARTAR\TARTAR.EXE -iwad DOOM.WAD -file ETCGFX1.WAD LEVELS\ETC21.WAD  
-
 ## Goodies
 
 ### COD10
@@ -285,7 +230,7 @@ via Tartar with intended map names, music tracks and end game text.
 Alternatively in GOODIES\NERVE\LUMPS\INTMAPS a similar set of lumps is 
 provided that uses intermission screen backgrounds from [No Rest for the Living
  Intermission Maps](https://www.doomworld.com/forum/topic/129415) by
-@oliacym. These are also included in the NERVE.WAD helper WAD shipped with
+\@oliacym. These are also included in the NERVE.WAD helper WAD shipped with
 Tartar distribution, so check the secsion on Helper WADs in Extras section 
 of this file for more information. 
 
