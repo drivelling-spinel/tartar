@@ -241,7 +241,7 @@ int Ex_InsertAllFixesInDir(char * dirname)
             {
               for(i = numfixes - 1 ; i >= 0 ; i -= 1)
               {
-                D_InsertFile(fnames[i]); 
+                D_InsertFile(fnames[i], 1); 
                 free(fnames[i]);
               }
               free(fnames);
@@ -697,6 +697,10 @@ void Ex_ResetExtraStatus()
   memset(extra_status, 0, sizeof(extra_status));
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+// WolfenDoom stuff
+////////////////////////////////////////////////////////////////////////////////////
+
 void Ex_RevertDSStates()
 {
   state_t *local_states;
@@ -711,11 +715,84 @@ void Ex_RevertDSStates()
    
 }
 
-
 void Ex_WolfenDoomStuff()
 {
   if(!wolfendoom) return;
   
   Ex_RevertDSStates();
+}
 
+int Ex_InsertResWadIfMissing(const char * wadname, int index, const char * reswadname)
+{
+  int i = strlen(wadname); 
+  struct stat sbuf;
+  if(D_HasWadInWadlist(reswadname)) return 0;
+  for(i = strlen(wadname) - 1 ; i >= 0 && wadname[i] != '/' && wadname[i] != '\\' ; i -= 1);
+  assert(++i + strlen(reswadname) < sizeof(filestr));
+  *filestr=0;
+  strncpy(filestr, wadname, i);
+  strcat(filestr, reswadname);
+  if(stat(filestr, &sbuf)) return 0;
+  D_InsertFile(filestr, index);  
+  return 1;
+}
+
+static char * WOLFDOOM_PWADS[] = {"1ST_ENC.WAD", "AFTERMTH.WAD"};
+static char * WOLFDOOM_RES_WADS[] = { "WLFGFX.WAD", "WLFSND.WAD", "WLFST.WAD", "WLFTXT.WAD" };
+
+int Ex_Check1stEncWads(const char * wadname, const int index) 
+{
+  int i;
+  ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
+  assert(strlen(filestr) + 5 <= sizeof(filestr));
+  AddDefaultExtension(filestr, ".wad");
+  for( i = 0 ; i < sizeof(WOLFDOOM_PWADS) / sizeof(*WOLFDOOM_PWADS) ; i += 1)
+    {
+      if(!stricmp(filestr, WOLFDOOM_PWADS[i]))
+        {
+          int c = 0, j;
+          *filestr = 0;
+          for( j = 0 ; j < sizeof(WOLFDOOM_RES_WADS) / sizeof(*WOLFDOOM_RES_WADS) ; j += 1)
+            c += Ex_InsertResWadIfMissing(wadname, index + c, WOLFDOOM_RES_WADS[j]);
+          return c;
+        }
+    }
+
+  return 0;
+}
+
+int Ex_CheckNoctWads(const char * wadname, const int index) 
+{
+  return 0;
+}
+
+int Ex_CheckOriginaltWads(const char * wadname, const int index) 
+{
+  return 0;
+}
+
+int Ex_CheckArctictWads(const char * wadname, const int index) 
+{
+  return 0;
+}
+
+int Ex_CheckArctictSeWads(const char * wadname, const int index) 
+{
+  return 0;
+}
+
+typedef int (related_wad_func_t)(const char *, const int);
+related_wad_func_t *related_wad_funcs[] = { Ex_Check1stEncWads, Ex_CheckNoctWads, Ex_CheckOriginaltWads,
+  Ex_CheckArctictWads, Ex_CheckArctictSeWads };
+
+int Ex_InsertRelatedWads(const char * wadname, const int index)
+{
+  int i;
+  for(i = 0 ; i < sizeof(related_wad_funcs) / sizeof(*related_wad_funcs) ; i += 1)
+    {
+      int j = related_wad_funcs[i](wadname, index);
+      if(j) return j;
+    }
+  
+  return 0;  
 }

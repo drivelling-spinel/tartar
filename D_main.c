@@ -623,7 +623,7 @@ void D_AddFile(char *file)
 }
 
 
-void D_InsertFile(char *file)
+void D_InsertFile(char *file, int index)
 {
   char ** newfiles;
   int newalloc;
@@ -633,10 +633,11 @@ void D_InsertFile(char *file)
                         : 8)*sizeof(char*));
   if(numwadfiles_alloc)
   {  
-     memcpy(newfiles + 1, wadfiles,
-        numwadfiles_alloc * sizeof(char*));
-     newfiles[0] = wadfiles[0];
-     newfiles[1] = strdup(file);
+     memcpy(newfiles, wadfiles, 
+        index * sizeof(char*));
+     newfiles[index] = strdup(file);
+     memcpy(newfiles + index + 1, wadfiles + index, 
+        (numwadfiles_alloc - index - 1) * sizeof(char*));
      free(wadfiles);
   }
   else newfiles[0] = strdup(file); //sf: always NULL at end
@@ -646,6 +647,37 @@ void D_InsertFile(char *file)
   numwadfiles_alloc = newalloc;
 }
 
+
+boolean D_HasFileInFilelist(const char * filenae, const char *EXT)
+{
+  int s = strlen(filenae), i, el, nl;
+  char * ext = strcpy(malloc(s + 5), filenae), * noext = strcpy(malloc(s + 1), filenae);
+  boolean found = false;
+  
+  AddDefaultExtension(ext, EXT);
+  if(s > 4 && !stricmp(filenae + s - 4, EXT)) noext[s-4] = 0;
+  el = strlen(ext);
+  nl = strlen(noext);
+  
+  for (i = 0; i<numwadfiles && !found; i++)
+     {
+        int l = strlen(wadfiles[i]);
+        found = found || (l>=el && !strnicmp(wadfiles[i]+l-el, ext, el)
+              && (l==el || wadfiles[i][l-el-1] == '/' || wadfiles[i][l-el-1] == '\\'));
+        found = found || (l>=nl && !strnicmp(wadfiles[i]+l-nl, noext, nl)
+              && (l==nl || wadfiles[i][l-nl-1] == '/' || wadfiles[i][l-nl-1] == '\\'));
+     }
+
+   free(ext);
+   free(noext);
+   return found;
+}
+
+
+boolean D_HasWadInWadlist(const char * wadname)
+{
+  return D_HasFileInFilelist(wadname, ".WAD");
+}
 
         //sf: console command to list loaded files
 void D_ListWads()
@@ -1351,6 +1383,23 @@ void D_SetGraphicsMode()
 }
 
 //
+// D_CheckRelatdWads
+//
+
+static int D_CheckRelatedWads()
+{
+  int i = 1;
+  int n = 0;
+  while(i < numwadfiles)
+    {
+      int j = Ex_InsertRelatedWads(wadfiles[i], i);
+      n += j;
+      i += j ? j : 1;
+    } 
+  return n;
+}
+
+//
 // D_DoomMain
 //
 
@@ -1522,22 +1571,8 @@ void D_DoomMain(void)
 	    D_AddFile(myargv[p]);
     }
 
-  for (codfound = codlevfound = i = 0; i<numwadfiles; i++)
-     {
-        int l = strlen(wadfiles[i]);
-        codfound = codfound ||
-           (l>=7 && !strnicmp(wadfiles[i]+l-7,"cod.wad",7)
-              && (l==7 || wadfiles[i][l-8] == '/' || wadfiles[i][l-8] == '\\'));
-        codfound = codfound ||
-           (l>=3 && !strnicmp(wadfiles[i]+l-3,"cod",3)
-              && (l==3 || wadfiles[i][l-4] == '/' || wadfiles[i][l-4] == '\\'));
-        codlevfound = codlevfound ||
-           (l>=10 && !strnicmp(wadfiles[i]+l-10,"codlev.wad",10)
-              && (l==10 || wadfiles[i][l-11] == '/' || wadfiles[i][l-11] == '\\'));
-        codlevfound = codlevfound ||
-           (l>=6 && !strnicmp(wadfiles[i]+l-6,"codlev",6)
-              && (l==6 || wadfiles[i][l-7] == '/' || wadfiles[i][l-7] == '\\'));
-     }
+  codfound = D_HasWadInWadlist("cod");
+  codlevfound = D_HasWadInWadlist("codlev");
 
   if(!codfound)
      {
@@ -1548,9 +1583,9 @@ void D_DoomMain(void)
         // haleyjd: merged smmu.wad and eternity.wad
 
         sprintf(filestr, "%seternity.wad", D_DoomExeDir());
-        D_InsertFile(filestr); 
+        D_InsertFile(filestr, 1); 
      }
-
+     
   if (!(p = M_CheckParm("-playdemo")) || p >= myargc-1)    // killough
     if ((p = M_CheckParm ("-fastdemo")) && p < myargc-1)   // killough
       fastdemo = true;             // run at fastest speed possible
@@ -1677,6 +1712,8 @@ void D_DoomMain(void)
   //V_Init(); - leaving the line above for "flavor"
 
   D_ProcessWadPreincludes(); // killough 10/98: add preincluded wads at the end
+
+  if(!M_CheckParm("-noload")) D_CheckRelatedWads(); 
 
 //  D_AddFile(NULL);           // killough 11/98
 

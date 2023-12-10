@@ -424,6 +424,8 @@ extern int drawgrenadetrails;
 extern int forceFlipPan;
 
 extern int wolfendoom;
+extern int wolfenMods;             //LP: WolfenDoom WAD(-s) detected
+extern int wolfenMode;             //LP: Wolf3D-like mode activated in options
 
 //=======================================================
 

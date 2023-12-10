@@ -73,8 +73,14 @@ typedef enum {
   pack_tnt,     // TNT mission pack
   pack_plut,    // Plutonia pack
   chex,         // Chex Quest
-  cod,          // Caverns of Darkness
-  hacx_reg,     // HACX registered
+  cod,          // Caverns of Darkness,
+  hacx_reg,     // HACX registered,
+  wolfdoom,     // 1st Encounter by Laz Rojas
+  arctic,       // Operation Arctic Wolf (1999 version)
+  arcticse,     // Operation Arctic WOlf Special Edition 
+  noct,         // WolfenDoom: Nocturnal Missions
+  sod,          // WolfenDoom: Spear of Destiny
+  original,     // WolfenDoom: Original Versions
   none
 } GameMission_t;
 
