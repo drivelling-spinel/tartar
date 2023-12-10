@@ -121,8 +121,7 @@ EXTRAS document above describes the contents of GOODIES directories.
 
 ### Playing Doom with TARTAR
 
-1. Download TARTAR directory contents from the above link (MEGA has means 
-   to download directory as a ZIP archive)
+1. Download TARTAR directory contents from the above link
 
 2. For a quick and simple start either 
 
@@ -175,18 +174,18 @@ Follow the below steps to have them installed with Tartar
 
 3. Or if Tartar will be used with multiple IWADs drop the WAD into
    a subdirectory of FIXES that has name matching the name of the IWAD
-   the fix pack is to be loaded with. For example:
-      
-  C:\GAMES\TARTAR\   
-  C:\GAMES\TARTAR\TARTAR.EXE   
-  ...   
-  C:\GAMES\TARTAR\FIXES\   
-  C:\GAMES\TARTAR\FIXES\Doom_Sound_Bulb.wad   
-  C:\GMAES\TARTAR\FIXES\DMXOPL.WAD   
-  C:\GAMES\TARTAR\FIXES\DOOM\   
-  C:\GAMES\TARTAR\FIXES\DOOM\D1SPFX20.WAD   
-  C:\GAMES\TARTAR\FIXES\DOOM2\   
-  C:\GAMES\TARTAR\FIXES\DOOM2\D2SPFX20.WAD   
+   the fix pack is to be loaded with. For example:   
+   
+   C:\GAMES\TARTAR\   
+   C:\GAMES\TARTAR\TARTAR.EXE   
+   ...   
+   C:\GAMES\TARTAR\FIXES\   
+   C:\GAMES\TARTAR\FIXES\Doom_Sound_Bulb.wad   
+   C:\GMAES\TARTAR\FIXES\DMXOPL.WAD   
+   C:\GAMES\TARTAR\FIXES\DOOM\   
+   C:\GAMES\TARTAR\FIXES\DOOM\D1SPFX20.WAD   
+   C:\GAMES\TARTAR\FIXES\DOOM2\   
+   C:\GAMES\TARTAR\FIXES\DOOM2\D2SPFX20.WAD   
 
 4. Start Tartar as you would normally do and enjoy improved Doom experience
 
@@ -246,14 +245,14 @@ Follow the below steps to have them installed with Tartar
 1. Install Tartar with DOOM2.WAD 
 
 2. Obtain classic Wolfendoom PWAD-s. The recommended way is by downloading   
-   [WolfenDOOM Collection](https://www.macintoshrepository.org/9074-wolfendoom-collection)   
-   for Mac (yes, Mac - WolfenDOOM was deveoped on Mac in the first place!)
+   [WolfenDOOM Collection](https://www.macintoshrepository.org/9074-wolfendoom-collection) 
+   for Mac (yes, Mac - WolfenDOOM was developed on Mac in the first place!)
 
 3. _Optionally_ get [Operation Arctic Wolf SE](https://www.doomworld.com/idgames/themes/wolf3d/arcticse)   
-   and [Aftermath](https://www.doomworld.com/idgames/themes/wolf3d/aftermth) and its   
+   and [Aftermath](https://www.doomworld.com/idgames/themes/wolf3d/aftermth) and its 
    [prerequisites](https://www.doomworld.com/idgames/themes/wolf3d/wolfdoom).   
-   For playing classic Artctic Wolf the following updates may also be of interest:   
-   [arc_fix.zip](https://doomworld.com/3ddownloads/wolfendoom/arc_fix.zip)   
+   For playing classic Arctic Wolf the following updates may also be of interest:   
+   [arc_fix.zip](https://doomworld.com/3ddownloads/wolfendoom/arc_fix.zip) 
    [Lrbjskin.zip](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip)   
 
 4. Drop _shim_ WAD with the same name as the PWAD to be player from GOODIES\SHIMS directory   
@@ -313,7 +312,7 @@ Follow the below steps to have them installed with Tartar
    ...   
    C:\GAMES\TARTAR\SHIMS\   
    C:\GAMES\TARTAR\SHIMS\2ND_ENC.WAD   
-   ...
+   ...   
    C:\GAMES\TARTAR\SKINS\   
    C:\GAMES\TARTAR\SKINS\BJ.WAD   
    
