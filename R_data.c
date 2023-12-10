@@ -504,6 +504,11 @@ byte *R_GetColumn(int tex, int col)
   return texturecomposite[tex] + ofs;
 }
 
+int R_HasComposite(int tex)
+{
+  return !!texturecomposite[tex];
+}
+
 //
 // R_InitTextures
 // Initializes the texture list

@@ -381,11 +381,20 @@ static void R_RenderSegLoop (void)
           dc_yh = yh;
           dc_texturemid = rw_midtexturemid;
           dc_source = R_GetColumn(midtexture, texturecolumn);
-          dc_texheight = textureheight[midtexture]>>FRACBITS; // killough
+          dc_texheight = textureheight[midtexture]>>FRACBITS; // killough          
 #ifdef NORENDER
           if(!norender5)
 #endif
-            colfunc ();
+            {
+              if(comp[comp_talltex] && R_HasComposite(midtexture))
+                {
+                  mfloorclip = floorclip;
+                  mceilingclip = ceilingclip;
+                  R_DrawMaskedColumn((column_t *)((byte *)dc_source));
+                }
+              else
+                colfunc ();
+            }
           ceilingclip[rw_x] = -1;
           floorclip[rw_x] = viewheight;
         }
@@ -411,7 +420,16 @@ static void R_RenderSegLoop (void)
 #ifdef NORENDER
                   if(!norender6)       
 #endif
-                    colfunc ();
+                    {
+                      if(comp[comp_talltex] && R_HasComposite(toptexture))
+                        {
+                          mfloorclip = floorclip;
+                          mceilingclip = ceilingclip;
+                          R_DrawMaskedColumn((column_t *)((byte *)dc_source));
+                        }
+                      else                    
+                        colfunc ();
+                    }
                   ceilingclip[rw_x] = mid;
                 }
               else 
@@ -445,7 +463,16 @@ static void R_RenderSegLoop (void)
 #ifdef NORENDER
                   if(!norender7)
 #endif
-                    colfunc ();
+                    {
+                      if(comp[comp_talltex] && R_HasComposite(bottomtexture))
+                        {
+                          mfloorclip = floorclip;
+                          mceilingclip = ceilingclip;
+                          R_DrawMaskedColumn((column_t *)((byte *)dc_source - 3));
+                        }
+                      else   
+                        colfunc ();
+                    }
                   floorclip[rw_x] = mid;
                   if (floorplane2 && floorplane2->height<worldlow)
                     {
@@ -641,6 +668,7 @@ void R_StoreWallRange(const int start, const int stop)
       ds_p->sprbottomclip = negonearray;
       ds_p->bsilheight = D_MAXINT;
       ds_p->tsilheight = D_MININT;
+
     }
   else      // two sided line
     {

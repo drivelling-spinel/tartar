@@ -34,6 +34,9 @@
 // Retrieve column data for span blitting.
 byte *R_GetColumn(int tex, int col);
 
+// Is a composite texture?
+int R_HasComposite(int tex);
+
 // I/O, setting up the stuff.
 void R_InitData (void);
 void R_FreeData();
