@@ -449,9 +449,9 @@ made available as COD10SRC.ZIP.
   CCMD.
   
   - r_norender1          - switches sky rendering on or off
-  - r_norender2 [number] - when number is set to a non-negative value
-                           only the screen column with that number 
-                           will be shown (numbering starts with 0)
+  - r_norender2 [number] - when number is set to a non-negative value   
+                           only the screen column with that number   
+                           will be shown (numbering starts with 0)   
   - r_norender3          - switches sprites rendering on or off 
   - r_norender4          - no action
   - r_norender5          - switches top textures rendering
@@ -460,9 +460,9 @@ made available as COD10SRC.ZIP.
   - r_norender8          - switches masked textures rendering
   - r_norender9          - switches floor and ceiling rendering
   - r_norender0          - switches all of the above on/off at once
-  - debugcolumn          - dumps information on visplanes and clipping
-                           for a single particular screen column
-                           set with r_norender2; needs -debugfile
+  - debugcolumn          - dumps information on visplanes and clipping   
+                           for a single particular screen column   
+                           set with r_norender2; needs -debugfile   
                            
   It is advised that KEYS.CSC is used to assign keys for activatning the
   various rendering aids and triggering column rendering dump.
@@ -584,13 +584,13 @@ look in a graphical editor had they loaded them.
   sits, not in the directory that was current when the .EXE was run. I.e. imagine 
   this directory structure:
   
-  C:\GAMES\DOOM2\  
-  ...  
-  C:\GAMES\DOOM2\DOOM2.WAD  
-  ...  
-  C:\GAMES\DOOM2\TARTAR\  
-  C:\GAMES\DOOM2\TARTAR\TARTAR.CFG  
-  C:\GAMES\DOOM2\TARTAR\TARTAR.EXE  
+  C:\GAMES\DOOM2\   
+  ...   
+  C:\GAMES\DOOM2\DOOM2.WAD   
+  ...   
+  C:\GAMES\DOOM2\TARTAR\   
+  C:\GAMES\DOOM2\TARTAR\TARTAR.CFG   
+  C:\GAMES\DOOM2\TARTAR\TARTAR.EXE   
 
   If player runs the game from C:\GAMES\DOOM2 using command TARTAR\TARTAR.EXE
   Tartar will load TARTAR.CFG and other files it needs from 
@@ -696,17 +696,17 @@ look in a graphical editor had they loaded them.
   
   Take for example this directory layout
 
-  C:\GAMES\DOOM2\  
-  C:\GAMES\DOOM2\DOOM2.WAD
-  C:\GAMES\DOOM2\NERVE.WAD
-  ...
-  C:\GAMES\DOOM2\TARTAR\  
-  C:\GAMES\DOOM2\TARTAR\TARTAR.EXE  
-  C:\GAMES\DOOM2\TARTAR\ETERNITY.WAD
-  ...
-  C:\GAMES\DOOM2\TARTAR\TAPE  
-  C:\GAMES\DOOM2\TARTAR\TAPE\NERVE.WAD  
-  C:\GAMES\DOOM2\TARTAR\TAPE\LONGTREK.WAD
+  C:\GAMES\DOOM2\   
+  C:\GAMES\DOOM2\DOOM2.WAD   
+  C:\GAMES\DOOM2\NERVE.WAD   
+  ...   
+  C:\GAMES\DOOM2\TARTAR\   
+  C:\GAMES\DOOM2\TARTAR\TARTAR.EXE   
+  C:\GAMES\DOOM2\TARTAR\ETERNITY.WAD   
+  ...   
+  C:\GAMES\DOOM2\TARTAR\TAPE   
+  C:\GAMES\DOOM2\TARTAR\TAPE\NERVE.WAD   
+  C:\GAMES\DOOM2\TARTAR\TAPE\LONGTREK.WAD   
   
   Then starting Tartar with this command from C:\GAMES\DOOM2
   TARTAR\TARTAR.EXE -file NERVE.WAD
@@ -731,20 +731,20 @@ look in a graphical editor had they loaded them.
   
   For example, let's consider this directory layout
 
-  C:\GAMES\DOOM2\  
-  C:\GAMES\DOOM2\DOOM2.WAD
-  C:\GAMES\DOOM2\NERVE.WAD
-  ...
-  C:\GAMES\DOOM2\TARTAR\
-  C:\GAMES\DOOM2\TARTAR\TARTAR.EXE
-  C:\GAMES\DOOM2\TARTAR\ETERNITY.WAD
-  ...
-  C:\GAMES\DOOM2\TARTAR\FIXES\
-  C:\GAMES\DOOM2\TARTAR\FIXES\Doom_Sound_Bulb.wad  
-  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM\
-  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM\D1SPFX20.WAD
-  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM2\
-  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM2\D2SPFX20.WAD
+  C:\GAMES\DOOM2\   
+  C:\GAMES\DOOM2\DOOM2.WAD   
+  C:\GAMES\DOOM2\NERVE.WAD   
+  ...   
+  C:\GAMES\DOOM2\TARTAR\   
+  C:\GAMES\DOOM2\TARTAR\TARTAR.EXE   
+  C:\GAMES\DOOM2\TARTAR\ETERNITY.WAD   
+  ...   
+  C:\GAMES\DOOM2\TARTAR\FIXES\   
+  C:\GAMES\DOOM2\TARTAR\FIXES\Doom_Sound_Bulb.wad   
+  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM\   
+  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM\D1SPFX20.WAD   
+  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM2\   
+  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM2\D2SPFX20.WAD   
   
   Then starting Tartar with this command from C:\GAMES\DOOM2
   TARTAR\TARTAR.EXE -file NERVE.WAD
@@ -1090,14 +1090,14 @@ look in a graphical editor had they loaded them.
 
   The following PWAD-s will be auto-loaded if found by Tartar:
   
-  - INTMAPD2.WAD - used with DOOM2.WAD IWAD; is also a dependency for
-                   the helper WAD for LONGTREK (A Long Trek Back Home)
+  - INTMAPD2.WAD - used with DOOM2.WAD IWAD; is also a dependency for    
+                   the helper WAD for LONGTREK (A Long Trek Back Home)   
                    included with Tartar distribution.
   - INTMAPEV.WAD - used with TNT.WAD IWAD
   - INTMAPPL.WAD - used with PLUTONIA.WAD IWAD  
-  - INTMAPNR.WAD - auto-loaded but not used on its own. Contains graphics for
-                   No Rest for The Living (NERVE.WAD) and is dependent by
-                   the helper WAD for NERVE included with Tartar distribution.
+  - INTMAPNR.WAD - auto-loaded but not used on its own. Contains graphics for   
+                   No Rest for The Living (NERVE.WAD) and is dependent by   
+                   the helper WAD for NERVE included with Tartar distribution.   
 
 ### Jumpwad, well... jumping
 
