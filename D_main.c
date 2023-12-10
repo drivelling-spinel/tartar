@@ -71,15 +71,13 @@ static const char rcsid[] = "$Id: d_main.c,v 1.47 1998/05/16 09:16:51 killough E
 #include "t_script.h"    // for FraggleScript init
 #include "g_bind.h" // haleyjd
 #include "d_dialog.h"
+#include "ex_stuff.h"
 
 // DEHacked support - Ty 03/09/97
 // killough 10/98:
 // Add lump number as third argument, for use when filename==NULL
 void ProcessDehFile(char *filename, char *outfilename, int lump);
-
 void ProcessExtraDehFile(extra_file_t extra, char *filename, char *outfilename, int lump);
-boolean selfieMode = false;
-boolean commercialWiMaps;
 
 // killough 10/98: support -dehout filename
 static char *D_dehout(void)
@@ -94,29 +92,6 @@ static char *D_dehout(void)
     }
   return s;
 }
-
-static char *D_tape(void)
-{
-  static char *tps;      // cache results over multiple calls
-  if (!tps)
-    {
-      int p = M_CheckParm("-tape");
-      tps = p && ++p < myargc ? myargv[p] : "";
-    }
-  return tps;
-}
-
-static char *D_fixes(void)
-{
-  static char *fps;      // cache results over multiple calls
-  if (!fps)
-    {
-      int p = M_CheckParm("-fixes");
-      fps = p && ++p < myargc ? myargv[p] : "";
-    }
-  return fps;
-}
-
 
 char **wadfiles;
 
@@ -669,7 +644,6 @@ void D_InsertFile(char *file)
   numwadfiles_alloc = newalloc;
 }
 
-void D_ListTapeWad();
 
         //sf: console command to list loaded files
 void D_ListWads()
@@ -680,7 +654,7 @@ void D_ListWads()
   for(i=0; i<numwadfiles; i++)
     C_Printf("%s\n",wadfiles[i]);
 
-  D_ListTapeWad();    
+  Ex_ListTapeWad();    
 }
 
 char basedir[257];
@@ -1332,9 +1306,8 @@ static void D_ProcessDehInWad(int i, extra_file_t extra)
 {
   if (i >= 0)
     {
-      if (!strncasecmp(lumpinfo[i]->name, "dehacked", 8) &&
-          lumpinfo[i]->namespace == ns_global)
-	ProcessExtraDehFile(extra, NULL, D_dehout(), i);
+      if (!strncasecmp(lumpinfo[i]->name, "dehacked", 8) && lumpinfo[i]->namespace == ns_global)
+ 	      ProcessExtraDehFile(extra, NULL, D_dehout(), i);
     }
 }
         //sf:
@@ -1367,10 +1340,6 @@ void D_SetGraphicsMode()
   D_ListWads();         // list wads to the console
   C_Printf("\n");       // leave a gap
 }
-
-void D_DetectAndLoadExtras(void);
-int D_DetectAndLoadTapeWads(char *const *filenames, int autoload);
-int D_InsertFixes(char * iwadfile, int autoload);
 
 //
 // D_DoomMain
@@ -1705,9 +1674,9 @@ void D_DoomMain(void)
     ((commercialWiMaps && !modifiedgame) || M_CheckParm("-wimaps"));
 
   startupmsg("W_Init", "Init WADfiles.");
-  D_DetectAndLoadTapeWads(wadfiles, !M_CheckParm("-noload"));
+  Ex_DetectAndLoadTapeWads(wadfiles, !M_CheckParm("-noload"));
 
-  D_InsertFixes(wadfiles[0], !M_CheckParm("-noload"));
+  Ex_InsertFixes(wadfiles[0], !M_CheckParm("-noload"));
   W_InitMultipleFiles(wadfiles);
 
   usermsg("");  // gap
@@ -1878,7 +1847,7 @@ void D_DoomMain(void)
   if (!M_CheckParm ("-noload"))
     {
       startupmsg("Extras","Detecting extra WADs to autoload.");
-      D_DetectAndLoadExtras();
+      Ex_DetectAndLoadExtras();
     }
 
   startupmsg("S_Init","Setting up sound.");
@@ -2097,301 +2066,6 @@ void D_NewWadLumps(int handle, extra_file_t extra)
   if(reset_finallevel)
     finallevel[0] = 0;
 
-}
-
-static char filestr[PATH_MAX+1];
-static char tapestr[PATH_MAX+1];
-
-int D_DetectAndLoadTapeWads(char *const *filenames, int autoload)
-{
-  if(*D_tape()) 
-    {
-      assert(strlen(D_tape()) < sizeof(tapestr));
-      strcat(tapestr, D_tape());
-      AddDefaultExtension(tapestr, ".wad");
-      if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
-    }
-  
-  while(*filenames && autoload)
-    {
-      struct stat sbuf;
-      ExtractFileBase(*filenames, filestr, sizeof(filestr) - 1);
-      assert(strlen(D_DoomExeDir()) + strlen(filestr) + 10 <= sizeof(tapestr));
-      sprintf(tapestr, "%stape/%s", D_DoomExeDir(), filestr);
-      AddDefaultExtension(tapestr, ".wad");
-      if (!stat(tapestr, &sbuf)) 
-        if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
-      filenames++;
-    }
-    
-  *tapestr = 0;
-  return 0;
-}
-
-void D_ListTapeWad()
-{
-  if(*tapestr)
-    C_Printf(FC_GOLD "%s " FC_RED "is taped onto the WADs\n", tapestr);
-}
-
-int D_FindAllWads(char * dir, char *** fnames)
-{
-  DIR *dirp;
-  struct dirent * ent;
-  char ** nms;
-  int num = 0, i, l = strlen(dir) + 2;
-
-  dirp = opendir(dir);
-  while(dirp && (ent = readdir(dirp)))
-    {
-      if(ent->d_namlen >= 4 && !strnicmp(".wad", ent->d_name + ent->d_namlen - 4, 4))
-        num += 1;
-    }
-
-  if(num)
-    {
-      rewinddir(dirp);
-      nms = malloc(sizeof(char *) * num);
-      *fnames = nms;
-      i = num;
-
-      while(i && (ent = readdir(dirp)))
-        if(ent->d_namlen >= 4 && !strnicmp(".wad", ent->d_name + ent->d_namlen - 4, 4))
-          {
-            nms[num - i] = malloc(ent->d_namlen + l);
-            memset(nms[num - i], 0, ent->d_namlen + l);
-            strcpy(nms[num - i], dir);
-            nms[num-i][l - 2] = '/';
-            strncpy(nms[num - i] + l - 1, ent->d_name, ent->d_namlen);
-            i -= 1;
-          }
-    }
-
-  if(dirp) closedir(dirp);
-  return num;
-}
-
-
-int D_FindFilterWads(char *** fnames)
-{
-  struct stat sbuf;
-  *filestr = 0;
-  sprintf(filestr, "%sfilters", D_DoomExeDir());
-
-  if (!stat(filestr, &sbuf))      
-    {
-      if(!S_ISDIR(sbuf.st_mode)) return 0;
-      return D_FindAllWads(filestr, fnames);     
-    }
-
-  return 0;  
-}
-
-
-int D_DetectAndLoadFilters()
-{
-  char **fnames;
-  int numfilters, loaded = 0;
-  int i;
-
-  numfilters = D_FindFilterWads(&fnames);
-  *filestr = 0;
-
-  for(i = 0 ; i < numfilters ; i += 1)
-    {
-      if(!W_AddExtraFile(fnames[i], EXTRA_FILTERS))
-        {
-          if(!loaded) ExtractFileBase(fnames[i], filestr, sizeof(filestr) -1);
-          loaded += 1;
-        }
-    }
-
-  if(loaded == 1) usermsg("%s filter loaded", filestr);
-  if(loaded > 1) usermsg("%s and %d other filter%s loaded",
-    filestr, loaded, loaded == 2 ? "" : "s");
-
-  if(numfilters)
-    {
-      for(i = 0 ; i < numfilters ; i += 1) free(fnames[i]);
-      free(fnames);
-    }
-
-  return loaded;
-}
-
-int D_InsertAllFixesInDir(char * dirname)
-{
-  struct stat sbuf;
-  int numfixes = 0, i;
-  char **fnames;
-
-  if (!stat(dirname, &sbuf))      
-    {
-      if(!S_ISDIR(sbuf.st_mode)) return 0;
-      numfixes = D_FindAllWads(dirname, &fnames);
-      if(numfixes)
-        {
-          for(i = numfixes - 1 ; i >= 0 ; i -= 1)
-          {
-            D_InsertFile(fnames[i]); 
-            free(fnames[i]);
-          }
-          free(fnames);
-        }
-    }
-
-  return numfixes;  
-}
-
-int D_InsertFixes(char * iwadfile, int autoload)
-{
-  int numfixes = 0;
-  int l = 0;
-  *filestr = 0;
-
-  if (*D_fixes())
-    {
-      assert(strlen(D_fixes()) < sizeof(filestr));
-      strcpy(filestr, D_fixes());
-    }
-  else if(autoload)
-    {
-      assert(strlen(D_DoomExeDir()) + strlen("fixes") < sizeof(filestr));
-      sprintf(filestr, "%s%s", D_DoomExeDir(), "fixes");
-    }
-
-  if(!*filestr) return 0;
-
-  l = strlen(filestr);
-  numfixes += D_InsertAllFixesInDir(filestr);
-  assert(l < sizeof(filestr) - 2);
-  strcat(filestr, "/");
-  ExtractFileBase(iwadfile, filestr + l + 1, sizeof(filestr) - l - 1);
-  numfixes += D_InsertAllFixesInDir(filestr);
-
-  return numfixes;
-}
-
-
-void A_TakeSelfie();
-void A_SelfieSound();
-void A_FirePlasma();
-void A_BFGsound();
-void A_PlaceJumppad();
-void A_VileAttack();
-void A_TossUp();
-
-int D_DetectAndLoadSelfie()
-{
-  struct stat sbuf;
-  int i = 0;
-
-  *filestr = 0;
-  sprintf(filestr, "%sselfie.wad", D_DoomExeDir());
-  if(stat(filestr, &sbuf)) return 0;
-
-  if(states2[0] == states2[1])
-    {
-      memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
-      memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
-    }
-  if(W_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
-  // another hack - we just happen to know that selfie overrides BFG sprites
-  for(i = 0 ; i < NUMSTATES ; i += 1)
-    {
-      if(states2[1][i].sprite == SPR_BFGG) states2[1][i].sprite = SPR_SELF;
-      if(states2[1][i].action == A_FirePlasma) states2[1][i].action = A_TakeSelfie;
-      if(states2[1][i].action == A_BFGsound) states2[1][i].action = A_SelfieSound;
-    }
-  weaponinfo2[1][wp_bfg].ammo = am_noammo;
-  selfieMode = true;
-  C_Printf("%s\n",s_GOTSELFIE);
-  
-  return 1;
-}
-
-int D_DetectAndLoadJumpwad()
-{
-  struct stat sbuf;
-  int i = 0;
-  
-  *filestr = 0;
-  sprintf(filestr, "%sjumpwad.wad", D_DoomExeDir());
-  if(stat(filestr, &sbuf)) return 0;
-  
-  if(states2[0] == states2[1])    
-    {
-      memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
-      memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
-    }
-  if(W_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
-  for(i = 0 ; i < NUMSTATES ; i += 1)
-    {
-      if(states2[1][i].sprite == SPR_PISF) states2[1][i].sprite = SPR_JMPF;
-      if(states2[1][i].sprite == SPR_PISG) states2[1][i].sprite = SPR_JMPG;
-      if(states2[1][i].sprite == SPR_PLSS) states2[1][i].sprite = SPR_JMPS;
-      if(states2[1][i].action == A_FirePlasma) states2[1][i].action = A_PlaceJumppad;
-      if(states2[1][i].action == A_VileAttack) states2[1][i].action = A_TossUp;
-    }
-  weaponinfo2[1][wp_pistol].ammo = am_noammo;
-  mobjinfo[MT_JUMPPAD].deathsound = sfx_jump;
-  mobjinfo[MT_JUMPPAD].seesound = sfx_None;
-  selfieMode = true;
-
-  return 1;
-}
-
-
-int D_LoadWiMapsWad(const char *fname)
-{
-  struct stat sbuf;
-
-  *filestr = 0;
-  sprintf(filestr, "%s%s", D_DoomExeDir(), fname);
-  if(!stat(filestr, &sbuf) && !W_AddExtraFile(filestr, EXTRA_WIMAPS)) 
-    {
-      C_Printf("Intermission maps loaded from %s\n", fname);
-      return 1;
-    }
-
-  return 0;
-}
-
-
-int D_DetectAndLoadWiMaps()
-{
-  int loaded = 0;
-
-  switch(gamemission)
-  {
-    case doom2:
-      loaded += D_LoadWiMapsWad("intmapd2.wad");
-      break;
-
-    case pack_tnt:
-      loaded += D_LoadWiMapsWad("intmapev.wad");
-      break;
-
-    case pack_plut:
-      loaded += D_LoadWiMapsWad("intmappl.wad");
-      break;
-
-    default:
-  }
-
-  if(!loaded)
-    commercialWiMaps = false;
-
-
-  loaded += D_LoadWiMapsWad("intmapnr.wad");
-  return loaded;
-}
-
-void D_DetectAndLoadExtras(void)
-{
-  //HACK: loading selfie.wad _after_ jumpwad.wad for a purpose
-  if(D_DetectAndLoadFilters() + D_DetectAndLoadJumpwad() + D_DetectAndLoadSelfie() + D_DetectAndLoadWiMaps())
-    D_ReInitWadfiles();
 }
 
 void usermsg(char *s, ...)

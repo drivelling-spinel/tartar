@@ -163,6 +163,7 @@ OBJS=   \
 	$(O)/m_argv.o       \
 	$(O)/m_bbox.o       \
 	$(O)/m_cheat.o      \
+	$(O)/ex_stuff.o     \
 	$(O)/m_random.o     \
 	$(O)/am_map.o       \
 	$(O)/am_color.o     \
@@ -376,7 +377,7 @@ $(O)/d_main.o: d_main.c doomdef.h z_zone.h m_swap.h version.h doomstat.h \
  c_net.h w_wad.h s_sound.h f_finale.h f_wipe.h m_argv.h m_misc.h \
  mn_engin.h i_sound.h i_video.h $(PLATFORM)/i_vgavbe.h g_game.h hu_stuff.h wi_stuff.h \
  am_map.h p_setup.h r_draw.h r_main.h d_main.h d_deh.h t_script.h \
- t_parse.h t_vari.h t_prepro.h g_bind.h d_dialog.h
+ t_parse.h t_vari.h t_prepro.h g_bind.h d_dialog.h ex_stuff.h
  
 $(O)/d_net.o: d_net.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
@@ -466,6 +467,13 @@ $(O)/m_bbox.o: m_bbox.c m_bbox.h z_zone.h m_fixed.h i_system.h d_ticcmd.h \
  doomtype.h
  
 $(O)/m_cheat.o: m_cheat.c doomstat.h doomdata.h doomtype.h d_net.h \
+ d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
+ m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
+ p_skin.h sounds.h st_stuff.h d_event.h r_defs.h c_runcmd.h c_net.h \
+ g_game.h r_data.h r_state.h p_chase.h p_inter.h m_cheat.h m_argv.h \
+ s_sound.h dstrings.h d_englsh.h d_deh.h
+ 
+$(O)/ex_stuff.o: ex_stuff.c doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
  m_fixed.h i_system.h d_ticcmd.h tables.h info.h d_think.h p_mobj.h \
  p_skin.h sounds.h st_stuff.h d_event.h r_defs.h c_runcmd.h c_net.h \

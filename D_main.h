@@ -37,6 +37,7 @@ extern skill_t startskill;
 extern char *startlevel;
 
 void D_AddFile(char *file);
+void D_InsertFile(char *file);
 void D_ListWads();
 void D_ReInitWadfiles();
 void D_NewWadLumps(int handle, extra_file_t extra);

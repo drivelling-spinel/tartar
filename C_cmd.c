@@ -272,6 +272,7 @@ extern void     T_AddCommands();        // t_script.c
 extern void     V_AddCommands();        // v_misc.c
 extern void    MN_AddCommands();        // mn_menu.c
 extern void    AM_AddCommands();        // am_color.c
+extern void    Ex_AddCommands();        // ex_cheat.c
 
 extern void    PE_AddCommands();        // p_enemy.c -- haleyjd
 extern void    G_Bind_AddCommands();    // g_bind.c  -- haleyjd
@@ -309,6 +310,7 @@ void C_AddCommands()
   MN_AddCommands();
   AM_AddCommands();
   PE_AddCommands();  // haleyjd
+  Ex_AddCommands();
   G_Bind_AddCommands();
 }
 
