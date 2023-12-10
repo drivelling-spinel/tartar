@@ -770,6 +770,9 @@ void ST_doPaletteStuff(void)
       if (palette >= NUMREDPALS)
         palette = NUMREDPALS-1;
       palette += STARTREDPALS;
+
+      if(gamemission == chex)
+        palette = RADIATIONPAL;
     }
   else
     if (plyr->bonuscount)
