@@ -92,7 +92,8 @@ typedef enum {
   EXTRA_NONE,
   EXTRA_FILTERS,
   EXTRA_SELFIE,
-  EXTRA_WIMAPS
+  EXTRA_WIMAPS,
+  EXTRA_TAPE
 } extra_file_t; 
 
 // load a specialy treated wad file that if game detects it 

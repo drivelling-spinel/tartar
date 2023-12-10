@@ -95,6 +95,17 @@ static char *D_dehout(void)
   return s;
 }
 
+static char *D_tape(void)
+{
+  static char *tps;      // cache results over multiple calls
+  if (!tps)
+    {
+      int p = M_CheckParm("-tape");
+      tps = p && ++p < myargc ? myargv[p] : "";
+    }
+  return tps;
+}
+
 char **wadfiles;
 
 // killough 10/98: preloaded files
@@ -645,6 +656,9 @@ void D_ListWads()
   
   for(i=0; i<numwadfiles; i++)
     C_Printf("%s\n",wadfiles[i]);
+    
+  if(*D_tape())
+    C_Printf(FC_GRAY "%s " FC_RED "is taped onto the WADs\n", D_tape());
 }
 
 char basedir[257];
@@ -1484,6 +1498,12 @@ void D_DoomMain(void)
   
   // add any files specified on the command line with -file wadfile
   // to the wad list
+
+  // but first tape
+  if(*D_tape()) 
+    {
+      if(!W_AddExtraFile(D_tape(), EXTRA_TAPE)) usermsg(" %s will be taped onto the WADs", D_tape());
+    }  
 
   // killough 1/31/98, 5/2/98: reload hack removed, -wart same as -warp now.
 

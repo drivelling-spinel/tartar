@@ -48,7 +48,11 @@ rcsid[] = "$Id: w_wad.c,v 1.20 1998/05/06 11:32:00 jim Exp $";
 // Location of each lump on disk.
 lumpinfo_t **lumpinfo;  //sf : array of ptrs
 int        numlumps;         // killough
-int        iwadhandle;                  // sf: the handle of the main iwad
+int        hashnumlumps;
+int        iwadhandle = 0;                  // sf: the handle of the main iwad
+int        tapehandle = 0;
+
+int W_CheckNumForNameOnTape(register const char *name);
 
 static int W_FileLength(int handle)
 {
@@ -231,12 +235,31 @@ int W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, cons
   char * tmpname;
 
   if(!W_ShouldKeepLump(lump, lumpnum, wadname, extra)) return 0;
+  
+  if(extra != EXTRA_TAPE)
+    {      
+      int sticky = W_CheckNumForNameOnTape(lump->name);
+      if(sticky >= 0)
+        {
+          lump->handle = lumpinfo[sticky]->handle;
+          lump->size = lumpinfo[sticky]->size;
+          lump->position = lumpinfo[sticky]->position;
+          lump->data = lumpinfo[sticky]->data;
+          lump->cache = lumpinfo[sticky]->cache;
+        }
+    }
 
-  if(!stricmp(lump->name, "DSBFG") && extra == EXTRA_SELFIE)
+  if(extra == EXTRA_SELFIE && !stricmp(lump->name, "DSBFG"))
     {
       char *c = lump->name;
       c[2] = 'S'; c[3] = 'L'; c[4] = 'F';
       return 1;  
+    }
+
+  if(extra == EXTRA_TAPE)
+    {
+      tapehandle = lump->handle;
+      return 1;
     }
 
   if(stricmp(lump->name, "PLAYPAL")) return 1;
@@ -420,7 +443,7 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
   //&lumpinfo[startlump];
   
   // TODO: as this port is ok with loading pwads as iwads the below may backfire
-  if (!strncmp(header.identification,"IWAD",4))
+  if (!strncmp(header.identification,"IWAD",4) && !iwadhandle)
     {                 // the iwad
       iwadhandle = handle;
     }
@@ -582,7 +605,7 @@ int (W_CheckNumForName)(register const char *name, register int namespace)
   // Hash function maps the name to one of possibly numlump chains.
   // It has been tuned so that the average chain length never exceeds 2.
 
-  register int i = lumpinfo[W_LumpNameHash(name) % (unsigned) numlumps]->index;
+  register int i = lumpinfo[W_LumpNameHash(name) % (unsigned) hashnumlumps]->index;
 
   // We search along the chain until end, looking for case-insensitive
   // matches which also match a namespace tag. Separate hash tables are
@@ -599,6 +622,19 @@ int (W_CheckNumForName)(register const char *name, register int namespace)
   return i;
 }
 
+int W_CheckNumForNameOnTape(register const char *name)
+{
+  if(!tapehandle) return -1;
+  else 
+    {
+      register int i = lumpinfo[W_LumpNameHash(name) % (unsigned) hashnumlumps]->index;
+      while (i >= 0 && (strncasecmp(lumpinfo[i]->name, name, 8) ||
+                        lumpinfo[i]->handle != tapehandle))
+        i = lumpinfo[i]->next;
+      return i;
+    }
+}
+
 //
 // killough 1/31/98: Initialize lump hash table
 //
@@ -606,17 +642,19 @@ int (W_CheckNumForName)(register const char *name, register int namespace)
 void W_InitLumpHash(void)
 {
   int i;
+  
+  hashnumlumps = numlumps;
 
-  for (i=0; i<numlumps; i++)
+  for (i=0; i<hashnumlumps; i++)
     lumpinfo[i]->index = -1;                     // mark slots empty
 
   // Insert nodes to the beginning of each chain, in first-to-last
   // lump order, so that the last lump of a given name appears first
   // in any chain, observing pwad ordering rules. killough
 
-  for (i=0; i<numlumps; i++)
+  for (i=0; i<hashnumlumps; i++)
     {                                           // hash function:
-      int j = W_LumpNameHash(lumpinfo[i]->name) % (unsigned) numlumps;
+      int j = W_LumpNameHash(lumpinfo[i]->name) % (unsigned) hashnumlumps;
       lumpinfo[i]->next = lumpinfo[j]->index;     // Prepend to list
       lumpinfo[j]->index = i;
     }
@@ -662,6 +700,8 @@ static void W_InitResources()          // sf
 
 void W_AddPredefines()
 {
+  if (numlumps) return; 
+
   // predefined lumps removed now
   numlumps = 0;
 
@@ -705,6 +745,7 @@ void W_InitMultipleFiles(char *const *filenames)
 
 int W_AddExtraFile(char *filename, extra_file_t extra)
 {
+  W_AddPredefines();
   if(W_AddFile(filename, extra)) return true;
   W_InitResources();              // reinit lump lookups etc
   W_SetDefaultDynamicLumpNames();
