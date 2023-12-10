@@ -19,4 +19,6 @@
   first shown for a second or so
 - When loading a game where player skin was changed from marine, 
   player mobj sprite is retained, but player skin is set to marine 
-
+- Map30 in Eviternity has some visual glitches (HOM) at the beginning 
+  and no music
+- Jumping in Jumpwad loaded as PWAD results in red screen fade sometimes 
