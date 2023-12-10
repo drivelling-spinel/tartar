@@ -62,13 +62,13 @@ _(this is documentation for a work in progress version of Tartar)_
 - New set of "boss action" properties has been added to MAPINFO following UMAPINFO standard as an example.   
   Code for these properties needs preprocessor definition `BOSSACTION` to be compiled in, which is set by default. 
 - `bossaction_clear` when present and set to anything but `false` cancels any "boss action" on the map;   
-  takes precedence over any other "boss action" properties
-- `bossaction_thingtype` decimal [thing type](https://doomwiki.org/wiki/Thing_types) of the monster that acts as the boss of the map;
+  takes precedence over all other "boss action" properties
+- `bossaction_thingtype` decimal [thing type](https://doomwiki.org/wiki/Thing_types) of the monster that acts as the boss of the map;   
   only a single type of boss per map is supported
 - `bossaction_linespecial` [special line type](https://doomwiki.org/wiki/Linedef_type#Table_of_all_types)    
   corresponding to the effect to trigger when all the level bosses are dead
-- `bossaction_tag` sector tag to apply the effect defined by `bossaction_linespecial` to;
-  only a single special sector per level is supported; vaue of *666* is used if omitted or in case of *0* 
+- `bossaction_tag` sector tag to apply the effect defined by `bossaction_linespecial` to;   
+  only a single special sector per level is supported; vaue of **666** is used if omitted or in case of **0**
 
 Here's an exmple of MAPINFO lump with these new properties:
 
