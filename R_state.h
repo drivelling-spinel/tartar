@@ -85,7 +85,9 @@ extern subsector_t      *subsectors;
 
 extern int              numnodes;
 extern node_t           *nodes;
+#ifdef NO_RECURSION_BSP
 extern int              *nodepath;
+#endif
 
 extern int              numlines;
 extern line_t           *lines;

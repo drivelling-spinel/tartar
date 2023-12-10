@@ -212,7 +212,8 @@ typedef struct line_s
 typedef struct subsector_s
 {
   sector_t *sector;
-  short numlines, firstline;
+  short numlines;
+  int firstline;
 } subsector_t;
 
 // phares 3/14/98

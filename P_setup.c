@@ -89,7 +89,9 @@ subsector_t *subsectors;
 
 int      numnodes;
 node_t   *nodes;
+#ifdef NO_RECURSION_BSP
 int      *nodepath;
+#endif
 
 int      numlines;
 line_t   *lines;
@@ -327,7 +329,7 @@ void P_LoadSubsectors (int lump)
   for (i=0; i<numsubsectors; i++)
     {
       subsectors[i].numlines  = SHORT(((mapsubsector_t *) data)[i].numsegs );
-      subsectors[i].firstline = SHORT(((mapsubsector_t *) data)[i].firstseg);
+      subsectors[i].firstline = (unsigned short)SHORT(((mapsubsector_t *) data)[i].firstseg);
     }
 
   Z_Free (data);
@@ -365,13 +367,13 @@ static void P_ValidateSubsectors()
   
   for(i = 0; i < numsubsectors ; i += 1, ss += 1)
   {
-    if((unsigned short) ss->firstline >= numsegs) break;
-    if((unsigned short) ss->firstline + (unsigned short) ss->numlines > numsegs) break;
+    if(ss->firstline >= numsegs) break;
+    if(ss->firstline + (unsigned short) ss->numlines > numsegs) break;
   }
   
   if(i < numsubsectors)
   {
-    sprintf(msgbuf, "ss=%d, ss->firstline=%d, ss->numlines=%d\n", i, (unsigned) ss->firstline, (unsigned) ss->numlines);
+    sprintf(msgbuf, "ss=%d, ss->firstline=%d, ss->numlines=%d\n", i, ss->firstline, (unsigned) ss->numlines);
     DEBUGMSG(msgbuf);
     
     numsubsectors = 0;
@@ -464,7 +466,9 @@ void P_LoadNodes (int lump)
   
   numnodes = sz / sizeof(mapnode_t);
   nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);
+#ifdef NO_RECURSION_BSP
   nodepath = Z_Calloc (numnodes, sizeof(int), PU_LEVEL, 0);
+#endif
 
   for (i=0; i<numnodes; i++)
     {
@@ -478,17 +482,20 @@ void P_LoadNodes (int lump)
       no->dy = SHORT(mn->dy)<<FRACBITS;
 
       for (j=0 ; j<2 ; j++)
-	{
-	  int k;
-          no->children[j] = (unsigned short)SHORT(mn->children[j]);
-          if(no->children[j] & NF_SUBSECTOR) 
+        {
+          int k;
+          short ch = SHORT(mn->children[j]);
+          if(ch == -1)  
+            no->children[j] = -1;
+          else if(ch & NF_SUBSECTOR)  
             {
-              no->children[j] &= ~NF_SUBSECTOR;
-              no->children[j] |= NFX_SUBSECTOR;
+              no->children[j] = (((unsigned short)ch) & ~NF_SUBSECTOR) | NFX_SUBSECTOR;
             }
-	  for (k=0 ; k<4 ; k++)
+          else 
+            no->children[j] = (unsigned short) ch;
+          for (k=0 ; k<4 ; k++)
             no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
-	}
+        }
     }
 
   Z_Free (data);
@@ -506,7 +513,9 @@ void P_LoadNodes32 (int lump)
   numnodes = (sz - 8) / sizeof(mapnodeext_t);
   nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);
   data = W_CacheLumpNum (lump, PU_STATIC) + 8;
+#ifdef NO_RECURSION_BSP
   nodepath = Z_Calloc (numnodes, 1, PU_LEVEL, 0);
+#endif
 
   for (i=0; i<numnodes; i++)
     {
@@ -520,12 +529,12 @@ void P_LoadNodes32 (int lump)
       no->dy = SHORT(mn->dy)<<FRACBITS;
 
       for (j=0 ; j<2 ; j++)
-	{
-	  int k;
+        {
+          int k;
           no->children[j] = LONG(mn->children[j]);
-	  for (k=0 ; k<4 ; k++)
+          for (k=0 ; k<4 ; k++)
             no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
-	}
+        }
     }
 
   Z_Free (data - 8);
@@ -860,7 +869,7 @@ byte * P_LoadSubsectorsExtended(byte * data)
       subsectors[i].numlines = LONG(*(long *)data);
       data += sizeof(long);
       subsectors[i].firstline = first;
-      first += (unsigned short) subsectors[i].numlines;
+      first += subsectors[i].numlines;
     }
 
   return data;
@@ -1239,7 +1248,7 @@ void P_GroupLines (void)
 
   // look up sector number for each subsector
   for (i=0; i<numsubsectors; i++)
-    subsectors[i].sector = segs[(unsigned short)(subsectors[i].firstline)].sidedef->sector;
+    subsectors[i].sector = segs[subsectors[i].firstline].sidedef->sector;
 
   // count number of lines in each sector
   for (i=0; i<numlines; i++)

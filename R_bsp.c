@@ -637,7 +637,7 @@ static void R_Subsector(int num)
   sub = &subsectors[num];
   frontsector = sub->sector;
   count = (unsigned short)sub->numlines;
-  line = &segs[(unsigned short)sub->firstline];
+  line = &segs[sub->firstline];
 
   R_SectorColormap(frontsector);
 
@@ -727,6 +727,8 @@ static void R_Subsector(int num)
 //
 // killough 5/2/98: reformatted, removed tail recursion
 
+#ifdef NO_RECURSION_BSP
+
 #define push(node) (nodepath[sp++]=(node))
 #define pop() (nodepath[--sp])
 #define peek() (nodepath[sp])
@@ -762,11 +764,10 @@ void R_RenderBSPNode2(int startnum)
     }
 }
 
+#endif
+
 void R_RenderBSPNode(int bspnum)
 {
-  R_RenderBSPNode2(bspnum);
-  return;
- 
   while (!(bspnum & NFX_SUBSECTOR))  // Found a subsector?
     {
       node_t *bsp = &nodes[bspnum];
