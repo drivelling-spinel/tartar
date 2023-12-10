@@ -1336,7 +1336,10 @@ void C_DumpThings()
 void P_InitEternityVars(void)
 {
    if(W_CheckNumForName("ETERNITY") != -1)
-     EternityMode = true;
+     {
+       EternityMode = true;
+       usermsg("Eternity TC Mode activated");
+     }
    else
      EternityMode = false;
 }

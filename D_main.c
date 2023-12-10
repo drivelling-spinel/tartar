@@ -1507,23 +1507,18 @@ void D_DoomMain(void)
         codfound = codfound ||
            (l>=7 && !strnicmp(wadfiles[i]+l-7,"cod.wad",7)
               && (l==7 || wadfiles[i][l-8] == '/' || wadfiles[i][l-8] == '\\'));
+        codfound = codfound ||
+           (l>=3 && !strnicmp(wadfiles[i]+l-3,"cod",3)
+              && (l==3 || wadfiles[i][l-4] == '/' || wadfiles[i][l-4] == '\\'));
         codlevfound = codlevfound ||
            (l>=10 && !strnicmp(wadfiles[i]+l-10,"codlev.wad",10)
               && (l==10 || wadfiles[i][l-11] == '/' || wadfiles[i][l-11] == '\\'));
+        codlevfound = codlevfound ||
+           (l>=6 && !strnicmp(wadfiles[i]+l-6,"codlev",6)
+              && (l==6 || wadfiles[i][l-7] == '/' || wadfiles[i][l-7] == '\\'));
      }
 
-  if (codfound && codlevfound)
-     {
-        gamemission = cod;
-        usermsg("Caverns of Darkness compatibility activated\n");
-     }
-
-  else if (codfound)
-     {
-        C_Printf("Not loading bundled eternity.wad\n");
-        C_Printf("as cod.wad was provided with -file\n");
-     }
-  else
+  if(!codfound)
      {
         char filestr[256];
         // get smmu.wad from the same directory as smmu.exe
@@ -1797,6 +1792,18 @@ void D_DoomMain(void)
   if(!textmode_startup && !devparm)
     C_Update();
 
+  // Are we in Caverns of Darkness mode?
+  if (codfound && codlevfound)
+     {
+        gamemission = cod;
+        usermsg("Caverns of Darkness compatibility activated\n");
+     }
+
+  else if (codfound)
+     {
+        C_Printf("Not loading bundled eternity.wad\n");
+        C_Printf("as cod.wad was provided with -file\n");
+     }
 
   idmusnum = -1; //jff 3/17/98 insure idmus number is blank
 
