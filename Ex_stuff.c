@@ -521,6 +521,8 @@ int Ex_CheckNumForNameOnTape(register const char *name)
     }
 }
 
+int reset_palette_needed = 0;
+
 // W_CacheDynamicLumpName
 // fetches a lump from an arbitrary loaded wad,
 // rather then using the latest one

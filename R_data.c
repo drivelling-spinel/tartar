@@ -137,6 +137,8 @@ int       *texturetranslation;
 // needed for pre-rendering
 fixed_t   *spritewidth, *spriteoffset, *spritetopoffset;
 
+static    boolean skip_step2 = false;
+
 
 //
 // MAPTEXTURE_T CACHING
@@ -445,7 +447,8 @@ static void R_GenerateLookup(int texnum, int *const errors)
                 for (;col->topdelta != 0xff; count[x].posts++)
                   {
                     col = (column_t *)((byte *) col + col->length + 4);
-                    if ((unsigned)((byte *) col - base) > limit)
+                    if ((unsigned)((byte *) col - base) > limit &&
+                      (strnicmp(texture->name, "STEP2", 8) || !skip_step2))
                       { // killough 12/98: warn about column construction bug
                         // sf: changed to usermsg
                         error_printf("\nWarning: Texture %8.8s[%d] "
@@ -584,7 +587,7 @@ void R_InitTextures (void)
 
           patchlookup[i] = (W_CheckNumForName)(name, ns_sprites);
 
-          if (patchlookup[i] == -1)            // killough 8/8/98
+          if (patchlookup[i] == -1 && gamemode != shareware) // killough 8/8/98
                 // sf: changed to usermsg
             error_printf("\nWarning: patch %.8s, index %d does not exist",name,i);
         }
@@ -613,6 +616,8 @@ void R_InitTextures (void)
       maxoff2 = 0;
     }
   numtextures = numtextures1 + numtextures2;
+
+  skip_step2 = gamemode == commercial;
 
   // killough 4/9/98: make column offsets 32-bit;
   // clean up malloc-ing to use sizeof

@@ -277,6 +277,7 @@ void D_Display (void)
     return;
 
   R_ReInitIfNeeded();
+
 #ifdef NORENDER
   if(norenderparm)
     {
@@ -1537,6 +1538,7 @@ void D_DoomMain(void)
 	// joel 10/16/98 end Final DOOM fix
 	
       default:
+        // peridot: FIXME - anything not in gamemission enum is Public DOOM?        
 	sprintf (title, "Public DOOM");
 	break;
     }
@@ -1797,6 +1799,9 @@ void D_DoomMain(void)
 	    I_Error("\nThis is not the registered version.");
     }
 
+  if (codfound && codlevfound)
+    gamemission = cod;
+
   V_InitColorTranslation(); //jff 4/24/98 load color translation lumps
 
   // killough 2/22/98: copyright / "modified game" / SPA banners removed
@@ -1911,18 +1916,15 @@ void D_DoomMain(void)
     C_Update();
 
   // Are we in Caverns of Darkness mode?
-  if (codfound && codlevfound)
+  if (gamemission == cod)
      {
-        gamemission = cod;
-        usermsg("Caverns of Darkness compatibility activated\n");
+        usermsg(FC_GOLD "Caverns of Darkness compatibility activated");
      }
-
-  else if (codfound)
+  if (codfound)
      {
         C_Printf("Not loading bundled eternity.wad\n");
-        C_Printf("as cod.wad was provided with -file\n");
+        C_Printf("as " FC_GOLD "cod.wad" FC_RED " was provided with -file\n");
      }
-
 
   idmusnum = -1; //jff 3/17/98 insure idmus number is blank
 
@@ -2092,11 +2094,11 @@ void D_NewWadLumps(int handle, extra_file_t extra)
           if(isExMy(name))
             {
               reset_finallevel = 1;
-              if(name[3] != '9' && handle != iwadhandle) estimated_maps_no += 1;
+              if(name[3] != '9' && !W_IsLumpFromIWAD(i)) estimated_maps_no += 1;
             }
           else if(isMAPxy(name))
             {
-              if(handle != iwadhandle) estimated_maps_no += 1;
+              if(!W_IsLumpFromIWAD(i)) estimated_maps_no += 1;
             }
 
 	  if(isExMy(name) && isExMy(wad_firstlevel))

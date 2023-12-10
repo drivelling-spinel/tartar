@@ -170,7 +170,7 @@ static boolean P_ShouldRandomizeMusic(int mapLumpNum)
 
   if(randomize_music == randm_no_runnin)
     {
-      if(musLump->handle == iwadhandle)
+      if(W_IsLumpFromIWAD(musLumpNum))
         if(!strnicmp("D_RUNNIN", musLump->name, 8)
          ||!strnicmp("D_E1M1", musLump->name, 8))
            return TRUE;
@@ -179,8 +179,9 @@ static boolean P_ShouldRandomizeMusic(int mapLumpNum)
   if(*info_music)
     return FALSE;
 
-  if(musLump->handle == mapLump->handle && mapLump->handle != iwadhandle)
-    return FALSE;
+  if(musLump->handle == mapLump->handle &&
+    !W_IsLumpFromIWAD(musLumpNum))
+      return FALSE;
 
   if(estimated_maps_no > 3)
     return FALSE;
@@ -1568,7 +1569,7 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
 #endif
 
   DEBUGMSG("hu_newlevel\n");
-  newlevel = lumpinfo[lumpnum]->handle != iwadhandle;
+  newlevel = !W_IsLumpFromIWAD(lumpnum);
   doom1level = false;
   HU_NewLevel();
   HU_Start();

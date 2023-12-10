@@ -365,10 +365,12 @@ void I_FinishUpdate(void)
        screens[0] = screens[2];
        screens[2] = swap;
      }
-  
+
    if (in_page_flip)
       if (!in_hires && (current_mode<256)) // Transfer from system memory to planar 'mode X' video memory:
       {
+         Do_ResetPalette();
+
          if (screen_base_addr==0) // GB 2014, switch between two pages, not four.
          {  // killough 8/15/98: 320x200 Wait-free page-flipping for flicker-free display
             screen_base_addr += 0x4000;             // Move address up one page
@@ -385,13 +387,15 @@ void I_FinishUpdate(void)
                                             /*else           ppro_blast_nobar(dascreen, *screens); */}
          else                              {/*if (ymax==200) */ blast           (dascreen, *screens);  // Other CPUs, e.g. 486
                                             /*else           blast_nobar     (dascreen, *screens); */}
-         outportw(0x3d4, screen_base_addr | 0x0c);              // page flip 
+         outportw(0x3d4, screen_base_addr | 0x0c);              // page flip
          return;
       } 
       else scroll_offset = scroll_offset ? 0 : screen_h;        // hires hardware page-flipping (VBE 2.0)
    // killough 8/15/98: no page flipping; use other methods:
    else if (use_vsync && !timingdemo && current_mode<256) wait_vsync(); // killough 2/7/98: use vsync() to prevent screen breaks.
-   
+
+   Do_ResetPalette();
+
    if (!linear || safeparm)
    {                                                            // note: divide scroll offset /2 to test if pageflipping occurs
       if (current_mode>255)
@@ -965,6 +969,7 @@ static void I_InitGraphicsMode(void)
   setsizeneeded = true;
   //if (!safeparm) I_InitDiskFlash(); // Initialize disk icon
   I_ResetPalette();
+  Do_ResetPalette();
   modeswitched=1; 
   if (current_mode==0x12) sprintf(mode_string,"%sMODE:X SIZE:%dx%d LFB:%s CPU:%d VBE:%d",  safestring,               screen_w, screen_h, linear ? "true" : "false", cpu_family, vesa_version);  
   else                    sprintf(mode_string,"%sMODE:%xh SIZE:%dx%d LFB:%s CPU:%d VBE:%d",safestring, current_mode, screen_w, screen_h, linear ? "true" : "false", cpu_family, vesa_version);
@@ -1105,7 +1110,7 @@ CONSOLE_VARIABLE(v_gammastyle, gammastyle, 0)
 {
   if(gammastyle && usegamma)
     usegamma = 4;
-  I_ResetPalette();  
+  I_ResetPalette();
 }
 
 void I_Video_AddCommands()

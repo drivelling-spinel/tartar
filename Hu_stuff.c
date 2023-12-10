@@ -969,7 +969,7 @@ extern void HU_OverAddCommands();
 CONSOLE_COMMAND(tip, 0)
 {
    if(!tip_tip || !*tip_tip)
-      HU_CentreMsg("Set tip to show in Features > Tartar menu");
+      HU_CentreMsg("Set tip in Options > Eternity > Tartar > More");
    else
       HU_CentreMsgTimed(tip_tip, 500);
 }

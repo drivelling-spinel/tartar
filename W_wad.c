@@ -52,7 +52,7 @@ rcsid[] = "$Id: w_wad.c,v 1.20 1998/05/06 11:32:00 jim Exp $";
 lumpinfo_t **lumpinfo;  //sf : array of ptrs
 int        numlumps;         // killough
 int        hashnumlumps;
-int        iwadhandle = 0;                  // sf: the handle of the main iwad
+static int iwadhandle = 0;                  // sf: the handle of the main iwad
 
 static int W_FileLength(int handle)
 {
@@ -627,6 +627,20 @@ long W_LumpCheckSum(int lumpnum)
   return checksum;
 }
 
+
+boolean W_IsLumpFromIWAD(int lump)
+{
+#ifdef RANGECHECK
+  if (lump >= numlumps)
+    I_Error ("W_IsLumpFromIWAD: %i >= numlumps",lump);
+#endif
+
+  if (lump < 0)
+    return false;
+
+  return lumpinfo[lump]->handle == iwadhandle;
+  
+}
 
 //----------------------------------------------------------------------------
 //

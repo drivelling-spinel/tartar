@@ -113,7 +113,7 @@ void I_BeginRead(void), I_EndRead(void); // killough 10/98
 // Function to write all predefined lumps to a PWAD if requested
 extern void WritePredefinedLumpWad(const char *filename); // jff 5/6/98
 
-extern int iwadhandle;
+boolean W_IsLumpFromIWAD(int lumpnum);
 
 #endif
 

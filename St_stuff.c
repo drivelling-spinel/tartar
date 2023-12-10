@@ -1457,6 +1457,13 @@ void ST_createWidgets(void)
 
 static boolean st_stopped = true;
 
+void ST_Reposition(void)
+{
+  if(st_stopped)
+    return;
+  ST_createWidgets();
+}
+
 void ST_Start(void)
 {
   st_stop_later_tm = 0;
@@ -1472,7 +1479,7 @@ void ST_Stop(void)
   if (st_stopped)
     return;
   st_palette = -1;
-  I_SetPalette (Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_CACHE));
+  I_ResetPalette();
   st_stopped = true;
 }
 

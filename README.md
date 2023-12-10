@@ -35,9 +35,7 @@ machines for retro gaming.
   with helper WAD included in the distribution
 - Chex Quest without Doom IWAD - and it will end after level 5!   
   (also green slime splashes can be activated by switching on particles)
-- [Wolfendoom collection by Laz Rojas]
-  (https://www.moddb.com/mods/tartar/news/tartar-source-port-almost-good-enough-for-wolfendoom-now)
-  (MAC versions strongly preferred!)
+- Wolfendoom collection by Laz Rojas (MAC versions strongly preferred!)
   with helper WAD included in the distribution
 - Strain TC for DOS - via a compatibility option to change [MBF collisions code]
   (https://www.doomworld.com/forum/post/2507168)
@@ -62,7 +60,7 @@ machines for retro gaming.
   (but make sure Tartar is given a PLAYPAL, e.g. by putting one of InstaDoom
   filter WAD-s into FILTERS directory AND that text mode startup is on!)
 - Also - only if you are desperate enough - The People's Doom as IWAD
-- ... and last but not least Doom 1.1 with tiled status bar extravaganza
+- ... and last but not least Doom 1.1 with tiled status bar extravaganza and demo playback
 
 ## Also...
 ... for some traits "less common among source ports":
@@ -112,7 +110,7 @@ this is not what Tartar supports:
 
 Tartar distribution is available following the link below:
 
-<https://mega.nz/folder/V50HiaSJ#yZa2LjO_kJB3Vs4tvlR3cQ>
+<https://www.moddb.com/mods/tartar/downloads/tartar-distro>
 
 There, TARTAR directory contains latest version of the port 
 including TARTAR.EXE and additional assets and files required to run it. 

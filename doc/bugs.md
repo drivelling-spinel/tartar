@@ -3,25 +3,13 @@
 - Dynamically adding sound effects from pwads with new names (e.g.
   from SMMU-style skins) and addressing sound affects by string names
   does not work after move to MBF 2.0.4. sound routines
-- Performance in NUTS.WAD is unacceptably poor straight from the start
-- In MAP03 of DV.WAD standing across from the huge painting (or tapestry)
-  in the "cathedral" causes a drop in performance 
-- TARTAR.EXE is a memory hog, especially in higher resolutions.
-  Running in Windows 98 is recommended with 65535 DPMI memory in shortcut
-  properties. For DOSBox enabling full 63Mb of memory is recommended.
-- With FILTERS directory filled with InstaDoom WAD-s Tartar exhausts DOS
-  file handles very quickly, suggested CONFIG.SYS setting being FILES=70
 - Loading a game saved on E1-type exit special sector crahses Tartar
 - When loading a game where player skin was changed from marine, 
   player mobj sprite is retained, but player skin is set to marine 
 - Map30 in Eviternity has some visual glitches (HOM) at the beginning 
 - Jumping in Jumpwad loaded as PWAD results in red screen fade sometimes 
-- Switching between palettes on the fly causes garbage colors on the screen 
-  for a brief moment if status bar logic causes palete to be changed
 - Moving from map to map with MAP CCMD sometimes does not cause screen wipe,
   which leaves garbage on screen borders when view size is not covering all screen
-- Changing the view size to the new extra size shows doomguy mugshot at
-  maximum health for a brief moment, and not at actual health
 - After option for random music is switched off while in game, restarting 
   current level is not sufficient to go back to the original track. 
   In case of the first level, starting new game is not sufficuent either. 

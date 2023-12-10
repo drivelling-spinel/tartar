@@ -751,7 +751,7 @@ void R_ReInitIfNeeded(void)
       R_ReInitLightTables();
       R_SetViewSize(screenSize+3);
       R_ResetTrans();
-      P_InitParticleEffects(); 
+      P_InitParticleEffects();
       I_ResetPalette();
     }
 }
@@ -915,7 +915,7 @@ CONSOLE_VARIABLE(screensize, screenSize, cf_buffered)
   if(screenSize >= 8)
   {
      clearscreen = 1;
-     ST_Start();
+     ST_Reposition();
      AM_LevelInit();
   }
 

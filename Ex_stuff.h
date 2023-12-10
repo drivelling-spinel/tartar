@@ -49,7 +49,10 @@ int Ex_DynamicNumForName(dyna_lumpname_t name);
 
 
 // Reloads palette lump before applying
-#define I_ResetPalette() { byte * pal = Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_CACHE); I_ValidatePaletteFunc(); I_SetPalette(pal + 768*(st_palette > 0 ? st_palette : 0)); }
+extern int reset_palette_needed;
+#define I_ResetPalette() { reset_palette_needed = true; }
+#define Do_ResetPalette() if(reset_palette_needed) { byte * pal = Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_CACHE); I_ValidatePaletteFunc(); I_SetPalette(pal + 768*(st_palette > 0 ? st_palette : 0)); reset_palette_needed = false;} 
+
 // and as sad as it is, modules calling this need the below
 extern int st_palette;
 extern int playpal_wad;              // idx of the wad that has selected PLAYPAL

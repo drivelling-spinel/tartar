@@ -65,6 +65,7 @@ void ST_Drawer(st_fullscreen_style fullscreen, boolean refresh);
 
 // Called when the console player is spawned on each level.
 void ST_Start(void);
+void ST_Reposition(void);
 
 void ST_StopLater();
 void ST_TryStop();
