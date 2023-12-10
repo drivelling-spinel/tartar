@@ -15,13 +15,14 @@ machines for retro gaming.
     - what remains from the cancelled Eternity TC
     - Chex Quest without dependency on any Doom assets
 - Includes numerous quality of life improvements including 
-  auto-loading of WAD files, compatibility improvements and
-  bugfixes  
+  auto-loading of WAD, DEH and BEX files, compatibility improvements
+  and bugfixes  
 - Treats certain popular WADs as first class mods improving
   player's experience with them:
   - InstaDoom by @linguica
   - Intemission Maps by @oliacym
   - No Rest for the Living via a "helper WAD"  
+  - Jumpwad.wad by @Grain of Salt and Ribbiks 
 - New display (game view) size for higher resolutions and 
   new translucency mode
 - Can load more complex (i.e. "more contemporary") maps
@@ -48,9 +49,9 @@ Tartar distribution is available following the link below:
 
 <https://mega.nz/folder/V50HiaSJ#yZa2LjO_kJB3Vs4tvlR3cQ>
 
-There, TESTING directory contains the the testing version of the port 
+There, STAGE3 directory contains current version of the port 
 including TARTAR.EXE and additional assets and files required to run it. 
-EXTRAS document above describes the contents of DEMOS and EXTRAS directories. 
+EXTRAS document above describes the contents of DEMOS and GOODIES directories. 
 
 If you are looking for the 2021 Christmas binary, which was previously
 under TARTAR directory - it's available under STAGES/STAGE1.
