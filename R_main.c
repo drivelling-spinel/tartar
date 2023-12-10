@@ -520,7 +520,7 @@ void R_SetupFrame (player_t *player, camera_t *camera)
   yslope = origyslope + (viewheight>>1) - updownangle;
 
         // use drawcolumn
-  colfunc = R_DrawColumn; //sf
+  colfunc = hires == 2 ? R_DrawColumn2 : R_DrawColumn; //sf
 
   validcount++;
 }

@@ -361,7 +361,7 @@ void I_FinishUpdate(void)
 
    // GB 2014, code to check if statusbar needs to be drawn (e.g. has anything changed, e.g. is dirty?): 
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
-   size = in_hires ? SCREENWIDTH*ymax*4 : SCREENWIDTH*ymax;
+   size = in_hires ? SCREENWIDTH*ymax*(4<<hires) : SCREENWIDTH*ymax;
  
    if (in_page_flip)
       if (!in_hires && (current_mode<256)) // Transfer from system memory to planar 'mode X' video memory:
@@ -549,7 +549,7 @@ static void I_InitGraphicsMode(void)
   		  if (current_mode!=current_mode_info) vesa_get_mode_info(current_mode); 
                   screen_w=1280; // Necessary for when mode 13h/X has overwritten them.
                   screen_h=1024;
-                  blackband=32;
+                  blackband=112;
                   hires=2;
 	 	}
 		else hiresfail=1;

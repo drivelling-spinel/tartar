@@ -406,11 +406,11 @@ void R_DrawVisSprite(vissprite_t *vis, int x1, int x2)
   }
   else if(vis->mobjflags & MF_TRANSLUCENT && general_translucency) // phares
   {
-     colfunc = R_DrawTLColumn;
+     colfunc = hires == 2 ? R_DrawTLColumn2 : R_DrawTLColumn;
      tranmap = main_tranmap;       // killough 4/11/98
   }
   else
-     colfunc = R_DrawColumn;         // killough 3/14/98, 4/11/98
+     colfunc = hires == 2 ? R_DrawColumn2 : R_DrawColumn;         // killough 3/14/98, 4/11/98
 
   dc_iscale = abs(vis->xiscale);
   dc_texturemid = vis->texturemid;
@@ -431,7 +431,7 @@ void R_DrawVisSprite(vissprite_t *vis, int x1, int x2)
                             LONG(patch->columnofs[texturecolumn]));
       R_DrawMaskedColumn (column);
     }
-  colfunc = R_DrawColumn;         // killough 3/14/98
+  colfunc = hires == 2 ? R_DrawColumn2 : R_DrawColumn; // killough 3/14/98
 }
 
 //
