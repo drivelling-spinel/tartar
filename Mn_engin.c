@@ -157,6 +157,8 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
   boolean leftaligned =
     (drawing_menu->flags & mf_skullmenu) ||
     (drawing_menu->flags & mf_leftaligned);
+  
+  boolean descr_collapsed = false;
 
   if(item->type == it_gap) return M_LINE;    // skip drawing if a gap
 
@@ -196,6 +198,10 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
 	  return height + 1;   // 1 pixel gap
 	}
     }
+    
+    descr_collapsed = drawing_menu->flags & mf_collapsedescr && item->type == it_variable &&
+        input_command && item->var == input_command->variable;
+
   // draw description text
   
   if(item->type == it_title)
@@ -213,7 +219,7 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
     }
   else if(item->description)
     {
-      if( (menutime / BLINK_TIME / 2) % 2 == 1 || colour != select_colour) 
+      if(!descr_collapsed && ((menutime / BLINK_TIME / 2) % 2 == 1 || colour != select_colour ))
         // write description
         MN_WriteTextColoured
           (
@@ -302,7 +308,7 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
 	  (
 	   varvalue,
            colour,
-           x + (leftaligned ? MN_StringWidth(item->description) : 0),
+           x + (leftaligned && !descr_collapsed ? MN_StringWidth(item->description) : 0),
 	   y
 	   );
 	break;

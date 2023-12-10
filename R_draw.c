@@ -1239,6 +1239,11 @@ void R_DrawTallSkyColumn(void)
     return;
   postLen = thisPost->length;
   nextPost = (column_t *)(((byte *)thisPost) + postLen + 4);
+  // skip the stub post for tall textures
+  if(nextPost->topdelta == 0xfe && nextPost->length == 0)
+    nextPost = (column_t *)(((byte *)nextPost) + 4);
+  if(nextPost->topdelta == 1 && nextPost->length == 0)
+    nextPost = (column_t *)(((byte *)nextPost) + 4);
   // panic if second post does not start immediately after first finishes
   if(nextPost->topdelta > 0)
     return;

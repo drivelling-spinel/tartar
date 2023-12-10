@@ -172,7 +172,6 @@ static void R_DrawColumnInCache(const column_t *patch, byte *cache,
         tall = patch->topdelta;
       position = originy + tall;
       count = patch->length;
-      tall += patch->length;
 
       if (position < 0)
         {
@@ -246,7 +245,7 @@ static void R_GenerateComposite(int texnum)
       {
         column_t *col = (column_t *)(block + colofs[i] - 3);  // cached column
         const byte *mark = marks + i * texture->height;
-        int j = 0, tall = 0, stop = texture->height;
+        int j = 0, tall = 0, stop = texture->height, llen = 0;
 
         // save column in temporary so we can shuffle it around
         memcpy(source, (byte *) col + 3, texture->height);
@@ -254,7 +253,7 @@ static void R_GenerateComposite(int texnum)
         // peridot: plain Doom patch post offset is up to 255 
         for (;j < 254;)  // reconstruct the column by scanning transparency marks
           {
-	          unsigned len = 0;        // killough 12/98
+            unsigned len = 0;        // killough 12/98
 
             while (j < stop && j < 254 && !mark[j]) // skip transparent cells
               j++;
@@ -265,33 +264,59 @@ static void R_GenerateComposite(int texnum)
                 break;
               }
               
-            col->topdelta = j;                  // starting offset of post
+            tall = col->topdelta = j;                  // starting offset of post
 
             if (j == 254)
               {
-                col->length = 0;
+                llen = col->length = 0;
                 col = (column_t *)((byte *) col + 4); // next post
                 break;                
               }
 
-	          // killough 12/98:
-	          // Use 32-bit len counter, to support tall 1s multipatched textures
-	          for (len = 0; j < stop && len <= 254 && mark[j]; j++)
+            // killough 12/98:
+            // Use 32-bit len counter, to support tall 1s multipatched textures
+            for (len = 0; j < stop && len <= 254 && mark[j]; j++) 
               len++;                    // count opaque cells
 
-	          col->length = len; // killough 12/98: intentionally truncate length
-
+            llen = col->length = len; // killough 12/98: intentionally truncate length
             // copy opaque cells from the temporary back into the column
             memcpy((byte *) col + 3, source + col->topdelta, len);
             col = (column_t *)((byte *) col + len + 4); // next post
           }
-
-        // peridot: tall patch can go on forever in chunks of 255 
+        // peridot: stub to offset of 254 
+        if(j < stop)
+          {
+            int stub = tall + llen - 0xfe;
+            llen = 0;
+            if(tall < 0xfe)
+              {
+                col->topdelta = 0xfe;
+                col->length = 0;
+                tall = 0xfe;            
+                col = (column_t *)((byte *) col + 4); // next post
+              }
+            if(stub > 0xfd)
+              {
+                col->topdelta = 0xfd;
+                col->length = 0;
+                tall += 0xfd;            
+                stub -= 0xfd;
+                col = (column_t *)((byte *) col + 4); // next post
+              }
+            if(stub > 0)
+              {
+                col->topdelta = stub;
+                col->length = 0;
+                tall += stub;
+                col = (column_t *)((byte *) col + 4); // next post
+              }
+          }
+        // peridot: tall patch can go on forever in chunks of 254
         for (;;)  // now the tall part
           {
-	          unsigned len = 0, tran = 0;        // killough 12/98
+            unsigned len = 0, tran = 0;        // killough 12/98
 
-            while (j < stop && tran < 254 && !mark[j]) // skip transparent cells
+            while (j < stop && tran < 254 && tran < tall - 1 && !mark[j]) // skip transparent cells
               j++, tran++;
 
             if (j >= stop)           // if at end of column
@@ -299,28 +324,24 @@ static void R_GenerateComposite(int texnum)
                 col->topdelta = 0xff;             // end-of-column marker
                 break;
               }
-            
-            if (tran == 254)
+              
+            if (tran == 254 || tran == tall - 1)
               {
-                col->topdelta = tran;
-                col->length = 0;
+                col->topdelta = tran;           // starting offset of post
+                llen = col->length = 0;
                 col = (column_t *)((byte *) col + 4); // next post
-                tall = j;
                 continue;
               }
-            
-              
-            col->topdelta = tran;           // starting offset of post
-            tall = j;
 
-	          // killough 12/98:
-	          // Use 32-bit len counter, to support tall 1s multipatched textures
+            // killough 12/98:
+            // Use 32-bit len counter, to support tall 1s multipatched textures
 
-	          for (len = 0; j < stop && len <= 254 && mark[j]; j++)
+            for (len = 0; j < stop && (len + tran <= 254)  && (len + tran < tall - 1) && mark[j]; j++)
               len++;                    // count opaque cells
 
-	          col->length = len; // killough 12/98: intentionally truncate length
-
+            col->topdelta = tran + llen;           // starting offset of post
+            tall += col->topdelta;
+            llen = col->length = len; // killough 12/98: intentionally truncate length
             // copy opaque cells from the temporary back into the column
             memcpy((byte *) col + 3, source + tall, len);
             col = (column_t *)((byte *) col + len + 4); // next post

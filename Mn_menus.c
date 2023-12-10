@@ -833,7 +833,7 @@ void MN_ReadSaveStrings(void)
         {   // Ty 03/27/98 - externalized:
           // haleyjd
           if(savegamenames[i]) Z_Free(savegamenames[i]);
-          savegamenames[i] = Z_Strdup("empty slot", PU_STATIC, 0);
+          savegamenames[i] = Z_Strdup("", PU_STATIC, 0);
           savegamestates[i] = 0;
           continue;
         }
@@ -916,6 +916,8 @@ void MN_LoadGameDrawer()
   // this is lame
   for(i=0, y=2; i<SAVESLOTS; i++, y+=2)  // haleyjd
     {
+      if(!savegamestates[i]) 
+        continue;
       menu_loadgame.menuitems[y].description = savegamenames[i];
     }
 }
@@ -1002,6 +1004,37 @@ CONSOLE_COMMAND(qload, cf_hidden)
 
 // haleyjd: fixes continue here from 8-17 build
 
+void MN_SaveGameDrawer();
+
+menu_t menu_savegame = 
+{
+  {
+    {it_title,  FC_GOLD "save game",           NULL,              "M_SGTTL"},
+    {it_titlegap},
+    {it_variable, "save slot 0",                          "savegame_0"},
+    {it_gap},
+    {it_variable, "save slot 1",                          "savegame_1"},
+    {it_gap},
+    {it_variable, "save slot 2",                          "savegame_2"},
+    {it_gap},
+    {it_variable, "save slot 3",                          "savegame_3"},
+    {it_gap},
+    {it_variable, "save slot 4",                          "savegame_4"},
+    {it_gap},
+    {it_variable, "save slot 5",                          "savegame_5"},
+    {it_gap},
+    {it_variable, "save slot 6",                          "savegame_6"},
+    // haleyjd: missing slot
+    {it_gap},
+    {it_variable, "save slot 7",                          "savegame_7"},
+    {it_end},
+  },
+  50, 15,                           // x, y
+  2,                                // starting slot
+  mf_skullmenu | mf_leftaligned | mf_collapsedescr,    // skull menu
+  MN_SaveGameDrawer,
+};
+
 void MN_SaveGameDrawer()
 {
    int i, y;
@@ -1010,36 +1043,15 @@ void MN_SaveGameDrawer()
    {
       MN_DrawLoadBox(45, y);
    }
+   
+  // this is lame
+  for(i=0, y=2; i<SAVESLOTS; i++, y+=2)  // haleyjd
+    {
+      if(savegamestates[i]) 
+        menu_savegame.menuitems[y].description = "";
+    }
+   
 }
-
-menu_t menu_savegame = 
-{
-  {
-    {it_title,  FC_GOLD "save game",           NULL,              "M_SGTTL"},
-    {it_titlegap},
-    {it_variable, "",                          "savegame_0"},
-    {it_gap},
-    {it_variable, "",                          "savegame_1"},
-    {it_gap},
-    {it_variable, "",                          "savegame_2"},
-    {it_gap},
-    {it_variable, "",                          "savegame_3"},
-    {it_gap},
-    {it_variable, "",                          "savegame_4"},
-    {it_gap},
-    {it_variable, "",                          "savegame_5"},
-    {it_gap},
-    {it_variable, "",                          "savegame_6"},
-    // haleyjd: missing slot
-    {it_gap},
-    {it_variable, "",                          "savegame_7"},
-    {it_end},
-  },
-  50, 15,                           // x, y
-  2,                                // starting slot
-  mf_skullmenu | mf_leftaligned,    // skull menu
-  MN_SaveGameDrawer,
-};
 
 CONSOLE_COMMAND(mn_savegame, 0)
 {

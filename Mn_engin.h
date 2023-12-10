@@ -142,6 +142,7 @@ struct menu_s
     mf_skullmenu =1,    // show skull rather than highlight
     mf_background=2,    // show background
     mf_leftaligned=4,   // left-aligned menu
+    mf_collapsedescr=8  // hide description when editing vars
   } flags;               
   void (*drawer)();       // seperate drawer function 
 };

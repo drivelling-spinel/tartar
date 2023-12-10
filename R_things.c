@@ -376,7 +376,6 @@ void R_DrawMaskedColumn(column_t *column)
           colfunc();
         }
         
-      tall += column->length;
       column = (column_t *)((byte *) column + column->length + 4);
     }
   dc_texturemid = basetexturemid;
@@ -429,7 +428,6 @@ void R_DrawMaskedColumn2(column_t *column)
           //  or (SHADOW) R_DrawFuzzColumn.
           colfunc();
         }
-      tall += column->length;
       column = (column_t *)((byte *) column + column->length + 4);
       if(column->topdelta == 0xff) 
         {
