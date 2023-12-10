@@ -294,7 +294,11 @@ void D_Display (void)
   R_ReInitIfNeeded();
 #ifdef NORENDER
   if(norenderparm)
-    V_FillScreen(32, FG);
+    {
+      V_FillScreen(64, FG);
+      if(norender2 >= 0 && viewwidth)
+        norender2 %= viewwidth;
+    }
 #endif
   abort_render = false;
   if (setsizeneeded)                // change the view size if needed

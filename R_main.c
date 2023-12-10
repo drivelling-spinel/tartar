@@ -78,7 +78,7 @@ void R_HOMdrawer();
 
 #ifdef NORENDER
 int norender1;
-int norender2;
+int norender2 = -1;
 int norender3;
 int norender4;
 int norender5;
@@ -87,6 +87,7 @@ int norender7;
 int norender8;
 int norender9;
 int norender0;
+int debugcolumn;
 #endif
 
 //
@@ -720,6 +721,9 @@ void R_RenderPlayerView (player_t* player, camera_t *camerapoint)
   NetUpdate ();
 
   render_ticker++;
+#ifdef NORENDER
+  debugcolumn = false;
+#endif
 }
 
         // sf: rewritten
@@ -942,7 +946,7 @@ CONSOLE_COMMAND(p_dumphubs, 0)
 
 #ifdef NORENDER
 VARIABLE_BOOLEAN(norender1, NULL, onoff);
-VARIABLE_BOOLEAN(norender2, NULL, onoff);
+VARIABLE_INT(norender2, NULL, -1, 1024, NULL);
 VARIABLE_BOOLEAN(norender3, NULL, onoff);
 VARIABLE_BOOLEAN(norender4, NULL, onoff);
 VARIABLE_BOOLEAN(norender5, NULL, onoff);
@@ -952,39 +956,73 @@ VARIABLE_BOOLEAN(norender8, NULL, onoff);
 VARIABLE_BOOLEAN(norender9, NULL, onoff);
 VARIABLE_BOOLEAN(norender0, NULL, onoff);
 
+VARIABLE_BOOLEAN(debugcolumn, NULL, onoff);
+CONSOLE_VARIABLE(debugcolumn, debugcolumn, 0) {}
+
+
 CONSOLE_VARIABLE(r_norender1, norender1, 0) {
   norender1 = norenderparm && norender1;
+  if(norenderparm)
+    HU_PlayerMsg(norender1 ? "Sky rendering off" : "Sky rendering on");
 }
 CONSOLE_VARIABLE(r_norender2, norender2, 0) {
-  norender2 = norenderparm && norender2;
+  char msg[32];
+  norender2 = norender2 % 1024;
+  if (!norenderparm)
+    {
+      norender2 = -1;
+      return;
+    }
+  sprintf(msg, "Rendering column %d", norender2);
+  HU_PlayerMsg(msg);
 }
 CONSOLE_VARIABLE(r_norender3, norender3, 0) {
   norender3 = norenderparm && norender3;
+  if(norenderparm)
+    HU_PlayerMsg(norender3 ? "Sprites rendering off" : "Sprites rendering on");
 }
 CONSOLE_VARIABLE(r_norender4, norender4, 0) {
   norender4 = norenderparm && norender4;
+  if(norenderparm)
+    HU_PlayerMsg(norender4 ? "Noop" : "Noop");
 }
 CONSOLE_VARIABLE(r_norender5, norender5, 0) {
   norender5 = norenderparm && norender5;
+  if(norenderparm)
+    HU_PlayerMsg(norender5 ? "Top rendering off" : "Top rendering on");
 }
 CONSOLE_VARIABLE(r_norender6, norender6, 0) {
   norender6 = norenderparm && norender6;
+  if(norenderparm)
+    HU_PlayerMsg(norender6 ? "Mid rendering off" : "Mid rendering on");
 }
 CONSOLE_VARIABLE(r_norender7, norender7, 0) {
   norender7 = norenderparm && norender7;
+  if(norenderparm)
+    HU_PlayerMsg(norender7 ? "Bottom rendering off" : "Bottom rendering on");
 }
 CONSOLE_VARIABLE(r_norender8, norender8, 0) {
   norender8 = norenderparm && norender8;
+  if(norenderparm)
+    HU_PlayerMsg(norender8 ? "Masked rendering off" : "Masked rendering on");
 }
 CONSOLE_VARIABLE(r_norender9, norender9, 0) {
   norender9 = norenderparm && norender9;
+  if(norenderparm)
+    HU_PlayerMsg(norender9 ? "Flats rendering off" : "Flats rendering on");
 }
 
 CONSOLE_VARIABLE(r_norender0, norender0, 0) {
   norender0 = norender0 && norenderparm;
-  norender1 = norender2 = norender3 =
-  norender4 = norender5 = norender6 =
-  norender7 = norender8 = norender9 = norender0;
+  norender1 = norender3 = norender4 = norender5 =
+  norender6 = norender7 = norender8 = norender9 =
+  norender0;
+
+  if(!norender0)
+    norender2 = -1;
+
+  if(norenderparm)
+    HU_PlayerMsg(norender0 ? "All rendering off" : "All rendering on");
 }
 #endif
 
@@ -1025,6 +1063,7 @@ void R_AddCommands()
    C_AddCommand(r_norender8);
    C_AddCommand(r_norender9);
    C_AddCommand(r_norender0);
+   C_AddCommand(debugcolumn);
 #endif
 }
 

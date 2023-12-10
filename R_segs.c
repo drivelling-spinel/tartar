@@ -253,11 +253,21 @@ static void R_RenderSegLoop (void)
       // no space above wall?
       int bottom = floorclip[rw_x]-1, top = ceilingclip[rw_x]+1;
 
-      if (yh < 0)
-        yh = viewheight - 1;
-
       if (yl < top)
         yl = top;
+
+      if (yh < 0 || yh == yl)
+        yh = viewheight - 1;
+
+#ifdef NORENDER
+      if (norender2 >= 0 && norender2 != rw_x)
+        {
+          rw_scale += rw_scalestep;
+          topfrac += topstep;
+          bottomfrac += bottomstep;
+          continue;
+        }
+#endif
 
       if (markceiling)
         {
@@ -382,10 +392,10 @@ static void R_RenderSegLoop (void)
                     colfunc ();
                   ceilingclip[rw_x] = mid;
                 }
-              else
+              else 
                 ceilingclip[rw_x] = yl - 1;
             }
-          else
+          else 
           {  // no top wall
             if (markceiling)
               ceilingclip[rw_x] = yl - 1;
@@ -420,12 +430,12 @@ static void R_RenderSegLoop (void)
                         floorclip2[rw_x] = mid;
                     }
                 }
-              else
+              else 
                 {
                   floorclip[rw_x] = yh + 1;
                 }
             }
-          else
+          else 
           {        // no bottom wall
             if (markfloor)
             {
@@ -440,21 +450,72 @@ static void R_RenderSegLoop (void)
           if (maskedtexture)
             maskedtexturecol[rw_x] = texturecolumn;
         }
-
-      if(bottomfrac + bottomstep<= 0)
-        {
-          if(bottomfrac >= 0 && bottomstep >= 0)
+#ifdef CLAMPHEIGHT
+      // clamp to 16+16 bit fixed point
+      if (bottomstep)
+        if(bottomfrac + bottomstep <= 0 && bottomfrac >= 0 && bottomstep > 0)
             {
               bottomfrac = 0x7fffffffu;
               bottomstep = 0;
             }
-        }
+        else if(bottomfrac + bottomstep >= 0 && bottomfrac <= 0 && bottomstep < 0)
+            {
+              bottomfrac = 0xffffffffu;
+              bottomstep = 0;
+            }
+
+      // clamp to 16+16 bit fixed point
+      if (topstep)
+        if(topfrac + topstep + HEIGHTUNIT - 1 <= 0 && topfrac >= 0 && topstep > 0)
+            {
+              topfrac = 0x7fffffffu - HEIGHTUNIT + 1;
+              topstep = 0;
+            }
+        else if(topfrac + topstep >= 0 && topfrac <= 0 && topstep < 0)
+            {
+              topfrac = 0xffffffffu - HEIGHTUNIT + 1;
+              topstep = 0;
+            }
+#endif
 
       rw_scale += rw_scalestep;
       topfrac += topstep;
       bottomfrac += bottomstep;
 #ifdef TRANWATER
+#ifdef CLAMPHEIGHT
+      if (bottomstep2)
+        if(bottomfrac2 + bottomstep2 <= 0 && bottomfrac2 >= 0 && bottomstep2 > 0)
+            {
+              bottomfrac2 = 0x7fffffffu;
+              bottomstep2 = 0;
+            }
+        else if(bottomfrac2 + bottomstep2 >= 0 && bottomfrac2 <= 0 && bottomstep2 < 0)
+            {
+              bottomfrac2 = 0xffffffffu;
+              bottomstep2 = 0;
+            }
+#endif
       bottomfrac2 += bottomstep2;
+#endif
+
+#ifdef NORENDER
+      if (debugcolumn && norenderparm)
+        {
+          static char msgbuf[256];
+          sprintf(msgbuf, "rw_x=%d, yh=%d, yl=%d, topfrac=%d.%d, topstep=%d.%d, bottomfrac=%d.%d, bottomstep=%d.%d\n",
+            rw_x, yh, yl, topfrac>>HEIGHTBITS, (topfrac&0xfff) << 4,
+            topstep>>HEIGHTBITS, (topstep&0xfff) << 4,
+            bottomfrac>>HEIGHTBITS, (bottomfrac&0xfff) << 4,
+            bottomstep>>HEIGHTBITS, (bottomstep&0xfff) << 4);
+          DEBUGMSG(msgbuf);
+          sprintf(msgbuf, "floorclip[rw_x]=%d, floorplane->top[rw_x]=%d, floorplane->bottom[rw_x]=%d\n",
+            floorclip[rw_x], floorplane->top[rw_x], floorplane->bottom[rw_x]);
+          DEBUGMSG(msgbuf);
+          sprintf(msgbuf, "ceilingclip[rw_x]=%d, ceilingplane->top[rw_x]=%d, ceilingplane->bottom[rw_x]=%d\n",
+            ceilingclip[rw_x],ceilingplane->top[rw_x], ceilingplane->bottom[rw_x]);
+          DEBUGMSG(msgbuf);
+          HU_PlayerMsg("Column details dumped");
+        }
 #endif
     }
 }
@@ -501,6 +562,7 @@ void R_StoreWallRange(const int start, const int stop)
   fixed_t hyp;
   fixed_t sineval;
   angle_t distangle, offsetangle;
+  fixed_t cy4;
 
   if (ds_p == drawsegs+maxdrawsegs)   // killough 1/98 -- fix 2s line HOM
     {
@@ -559,7 +621,19 @@ void R_StoreWallRange(const int start, const int stop)
   // calculate texture boundaries
   //  and decide if floor / ceiling marks are needed
   worldtop = frontsector->ceilingheight - viewz;
+#ifdef CLAMPHEIGHT
+  if(frontsector->ceilingheight > 0 && viewz < 0 && worldtop <= 0)
+    worldtop = 0x7fffffffu;
+  else if(frontsector->ceilingheight < 0 && viewz > 0 && worldtop >= 0)
+    worldtop = 0xffffffffu;
+#endif
   worldbottom = frontsector->floorheight - viewz;
+#ifdef CLAMPHEIGHT
+  if(frontsector->floorheight > 0 && viewz < 0 && worldbottom <= 0)
+    worldbottom = 0x7fffffffu;
+  else if(frontsector->floorheight < 0 && viewz > 0 && worldbottom >= 0)
+    worldbottom = 0xffffffffu;
+#endif
 
   midtexture = toptexture = bottomtexture = maskedtexture = 0;
   ds_p->maskedtexturecol = NULL;
@@ -653,7 +727,19 @@ void R_StoreWallRange(const int start, const int stop)
       }
 
       worldhigh = backsector->ceilingheight - viewz;
+#ifdef CLAMPHEIGHT
+      if(backsector->ceilingheight > 0 && viewz < 0 && worldhigh <= 0)
+        worldhigh = 0x7fffffffu;
+      else if(backsector->ceilingheight < 0 && viewz > 0 && worldhigh >= 0)
+        worldhigh = 0xffffffffu;
+#endif
       worldlow = backsector->floorheight - viewz;
+#ifdef CLAMPHEIGHT
+      if(backsector->floorheight > 0 && viewz < 0 && worldlow <= 0)
+        worldlow = 0x7fffffffu;
+      else if(backsector->floorheight < 0 && viewz > 0 && worldlow >= 0)
+        worldlow = 0xffffffffu;
+#endif
 
       // hack to allow height changes in outdoor areas
       if ((frontsector->ceilingpic == skyflatnum ||
@@ -822,12 +908,53 @@ void R_StoreWallRange(const int start, const int stop)
   // calculate incremental stepping values for texture edges
   worldtop >>= 4;
   worldbottom >>= 4;
+  cy4 = centeryfrac >> 4;
 
   topstep = -FixedMul (rw_scalestep, worldtop);
-  topfrac = (centeryfrac>>4) - FixedMul (worldtop, rw_scale);
+  topfrac = -FixedMul (worldtop, rw_scale);
+#ifdef CLAMPHEIGHT
+  // clamp to 16+16 bit fixed point
+  if(((worldtop > 0 && rw_scale > 0) || (worldtop < 0 && rw_scale < 0)) && topfrac > 0)
+    {
+      topfrac = 0xffffffffu - HEIGHTUNIT + 1;
+      topstep = 0;
+    }
+  else if(((worldtop < 0 && rw_scale > 0) || (worldtop > 0 && rw_scale < 0)) && topfrac < 0)
+    {
+      topfrac = 0x7fffffffu - HEIGHTUNIT + 1;
+      topstep = 0;
+    }
+  else if(topfrac > 0 && cy4 + topfrac + HEIGHTUNIT - 1 <= 0)
+    {
+      topfrac = 0x7fffffffu - HEIGHTUNIT + 1;
+      topstep = 0;
+    }
+  else
+#endif
+    topfrac += cy4;
 
   bottomstep = -FixedMul (rw_scalestep,worldbottom);
-  bottomfrac = (centeryfrac>>4) - FixedMul (worldbottom, rw_scale);
+  bottomfrac = -FixedMul (worldbottom, rw_scale);
+#ifdef CLAMPHEIGHT
+  // clamp to 16+16 bit fixed point
+  if(((worldbottom > 0 && rw_scale > 0) || (worldbottom < 0 && rw_scale < 0)) && bottomfrac > 0)
+    {
+      bottomfrac = 0xffffffffu;
+      bottomstep = 0;
+    }
+  else if(((worldbottom < 0 && rw_scale > 0) || (worldbottom > 0 && rw_scale < 0)) && bottomfrac < 0)
+    {
+      bottomfrac = 0x7fffffffu;
+      bottomstep = 0;
+    }
+  else if(bottomfrac > 0 && cy4 + bottomfrac <= 0)
+    {
+      bottomfrac = 0x7fffffffu;
+      bottomstep = 0;
+    }
+  else
+#endif
+    bottomfrac += cy4;
 
 #ifdef TRANWATER
   if (floorplane2)

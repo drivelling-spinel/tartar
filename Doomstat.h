@@ -447,6 +447,7 @@ extern int norender8;
 extern int norender9;
 extern int norender0;
 extern boolean norenderparm;
+extern int debugcolumn;
 #endif
 
 #endif
