@@ -478,25 +478,19 @@ void V_ClassicFPSDrawer()
 
 void V_Init(void)
 {
-  int size = (SCREENWIDTH<<hires)*(SCREENHEIGHT<<hires);
+  int size = (SCREENWIDTH << hires) * (SCREENHEIGHT << hires);
+  int rsize = RESULTING_SCALE - hires;
   static byte *s;
 
   if (s) free(s);
   if (screens[0]) free(screens[0]);
 
-  screens[3] = (screens[2] = (screens[1] = s = calloc(size,3)) + size) + size;
+
+  screens[3] = (screens[2] = (screens[1] = s = calloc(size,2 + (1 << rsize << rsize))) + size) + (size <<rsize << rsize);
 
   screens[0] = calloc(size,1);
 
   memset(screens[0], 0, size);
-
-  if (screens[5]) free(screens[5]);
-  if (scale_to_hires && (scale_to_hires + hires <= 2))
-    {
-      screens[5] = malloc(size * 4);
-      memset(screens[5], 0, size * 4);
-    }
-  else screens[5] = NULL;
 
 }
 

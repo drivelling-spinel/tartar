@@ -41,7 +41,7 @@ rcsid[] = "$Id: v_video.c,v 1.10 1998/05/06 11:12:48 jim Exp $";
 #include "i_video.h"
 
 // Each screen is [SCREENWIDTH*SCREENHEIGHT];
-byte *screens[6];
+byte *screens[5];
 int  dirtybox[4];
 
 //jff 2/18/98 palette color ranges for translation

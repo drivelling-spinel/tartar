@@ -2009,7 +2009,7 @@ typedef struct
 //
 
 boolean WritePCXfile(char *filename, byte *data, int width,
-		     int height, byte *palette)
+                     int height, int band, byte *palette)
 {
   int    i;
   int    length;
@@ -2017,7 +2017,7 @@ boolean WritePCXfile(char *filename, byte *data, int width,
   byte*  pack;
   boolean success;      // killough 10/98
 
-  pcx = Z_Malloc(width*height*2+1000, PU_STATIC, NULL);
+  pcx = Z_Malloc(width*(height+band*2)*2+1000, PU_STATIC, NULL);
 
   pcx->manufacturer = 0x0a; // PCX id
   pcx->version = 5;         // 256 color
@@ -2026,9 +2026,9 @@ boolean WritePCXfile(char *filename, byte *data, int width,
   pcx->xmin = 0;
   pcx->ymin = 0;
   pcx->xmax = SHORT((short)width-1);
-  pcx->ymax = SHORT((short)height-1);
+  pcx->ymax = SHORT((short)(height + band * 2)-1);
   pcx->hres = SHORT((short)width);
-  pcx->vres = SHORT((short)height);
+  pcx->vres = SHORT((short)(height + band * 2));
   memset(pcx->palette,0,sizeof(pcx->palette));
   pcx->color_planes = 1;        // chunky image
   pcx->bytes_per_line = SHORT((short)width);
@@ -2039,6 +2039,9 @@ boolean WritePCXfile(char *filename, byte *data, int width,
 
   pack = &pcx->data;
 
+  for (i = 0 ; i < width * band ; i++)
+    *pack++ = 0;
+
   for (i = 0 ; i < width*height ; i++)
     if ( (*data & 0xc0) != 0xc0)
       *pack++ = *data++;
@@ -2047,6 +2050,9 @@ boolean WritePCXfile(char *filename, byte *data, int width,
 	*pack++ = 0xc1;
 	*pack++ = *data++;
       }
+
+  for (i = 0 ; i < width * band ; i++)
+    *pack++ = 0;
 
   // write the palette
 
@@ -2114,7 +2120,7 @@ typedef struct tagBITMAPINFOHEADER
 //
 
 boolean WriteBMPfile(char *filename, byte *data, int width,
-		     int height, byte *palette)
+                     int height, int band, byte *palette)
 {
   int i,wid;
   BITMAPFILEHEADER bmfh;
@@ -2131,18 +2137,18 @@ boolean WriteBMPfile(char *filename, byte *data, int width,
   wid = 4*((width+3)/4);
   //jff 4/22/98 add endian macros
   bmfh.bfType = SHORT(19778);
-  bmfh.bfSize = LONG(fhsiz+ihsiz+256L*4+width*height);
+  bmfh.bfSize = LONG(fhsiz+ihsiz+256L*4+width*(height + band*2));
   bmfh.bfReserved1 = SHORT(0);
   bmfh.bfReserved2 = SHORT(0);
   bmfh.bfOffBits = LONG(fhsiz+ihsiz+256L*4);
 
   bmih.biSize = LONG(ihsiz);
   bmih.biWidth = LONG(width);
-  bmih.biHeight = LONG(height);
+  bmih.biHeight = LONG(height + band * 2);
   bmih.biPlanes = SHORT(1);
   bmih.biBitCount = SHORT(8);
   bmih.biCompression = LONG(BI_RGB);
-  bmih.biSizeImage = LONG(wid*height);
+  bmih.biSizeImage = LONG(wid*(height + band * 2));
   bmih.biXPelsPerMeter = LONG(0);
   bmih.biYPelsPerMeter = LONG(0);
   bmih.biClrUsed = LONG(256);
@@ -2182,8 +2188,12 @@ boolean WriteBMPfile(char *filename, byte *data, int width,
 	  SafeWrite(&zero,sizeof(char),1,st);
 	}
 
+      for (i = 0 ; i < width * band ; i++)
+        SafeWrite(&zero, sizeof(char), 1, st);
       for (i = 0 ; i < height ; i++)
 	SafeWrite(data+(height-1-i)*width,sizeof(byte),wid,st);
+      for (i = 0 ; i < width * band ; i++)
+        SafeWrite(&zero, sizeof(char), 1, st);
 
       fclose(st);
     }
@@ -2223,9 +2233,11 @@ void M_ScreenShot (void)
 	  // (PU_CACHE could cause crash)
 
 	  byte *pal = W_CacheLumpName ("PLAYPAL", PU_STATIC);
-	  byte *linear = screens[2];
+          byte *linear = screens[2];
+          int scale = RESULTING_SCALE;
 
-	  I_ReadScreen(linear);
+          if(SCALING_TO_HIRES) I_BlitScreenScaled(2);
+          else I_ReadScreen(linear);
 
 	  // save the pcx file
 	  //jff 3/30/98 write pcx or bmp depending on mode
@@ -2233,7 +2245,7 @@ void M_ScreenShot (void)
 	  // killough 10/98: detect failure and remove file if error
 	  // killough 11/98: add hires support
 	  if (!(success = (screenshot_pcx ? WritePCXfile : WriteBMPfile)
-		(lbmname,linear, SCREENWIDTH<<hires, SCREENHEIGHT<<hires,pal)))
+                (lbmname,linear, SCREENWIDTH<<scale, SCREENHEIGHT<<scale, blackband, pal)))
 	    {
 	      int t = errno;
 	      remove(lbmname);

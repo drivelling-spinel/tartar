@@ -32,6 +32,9 @@
 #include "doomtype.h"
 #include "m_misc.h" // GB 2014: for M_DrawText
 
+#define RESULTING_SCALE ((hires + scale_to_hires) > 2 ? 2 : (hires + scale_to_hires))
+#define SCALING_TO_HIRES (scale_to_hires && (hires + scale_to_hires <= 2))
+
 // Called by D_DoomMain,
 // determines the hardware configuration
 // and sets up the video mode
@@ -69,6 +72,7 @@ extern boolean nolfbparm; // checkparm of -noLFB GB 2014
 extern int modeswitched;
 extern int fps;
 extern char mode_string[];
+extern int blackband;
 
 #endif
 

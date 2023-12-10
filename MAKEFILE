@@ -266,7 +266,7 @@ $(O)/i_video.o: $(PLATFORM)/i_video.c z_zone.h doomstat.h doomdata.h \
  am_map.h c_io.h v_video.h r_data.h r_state.h \
  p_chase.h v_misc.h c_runcmd.h d_main.h i_video.h $(PLATFORM)/i_vgavbe.h \
  m_argv.h m_bbox.h mn_engin.h r_draw.h w_wad.h \
- wi_stuff.h
+ wi_stuff.h i_video.h
 
 $(O)/i_vgavbe.o: $(PLATFORM)/i_vgavbe.c z_zone.h doomstat.h doomdata.h \
  doomtype.h d_net.h d_player.h d_items.h doomdef.h \

@@ -48,6 +48,7 @@ static const char rcsid[] = "$Id: i_video.c,v 1.3 2000-08-12 21:29:28 fraggle Ex
 #include "../wi_stuff.h"
 #include "../m_misc.h"   // for M_DrawText, GB 2014
 #include "i_vgavbe.h" // Graphics routines replacements, GB 2014
+#include "../i_video.h" 
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -322,10 +323,9 @@ void I_FinishUpdate(void)
   // int d=I_GetTime_RealTime();
 
    int ymax=SCREENHEIGHT, size;
-   int res_scale = hires + scale_to_hires;
+   int res_scale = RESULTING_SCALE;
    byte * swap = screens[0];
    if (noblit || !in_graphics_mode) return;
-   if (res_scale > 2) res_scale = 2;
 
  //if (v12_compat)    M_DrawText2(1,10,CR_BLUE,true,"V12_COMPAT");   // debug
  //if (compatibility) M_DrawText2(1,16,CR_BLUE,true,"compatibility");// debug 
@@ -348,11 +348,11 @@ void I_FinishUpdate(void)
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
    size = in_hires ? (SCREENWIDTH<<res_scale)*(ymax<<res_scale) : SCREENWIDTH*ymax;
 
-   if (in_hires && scale_to_hires && (scale_to_hires + hires <= 2))
+   if (in_hires && SCALING_TO_HIRES)
      {
-       I_BlitScreenScaled(5);
-       screens[0] = screens[5];
-       screens[5] = swap;
+       I_BlitScreenScaled(2);
+       screens[0] = screens[2];
+       screens[2] = swap;
      }
 
    if (in_page_flip)
@@ -398,7 +398,7 @@ void I_FinishUpdate(void)
 
    if (swap != screens[0])
      {
-       screens[5] = screens[0];
+       screens[2] = screens[0];
        screens[0] = swap;
      }
 }
@@ -587,10 +587,10 @@ static void I_InitGraphicsMode(void)
   }
  
   // HIGH RESOLUTION - 640x400 or 640x480
-  if ((hires + scale_to_hires) && !in_hires)  
+  if (RESULTING_SCALE && !in_hires)  
   {  // GB 2014: Used to just try mode 100h and then 101h, but intel graphics gives trouble if 100h was tried first.
 	 if (vesa_version<1) {hiresfail=1;}
-         else if ((hires + scale_to_hires) >= 2 && vesa_mode_1280x1024>0) 
+         else if (RESULTING_SCALE >= 2 && vesa_mode_1280x1024>0) 
      {
         if (vesa_set_mode(vesa_mode_1280x1024)!=-1)      
 		{                       
@@ -704,7 +704,7 @@ static void I_InitGraphicsMode(void)
   in_graphics_mode = 1;
   in_textmode = false;
   in_page_flip = page_flip;
-  in_hires = hires;
+  in_hires = RESULTING_SCALE;
   setsizeneeded = true;
   //if (!safeparm) I_InitDiskFlash(); // Initialize disk icon
   I_SetPalette(W_CacheLumpName("PLAYPAL",PU_CACHE));
