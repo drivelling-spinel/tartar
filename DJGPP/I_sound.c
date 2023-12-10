@@ -79,6 +79,30 @@ static SAMPLE *raw2SAMPLE(unsigned char *rawdata, int *len)
   return spl;
 }
 
+static SAMPLE *beRaw2SAMPLE(unsigned char *rawdata, int *len)
+{
+  SAMPLE *spl = malloc(sizeof(SAMPLE));
+  *len = *len - 8;
+  spl->bits = 8;
+
+  // comment out this line for allegro pre-v3.12
+//#if(ALLEGRO_VERSION>=3 && ALLEGRO_SUB_VERSION>=10)
+//  spl->stereo = 0;
+//#endif
+
+  // killough 1/22/98: Get correct frequency
+  spl->freq = (rawdata[2]<<8)+rawdata[3];
+  spl->len = *len;
+  spl->priority = 255;
+  spl->loop_start = 0;
+  spl->loop_end = *len;
+  spl->param = -1;
+  spl->data = rawdata + 8;
+  
+  _go32_dpmi_lock_data(rawdata+8, *len);   // killough 3/8/98: lock sound data
+  return spl;
+}
+
 static SAMPLE *wav2SAMPLE(unsigned char *rawdata, int *len)
 {
   SAMPLE *spl = malloc(sizeof(SAMPLE));
@@ -149,10 +173,14 @@ static void *getsfx(char *sfxname)
   
   if(size < 8) return NULL;
   sfx = memcpy(malloc(size), W_CacheLumpNum(sfxlump, PU_CACHE), size);
+
   format = size >= 44 && !strncmp("RIFF", sfx, 4);
-  
   if(format) return wav2SAMPLE(sfx,&size); 
-  return raw2SAMPLE(sfx,&size); // killough 1/22/98: pass all data
+  
+  return (sfx[1] == 0 && sfx[0]) ? raw2SAMPLE(sfx,&size) : // killough 1/22/98: pass all data
+    (sfx[0] == 0 && sfx[1]) ? beRaw2SAMPLE(sfx,&size) :
+      NULL;
+ 
 }
 
 // SFX API
