@@ -29,7 +29,7 @@
 - Eternity MAP11 has sky rendering artifacts 
   _although I think I meant Eviternity when taking notes_
 - Switching weapons while shooting crashes game
-- Original 1st encounter Wolfendoom sounds are played at incorrect sampling rat
+- Original 1st encounter Wolfendoom sounds are played at incorrect sampling rate
 - Weapon in SSG slot has glitchy animation in Rheingold and (original) Arctic Wolf 
 - Vertical line artifact visible in Well of Souls (check revenants) and KDiKDiZD dressing room
 I _think_ it is observable in SMMU as well
