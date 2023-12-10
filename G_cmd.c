@@ -209,7 +209,7 @@ CONSOLE_NETCMD(exitlevel, cf_server|cf_level, netcmd_exitlevel)
   G_ExitLevel();
 }
 
-VARIABLE_BOOLEAN(detect_finallevel, NULL,           onoff);
+VARIABLE_BOOLEAN(detect_finallevel, NULL, yesno);
 CONSOLE_VARIABLE(detectfinal, detect_finallevel, 0) {}
 
 

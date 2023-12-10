@@ -2657,7 +2657,9 @@ void G_InitNew(skill_t skill, char *name)
 
    G_SetFastParms(fastparm || skill == sk_nightmare);  // killough 4/10/98
 
-   random_mus_num = randomize_music ? S_PreselectRandomMusic(): -1;
+   // LP: Select random tune before rebooting the RNG; decide whether to use later
+   random_mus_num = randomize_music ?
+     S_PreselectRandomMusic(randomize_music == randm_no_runnin): -1;
 
    M_ClearRandom();
    

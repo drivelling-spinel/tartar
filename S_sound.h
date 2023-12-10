@@ -63,8 +63,10 @@ void S_ChangeMusic(musicinfo_t *music, int looping);
 // Change to next music; return music name
 char * S_ChangeToNextMusic(boolean next);
 char * S_ChangeToRandomMusic();
-int S_PreselectRandomMusic();
+int S_PreselectRandomMusic(boolean no_runnin);
 char * S_ChangeToPreselectedMusic(int index);
+void S_InsertSomeRandomness();
+int S_NowPlayingLumpNum();
 
 // Stops the music fer sure.
 void S_StopMusic(void);

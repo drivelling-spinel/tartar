@@ -353,7 +353,7 @@ menu_t menu_tartar =
     {it_runcmd,     "More...", "mn_tartar_more"},
     {it_end},    
   },
-  270, 1,                               // x,y
+  233, 1,                               // x,y
   2,                                    // start item
   mf_background  
 };

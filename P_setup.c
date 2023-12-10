@@ -155,6 +155,40 @@ int randomize_music = 0;
 int random_mus_num = -1;
 
 
+static boolean P_ShouldRandomizeMusic(int mapLumpNum)
+{
+  lumpinfo_t * mapLump = lumpinfo[mapLumpNum], * musLump = NULL;
+  int musLumpNum = S_NowPlayingLumpNum();
+
+  if(musLumpNum < 0 || !randomize_music)
+    return FALSE;
+
+  if(randomize_music == randm_always)
+    return TRUE;
+
+  musLump = lumpinfo[musLumpNum];
+
+  if(randomize_music == randm_no_runnin)
+    {
+      if(musLump->handle == iwadhandle)
+        if(!strnicmp("D_RUNNIN", musLump->name, 8)
+         ||!strnicmp("D_E1M1", musLump->name, 8))
+           return TRUE;
+    }
+
+  if(*info_music)
+    return FALSE;
+
+  if(musLump->handle == mapLump->handle && mapLump->handle != iwadhandle)
+    return FALSE;
+
+  if(estimated_maps_no > 3)
+    return FALSE;
+
+  return TRUE;
+}
+
+
 //
 // P_LoadVertexes
 //
@@ -1691,7 +1725,9 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
 
   camera = NULL;        // camera off
 
-  if(random_mus_num >= 0)
+  
+
+  if(P_ShouldRandomizeMusic(lumpnum) && random_mus_num >= 0)          
     {
       const char * mus = S_ChangeToPreselectedMusic(random_mus_num);
       if(mus)

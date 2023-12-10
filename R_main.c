@@ -790,7 +790,7 @@ VARIABLE_BOOLEAN(showpsprites, NULL,                yesno);
 VARIABLE_BOOLEAN(stretchsky, NULL,                  onoff);
 VARIABLE_BOOLEAN(r_swirl, NULL,                     onoff);
 VARIABLE_BOOLEAN(general_translucency, NULL,        onoff);
-VARIABLE_BOOLEAN(faux_translucency, NULL,           onoff);
+VARIABLE_BOOLEAN(faux_translucency, NULL,           yesno);
 VARIABLE_BOOLEAN(water_translucency, NULL,           onoff);
 VARIABLE_INT(tran_filter_pct, NULL,             0, 100, NULL);
 VARIABLE_BOOLEAN(autodetect_hom, NULL,              yesno);

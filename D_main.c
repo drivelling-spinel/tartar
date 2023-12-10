@@ -163,6 +163,10 @@ char firstlevel[9] = "";
 char finallevel[9] = "";
 int detect_finallevel = 1;
 
+
+int estimated_maps_no;
+
+
 //jff 4/19/98 list of standard IWAD names
 const char *const standard_iwads[]=
 {
@@ -472,6 +476,7 @@ void D_640PageDrawer(char *key)
 void D_AdvanceDemo (void)
 {
   advancedemo = true;
+  S_InsertSomeRandomness();
 }
 
 // killough 11/98: functions to perform demo sequences
@@ -2077,7 +2082,13 @@ void D_NewWadLumps(int handle, extra_file_t extra)
           if(isExMy(name))
             {
               reset_finallevel = 1;
+              if(name[3] != '9' && handle != iwadhandle) estimated_maps_no += 1;
             }
+          else if(isMAPxy(name))
+            {
+              if(handle != iwadhandle) estimated_maps_no += 1;
+            }
+
 	  if(isExMy(name) && isExMy(wad_firstlevel))
 	    {
 	      if(name[1] < wad_firstlevel[1] ||       // earlier episode?

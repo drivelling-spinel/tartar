@@ -556,7 +556,27 @@ void S_ChangeMusicNum(int musnum, int looping)
   S_ChangeMusic(music, looping);
 }
 
-int S_PreselectRandomMusic()
+int S_NowPlayingLumpNum()
+{
+  char namebuf[9];
+  int lumpnum;
+
+  if(mus_playing)
+    {
+      sprintf(namebuf, "d_%s", mus_playing->name);
+      return W_CheckNumForName(namebuf);
+    }
+  return NULL;
+}
+
+static int seed = -1;
+
+void S_InsertSomeRandomness()
+{
+  seed = -1;
+}
+
+int S_PreselectRandomMusic(boolean no_runnin)
 {
   int i;
   static int last = 0;
@@ -567,6 +587,14 @@ int S_PreselectRandomMusic()
       min = mus_runnin;
       max = mus_read_m - 1;
     }
+  if(no_runnin) min += 1;
+
+  if(seed == -1)
+    {
+      i = seed = time(NULL) % 16;
+      while(i --> 0) P_Random(pr_mustrack);
+    }
+
   i = (P_Random(pr_mustrack) % (max - min + 1)) + min;
   if(mus_playing == &S_music[i] || i == last + min)
     {
@@ -594,10 +622,9 @@ char * S_ChangeToPreselectedMusic(int i)
   return NULL;
 }
 
-
 char * S_ChangeToRandomMusic()
 {
-  int i = S_PreselectRandomMusic();
+  int i = S_PreselectRandomMusic(false);
   musicinfo_t * music = NULL;
 
   music = &S_music[i];
@@ -876,10 +903,6 @@ void S_Init(int sfxVolume, int musicVolume)
   // no sounds are playing, and they are not mus_paused
   mus_paused = 0;
 
-  {
-    int i = time(NULL) % 16;
-    while(i --> 0) P_Random(pr_mustrack);
-  }
 }
 
 /////////////////////////////////////////////////////////////////////////

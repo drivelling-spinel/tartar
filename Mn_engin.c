@@ -261,7 +261,7 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
       {
 	 char *boundkeys = G_BoundKeys(item->data);
 	 
-	 if(drawing_menu->flags & mf_background)
+         if(drawing_menu->flags & mf_background)
 	 {
 	    // include gap on fullscreen menus
 	    x += GAP;

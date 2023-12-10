@@ -48,6 +48,7 @@ rcsid[] = "$Id: w_wad.c,v 1.20 1998/05/06 11:32:00 jim Exp $";
 #endif
 
 // Location of each lump on disk.
+
 lumpinfo_t **lumpinfo;  //sf : array of ptrs
 int        numlumps;         // killough
 int        hashnumlumps;

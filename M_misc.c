@@ -1649,7 +1649,7 @@ default_t defaults[] = {
   {
     "randomize_music",
     &randomize_music, NULL,
-    0, {0, 1}, dt_number, ss_none, wad_no,
+    0, {0, 3}, dt_number, ss_none, wad_no,
     "Play random music track at level start"
   },
 

@@ -445,8 +445,17 @@ enum {
 extern char * hint_wolfendoom;
 extern char * hint_bjskin;
 
+enum {
+  randm_never = 0,
+  randm_always,
+  randm_auto,
+  randm_no_runnin
+};
+
 extern int randomize_music;
 extern int random_mus_num;
+
+extern int estimated_maps_no;
 
 //=======================================================
 

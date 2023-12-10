@@ -76,6 +76,7 @@ char *skills[]=
 char *bfgtypestr[3]= {"bfg9000", "classic", "bfg11k"};
 char *dmstr[] = {"co-op", "deathmatch", "altdeath", "trideath"};
 char *bloodcolors[] = {"original", "blue", "green", "yellow", "auto" };
+char *randomize_modes[] = {"never", "always", "auto", "no runnin" };
 
 
 /*************************************************************************
@@ -94,6 +95,10 @@ CONSOLE_CONST(hint_wolfendoom, hint_wolfendoom);
 
 CONST_STRING(hint_bjskin);
 CONSOLE_CONST(hint_bjskin, hint_bjskin);
+
+
+CONST_INT(estimated_maps_no);
+CONSOLE_CONST(estmaps, estimated_maps_no);
 
 
 /*************************************************************************
@@ -269,8 +274,7 @@ CONSOLE_VARIABLE(wolfendoom, wolfendoom, 0) {
 VARIABLE_BOOLEAN(wolflooks, NULL, onoff);
 CONSOLE_VARIABLE(wolflooks, wolflooks, 0) {}
 
-
-VARIABLE_BOOLEAN(randomize_music, NULL, onoff);
+VARIABLE_INT(randomize_music, NULL, 0, sizeof(randomize_modes)/sizeof(*randomize_modes) - 1, randomize_modes);
 CONSOLE_VARIABLE(randmus, randomize_music, 0) {}
 
 
@@ -315,6 +319,7 @@ void P_AddCommands()
   C_AddCommand(wolflooks);
 
   C_AddCommand(randmus);
+  C_AddCommand(estmaps);
 
   C_AddCommand(timelimit);
   C_AddCommand(fraglimit);
