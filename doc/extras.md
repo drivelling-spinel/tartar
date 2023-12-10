@@ -1,6 +1,6 @@
 # Extras and goodies 
 
-Description of stuff included with Tartar distribution
+Description of additional stuff included with Tartar distribution
 
 ## Demos
 
