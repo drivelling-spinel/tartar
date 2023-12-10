@@ -1434,12 +1434,8 @@ void G_LoadGame(char *name, int slot, boolean command)
 static void G_LoadGameErr(const char *msg)
 {
    Z_Free(savebuffer);           // Free the savegame buffer
-   MN_ForcedLoadGame(msg);       // Print message asking for 'Y' to force
-   if(command_loadgame)          // If this was a command-line -loadgame
-   {
-      D_StartTitle();            // Start the title screen
-      gamestate = GS_DEMOSCREEN; // And set the game state accordingly
-   }
+   C_Puts(msg);       // Print message asking for 'Y' to force
+   C_SetConsole();
 }
 
 //
@@ -1655,7 +1651,7 @@ static void G_DoLoadGame(void)
   // killough 2/22/98: Friendly savegame version difference message
   if (!forced_loadgame && strncmp(save_p, vcheck, VERSIONSIZE))
     {
-      G_LoadGameErr("Different Savegame Version!!!\n\nAre you sure?");
+      G_LoadGameErr(FC_GOLD "Different Savegame Version!!!" FC_RED);
       return;
     }
 
@@ -1686,10 +1682,9 @@ static void G_DoLoadGame(void)
      if (memcmp(&checksum, save_p, sizeof checksum))
        {
 	 char *msg = malloc(strlen(save_p + sizeof checksum) + 128);
-	 strcpy(msg,"Incompatible Savegame!!!\n");
+	 strcpy(msg, FC_GOLD "Incompatible Savegame!!!\n" FC_RED);
 	 if (save_p[sizeof checksum])
 	   strcat(strcat(msg,"Wads expected:\n\n"), save_p + sizeof checksum);
-	 strcat(msg, "\nAre you sure?");
 	 C_Puts(msg);
 	 G_LoadGameErr(msg);
 	 free(msg);

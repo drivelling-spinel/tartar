@@ -1169,7 +1169,7 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
   if(level_error)       // drop to the console
   {             
     C_SetConsole();
-    C_Puts("Unrecoverable error while loading map\n");
+    C_Puts(FC_GOLD "Unrecoverable error while loading map\n" FC_RED);
     return;
   }
 
@@ -1181,7 +1181,7 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
   if(level_error)       // drop to the console
   {             
     C_SetConsole();
-    C_Puts("Unrecoverable error while loading map");
+    C_Puts(FC_GOLD "Unrecoverable error while loading map" FC_RED);
     return;
   }
 
