@@ -44,7 +44,7 @@
 #include "w_wad.h"
 #include "m_argv.h"
 
-#define EXTRA_STATES_INDEX(extra) ( extra == EXTRA_JUMP ? 2 : extra == EXTRA_SELFIE ? 1 : 0 )
+#define EXTRA_STATES_INDEX(extra) ( (extra) == EXTRA_JUMP ? 2 : (extra) == EXTRA_SELFIE ? 1 : 0 )
 #define INIT_EXTRA_STATES(extra) { int idx = EXTRA_STATES_INDEX(extra); \
   if(idx && states3[idx] == states) \
     { \
@@ -354,11 +354,18 @@ int Ex_DetectAndLoadWiMaps()
     default:
   }
 
-  MARK_EXTRA_LOADED(EXTRA_WIMAPS, loaded);
-  
-  loaded += Ex_LoadWiMapsWad("intmapnr.wad");
   return loaded;
 }
+
+int Ex_DetectAndLoadNerve()
+{
+  int loaded = 0;
+
+  loaded += Ex_LoadWiMapsWad("intmapnr.wad");
+  
+  return loaded;
+}
+
 
 void Ex_DetectAndLoadExtras(void)
 {
@@ -366,7 +373,10 @@ void Ex_DetectAndLoadExtras(void)
   MARK_EXTRA_LOADED(EXTRA_FILTERS, total += loaded = Ex_DetectAndLoadFilters());
   MARK_EXTRA_LOADED(EXTRA_JUMP, total += loaded = Ex_DetectAndLoadJumpwad());
   MARK_EXTRA_LOADED(EXTRA_SELFIE, total += loaded = Ex_DetectAndLoadSelfie());
-  MARK_EXTRA_LOADED(EXTRA_WIMAPS, total += loaded = Ex_DetectAndLoadWiMaps());
+  // WIMAPS is special in that D_Main can signal not to load them via extra status
+  if(IS_EXTRA_LOADED(EXTRA_WIMAPS))
+    MARK_EXTRA_LOADED(EXTRA_WIMAPS, total += loaded = Ex_DetectAndLoadWiMaps());
+  MARK_EXTRA_LOADED(EXTRA_NERVE, total += loaded = Ex_DetectAndLoadNerve())
   if(total)
     D_ReInitWadfiles();
 }

@@ -1379,11 +1379,11 @@ void D_DoomMain(void)
 #endif
   asmp6parm                   = M_CheckParm ("-asmp6");  // GB 2014  
 
-  IdentifyVersion();
-  printf("\n"); // gap
-
   Ex_ResetExtraStatus();
   modifiedgame = false;
+
+  IdentifyVersion();
+  printf("\n"); // gap
 
   D_BuildBEXTables(); // haleyjd
 

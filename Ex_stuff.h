@@ -65,8 +65,8 @@ byte extra_status[NUM_EXTRAS];
 
 void Ex_ResetExtraStatus();
 
-#define IS_EXTRA_LOADED(extra) (extra_status[extra])
-#define MARK_EXTRA_LOADED(extra, trueornot) { extra_status[extra] = trueornot; }
+#define IS_EXTRA_LOADED(extra) (extra_status[(extra)])
+#define MARK_EXTRA_LOADED(extra, trueornot) { extra_status[(extra)] = (trueornot); }
 
 #define EXTRA_STATES_TABLE(extra) ((extra) == EXTRA_SELFIE ? states3[1] : (extra) == EXTRA_JUMP ? states3[2] : states3[0])
 #define EXTRA_WEAPONS_TABLE(extra) ((extra) == EXTRA_SELFIE ? weaponinfo3[1] : (extra) == EXTRA_JUMP ? weaponinfo3[2] : weaponinfo3[0])

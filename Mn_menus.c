@@ -1770,6 +1770,7 @@ menu_t menu_extrabindings =
         {it_binding,      "prev palette",          "pal_prev"},
         {it_binding,      "selfie stick",          "selfie"},
         {it_binding,      "screenshot",            "screenshot"},
+        {it_binding,      "pogo stick",            "pogo"},
 	{it_end},
     },
     150, 1,                        // x,y offsets
