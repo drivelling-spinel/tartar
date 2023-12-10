@@ -11,7 +11,6 @@
   properties. For DOSBox enabling full 63Mb of memory is recommended.
 - Demos in Eviternity play outright weirdly.
 - Demos in Phobos Anomaly: Reborn go out of sync.
-- Demos in Phobos Anomaly: Reborn go out of sync.
 - ChexQuest demos go out of sync.
 - With FILTERS directory filled with InstaDoom WAD-s Tartar exhausts DOS
   file handles very quickly, suggested CONFIG.SYS setting being FILES=70
@@ -23,20 +22,18 @@
 - Top and bottom textures with tall patches sometimes render with glitches; 
   this seems to be relevant for when very tall objects are in proximity, 
   see for example skyscrapers in Jumpwad MAP02 if IDCLIP-ed to close enough.
-- No special handling of tall patches in some cases - e.g.  UI graphics;
-  in fact only things and textures rendering code is  aware that tall patches exist.
 - Tartar crashes when loading Avactor MAP09.
-- Eternity MAP11 has sky rendering artifacts 
-  _although I think I meant Eviternity when taking notes_
 - Switching weapons while shooting crashes game
-- Original 1st encounter Wolfendoom sounds are played at incorrect sampling rate
-- Weapon in SSG slot has glitchy animation in Rheingold and (original) Arctic Wolf 
 - Loading from empty slot crashes the game
 
-
-
-
-- Stereo imagine (especially with headphones) leaves much to be desires, as in   
+_The following are expected to be resolved with Stage 3 Maintenance release 2_:   
+- Stereo image (especially with headphones) leaves much to be desires, as in   
   it is difficult to figure out enemy position by ear
 - MAP04 of Fire on the Mountain crashes the port
 - Death exits don't work properly (check either of Earthless, Nostalgia or Unternity)
+- Eternity MAP11 has sky rendering artifacts 
+  _although I think I meant Eviternity when taking notes_
+- No special handling of tall patches in some cases - e.g.  UI graphics;
+  in fact only things and textures rendering code is  aware that tall patches exist.
+- Original 1st encounter Wolfendoom sounds are played at incorrect sampling rate
+- Weapon in SSG slot has glitchy animation in Rheingold and (original) Arctic Wolf 
