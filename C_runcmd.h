@@ -223,7 +223,7 @@ char *C_VariableStringValue(variable_t *command);
 // haleyjd: the SMMU v3.30 script-running functions
 // (with my fixes :P)
 
-void C_RunScript(char *script);
+void C_RunScript(char *script, int len);
 void C_RunScriptFromFile(char *filename);
 
 /**** tab completion ****/

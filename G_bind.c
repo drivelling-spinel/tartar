@@ -632,22 +632,25 @@ void G_EditBinding(char *action)
 // default script:
 
 static char *cfg_file = NULL; 
+static byte *cfg_data;
 
 void G_LoadDefaults()
 {
-  byte *cfg_data;
   char temp[1024];
+  int len;
 
   sprintf(temp, "%s", "keys.csc");
-  if(M_ReadFile(temp, &cfg_data) <= 0)
+  if((len = M_ReadFile(temp, &cfg_data)) <= 0)
   {
      sprintf(temp, "%s%s", D_DoomExeDir(), "keys.csc");
-     if(M_ReadFile(temp, &cfg_data) <= 0)
+     if((len = M_ReadFile(temp, &cfg_data)) <= 0) {
+        len = W_LumpLength("KEYDEFS");
         cfg_data = W_CacheLumpName("KEYDEFS", PU_STATIC);
+     }
   }
   cfg_file = strdup(temp);
   
-  C_RunScript(cfg_data);
+  C_RunScript(cfg_data, len);
 }
 
 void G_SaveDefaults()

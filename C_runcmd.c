@@ -1023,7 +1023,7 @@ command_t *C_GetCmdForName(char *cmdname)
   files or buffered lumps -- very cool IMHO.
 */
   
-void C_RunScript(char *script)
+void C_RunScript(char *script, int len)
 {
   char buffer[128] = "";
   char *rover;
@@ -1031,11 +1031,11 @@ void C_RunScript(char *script)
   if(!script)
     return;
   
-  for(rover = script; *rover; rover++)
+  for(rover = script; *rover && len >= 0; rover++, len--)
   {
       if(*rover == '\n')      // end of line - run command
       {
-	  //	  C_Puts(buffer);
+	 	  // C_Puts(buffer);
 	  
 	  if(buffer[0] == '#' || buffer[0] == ';' ||
 	     (buffer[0] == '/' && buffer[1] == '/'))
@@ -1079,15 +1079,16 @@ extern int M_ReadFile(const char*, byte**);
 void C_RunScriptFromFile(char *filename)
 {
    char *filedata;
+   int len;
    
-   if(M_ReadFile(filename, (byte **)&filedata) <= 0) // haleyjd: ptr cast
+   if((len = M_ReadFile(filename, (byte **)&filedata)) <= 0) // haleyjd: ptr cast
    {
       C_Printf("couldn't exec script '%s'\n", filename);
    }
    else
    {
       C_Printf("executing script %s\n", filename);
-      C_RunScript(filedata);
+      C_RunScript(filedata, len);
    }
 }
 

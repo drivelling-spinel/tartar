@@ -103,10 +103,13 @@ static SAMPLE *wav2SAMPLE(unsigned char *rawdata, int len)
   SAMPLE *spl = malloc(sizeof(SAMPLE));
   int channels = *(short *)(rawdata+22);
   int i = 0;
+  int bytelen = *(int *)(rawdata+40);
+  
+  if(bytelen > len - 44) bytelen = len - 44;
   
   spl->bits = *(short *)(rawdata+34);
   spl->freq = *(int *)(rawdata+24);
-  spl->len = *(int *)(rawdata+40) >> (spl->bits >> 4);
+  spl->len = bytelen >> (spl->bits >> 4);
   spl->priority = 255;
   spl->loop_start = 0;
   spl->loop_end = spl->len;
@@ -116,7 +119,7 @@ static SAMPLE *wav2SAMPLE(unsigned char *rawdata, int len)
   // Allegro does this for some reason
   for(i = 0; i < spl->len && spl->bits == 16; i += 1) ((char *)spl->data)[1 + (i << 1)] ^= 0x80;
   
-  _go32_dpmi_lock_data(rawdata+8, len);   // killough 3/8/98: lock sound data
+  _go32_dpmi_lock_data(rawdata+44, bytelen);   // killough 3/8/98: lock sound data
   return spl;
 }
 
@@ -133,7 +136,7 @@ static void *getsfx(char *sfxname)
   int  paddedsize;
   char name[20];
   int  sfxlump;
-
+  
   // Get the sound data from the WAD, allocate lump
   //  in zone memory.
   sprintf(name, "ds%s", sfxname);
@@ -148,7 +151,7 @@ static void *getsfx(char *sfxname)
   //  variable. Instead, we will use a
   //  default sound for replacement.
 
-  if ( W_CheckNumForName(name) == -1 ) return NULL;
+  if (W_CheckNumForName(name) == -1 ) return NULL;
 
   sfxlump = W_GetNumForName(name);
 
@@ -175,10 +178,7 @@ static void *getsfx(char *sfxname)
   // Remove the cached lump.
   Z_Free(sfx);
 
-  if(!strncmp("RIFF", paddedsfx, 4)) return wav2SAMPLE(paddedsfx,paddedsize); 
-  
-  // LP: version (?) in the second byte, good chances this is a big endian format file
-  if(paddedsfx[0] == 0 && paddedsfx[1] != 0) return mac2SAMPLE(paddedsfx, paddedsize);
+  if(!strncmp("RIFF", paddedsfx, 4)) return wav2SAMPLE(paddedsfx,paddedsize + 8); 
 
   // Return allocated padded data.
   return raw2SAMPLE(paddedsfx,paddedsize);  // killough 1/22/98: pass all data

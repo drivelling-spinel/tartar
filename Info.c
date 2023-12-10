@@ -100,7 +100,7 @@ char *sprnames[NUMSPRITES+1] = {
   "CROS", // joel: cross stuff
   "CRSS",
 
-  "SELF", "JMPG", "JMPF", "JMPS"
+  "SELF", "JMPG", "JMPF", "JMPS", NULL
 };
 
 // ********************************************************************

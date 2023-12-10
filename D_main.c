@@ -758,7 +758,7 @@ static void CheckIWAD(const char *iwadname,
 		      boolean *hassec)
 {
   FILE *fp = fopen(iwadname, "rb");
-  int ud, rg, sw, cm, sc, tnt, plut, hacx;
+  int ud, rg, sw, cm, sc, tnt, plut, hacx, freed;
   filelump_t lump;
   wadinfo_t header;
   const char *n = lump.name;
@@ -779,7 +779,7 @@ static void CheckIWAD(const char *iwadname,
   // Lack of wolf-3d levels also detected here
 	// sf: this is almost impossible to understand
 
-  for (ud=rg=sw=cm=sc=tnt=plut=0, header.numlumps = LONG(header.numlumps);
+  for (hacx=freed=ud=rg=sw=cm=sc=tnt=plut=0, header.numlumps = LONG(header.numlumps);
        header.numlumps && fread(&lump, sizeof lump, 1, fp); header.numlumps--)
     *n=='E' && n[2]=='M' && !n[4] ?
       n[1]=='4' ? ++ud : n[1]!='1' ? rg += n[1]=='3' || n[1]=='2' : ++sw :
@@ -787,18 +787,19 @@ static void CheckIWAD(const char *iwadname,
       ++cm, sc += n[3]=='3' && (n[4]=='1' || n[4]=='2') :
     *n=='C' && n[1]=='A' && n[2]=='V' && !n[7] ? ++tnt :
     *n=='M' && n[1]=='C' && !n[3] ? ++plut :
-    *n=='H' && n[1]=='A' && n[2]=='C' && n[3]=='X' && n[4]=='-' && ++hacx;
+    *n=='H' && n[1]=='A' && n[2]=='C' && n[3]=='X' && n[4]=='-' ? ++hacx :
+    *n=='F' && n[1]=='R' && n[2]=='E' && n[3]=='E' && n[4]=='D' && n[5]=='O' && n[6]=='O' && n[7] == 'M' && freed++;
 
   fclose(fp);
 
   *gmission = doom;
   *hassec = false;
   *gmode =
-    cm >= 30 ? (*gmission = tnt >= 4 ? pack_tnt :
+    cm >= 30 ? (*gmission = freed ? freedoom : tnt >= 4 ? pack_tnt :
 		plut >= 8 ? pack_plut : doom2,
 		*hassec = sc >= 2, commercial) :
     hacx ? (*gmission = cm <= 5 ? none : hacx_reg , *hassec = sc > 0 , commercial) :
-    ud >= 9 ? retail :
+    ud >= 9 ? (*gmission = freed ? freedoom : doom, retail) :
     rg >= 18 ? registered :
     sw >= 9 ? shareware :
     indetermined;
@@ -1048,6 +1049,12 @@ void IdentifyVersion (void)
               game_name = "Chex Quest";
               gamemission = chex;
               break;
+            }
+           
+          if(gamemission == freedoom) 
+            {
+              game_name = "Freedoom Phase I";
+              break;
             } 
 	  game_name = "Ultimate DOOM version";  // killough 8/8/98
 	  break;
@@ -1069,6 +1076,10 @@ void IdentifyVersion (void)
 	      game_name = "Final DOOM: TNT - Evilution version";
 	      MARK_EXTRA_LOADED(EXTRA_WIMAPS, true);
 	      break;
+
+      case freedoom:
+        game_name = "Freedoom Phase II";
+        break;
 
 	    case pack_plut:
 	      game_name = "Final DOOM: The Plutonia Experiment version";
