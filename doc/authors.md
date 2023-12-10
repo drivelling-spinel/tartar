@@ -1,13 +1,13 @@
 # Acknowledgements
 
-Tartar is based on the previously released work by other authors.
-Please refer to [COPYRGHT] directory for the collection of licences
+Tartar is based on previously released work by other authors.
+Please refer to COPYRGHT directory for the collection of licences
 covering their work listed below.
 
 1. Doom is a rather scary hellish 3-D game, source code for which has 
-   been [released](COPYRIGHT/DOOMLIC.TXT) by ID Software.
+   been [released](COPYRGHT/DOOMLIC.TXT) by ID Software.
 
-2. MBF (Marine's Nest Friend) is a port of Doom source code to DOS
+2. MBF (Marine's Best Friend) is a port of Doom source code to DOS
    based on BOOM (another DOS source port by the famous modding group
    Team TNT). MBF up to version 2.0.3 was developed by Lee Killough.
 
@@ -16,14 +16,14 @@ covering their work listed below.
    compatibility with video and audio hardware. 
 
 4. SMMU (Smack My Marine Up) was a source port by Simon "Fraggle"
-   Howard that built on the original MBF. SMMU version 3.21 serverd
+   Howard that built on the original MBF. SMMU version 3.21 served
    as a basis for [Eternity Engine](COPYRGHT/ee331b7-dos.txt) - 
    game engine for Eternity TC project.
 
 5. Eternity Enigine also contained portions of code from
    [ZDoom by Randy Heit](COPYRGHT/zdoomcode-license.txt). 
 
-6. Starting with version [3.29 developer beta 5](ETERNITY/ee329db5.txt),
+6. Starting with version [3.29 developer beta 5](eternity/ee329db5.txt),
    Eternity Engine contributors lead by James "Quasar" Haley started
    removing from the code the features related to the TC. These were 
    expected to come back eventually as EDF externalized versions, but 
@@ -45,8 +45,8 @@ to bring extra stability and hardware compatibility to the early beta
 version of Eternity Enigne, thus making it and historic content that was built
 to be run with it, more accessible to players with modern hardware, 
 should they choose to run DOS or Windows 9X on that hardware for retro gaming.
-It is built with DJGPP following the process extablished by Gerwin for MBF 2.0.4. 
+It is built with DJGPP following the process explained by Gerwin for MBF 2.0.4. 
 
 As Eternity Engine constitutes the majority of Tartar's code, a collection
-of [documents](ETERNITY) from various public sources that describe the state of 
-Eternity circa 3.29db5-joel2 is included with Tartar's source.  
+of [documents](eternity) from various publicly available sources that describe 
+the state of Eternity circa 3.29db5-joel2 is included with Tartar's source.  
