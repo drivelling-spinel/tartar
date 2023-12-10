@@ -1,0 +1,121 @@
+===========================================================================
+Archive Maintainer      : Remove mail address. 
+Primary purpose         : Source port binary distribution
+===========================================================================
+Title                   : Tartar Doom source port for DOS (TARTAR.EXE) 
+Filename                : TARTAR.ZIP
+Release date            : 12/24/21 (December 24, 2021)
+
+Author                  : Ludicrous_peridot. Uploaded with
+                          permission by Rick ''Red'' Commandeur.
+                         
+Email Address           : [redacted]
+Other Files By Author   : Sega Saturn Doom Experience for GZDoom
+			              ConsolUX
+			  
+Description             : Tartar is a Doom source port for DOS, author aiming for it 
+                          to be useful to players running pure DOS or Windows 9X 
+                          on modern machines for retro gaming.
+
+Additional Info by Red	: 
+
+Additional Credits to   : Gerwin from VOGONS forums for MBF 2.0.4 ,
+			              Joel Murdoch for Caverns of Darkness engine Tartar is based on,
+                          James "Quasar" Haley for Eternity Engine,                           
+                          Rick ''Red'' Commandeur (Uploader),
+                          www.DoomWorld.com for hosting
+===========================================================================
+* What is included *
+
+New levels              : None
+Sounds                  : No
+Music                   : No
+Graphics                : No
+Dehacked/BEX Patch      : No
+Demos                   : No
+Other                   : TARTAR.EXE, assets and configuration needed to run it 
+Other files required    : No
+
+* Play Information *
+
+Game                    : Doom 2
+Single Player           : Designed for
+Cooperative 2-4 Player  : No
+Deathmatch 2-4 Player   : No
+Other game styles       : None 
+Difficulty Settings     : Not implemented
+
+
+* Construction *
+
+Base                    : Caverns of Darkness engine source by Joel Murdoch
+                          released as COD10SRC.ZIP on idgames,
+                          MBF 2.0.4 Maintenance release source code,
+                          released by Gerwin 
+Build Time              : 2 month
+Editor(s) used          : Slade, DETH, DoomBuilder, DJGPP
+
+
+* Copyright / Permissions *
+
+Authors MAY use the contents of this file as a base for
+modification or reuse under the GPL license.  
+
+You MAY distribute this file, provided you include this text file, with
+no modifications.  You may distribute this file in any electronic
+format (BBS, Diskette, CD, etc) as long as you include this file 
+intact.  I have received permission from the original authors of any
+modified or included content in this file to allow further distribution.
+
+* Where to get the file that this text file describes *
+
+The Usual: ftp://archives.gamers.org/pub/idgames/ and mirrors
+
+
+* More info on Tartar *
+
+## Tartar hilights
+
+- Has better audio compatibility through updated Allegro library 
+  from MBF 2.0.4 Maintenance Release by Gerwin 
+- Supports additional screen resolutions of 640x480 and 1280x1024
+- Can load
+    - classic Caverns of Darkness TC for DOS
+    - what remain from the cancelled Eternity TC
+    - Chex Quest without dependency on any Doom assets
+- Includes numerous smaller changes that are seen by the author as 
+  quality of life improvements 
+
+### Playing Doom with TARTAR
+
+1. Download TARTAR.ZIP (you've probably done that if you are reading this)
+
+2. For a quick and simple start either 
+
+   - put one of the supported WADs (e.g. DOOM.WAD, DOOM1.WAD,
+     DOOM2.WAD, PLUTONIA.WAD or TNT.WAD) into the directory
+     with TARTAR.EXE 
+   
+   - or put TARTAR.EXE and other files from the directory into 
+     a directory that has a Doom game installed  
+  
+3. Run SETUP.EXE from directory with TARTAR.EXE and follow
+   on screen instructions to configure sound and music card.
+
+4. Run TARTAR.EXE to play 
+
+### Playing Caverns of Darkness with Tartar
+
+1. Download Caverns of Darkness TC distribution and unzip
+   the contents into a separate directory
+
+2. Download TARTAR.ZIP and copy eveything there to the same 
+   directory as COD **except do not** copy KEYS.CSC and retain
+   the one shipped with the TC.
+
+3. Copy DOOM2.WAD into the same directory as COD
+
+4. Run SETUP.EXE from the COD directory and follow
+   on screen instructions to configure sound and music card.
+
+5. Start TARTAR.EXE -file COD.WAD CODLEV.WAD to play
