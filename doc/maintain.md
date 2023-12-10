@@ -171,12 +171,17 @@ _Note that this is documentation for a work in progress version of Tartar_
 - Finishing 5th map of any Doom 1 episode no longer takes players
   to episode end. This behaviour is retained for Chex Quest
   (it was in fact only intended for Chex Quest originally)
-- `force_load <slot>` CCMD has been added that takes advantage of
-  original MBF code to override savegame compatibility checks
-  when loading a level
+- Opening automap in maps of extreme extents (e.g. MAP04 of Boomer)
+  no longer renders gibberish nor causes subsequent sporadic crashes 
+  while playing or saving/loading games.
+- Zooming out in automap in very large maps no longer causes
+  the map to disappear.
 
 ### System
 
+- `force_load <slot>` CCMD has been added that takes advantage of
+  original MBF code to override savegame compatibility checks
+  when loading a level
 - DeepSea 32 bit format for NODES, SEGS and SUBSECTORS is now supprted,
   so all maps of Avactor (including MAP09 and MAP10) can be loaded
 - Slime trale removal is back on by default and can be overridden from
