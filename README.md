@@ -51,7 +51,7 @@ Tartar distribution is available following the link below:
 
 <https://mega.nz/folder/V50HiaSJ#yZa2LjO_kJB3Vs4tvlR3cQ>
 
-There, STAGE3M2 directory contains current version of the port 
+There, STAGE3M3 directory contains current version of the port 
 including TARTAR.EXE and additional assets and files required to run it. 
 EXTRAS document above describes the contents of DEMOS and GOODIES directories. 
 
@@ -60,7 +60,7 @@ under TARTAR directory - it's available under STAGES/STAGE1.
 
 ### Playing Doom with TARTAR
 
-1. Download STAGE3M2 directory contents from the above link (MEGA has means 
+1. Download STAGE3M3 directory contents from the above link (MEGA has means 
    to download directory as a ZIP archive)
 
 2. For a quick and simple start either 
@@ -85,7 +85,7 @@ under TARTAR directory - it's available under STAGES/STAGE1.
 1. Download Caverns of Darkness TC distribution and unzip the contents 
    into a separate directory
 
-2. Download STAGE3M1 directory contents from the above link (MEGA has means 
+2. Download STAGE3M3 directory contents from the above link (MEGA has means 
    to download directory as a ZIP archive) and copy everything there 
    to the same directory as COD **except do not** copy KEYS.CSC 
    and retain the one shipped with the TC.
