@@ -76,7 +76,7 @@ char *dehfgets(char *buf, size_t n, DEHFILE *fp)
 {
   if (!fp->lump)                                     // If this is a real file,
     return (fgets)(buf, n, (FILE *) fp->inp);        // return regular fgets
-  if (!n || !*fp->inp || fp->size<=0)                // If no more characters
+  if (!n || fp->size<=0)                             // If no more characters
     return NULL;
   if (n==1)
     fp->size--, *buf = *fp->inp++;
