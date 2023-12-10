@@ -648,6 +648,8 @@ void D_InsertFile(char *file)
   numwadfiles_alloc = newalloc;
 }
 
+void D_ListTapeWad();
+
         //sf: console command to list loaded files
 void D_ListWads()
 {
@@ -656,9 +658,8 @@ void D_ListWads()
   
   for(i=0; i<numwadfiles; i++)
     C_Printf("%s\n",wadfiles[i]);
-    
-  if(*D_tape())
-    C_Printf(FC_GRAY "%s " FC_RED "is taped onto the WADs\n", D_tape());
+
+  D_ListTapeWad();    
 }
 
 char basedir[257];
@@ -1345,7 +1346,7 @@ void D_SetGraphicsMode()
 }
 
 void D_DetectAndLoadExtras(void);
-
+int D_DetectAndLoadTapeWads(char *const *filenames, int autoload);
 
 //
 // D_DoomMain
@@ -1498,12 +1499,6 @@ void D_DoomMain(void)
   
   // add any files specified on the command line with -file wadfile
   // to the wad list
-
-  // but first tape
-  if(*D_tape()) 
-    {
-      if(!W_AddExtraFile(D_tape(), EXTRA_TAPE)) usermsg(" %s will be taped onto the WADs", D_tape());
-    }  
 
   // killough 1/31/98, 5/2/98: reload hack removed, -wart same as -warp now.
 
@@ -1683,6 +1678,7 @@ void D_DoomMain(void)
   commercialWiMaps = (commercialWiMaps && !modifiedgame) || M_CheckParm("-wimaps");
 
   startupmsg("W_Init", "Init WADfiles.");
+  D_DetectAndLoadTapeWads(wadfiles, !M_CheckParm("-noload"));
   W_InitMultipleFiles(wadfiles);
   usermsg("");  // gap
 
@@ -1849,8 +1845,11 @@ void D_DoomMain(void)
   if(M_CheckParm("-blockmap")) r_blockmap = true;
 
   // load all dymic extras before starting the game
-  startupmsg("Extras","Detecting extra WADs to autoload.");
-  D_DetectAndLoadExtras();
+  if (!M_CheckParm ("-noload"))
+    {
+      startupmsg("Extras","Detecting extra WADs to autoload.");
+      D_DetectAndLoadExtras();
+    }
 
   startupmsg("S_Init","Setting up sound.");
   S_Init(snd_SfxVolume, snd_MusicVolume);
@@ -2068,7 +2067,40 @@ void D_NewWadLumps(int handle)
 
 }
 
-static char filestr[256];
+static char filestr[PATH_MAX+1];
+static char tapestr[PATH_MAX+1];
+
+int D_DetectAndLoadTapeWads(char *const *filenames, int autoload)
+{
+  if(*D_tape()) 
+    {
+      assert(strlen(D_tape()) < sizeof(tapestr));
+      strcat(tapestr, D_tape());
+      AddDefaultExtension(tapestr, ".wad");
+      if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
+    }
+  
+  while(*filenames && autoload)
+    {
+      struct stat sbuf;
+      ExtractFileBase(*filenames, filestr, sizeof(filestr) - 1);
+      assert(strlen(D_DoomExeDir()) + strlen(filestr) + 10 <= sizeof(tapestr));
+      sprintf(tapestr, "%stape/%s", D_DoomExeDir(), filestr);
+      AddDefaultExtension(tapestr, ".wad");
+      if (!stat(tapestr, &sbuf)) 
+        if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
+      filenames++;
+    }
+    
+  *tapestr = 0;
+  return 0;
+}
+
+void D_ListTapeWad()
+{
+  if(*tapestr)
+    C_Printf(FC_GOLD "%s " FC_RED "is taped onto the WADs\n", tapestr);
+}
 
 int D_FindAllWads(char * dir, char *** fnames)
 {
