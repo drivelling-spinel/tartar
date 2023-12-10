@@ -82,6 +82,9 @@ void P_InitParticleEffects(void)
    byte *palette;
    struct particleColorList *pc = particleColors;
 
+   // LP: for those WAD-s that don't provide a PLAYPAL lump
+   if(Ex_DynamicNumForName(DYNA_PLAYPAL) < 0) return;
+   
    palette = Ex_CacheDynamicLumpName(DYNA_PLAYPAL, PU_STATIC);
 
    // match particle colors to best fit and write back to

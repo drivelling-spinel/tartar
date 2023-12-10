@@ -1466,6 +1466,7 @@ void P_InitEternityVars(void);
 //
 void P_Init (void)
 {
+   P_InitParticleEffects(); // haleyjd 09/30/01
    P_InitSwitchList();
    P_InitPicAnims();
    R_InitSprites(spritelist);
