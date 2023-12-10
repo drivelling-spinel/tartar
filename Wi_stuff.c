@@ -2599,8 +2599,11 @@ wbstartstruct_t* WI_CommercialWbs(wbstartstruct_t * wbs, int lastnext)
             wbs2.epsd += NUMCOMMERCIALEP /* skip TNT */;
           case pack_tnt:
             wbs2.epsd += NUMCOMMERCIALEP /* skip DOOM 2 */;
-          default:
+          case doom2:
             wbs2.epsd += COMMERCIAL_IDX  /* skip Ultimate DOOM */;
+            break;
+          default:
+            wbs2.epsd = -1;
             break;
         }
       }

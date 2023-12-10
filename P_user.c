@@ -115,7 +115,7 @@ void P_CalcHeight (player_t* player)
   player->bob = demo_compatibility ?
      (FixedMul(player->mo->momx, player->mo->momx) +
       FixedMul(player->mo->momy,player->mo->momy))>>2 :
-      (player_bobbing && !wolfendoom)? (FixedMul(player->momx,player->momx) + 
+      (player_bobbing && !wolf3dmode)? (FixedMul(player->momx,player->momx) + 
 	               FixedMul(player->momy,player->momy))>>2 : 0;
 
   if (player->bob > MAXBOB)
@@ -501,7 +501,7 @@ void P_PlayerThink (player_t* player)
         // sf: removed MBF beta stuff
   player->powers[pw_invulnerability] > 4*32 ||    /* Regular Doom */
   player->powers[pw_invulnerability] & 8 ? INVERSECOLORMAP :
-  wolfendoom || player->powers[pw_infrared] > 4*32 || player->powers[pw_infrared] & 8;
+  wolf3dmode || player->powers[pw_infrared] > 4*32 || player->powers[pw_infrared] & 8;
 }
 
 //----------------------------------------------------------------------------

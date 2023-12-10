@@ -315,6 +315,32 @@ char *str_startmap[] = {"ask", "no", "yes"};
 VARIABLE_INT(use_startmap, NULL, -1, 1, str_startmap);
 CONSOLE_VARIABLE(use_startmap, use_startmap, 0) {}
 
+
+/////////////////////////////////////////////////////
+//
+// Tartar Menu
+//
+// Access to new Tartar settings
+//
+
+menu_t menu_tartar =
+{
+  {
+    {it_title,  FC_GOLD "Tartar options",     NULL,               "M_ETCOPT"},
+    {it_toggle, "Make game feel closer to Wolf3D",       "wolfendoom"},   
+    {it_end},
+  },
+  270, 1,                               // x,y
+  1,                                    // start item
+  mf_background 
+};
+
+CONSOLE_COMMAND(mn_tartar, 0)
+{
+  MN_StartMenu(&menu_tartar);
+}
+
+
 /////////////////////////////////////////////////////
 //
 // Features Menu
@@ -330,7 +356,10 @@ menu_t menu_features =
     {it_runcmd, "load wad",             "mn_loadwad" },
     {it_runcmd, "demos",                "mn_demos" },
     {it_gap},
+    {it_runcmd, "Tartar options",       "mn_tartar" },
+    {it_gap},
     {it_runcmd, "about",                "credits" },
+    {it_gap},
     {it_end},
   },
   100, 1,                               // x,y
@@ -342,6 +371,7 @@ CONSOLE_COMMAND(mn_features, 0)
 {
   MN_StartMenu(&menu_features);
 }
+
 
 ////////////////////////////////////////////////
 //
@@ -1557,7 +1587,6 @@ menu_t menu_etccompat =
     {it_toggle,   "Exhaustive line specials check",         "comp_everyline"},   
     {it_toggle,   "Disable SMMU coloured lighting",         "comp_clighting"},   
     {it_toggle,   "Disable support for tall textures",      "comp_talltex"},   
-    {it_toggle,   "Make Wolfendoom closer to Wolf3D",       "wolfendoom"},   
     {it_toggle,   "Remove slime trails (Firelines way)",    "p_rmslime"},
     {it_end},
   },
@@ -1885,6 +1914,8 @@ void MN_AddMenus()
   C_AddCommand(qload);
   
   C_AddCommand(force_load);
+
+  C_AddCommand(mn_tartar);
 
   MN_CreateSaveCmds();
 }

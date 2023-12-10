@@ -132,6 +132,9 @@ boolean remove_slime_trails;
 int def_hide_weapon_on_flash;
 int hide_weapon_on_flash;
 
+int wolfendoom;
+int wolf3dmode;
+
 //----------------------------------------------------------------------------
 //
 // $Log: doomstat.c,v $

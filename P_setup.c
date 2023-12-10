@@ -1784,18 +1784,34 @@ void P_InitEternityVars(void)
 
 void P_ApplyPersistentOptions(void) 
 {
-    int bloodvar;
+    int bloodvar, bloodset = 0, wolfvar;
     
     bloodvar = T_GetGlobalIntVar("_private_bloodcolor", -1);
-    if(bloodvar < 0) {
-        if(info_nobloodcolor) {
+    if(bloodvar < 0)
+      {
+        if(info_nobloodcolor)
+          {
             R_RefreshTranslationTables(0);
             prtclblood = 0;
-            return;
-        }
-    } 
-    prtclblood = bloodcolor;
-    R_RefreshTranslationTables(bloodcolor);
+            bloodset = 1;
+          }
+      }
+    if(!bloodset)
+      {
+        prtclblood = bloodcolor;
+        R_RefreshTranslationTables(bloodcolor);
+      }
+
+
+    wolfvar = T_GetGlobalIntVar("_private_wolfdoom", -1);
+    if(wolfvar < 0 && info_wolf3d)
+      {
+        wolf3dmode = 1;
+      }
+    else 
+      {
+        wolf3dmode = wolfendoom;
+      }
 }
 
 //----------------------------------------------------------------------------

@@ -234,7 +234,7 @@ boolean P_GiveBody(player_t *player, int num)
 boolean P_GiveArmor(player_t *player, int armortype)
 {
   int hits = armortype*100;
-  if (player->armorpoints >= hits && !wolfendoom)
+  if (player->armorpoints >= hits && !wolf3dmode)
     return false;   // don't pick up
   player->armortype = armortype;
   player->armorpoints = hits;
@@ -347,7 +347,7 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
         // sf: remove beta
 
       player->armorpoints++;          // can go over 100%
-      if (player->armorpoints > max_armor && !wolfendoom)
+      if (player->armorpoints > max_armor && !wolf3dmode)
         player->armorpoints = max_armor;
       if (!player->armortype)
         player->armortype = green_armor_class;
@@ -1229,7 +1229,7 @@ void P_DamageMobj(mobj_t *target,mobj_t *inflictor, mobj_t *source, int damage)
           (player->cheats&CF_GODMODE || player->powers[pw_invulnerability]))
         return;
 
-      if (player->armortype && !wolfendoom)
+      if (player->armortype && !wolf3dmode)
         {
           int saved = player->armortype == 1 ? damage/3 : damage/2;
           if (player->armorpoints <= saved)
@@ -1320,7 +1320,7 @@ void P_DamageMobj(mobj_t *target,mobj_t *inflictor, mobj_t *source, int damage)
   if (source && source != target && source->type != MT_VILE &&
       (!target->threshold || target->type == MT_VILE) &&
       ((source->flags ^ target->flags) & MF_FRIEND || 
-       (monster_infighting && !wolfendoom) || demo_version < 203))
+       (monster_infighting && !wolf3dmode) || demo_version < 203))
     {
       // if not intent on another player, chase after this one
       //

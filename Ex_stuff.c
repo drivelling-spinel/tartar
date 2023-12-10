@@ -717,13 +717,6 @@ void Ex_RevertDSStates()
    
 }
 
-void Ex_WolfenDoomStuff()
-{
-  if(!wolfendoom) return;
-  
-  Ex_RevertDSStates();
-}
-
 int Ex_InsertResWadIfMissing(const char * wadname, int index, const char * reswadname)
 {
   int i = strlen(wadname); 
@@ -833,9 +826,58 @@ int Ex_CheckArctictSeWads(const char * wadname, const int index)
     ARCTICSE_RES_WADS3, sizeof(ARCTICSE_RES_WADS3) / sizeof(*ARCTICSE_RES_WADS3));
 }
 
+
+
+int Ex_CheckBTSXWads(const char * wadname, const int index) 
+{
+  int c;
+  char * cpy;
+
+  ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
+  assert(strlen(filestr) + 5 <= sizeof(filestr));
+  AddDefaultExtension(filestr, ".wad");
+  if(strnicmp(filestr, "BTSX_E", 6))
+    return 0;
+  cpy=strdup(filestr);
+  cpy[strlen(cpy)-5]--;
+  c = Ex_InsertResWadIfMissing(wadname, index + 1, cpy);
+  if(!c)
+    {
+      cpy[strlen(cpy)-5] += 2;
+      c = Ex_InsertResWadIfMissing(wadname, index + 1, cpy);
+    }
+  free(cpy);
+  return c;
+}
+
+int Ex_CheckKDiKDiZDWads(const char * wadname, const int index) 
+{
+  int c;
+  char * cpy;
+
+  ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
+  assert(strlen(filestr) + 5 <= sizeof(filestr));
+  AddDefaultExtension(filestr, ".wad");
+  if(strnicmp(filestr, "KDIKDI_", 7))
+    return 0;
+  cpy=strdup(filestr);
+  cpy[strlen(cpy)-5]--;
+  c = Ex_InsertResWadIfMissing(wadname, index + 1, cpy);
+  if(!c)
+    {
+      cpy[strlen(cpy)-5] += 2;
+      c = Ex_InsertResWadIfMissing(wadname, index + 1, cpy);
+    }
+  free(cpy);
+  return c;
+}
+
+
+
 typedef int (related_wad_func_t)(const char *, const int);
-related_wad_func_t *related_wad_funcs[] = { Ex_Check1stEncWads, Ex_CheckNoctWads, Ex_CheckOriginaltWads,
-  Ex_CheckArctictWads, Ex_CheckArctictSeWads };
+related_wad_func_t *related_wad_funcs[] = { Ex_Check1stEncWads,
+  Ex_CheckArctictWads, Ex_CheckArctictSeWads,
+  Ex_CheckBTSXWads, Ex_CheckKDiKDiZDWads };
 
 int Ex_InsertRelatedWads(const char * wadname, const int index)
 {

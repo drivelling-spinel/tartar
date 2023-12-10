@@ -73,6 +73,7 @@ char *info_killfinale;
 char *info_endofgame;
 
 int  info_nobloodcolor;
+int  info_wolf3d;
 
 char * info_intermusic;
 char * info_endpic;
@@ -269,6 +270,7 @@ levelvar_t levelvars[]=
   {IVT_INT,       "bossaction-linespecial",     &info_bossaction_linespecial},
   {IVT_STRING,    "bossaction-clear",           &info_bossaction_clear}, 
 #endif
+  {IVT_INT,       "wolf3d",       &info_wolf3d},
   {IVT_END,       0,              0}
 
 
@@ -349,6 +351,7 @@ void P_ClearLevelVars()
   info_skydelta   = 0;
   info_sky2delta  = 0;
   info_nobloodcolor = 0;
+  info_wolf3d = 0;
 #ifdef BOSSACTION
   info_bossaction_clear = "false";
   info_bossaction_thingtype = info_bossaction_tag = info_bossaction_linespecial = 0;

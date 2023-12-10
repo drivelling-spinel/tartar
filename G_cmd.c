@@ -53,7 +53,6 @@ extern boolean sendpause;
 extern int forwardmove[2];
 extern int sidemove[2];
 
-int wolfendoom;
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -490,9 +489,6 @@ void G_AddWeapPrefs()
     }
 }
 
-VARIABLE_BOOLEAN(wolfendoom, NULL, onoff);
-CONSOLE_VARIABLE(wolfendoom, wolfendoom, 0) {}
-
 
 ///////////////////////////////////////////////////////////////
 //
@@ -610,8 +606,6 @@ void G_AddCommands()
   C_AddCommand(rocket_trails);
   C_AddCommand(grenade_trails);
 
-  C_AddCommand(wolfendoom);
-  
   G_AddChatMacros();
   G_AddWeapPrefs();
   G_AddCompat();

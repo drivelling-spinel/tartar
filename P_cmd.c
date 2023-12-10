@@ -77,6 +77,7 @@ char *bfgtypestr[3]= {"bfg9000", "classic", "bfg11k"};
 char *dmstr[] = {"co-op", "deathmatch", "altdeath", "trideath"};
 char *bloodcolors[] = {"original", "blue", "green", "yellow", "auto" };
 
+
 /*************************************************************************
         Constants
  *************************************************************************/
@@ -245,6 +246,14 @@ CONSOLE_VARIABLE(mon_bloodcolor, bloodcolor, 0) {
     R_RefreshTranslationTables(bloodcolor);
 }
 
+// wolf3d mode
+VARIABLE_BOOLEAN(wolfendoom, NULL, onoff);
+CONSOLE_VARIABLE(wolfendoom, wolfendoom, 0) {
+    wolf3dmode = wolfendoom;
+    if(defaults_loaded) T_EnsureGlobalIntVar("_private_wolfendoom", wolfendoom);
+}
+
+
 void P_Chase_AddCommands();
 void P_Skin_AddCommands();
 
@@ -277,7 +286,9 @@ void P_AddCommands()
   C_AddCommand(mon_helpfriends);
   C_AddCommand(mon_distfriend);
   C_AddCommand(mon_bloodcolor);
-  
+
+  C_AddCommand(wolfendoom);
+
   C_AddCommand(timelimit);
   C_AddCommand(fraglimit);
   

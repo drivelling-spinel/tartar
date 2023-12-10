@@ -1732,7 +1732,6 @@ void D_DoomMain(void)
     ((IS_EXTRA_LOADED(EXTRA_WIMAPS) && !modifiedgame) || M_CheckParm("-wimaps")));
 
   startupmsg("W_Init", "Init WADfiles.");
-  Ex_WolfenDoomStuff();
   
   Ex_DetectAndLoadTapeWads(wadfiles, !M_CheckParm("-noload"));
 

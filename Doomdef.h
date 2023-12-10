@@ -77,7 +77,7 @@ typedef enum {
   hacx_reg,     // HACX registered,
   freedoom,
   arctic,       // Operation Arctic Wolf (1999 version)
-  arcticse,     // Operation Arctic WOlf Special Edition 
+  arcticse,     // Operation Arctic Wolf Special Edition 
   none
 } GameMission_t;
 

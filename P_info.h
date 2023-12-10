@@ -76,6 +76,8 @@ extern int info_bossaction_linespecial;
 
 extern boolean default_weaponowned[NUMWEAPONS];
 
+extern int info_wolf3d;
+
 #endif
 
 // EOF
