@@ -505,9 +505,9 @@ byte *R_GetColumn(int tex, int col)
   return texturecomposite[tex] + ofs;
 }
 
-int R_HasComposite(int tex)
+int R_HasMultipatchColumns(int tex)
 {
-  return !!texturecomposite[tex];
+  return !!texturecomposite[tex] && textureheight[tex] > 255 && comp[comp_talltex];
 }
 
 //

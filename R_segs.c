@@ -404,7 +404,7 @@ static void R_RenderSegLoop (void)
           if(!norender5)
 #endif
             {
-              if(comp[comp_talltex] && R_HasComposite(midtexture))
+              if(R_HasMultipatchColumns(midtexture))
                 DRAW_MASKED_ANYTHING()
               else
                 colfunc ();
@@ -435,7 +435,7 @@ static void R_RenderSegLoop (void)
                   if(!norender6)       
 #endif
                     {
-                      if(comp[comp_talltex] && R_HasComposite(toptexture))
+                      if(R_HasMultipatchColumns(toptexture))
                         DRAW_MASKED_ANYTHING()
                       else                    
                         colfunc ();
@@ -474,7 +474,7 @@ static void R_RenderSegLoop (void)
                   if(!norender7)
 #endif
                     {
-                      if(comp[comp_talltex] && R_HasComposite(bottomtexture))
+                      if(R_HasMultipatchColumns(bottomtexture))
                         DRAW_MASKED_ANYTHING()
                       else   
                         colfunc ();
