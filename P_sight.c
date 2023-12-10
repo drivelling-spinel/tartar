@@ -193,7 +193,7 @@ static boolean P_CrossSubsector(int num, register los_t *los)
 
 static boolean P_CrossBSPNode(int bspnum, register los_t *los)
 {
-  while (!(bspnum & NF_SUBSECTOR))
+  while (!(bspnum & NFX_SUBSECTOR))
     {
       register const node_t *bsp = nodes + bspnum;
       int side = P_DivlineSide(los->strace.x,los->strace.y,(divline_t *)bsp)&1;
@@ -205,7 +205,7 @@ static boolean P_CrossBSPNode(int bspnum, register los_t *los)
         else
           bspnum = bsp->children[side^1];  // cross the ending side
     }
-  return P_CrossSubsector(bspnum == -1 ? 0 : bspnum & ~NF_SUBSECTOR, los);
+  return P_CrossSubsector(bspnum == -1 ? 0 : bspnum & ~NFX_SUBSECTOR, los);
 }
 
 //

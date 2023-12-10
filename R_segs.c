@@ -496,7 +496,10 @@ void R_StoreWallRange(const int start, const int stop)
   linedef->flags |= ML_MAPPED;
 
   // calculate rw_distance for scale calculation
-  rw_normalangle = curline->angle + ANG90;
+  // TODO: hopefully R_PointToAngle2 func does what I think
+  rw_normalangle = curline->angle;
+  if(!rw_normalangle) rw_normalangle = R_PointToAngle2(curline->v1->x, curline->v1->y, curline->v2->x, curline->v2->y);
+  rw_normalangle += ANG90;
   offsetangle = abs(rw_normalangle-rw_angle1);
 
   if (offsetangle > ANG90)
@@ -740,8 +743,8 @@ void R_StoreWallRange(const int start, const int stop)
 
       if (rw_normalangle-rw_angle1 < ANG180)
         rw_offset = -rw_offset;
-
-      rw_offset += sidedef->textureoffset + curline->offset;
+      // hoping R_PointToDist2 does what I think
+      rw_offset += sidedef->textureoffset + (curline->offset ? curline->offset : R_PointToDist2(curline->v1->x, curline->v1->y, curline->linedef->v1->x, curline->linedef->v1->y));
 
       rw_centerangle = ANG90 + viewangle - rw_normalangle;
 

@@ -729,7 +729,7 @@ static void R_Subsector(int num)
 
 void R_RenderBSPNode(int bspnum)
 {
-  while (!(bspnum & NF_SUBSECTOR))  // Found a subsector?
+  while (!(bspnum & NFX_SUBSECTOR))  // Found a subsector?
     {
       node_t *bsp = &nodes[bspnum];
 
@@ -746,7 +746,7 @@ void R_RenderBSPNode(int bspnum)
 
       bspnum = bsp->children[side];
     }
-  R_Subsector(bspnum == -1 ? 0 : bspnum & ~NF_SUBSECTOR);
+  R_Subsector(bspnum == -1 ? 0 : bspnum & ~NFX_SUBSECTOR);
 }
 
 //----------------------------------------------------------------------------

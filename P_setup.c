@@ -61,7 +61,6 @@ rcsid[] = "$Id: p_setup.c,v 1.16 1998/05/07 00:56:49 killough Exp $";
 #include "d_dialog.h"
 #include "d_io.h" // SoM 3/14/2002: strncasecmp
 
-
 void T_BuildGameArrays(void); // in t_array.c
 
 extern int level_error;
@@ -244,8 +243,6 @@ void P_LoadSubsectors (int lump)
     }
 
   Z_Free (data);
-
-  level_error += numsubsectors == 0;
 }
 
 //
@@ -334,6 +331,11 @@ void P_LoadNodes (int lump)
 	{
 	  int k;
           no->children[j] = (unsigned short)SHORT(mn->children[j]);
+          if(no->children[j] & NF_SUBSECTOR) 
+            {
+              no->children[j] &= ~NF_SUBSECTOR;
+              no->children[j] |= NFX_SUBSECTOR;
+            }
 	  for (k=0 ; k<4 ; k++)
             no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
 	}
@@ -342,6 +344,7 @@ void P_LoadNodes (int lump)
   Z_Free (data);
 }
 
+char msgbuf[256];
 
 //
 // P_LoadThings
@@ -614,6 +617,179 @@ void P_LoadSideDefs2(int lump)
 	}
     }
   Z_Free (data);
+}
+
+byte * P_LoadVerticesExtended(byte * data)
+{
+  int OrgVerts, NewVerts;
+  int i;
+  vertex_t * old;
+  OrgVerts = LONG(*(long *)data);
+  data += sizeof(long);
+  NewVerts = LONG(*(long *)data);
+  data += sizeof(long);
+
+  sprintf(msgbuf, "OrgVerts=%d, NewVerts=%d, numvers=%d\n", OrgVerts, NewVerts, numvertexes);
+  DEBUGMSG(msgbuf);
+
+  assert(OrgVerts <= numvertexes);
+  numvertexes = OrgVerts + NewVerts;
+  old = vertexes;
+  vertexes = Z_Realloc(vertexes, (OrgVerts + NewVerts) * sizeof(vertex_t), PU_LEVEL, 0);
+  for(i = 0 ; i < numlines ; i += 1)
+    {
+       lines[i].v1 = vertexes + (lines[i].v1 - old);
+       lines[i].v2 = vertexes + (lines[i].v2 - old);
+    }
+  
+  for(i = OrgVerts; i < numvertexes ; i += 1)
+    {
+      vertexes[i].x = LONG(*(long *)data);
+      data += sizeof(long);
+      vertexes[i].y = LONG(*(long *)data);
+      data += sizeof(long);
+    }
+  return data;
+}
+
+
+byte * P_LoadSubsectorsExtended(byte * data)
+{
+  int first = 0, i;
+  numsubsectors = LONG(*(long *)data);
+  data += sizeof(long);
+  subsectors = Z_Malloc(numsubsectors*sizeof(subsector_t),PU_LEVEL,0);
+  memset(subsectors, 0, numsubsectors*sizeof(subsector_t));
+
+  sprintf(msgbuf, "numsubsectors=%d\n", numsubsectors);
+  DEBUGMSG(msgbuf);
+
+  for (i=0; i<numsubsectors; i++)
+    {
+      subsectors[i].numlines = LONG(*(long *)data);
+      data += sizeof(long);
+      subsectors[i].firstline = first;
+      first += subsectors[i].numlines;
+    }
+
+  return data;
+}
+
+byte * P_LoadSegsExtended(byte * data)
+{
+  int i;
+  numsegs = LONG(*(long *)data);
+  data += sizeof(long);
+  segs = Z_Malloc(numsegs*sizeof(seg_t),PU_LEVEL,0);
+  memset(segs, 0, numsegs*sizeof(seg_t));
+
+  sprintf(msgbuf, "numsegs=%d\n", numsegs);
+  DEBUGMSG(msgbuf);
+
+  for (i=0; i<numsegs; i++)
+    {
+      seg_t *li = segs+i;
+      int side, linedef;
+      line_t *ldef;
+
+      li->v1 = &vertexes[LONG(*(long *)data)];
+      data += sizeof(long);
+      li->v2 = &vertexes[LONG(*(long *)data)];
+      data += sizeof(long);
+      // compute them?
+      li->angle = 0;
+      li->offset = 0;
+      
+      linedef = (unsigned short)SHORT(*(short *)data);
+      data += sizeof(short);
+      ldef = &lines[linedef];
+      li->linedef = ldef;
+      
+      side = *(byte *)data;
+      data += sizeof(byte);
+      li->sidedef = &sides[(unsigned short)(ldef->sidenum[side])];
+      li->frontsector = sides[(unsigned short)(ldef->sidenum[side])].sector;
+
+      // killough 5/3/98: ignore 2s flag if second sidedef missing:
+      if (ldef->flags & ML_TWOSIDED && (unsigned short)(ldef->sidenum[side^1])!=0xffff)
+        li->backsector = sides[(unsigned short)(ldef->sidenum[side^1])].sector;
+      else
+        li->backsector = 0;
+    }
+    
+    return data;
+}
+
+byte * P_LoadNodesExtended(byte * data)
+{
+  int  i;
+
+  numnodes = LONG(*(long *)data);
+  data += sizeof(long);
+  nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);
+
+  sprintf(msgbuf, "numnodes=%d\n", numnodes);
+  DEBUGMSG(msgbuf);
+
+  for (i=0; i<numnodes; i++)
+    {
+      int j;
+      node_t *no = nodes + i;
+
+      no->x = SHORT(*(short *)data)<<FRACBITS;
+      data += sizeof(short);
+      no->y = SHORT(*(short *)data)<<FRACBITS;
+      data += sizeof(short);
+      no->dx = SHORT(*(short *)data)<<FRACBITS;
+      data += sizeof(short);
+      no->dy = SHORT(*(short *)data)<<FRACBITS;
+      data += sizeof(short);
+
+      for (j=0 ; j<2 ; j++)
+        {
+          int k;
+          for (k=0 ; k<4 ; k++)
+            {
+              no->bbox[j][k] = SHORT(*(short *)data)<<FRACBITS;
+              data += sizeof(short);
+            }
+        }
+      
+      for (j=0 ; j<2 ; j++)
+        {
+           no->children[j] = LONG(*(long *)data);
+           data += sizeof(long);
+        }
+    }
+
+  return data;
+}
+
+
+void P_LoadExtended(int lumpnum)
+{
+  byte *data = W_CacheLumpNum(lumpnum, PU_STATIC);
+  int len = W_LumpLength(lumpnum);
+  byte * runner = data;
+  
+  if(len < 4 || strncmp("XNOD", runner, 4)) 
+    {
+      Z_Free(data);
+      return;
+    }
+
+  runner += 4;
+  DEBUGMSG("P_LoadVerticesExtended\n");
+  runner = P_LoadVerticesExtended(runner);
+  DEBUGMSG("P_LoadSubsectorsExtended\n");
+  runner = P_LoadSubsectorsExtended(runner);
+  DEBUGMSG("P_LoadSegsExtended\n");
+  runner = P_LoadSegsExtended(runner);
+  DEBUGMSG("P_LoadNodesExtended\n");
+  runner = P_LoadNodesExtended(runner);
+  DEBUGMSG("P_LoadExtended done\n");
+  
+  Z_Free(data);
 }
 
 //
@@ -1154,6 +1330,8 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
 
   level_error = false;  // reset
 
+  numnodes = numsectors = numsubsectors = 0;
+
   P_LoadVertexes  (lumpnum+ML_VERTEXES);
   P_LoadSectors   (lumpnum+ML_SECTORS);
   P_LoadSideDefs  (lumpnum+ML_SIDEDEFS);             // killough 4/4/98
@@ -1173,11 +1351,14 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
     return;
   }
 
+  P_LoadExtended  (lumpnum+ML_NODES);  
   P_LoadBlockMap  (lumpnum+ML_BLOCKMAP);             // killough 3/1/98
-  P_LoadSubsectors(lumpnum+ML_SSECTORS);
-  P_LoadNodes     (lumpnum+ML_NODES);
-  P_LoadSegs      (lumpnum+ML_SEGS);
+  if (!numsubsectors) P_LoadSubsectors(lumpnum+ML_SSECTORS);
+  if (!numsegs)       P_LoadSegs      (lumpnum+ML_SEGS);
+  if (!numnodes)      P_LoadNodes     (lumpnum+ML_NODES);
 
+  level_error = !numsubsectors || !numsegs || !numnodes;
+  
   if(level_error)       // drop to the console
   {             
     C_SetConsole();
@@ -1201,6 +1382,7 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
 
   bodyqueslot = 0;
   deathmatch_p = deathmatchstarts;
+
   P_LoadThings(lumpnum+ML_THINGS);
 
   DEBUGMSG("ok, things loaded, spawn players\n");

@@ -514,9 +514,9 @@ void R_Init (void)
 subsector_t *R_PointInSubsector(fixed_t x, fixed_t y)
 {
   int nodenum = numnodes-1;
-  while (!(nodenum & NF_SUBSECTOR))
+  while (!(nodenum & NFX_SUBSECTOR))
     nodenum = nodes[nodenum].children[R_PointOnSide(x, y, nodes+nodenum)];
-  return &subsectors[nodenum & ~NF_SUBSECTOR];
+  return &subsectors[nodenum & ~NFX_SUBSECTOR];
 }
 
 int autodetect_hom = 0;       // killough 2/7/98: HOM autodetection flag

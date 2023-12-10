@@ -250,10 +250,17 @@ void D_ProcessEvents (void)
               if (!MN_Responder(events+eventtail))
                  C_Responder(events+eventtail);
         }
-      else
+      else if(consoleactive)
         {
-          if (consoleactive  ? !C_Responder(events+eventtail) : !MN_Responder(events+eventtail))
+          if (!C_Responder(events+eventtail))
             if (!ST_Responder(events+eventtail))
+             if (!MN_Responder(events+eventtail))
+               G_Responder(events+eventtail);
+        }
+      else 
+        {
+          if (!ST_Responder(events+eventtail))
+            if (!MN_Responder(events+eventtail))
               if (gamestate == GS_DEMOSCREEN ? !C_Responder(events+eventtail) : !G_Responder(events+eventtail))
                  gamestate == GS_DEMOSCREEN ? G_Responder(events+eventtail) : C_Responder(events+eventtail);
         }

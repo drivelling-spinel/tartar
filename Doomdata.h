@@ -157,6 +157,7 @@ typedef struct {
 
 // Indicate a leaf.
 #define NF_SUBSECTOR    0x8000
+#define NFX_SUBSECTOR   0x80000000
 
 typedef struct {
   short x;  // Partition line from (x,y) to x+dx,y+dy)
