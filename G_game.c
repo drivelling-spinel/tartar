@@ -645,6 +645,15 @@ static void G_DoLoadLevel(void)
    if(!demo_compatibility && demo_version < 203)   // killough 9/29/98
       basetic = gametic;
 
+
+   for(i = 0; i < MAXPLAYERS; i++)
+   {
+      if(playeringame[i] && players[i].playerstate == PST_DEAD)
+	 players[i].playerstate = PST_REBORN;
+
+      memset(players[i].frags, 0, sizeof(players[i].frags));
+   }
+
    gamestate = GS_LEVEL;
    
    P_SetupLevel(gamemapname, 0, gameskill);
@@ -656,13 +665,6 @@ static void G_DoLoadLevel(void)
       return;
    }
 
-   for(i = 0; i < MAXPLAYERS; i++)
-   {
-      if(playeringame[i] && players[i].playerstate == PST_DEAD)
-	 players[i].playerstate = PST_REBORN;
-
-      memset(players[i].frags, 0, sizeof(players[i].frags));
-   }
 
    if(!netgame || demoplayback)
       consoleplayer = 0;
