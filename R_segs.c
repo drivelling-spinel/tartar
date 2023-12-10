@@ -721,10 +721,6 @@ void R_StoreWallRange(const int start, const int stop)
   angle_t distangle, offsetangle;
   int skipmid;
 
-  fixed_t dx, dy, a, c, ac, rwd_x_offset, rwd_y_offset;
-  fixed_t recentered_v1_x, recentered_v1_y, recentered_v2_x, recentered_v2_y;
-  char scaling_fudge;
-
   if (ds_p == drawsegs+maxdrawsegs)   // killough 1/98 -- fix 2s line HOM
     {
       unsigned newmax = maxdrawsegs ? maxdrawsegs*2 : 128; // killough

@@ -1169,7 +1169,9 @@ int level_error = false;
 
 int R_FlatNumForName(const char *name)    // killough -- const added
 {
-  int i = (W_CheckNumForName)(name, ns_flats);
+  int i = firstflat;
+  if (*name != '-')
+    i = (W_CheckNumForName)(name, ns_flats);
   if (i == -1)
     {
       C_Printf("R_FlatNumForName: %.8s not found\n", name);

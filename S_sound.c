@@ -664,13 +664,15 @@ char * S_ChangeToNextMusic(boolean next)
           int max = mus_runnin - 1;
           int m = i + (next ? 1 : -1);
 
-
           if(gamemode == commercial)
             {
               min = mus_runnin;
               max = NUMMUSIC - 1;
             }
-
+          else if(gamemode == shareware)
+            {
+              max = mus_e1m9;
+            }
 
           if(m > max) m = min;
           else if(m < min) m = max;
