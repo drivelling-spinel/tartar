@@ -58,6 +58,12 @@ extern  boolean respawnparm;  // checkparm of -respawn
 extern  boolean fastparm; // checkparm of -fast
 extern  boolean devparm;  // DEBUG: launched with -devparm
 
+extern  boolean nolfbparm;    // checkparm of -nolfb    GB 2014
+extern  boolean nopmparm;     // checkparm of -nopm     GB 2014
+extern  boolean noasmxparm;   // checkparm of -noasmx   GB 2014
+extern  boolean asmp6parm;    // checkparm of -asmp6    GB 2014
+extern  boolean safeparm;     // checkparm of -safe     GB 2014
+
                 // sf: screenblocks removed, replaced w/screenSize
 extern  int screenSize;     // killough 11/98
 
@@ -296,6 +302,8 @@ extern  gamestate_t     wipegamestate;
 
 extern  int             mouseSensitivity_horiz; // killough
 extern  int             mouseSensitivity_vert;
+extern  boolean         smooth_turning;
+
 
 // debug flag to cancel adaptiveness
 extern  boolean         singletics;

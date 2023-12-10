@@ -246,10 +246,6 @@ int  modeswitched=0;
 // Disk icon:
 int disk_icon;
 //static BITMAP *diskflash, *old_data;
-int safeparm = 0;
-int nolfbparm = 0;
-int asmp6parm = 0;
-int nopmparm = 0;
 
 //-----------------------------------------------------------------------------
 void I_UpdateNoBlit (void){}
@@ -504,6 +500,7 @@ void I_ShutdownGraphics(void)
       //set_gfx_mode(GFX_TEXT, 0, 0, 0, 0); // Turn off graphics mode
 	  set_mode_text();
       in_graphics_mode = 0;
+      in_textmode = true;
 	  vesa_get_screen_base_addr(1); // free mapping, when set before
 	  get_vesa_pm_functions(1);
    }
@@ -644,6 +641,7 @@ static void I_InitGraphicsMode(void)
   if (!in_graphics_mode || hires!=in_hires) V_Init(); // required buffer size has changed
   scroll_offset = 0;
   in_graphics_mode = 1;
+  in_textmode = false;
   in_page_flip = page_flip;
   in_hires = hires;
   setsizeneeded = true;

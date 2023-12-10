@@ -411,6 +411,13 @@ default_t defaults[] = {
     "1 to keep keyboard LEDs turned off"
   },
 
+  { // killough 3/6/98
+    "smooth_turning",
+    &smooth_turning, NULL,
+    0, {0,1}, dt_number, ss_none, wad_no,
+    "1 to smooth out mouse movement"
+  },
+
   { //jff 4/3/98 allow unlimited sensitivity
     "mouse_sensitivity_horiz",
     &mouseSensitivity_horiz, NULL,

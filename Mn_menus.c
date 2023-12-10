@@ -1188,7 +1188,6 @@ menu_t menu_video =
     
     {it_gap},
     {it_info,         FC_GOLD "misc."},
-    {it_toggle,       "\"loading\" disk icon",        "v_diskicon"},
     {it_toggle,       "screenshot format",            "shot_type"},
     {it_toggle,       "text mode startup",            "textmode_startup"},
     

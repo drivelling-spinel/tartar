@@ -343,7 +343,6 @@ char *insure_str[]={"off", "on", "when recording"};
 VARIABLE_INT(demo_insurance, &default_demo_insurance, 0, 2, insure_str);
 CONSOLE_VARIABLE(demo_insurance, demo_insurance, cf_notnet) {}
 
-extern int smooth_turning;
 VARIABLE_BOOLEAN(smooth_turning, NULL,          onoff);
 CONSOLE_VARIABLE(smooth_turning, smooth_turning, 0) {}
 

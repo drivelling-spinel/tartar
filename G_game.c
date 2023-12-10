@@ -131,7 +131,7 @@ byte            *savebuffer;
 int             autorun = false;      // always running?          // phares
 int             automlook = false;
 int             bfglook = 1;
-int             smooth_turning = 0;       // sf
+boolean         smooth_turning = 0;       // sf
 
 // sf: moved sensitivity here
 int             mouseSensitivity_horiz; // has default   //  killough

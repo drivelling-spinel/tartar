@@ -101,6 +101,11 @@ char *csc_files[MAXLOADFILES];
 int textmode_startup = 0;  // sf: textmode_startup for old-fashioned people
 int use_startmap = -1;     // default to -1 for asking in menu
 boolean devparm;           // started game with -devparm
+boolean nolfbparm;      // working -nolfb  GB 2014
+boolean nopmparm;       // working -nopm   GB 2014
+boolean noasmxparm;     // working -noasmx GB 2014
+boolean asmp6parm;      // working -asmp6  GB 2014
+boolean safeparm;       // working -safe   GB 2014
 
 // jff 1/24/98 add new versions of these variables to remember command line
 boolean clnomonsters;   // checkparm of -nomonsters
@@ -1248,6 +1253,17 @@ void D_DoomMain(void)
   // killough 10/98: set default savename based on executable's name
   sprintf(savegamename = malloc(16), "%.4ssav", D_DoomExeName());
 
+  safeparm                    = M_CheckParm ("-safe");   // GB 2014  
+  // GB 2014, safeparm: skip nearptr_enable function, retain memory protection. 0,1 FPS less if I put it in i_main
+  if (_get_dos_version(1)==0x532) {printf("Windows NT based OS detected: Safe mode enabled.\n"); safeparm=1;} // Windows NT, 2000, XP
+  if (!safeparm) 
+   // 2/2/98 Stan, Must call this here.  It's required by both netgames and i_video.c.
+  if (!__djgpp_nearptr_enable()) {printf ("Failed trying to allocate DOS near pointers, try -safe parameter.\n"); return;}
+  nolfbparm                   = M_CheckParm ("-nolfb");  // GB 2014
+  nopmparm                    = M_CheckParm ("-nopm");   // GB 2014
+  noasmxparm                  = M_CheckParm ("-noasmx"); // GB 2014
+  asmp6parm                   = M_CheckParm ("-asmp6");  // GB 2014  
+
   IdentifyVersion();
   printf("\n"); // gap
 
@@ -1653,7 +1669,6 @@ void D_DoomMain(void)
   //
     
   // check
-
   if(in_textmode)
     D_SetGraphicsMode();
 
@@ -1681,6 +1696,7 @@ void D_DoomMain(void)
   
   if(!textmode_startup && !devparm)
     C_Update();
+
 
   idmusnum = -1; //jff 3/17/98 insure idmus number is blank
 
