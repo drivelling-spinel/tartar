@@ -542,20 +542,21 @@ void ST_updateWidgets(void)
 {
   static int  largeammo = 2023; // means "n/a"
   int         i;
+  weaponinfo_t *local_weaponinfo = (plyr->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
 
   // must redirect the pointer if the ready weapon has changed.
   //  if (w_ready.data != plyr->readyweapon)
   //  {
-  if (weaponinfo[plyr->readyweapon].ammo == am_noammo)
+  if (local_weaponinfo[plyr->readyweapon].ammo == am_noammo)
     w_ready.num = &largeammo;
   else
-    w_ready.num = &plyr->ammo[weaponinfo[plyr->readyweapon].ammo];
+    w_ready.num = &plyr->ammo[local_weaponinfo[plyr->readyweapon].ammo];
   //{
   // static int tic=0;
   // static int dir=-1;
   // if (!(tic&15))
-  //   plyr->ammo[weaponinfo[plyr->readyweapon].ammo]+=dir;
-  // if (plyr->ammo[weaponinfo[plyr->readyweapon].ammo] == -100)
+  //   plyr->ammo[local_weaponinfo[plyr->readyweapon].ammo]+=dir;
+  // if (plyr->ammo[local_weaponinfo[plyr->readyweapon].ammo] == -100)
   //   dir = 1;
   // tic++;
   // }
@@ -649,6 +650,7 @@ void ST_doPaletteStuff(void)
 void ST_drawWidgets(boolean refresh)
 {
   int i;
+  weaponinfo_t *local_weaponinfo = (plyr->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
 
   // used by w_arms[] widgets
   st_armson = st_statusbaron && !deathmatch;
@@ -657,11 +659,11 @@ void ST_drawWidgets(boolean refresh)
   st_fragson = deathmatch && st_statusbaron;
 
   //jff 2/16/98 make color of ammo depend on amount
-  if (*w_ready.num*100 < ammo_red*plyr->maxammo[weaponinfo[w_ready.data].ammo])
+  if (*w_ready.num*100 < ammo_red*plyr->maxammo[local_weaponinfo[w_ready.data].ammo])
     STlib_updateNum(&w_ready, cr_red, refresh);
   else
     if (*w_ready.num*100 <
-        ammo_yellow*plyr->maxammo[weaponinfo[w_ready.data].ammo])
+        ammo_yellow*plyr->maxammo[local_weaponinfo[w_ready.data].ammo])
       STlib_updateNum(&w_ready, cr_gold, refresh);
     else
       STlib_updateNum(&w_ready, cr_green, refresh);
@@ -901,13 +903,14 @@ void ST_initData(void)
 void ST_createWidgets(void)
 {
   int i;
+  weaponinfo_t *local_weaponinfo = (plyr->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
 
   // ready weapon ammo
   STlib_initNum(&w_ready,
                 ST_AMMOX,
                 ST_AMMOY,
                 tallnum,
-                &plyr->ammo[weaponinfo[plyr->readyweapon].ammo],
+                &plyr->ammo[local_weaponinfo[plyr->readyweapon].ammo],
                 &st_statusbaron,
                 ST_AMMOWIDTH );
 

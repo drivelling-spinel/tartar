@@ -408,7 +408,7 @@ typedef enum {
   sfx_mbdopn,
   sfx_mbdcls,
 
-  sfx_slfy,
+  sfx_selfie,
 
   NUMSFX
 } sfxenum_t;

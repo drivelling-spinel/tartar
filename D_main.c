@@ -2133,6 +2133,12 @@ int D_DetectAndLoadSelfie()
   memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
   sprintf(filestr, "%s%s", D_DoomExeDir(), files[1]);
   ProcessExtraDehFile(EXTRA_SELFIE, filestr, D_dehout(), 0);
+  // another hack - we just happen to know that selfie overrides BFG sprites
+  for(i = 0 ; i < NUMSTATES ; i += 1)
+    {
+      if(states2[1][i].sprite == SPR_BFGG) states2[1][i].sprite = SPR_SELF;
+    }
+  weaponinfo2[1][wp_bfg].ammo = am_noammo;
   selfieMode = true;
   C_Printf("%s\n",s_GOTSELFIE);
   

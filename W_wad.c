@@ -201,10 +201,10 @@ int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_
     
   if(extra == EXTRA_SELFIE)
     {
-      static char * names[] = { "SELF", "DSBFG" };
+      static char * names[] = { "SELF", "DSBFG", "SS_START", "S_END", "S_START" };
       int i = 0;
 
-      for(i = 0 ; i < 1 ; i += 1)
+      for(i = 0 ; i < 5 ; i += 1)
         {
           if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
         }

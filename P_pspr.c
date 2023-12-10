@@ -83,6 +83,7 @@ static void P_SetPsprite(player_t *player, int position, statenum_t stnum)
 
   do
     {
+      state_t *local_states = (player->cheats & CF_SELFIE) ? states2[1] : states2[0];
       state_t *state;
 
       if (!stnum)
@@ -93,10 +94,10 @@ static void P_SetPsprite(player_t *player, int position, statenum_t stnum)
         }
 
       // killough 7/19/98: Pre-Beta BFG
-      if (stnum == S_BFG1 && bfgtype == bfg_classic)
+      if (stnum == S_BFG1 && bfgtype == bfg_classic && !(player->cheats & CF_SELFIE))
 	stnum = S_OLDBFG1;                 // Skip to alternative weapon frame
 
-      state = &states[stnum];
+      state = &local_states[stnum];
       psp->state = state;
       psp->tics = state->tics;        // could be 0
 
@@ -133,6 +134,7 @@ static void P_SetPsprite(player_t *player, int position, statenum_t stnum)
 static void P_BringUpWeapon(player_t *player)
 {
   statenum_t newstate;
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
 
   if (player->pendingweapon == wp_nochange)
     player->pendingweapon = player->readyweapon;
@@ -140,7 +142,7 @@ static void P_BringUpWeapon(player_t *player)
   if (player->pendingweapon == wp_chainsaw)
     S_StartSound(player->mo, sfx_sawup);
 
-  newstate = weaponinfo[player->pendingweapon].upstate;
+  newstate = local_weaponinfo[player->pendingweapon].upstate;
 
   player->pendingweapon = wp_nochange;
 
@@ -260,7 +262,9 @@ int P_WeaponPreferred(int w1, int w2)
 
 boolean P_CheckAmmo(player_t *player)
 {
-  ammotype_t ammo = weaponinfo[player->readyweapon].ammo;
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  
+  ammotype_t ammo = local_weaponinfo[player->readyweapon].ammo;
   int count = 1;  // Regular
 
   if (player->readyweapon == wp_bfg)  // Minimal amount for one shot varies.
@@ -286,13 +290,13 @@ boolean P_CheckAmmo(player_t *player)
     {
       player->pendingweapon = P_SwitchWeapon(player);      // phares
       // Now set appropriate weapon overlay.
-      P_SetPsprite(player,ps_weapon,weaponinfo[player->readyweapon].downstate);
+      P_SetPsprite(player,ps_weapon,local_weaponinfo[player->readyweapon].downstate);
     }
 
 #if 0 /* PROBABLY UNSAFE */
   else
     if (demo_version >= 203)  // killough 9/5/98: force switch if out of ammo
-      P_SetPsprite(player,ps_weapon,weaponinfo[player->readyweapon].downstate);
+      P_SetPsprite(player,ps_weapon,local_weaponinfo[player->readyweapon].downstate);
 #endif
 
   return false;
@@ -307,12 +311,13 @@ int lastshottic; // killough 3/22/98
 static void P_FireWeapon(player_t *player)
 {
   statenum_t newstate;
-
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  
   if (!P_CheckAmmo(player))
     return;
 
   P_SetMobjState(player->mo, S_PLAY_ATK1);
-  newstate = weaponinfo[player->readyweapon].atkstate;
+  newstate = local_weaponinfo[player->readyweapon].atkstate;
   P_SetPsprite(player, ps_weapon, newstate);
   P_NoiseAlert(player->mo, player->mo);
   lastshottic = gametic;                       // killough 3/22/98
@@ -325,7 +330,9 @@ static void P_FireWeapon(player_t *player)
 
 void P_DropWeapon(player_t *player)
 {
-  P_SetPsprite(player, ps_weapon, weaponinfo[player->readyweapon].downstate);
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  
+  P_SetPsprite(player, ps_weapon, local_weaponinfo[player->readyweapon].downstate);
 }
 
 //
@@ -338,12 +345,15 @@ void P_DropWeapon(player_t *player)
 
 void A_WeaponReady(player_t *player, pspdef_t *psp)
 {
+  state_t *local_states = (player->cheats & CF_SELFIE) ? states2[1] : states2[0];
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+
   // get out of attack state
-  if (player->mo->state == &states[S_PLAY_ATK1]
-      || player->mo->state == &states[S_PLAY_ATK2] )
+  if (player->mo->state == &local_states[S_PLAY_ATK1]
+      || player->mo->state == &local_states[S_PLAY_ATK2] )
     P_SetMobjState(player->mo, S_PLAY);
 
-  if (player->readyweapon == wp_chainsaw && psp->state == &states[S_SAW])
+  if (player->readyweapon == wp_chainsaw && psp->state == &local_states[S_SAW])
     S_StartSound(player->mo, sfx_sawidl);
 
   // check for change
@@ -352,7 +362,7 @@ void A_WeaponReady(player_t *player, pspdef_t *psp)
   if (player->pendingweapon != wp_nochange || !player->health)
     {
       // change weapon (pending weapon should already be validated)
-      statenum_t newstate = weaponinfo[player->readyweapon].downstate;
+      statenum_t newstate = local_weaponinfo[player->readyweapon].downstate;
       P_SetPsprite(player, ps_weapon, newstate);
       return;
     }
@@ -441,6 +451,24 @@ void A_Lower(player_t *player, pspdef_t *psp)
       return;
     }
 
+  if(player->pendingweapon == wp_selfie)
+    {
+      if(selfieMode) 
+        {
+          player->cheats |= CF_SELFIE;
+          player->pendingweapon = wp_bfg;
+        }
+      else
+        {
+          player->pendingweapon = P_SwitchWeapon(player);
+        }
+    }
+  else 
+    if((player->cheats & CF_SELFIE))
+      {
+        player->cheats &= ~CF_SELFIE;
+      }
+    
   player->readyweapon = player->pendingweapon;
 
   P_BringUpWeapon(player);
@@ -453,7 +481,8 @@ void A_Lower(player_t *player, pspdef_t *psp)
 void A_Raise(player_t *player, pspdef_t *psp)
 {
   statenum_t newstate;
-
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  
   psp->sy -= RAISESPEED;
 
   if (psp->sy > WEAPONTOP)
@@ -464,7 +493,7 @@ void A_Raise(player_t *player, pspdef_t *psp)
   // The weapon has been raised all the way,
   //  so change to the ready state.
 
-  newstate = weaponinfo[player->readyweapon].readystate;
+  newstate = local_weaponinfo[player->readyweapon].readystate;
 
   P_SetPsprite(player, ps_weapon, newstate);
 }
@@ -478,8 +507,10 @@ void A_Raise(player_t *player, pspdef_t *psp)
 
 static void A_FireSomething(player_t* player,int adder)
 {
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  
   P_SetPsprite(player, ps_flash,
-               weaponinfo[player->readyweapon].flashstate+adder);
+               local_weaponinfo[player->readyweapon].flashstate+adder);
 
   // killough 3/27/98: prevent recoil in no-clipping mode
   if (!(player->mo->flags & MF_NOCLIP))
@@ -508,9 +539,9 @@ void A_GunFlash(player_t *player, pspdef_t *psp)
 //   that normally use non-infinite ammo types causes your max shells
 //   to reduce, now I know why:
 //
-//   player->ammo[weaponinfo[player->readyweapon].ammo]--;
+//   player->ammo[weaponinfo2[player->readyweapon].ammo]--;
 //
-//   If weaponinfo[].ammo evaluates to am_noammo, then it is equal
+//   If weaponinfo2[].ammo evaluates to am_noammo, then it is equal
 //   to NUMAMMO+1. In the player struct we find:
 //
 //   int ammo[NUMAMMO];
@@ -614,9 +645,11 @@ void A_Saw(player_t *player, pspdef_t *psp)
 
 void A_FireMissile(player_t *player, pspdef_t *psp)
 {
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  
   if(demo_version < 329 || 
-	  weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
-    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+	  local_weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
+    player->ammo[local_weaponinfo[player->readyweapon].ammo]--;
   P_SpawnPlayerMissile(player->mo, MT_ROCKET);
 }
 
@@ -629,9 +662,11 @@ void A_FireMissile(player_t *player, pspdef_t *psp)
 void A_FireBFG(player_t *player, pspdef_t *psp)
 {
   mobj_t *mo;
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+  
   if(demo_version < 329 ||
-	  weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
-    player->ammo[weaponinfo[player->readyweapon].ammo] -= BFGCELLS;
+	  local_weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
+    player->ammo[local_weaponinfo[player->readyweapon].ammo] -= BFGCELLS;
   mo = P_SpawnPlayerMissile(player->mo, MT_BFG );
   mo->extradata.bfgcount = BFGBOUNCE;   // for bouncing bfg - redundant
 }
@@ -648,6 +683,7 @@ void A_FireBFG(player_t *player, pspdef_t *psp)
 void A_FireOldBFG(player_t *player, pspdef_t *psp)
 {
   int type = MT_PLASMA1;
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
 
         // sf: make sure the player is in firing frame, or it looks silly
   P_SetMobjState(player->mo, S_PLAY_ATK2);
@@ -657,8 +693,8 @@ void A_FireOldBFG(player_t *player, pspdef_t *psp)
 	     512*recoil_values[wp_plasma]);
 
   if(demo_version < 329 ||
-	  weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
-    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+	  local_weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
+    player->ammo[local_weaponinfo[player->readyweapon].ammo]--;
 
   if(MapUseFullBright) // haleyjd
     player->extralight = 2;
@@ -723,10 +759,11 @@ void A_FireOldBFG(player_t *player, pspdef_t *psp)
 
 void A_FirePlasma(player_t *player, pspdef_t *psp)
 {
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
 
   if(demo_version < 329 ||
-	  weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
-    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+	  local_weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
+    player->ammo[local_weaponinfo[player->readyweapon].ammo]--;
   A_FireSomething(player, P_Random(pr_plasma) & 1);
 
         // sf: removed beta
@@ -783,14 +820,16 @@ void P_GunShot(mobj_t *mo, boolean accurate)
 
 void A_FirePistol(player_t *player, pspdef_t *psp)
 {
+   weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+   
    S_StartSound(player->mo, sfx_pistol);
    
    P_SetMobjState(player->mo, S_PLAY_ATK2);
    
    if(demo_version < 329 || 
-      weaponinfo[player->readyweapon].ammo < NUMAMMO)
+      local_weaponinfo[player->readyweapon].ammo < NUMAMMO)
    {
-      player->ammo[weaponinfo[player->readyweapon].ammo]--;
+      player->ammo[local_weaponinfo[player->readyweapon].ammo]--;
    }
 
    A_FireSomething(player, 0); // phares
@@ -805,13 +844,14 @@ void A_FirePistol(player_t *player, pspdef_t *psp)
 void A_FireShotgun(player_t *player, pspdef_t *psp)
 {
   int i;
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
 
   S_StartSound(player->mo, sfx_shotgn);
   P_SetMobjState(player->mo, S_PLAY_ATK2);
 
   if(demo_version < 329 ||
-	  weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
-    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+	  local_weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
+    player->ammo[local_weaponinfo[player->readyweapon].ammo]--;
 
   A_FireSomething(player,0);                                      // phares
 
@@ -828,13 +868,14 @@ void A_FireShotgun(player_t *player, pspdef_t *psp)
 void A_FireShotgun2(player_t *player, pspdef_t *psp)
 {
   int i;
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
 
   S_StartSound(player->mo, sfx_dshtgn);
   P_SetMobjState(player->mo, S_PLAY_ATK2);
 
   if(demo_version < 329 ||
-	  weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
-  player->ammo[weaponinfo[player->readyweapon].ammo] -= 2;
+	  local_weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
+  player->ammo[local_weaponinfo[player->readyweapon].ammo] -= 2;
 
   A_FireSomething(player,0);                                      // phares
 
@@ -859,9 +900,12 @@ void A_FireShotgun2(player_t *player, pspdef_t *psp)
 
 void A_FireCGun(player_t *player, pspdef_t *psp)
 {
+  state_t *local_states = (player->cheats & CF_SELFIE) ? states2[1] : states2[0];
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
+   
   S_StartSound(player->mo, sfx_chgun);
 
-  if (!player->ammo[weaponinfo[player->readyweapon].ammo])
+  if (!player->ammo[local_weaponinfo[player->readyweapon].ammo])
     return;
 
         // sf: removed beta
@@ -869,10 +913,10 @@ void A_FireCGun(player_t *player, pspdef_t *psp)
   P_SetMobjState(player->mo, S_PLAY_ATK2);
 
   if(demo_version < 329 ||
-	  weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
-  player->ammo[weaponinfo[player->readyweapon].ammo]--;
+	  local_weaponinfo[player->readyweapon].ammo < NUMAMMO) // haleyjd
+  player->ammo[local_weaponinfo[player->readyweapon].ammo]--;
 
-  A_FireSomething(player,psp->state - &states[S_CHAIN1]);           // phares
+  A_FireSomething(player,psp->state - &local_states[S_CHAIN1]);           // phares
 
   P_BulletSlope(player->mo);
 
@@ -1122,9 +1166,10 @@ void P_MovePsprites(player_t *player)
 
 void A_FireGrenade(player_t *player, pspdef_t *psp)
 {
+  weaponinfo_t * local_weaponinfo = (player->cheats & CF_SELFIE) ? weaponinfo2[1] : weaponinfo2[0];
 
-  if(weaponinfo[player->readyweapon].ammo < NUMAMMO) // fixed here too
-    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+  if(local_weaponinfo[player->readyweapon].ammo < NUMAMMO) // fixed here too
+    player->ammo[local_weaponinfo[player->readyweapon].ammo]--;
   P_SpawnPlayerMissile(player->mo, MT_GRENADE);
 }
 
