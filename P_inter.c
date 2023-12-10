@@ -237,7 +237,8 @@ boolean P_GiveArmor(player_t *player, int armortype)
   if (player->armorpoints >= hits && !wolf3dmode)
     return false;   // don't pick up
   player->armortype = armortype;
-  player->armorpoints = hits;
+  if(wolf3dmode) player->armorpoints += hits;
+  else player->armorpoints = hits;
   return true;
 }
 
