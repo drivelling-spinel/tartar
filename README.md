@@ -9,11 +9,11 @@ machines for retro gaming.
 - Has better audio compatibility through updated Allegro library 
   from [MBF 2.0.4 Maintenance Release](doc/COPYRGHT/MBFUP204.TXT)
   and plays 16 bit sound effects (useful if you have SB16 or later)
-- Supports additional screen resolutions of 640x480 and 1280x1024
+- Supports additional screen resolutions 640x480 and 1280x1024
   with and without upscaling from smaller core rendering resolution
   and optional aspect ratio correction for non-CRT displays
 - Includes numerous quality of life improvements including 
-  auto-loading of WAD, DEH and BEX files to included
+  auto-loading of WAD, DEH and BEX files to include
   skins, fixes and WAD compatibility packs for specific PWADs
 - Offers extended game view size for higher resolutions, 
   new optional "grille" translucency for sprites and textures and 
@@ -76,6 +76,7 @@ WAD-s for that matter) without restarting the level
      and still shoot plasma rifle happily 
   -- drop in JUMPWAD.WAD to switch to "pogo stick" mode in any PWAD
      and jump around by pressing fire
+     (by the way, you can also load Jumpwad as a PWAD with Tartar)
 - Send regards to the loved ones with a bindable hotkey, 
   (e.g. while recording a video)
 
