@@ -114,7 +114,7 @@ Tartar distribution is available following the link below:
 
 There, TARTAR directory contains latest version of the port 
 including TARTAR.EXE and additional assets and files required to run it. 
-EXTRAS document above describes the contents of DEMOS and GOODIES directories. 
+EXTRAS document above describes the contents of GOODIES directories. 
 
 
 ### Playing Doom with TARTAR
@@ -193,22 +193,7 @@ Follow the below steps to have them installed with Tartar
 
 ## On the name of the port
 
-I've been asked why Tartar refers to itself as Eternity Engine when
-being run. As Tartar's author I personally have no issue with this small
-identity crisis and would not hurry resolving it. Even though Tartar comes
-from 2021 it is in a way a thing of the past, and in author's opinion,
-retaining such smaller bits helps retain the "retro" feel that the port
-has to it.
-
-Of course, if this confuses players, author will make the necessary changes,
-(after all they are not hard to make).
-
-The name itself... could it be that Tartar is from Greek Tartarus 
-(Τάρταρος) that is the deepest abyss in Ancient Greek mythology where,
-no doubt, demons and horrible beasts of chaos roam. A suitable place
-for a Doom game protagonist to visit...  
-
-Well, in fact not. Tartar continues a glorious tradition of giving Doom 
+Tartar continues a glorious tradition of giving Doom 
 source ports gastronomic names and bears the name of the white sauce, 
-traditionally served with fried fish (and chips). 
-Indeed, cod is even more delicious when served with tartar.
+traditionally served with potato fries and fried fish (usually COD). 
+
