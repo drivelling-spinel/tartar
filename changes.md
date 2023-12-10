@@ -72,8 +72,8 @@ made available as COD10SRC.ZIP.
 ## Video
 
 - VESA-based lowlevel routines replace Allegro ones for video
-  Low-level system video routines have been replaced by those by @gerwin 
-  for his [MBF 2.0.4](https://www.vogons.org/viewtopic.php?f=24&t=40857).
+  Low-level system video routines have been replaced by those by author  
+  of [MBF 2.0.4](https://www.vogons.org/viewtopic.php?f=24&t=40857).
   The new routines use VESA API calls instead of Allegro and for improved
   video cards compatibility. 
   
@@ -218,7 +218,7 @@ made available as COD10SRC.ZIP.
   translucency effect when used with intended equipment, e.g. a CRT
   VGA display at high enough resolution (1280x1024 would do).
 
-  ![checkers.png]
+  ![checkers.png](checkers.png)
   _Photo demonstrating the resulting effect_
   
   Column and span rendering functions have been provided as well 
@@ -232,7 +232,7 @@ made available as COD10SRC.ZIP.
   this to fuzz-ed objects, like Specter monster or player with invisibility 
   powerup. 
   
-  ![comptran.png] 
+  ![comptran.png](comptran.png) 
   _comparison of no transparency, tranmap-based general transparency 
   and "checkered" transparency_  
   
@@ -263,6 +263,8 @@ or interest in classic vanilla/BOOM/MBF experience.
 
 320x200 resolution will be configured by Tartar.
 
+![usecase1.png](usecase1.png)
+
 ### 2. Classic MBF hires
 
 Player has access to slightly more powerful hardware including and a 
@@ -285,6 +287,8 @@ CRT display but their videocard only supports 640x480 and not 640x400
 
 640x480 resolution will be configured by Tartar.
 
+![usecase3.png](usecase3.png)
+
 ### 4. Gaming system with an "classic" LCD monitor attached
 
 Player has a "classic" 1280x1024 display with 5:4 aspect ratio and
@@ -296,6 +300,9 @@ resolution.
 - Aspect ratio to scale to - 4:3
 
 1280x1024 resolution will be configured by Tartar.
+
+![usecase4.png](usecase4.png)
+
 
 ### 5. Square pixel appreciation on a more modern system
 
@@ -310,13 +317,50 @@ look in a graphical editor had they loaded them.
 
 1280x1024 resolution will be configured by Tartar.
 
-## Experimental mouse changes
+![usecase5.png](usecase5.png)
+
+## Mouse changes
+
+- Option to enable turning smoothing with mouse is now persisted
+  Configuration file option for it is smooth_turning, same name as for CVAR.
+
+- _Experimental_ smoother mouse turning
+  Mouse turning smoothing takes 4 samples into account for _extra_
+  smooth turning when smooth turning is activated in options menu.
+  Previously 2 samples were used.
+
+- _Experimental_ filtering of mouse movement
+  Historically Eternity had been suffering from "jerky" mouse turning, as sharp 
+  turns by the player could easily result in 360 (or more) degree turns in game. 
+  Rather than fixing this at the source as SoM has done 
+  in [late 2008](https://web.archive.org/web/20090110014229/http://som.mancubus.net/),   
+  Tartar author has introduced filtering of exessive mouse readings
+  to prevent unexpected turning behavior. This change is specific to Tartar and
+  makes mouse turns in Tartar "feel" different from other ports. There is no
+  configuration option or CVAR to disable it. 
 
 ## System
 
 ## WADS compatibility
 
 ## Gameplay changes
+
+- Option for blood re-coloring including "intelligent" mode has bee added
+  Enemies menu in Tartar has option to enable re-coloring of blood splats into 
+  other colors from the default red. Color can be set to blue, yellow or green.
+  This will affect all blood splats and particle blood, but not gore, corpses,
+  decorations or wall textures. Screen fade into red when player is in pain is 
+  also not affected by this option. 
+  
+  Additionally intelligent mode is available (Auto in options) that:
+  - changes all blood color to green in Chex 
+  - re-colors Doom Barons and Knights blood color to green
+  - re-colors Doom Cacodemons blood color to blue
+  - retains default color for all other splats (which is red, unless replaced ny pwads)
+
+  CVAR mon_bloodcolor controls blood re-coloring, values are 0-4, 0 corresponds
+  to no re-coloring, 4 - to auto (intelligent mode). The configuration file option
+  is bloodcolor.
 
 ## New CVARS
 
