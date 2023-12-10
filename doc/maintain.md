@@ -10,7 +10,8 @@ The release in the works now will contain:
 4. Supports new option in SMMU-style map information to signal that blood recoloring is not recommended in a map. Loading such map will suppress blood recoloring for the duration of the map, but not change any of the game options, allowing the player to switch between, say KDiKDiZD and some less palette-hacks-intense other mod, without the hassle of going into game options each time. 
 The way it is achieved is by treating the option in mapinfo as a "soft" option in the sense that after the level is started and blood recoloring is suppressed, player may switch it back on any time via Options / Enemies menu and that choice will persist throughout the playthrough, including respawning and subseqent next level. Starting new game resets the engine to again respect recommendations from the maps.
 5. Makes dehacked patches imported from JUMPWAD.WAD and INSTADOOM.WAD work with PWAD-s that themselves have complex PWAD patches, thus enabling selfies and Archie-infused jumping with them. 
-6. Fixes buffer overflow errors when running commands from CSC script files including from KEYS.CSC, and improves controls over buffer length handling here (sound samples) and there (game sprite list).
+6. Fixes buffer overflow errors when running commands from CSC script files including from KEYS.CSC, and improves controls over buffer length handling here (sound samples) and there (game sprite list).d
+7. Probably fixes a rendering bug that previously resulted in vertial line artifacts displayed to clipping errors.
 
 ###### New compatibility WAD for KDiKDiZD that:
 

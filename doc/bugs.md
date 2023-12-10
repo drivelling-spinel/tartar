@@ -31,5 +31,3 @@
 - Switching weapons while shooting crashes game
 - Original 1st encounter Wolfendoom sounds are played at incorrect sampling rate
 - Weapon in SSG slot has glitchy animation in Rheingold and (original) Arctic Wolf 
-- Vertical line artifact visible in Well of Souls (check revenants) and KDiKDiZD dressing room
-I _think_ it is observable in SMMU as well
