@@ -328,7 +328,14 @@ sfxinfo_t S_sfx[] = {
   { "mbdcls",  sg_none,  100, 0, -1, -1, 0 },
   
   { "slf",    sg_none,   100, 0, -1, -1, 0 },
-  { "noway",    sg_oof,    100, 0, -1, -1, 0, sk_oof+1 }
+  { "noway",    sg_oof,    100, 0, -1, -1, 0, sk_oof+1 },
+  // LP: DSV 4 sounds
+  { "icebk",  sg_none,  100, 0, -1, -1, 0 },
+  { "crash",  sg_none,  100, 0, -1, -1, 0 },
+  { "drauto",  sg_none,  100, 0, -1, -1, 0 },
+  { "drspwn",  sg_none,  100, 0, -1, -1, 0 },
+  { "thunr",  sg_none,  100, 0, -1, -1, 0 }
+  
   
 };
 sfxinfo_t chgun=

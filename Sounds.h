@@ -411,6 +411,13 @@ typedef enum {
   sfx_selfie,
   sfx_jump,
 
+  // lp: the quickest way to fix DSV 4 custom sounds 
+  sfx_icebk,
+  sfx_crash,
+  sfx_drauto,
+  sfx_drspwn,
+  sfx_thunr,
+  
   NUMSFX
 } sfxenum_t;
 

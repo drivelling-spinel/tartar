@@ -886,7 +886,8 @@ void R_StoreWallRange(const int start, const int stop)
             {
               if(wolflooks)
               {
-                if(!P_IsDoor(linedef) || P_IsSecret(backsector) || P_WasSecret(backsector)) lightnum++;
+                if((linedef && !P_IsDoor(linedef)) ||
+                 (backsector && (P_IsSecret(backsector) || P_WasSecret(backsector)))) lightnum++;
               }
               else lightnum--;
             }
