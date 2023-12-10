@@ -263,7 +263,7 @@ levelvar_t levelvars[]=
   {IVT_STRING,    "levelpic",     &info_levelpic},
   {IVT_STRING,    "levelname",    &info_levelname},
   {IVT_INT,       "partime",      &info_partime},
-  {IVT_STRING,    "music",        &info_music},
+//  {IVT_STRING,    "music",        &info_music},
   {IVT_STRING,    "skyname",      &info_skyname},
   {IVT_STRING,    "creator",      &info_creator},
   {IVT_STRING,    "interpic",     &info_interpic},

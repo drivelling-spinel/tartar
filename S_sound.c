@@ -867,8 +867,10 @@ void S_Start(void)
 	      };
 	    
 	    // sf: simplified
-            mnum = gameepisode != 4 ?
-              mus_e1m1 + ((gameepisode-1)%3)*9 + gamemap-1 :
+            mnum = gameepisode < 4 ?
+              (mus_e1m1 + (gameepisode - 1)*9 + gamemap-1) :
+              gameepisode > 4 ?
+              (mus_e1m1 + ((gameepisode - 2)%3)*9 + gamemap-1) :
 	      spmus[gamemap-1];
 	  }
      

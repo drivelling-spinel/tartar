@@ -284,7 +284,7 @@ void setvariablevalue(svariable_t *v, svalue_t newvalue)
   if(killscript) return;  // protect the variables when killing script
   
   if(!v) return;
-  
+
   if(v->type == svt_const)
     {
       // const adapts to the value it is set to
@@ -296,15 +296,7 @@ void setvariablevalue(svariable_t *v, svalue_t newvalue)
     }
 
   if(v->type == svt_int)
-    {
-      int ival = intvalue(newvalue);
-      if(!strcmp(v->name, "zoom"))
-      {
-        if(ival < 1)
-          ival = 1;
-      }
-      v->value.i = ival;
-    }
+    v->value.i = intvalue(newvalue);
 
   if(v->type == svt_string)
     strcpy(v->value.s, stringvalue(newvalue));
@@ -327,7 +319,17 @@ void setvariablevalue(svariable_t *v, svalue_t newvalue)
 
 
   if(v->type == svt_pInt)
-    *v->value.pI = intvalue(newvalue);
+  {
+    int ival = intvalue(newvalue);
+    if(!strcmp(v->name, "zoom") || !strcmp(v->name, "fov"))
+    {
+      if(ival < 1)       
+        ival = 1;
+      if(ival > 50)       
+        ival = 50;
+    }
+    *v->value.pI = ival;
+  }
 
   if(v->type == svt_pString)
     {

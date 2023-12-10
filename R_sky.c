@@ -91,7 +91,7 @@ void R_StartSky()
           if(gamemap<21) texturename="SKY2";
     }
   else //jff 3/27/98 and lets not forget about DOOM and Ultimate DOOM huh?
-    switch (gameepisode)
+    switch ((gameepisode <= 4) ? gameepisode : (((gameepisode - 2) % 3) + 1))
       {
       case 1:
         texturename="SKY1";

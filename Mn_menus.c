@@ -262,7 +262,8 @@ static menu_t * Mn_BuildEpisodeMenu(void)
   while(builtin + extra > 0)
     {
       int j = 0;
-      for(j = 0; info_epis_num[j] != position && j < info_epis_count ; j ++);
+      for(j = 0; j < info_epis_count ; j ++)
+        if(info_epis_num[j] == position) break;
 
       if(j == info_epis_count)
         switch(position)
@@ -396,7 +397,8 @@ CONSOLE_COMMAND(newgame, cf_notnet)
     {
 #ifdef EPISINFO
       int j = 0;
-      for(j = 0 ; start_episode != info_epis_num[j] && j < info_epis_count ; j ++);
+      for(j = 0 ; j < info_epis_count ; j ++)
+        if(start_episode == info_epis_num[j]) break;
       if(j == info_epis_count)
         {
 #endif

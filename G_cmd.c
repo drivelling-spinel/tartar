@@ -66,6 +66,7 @@ CONSOLE_COMMAND(i_error, 0)
 
 CONSOLE_COMMAND(starttitle, cf_notnet)
 {
+  automapactive = false; 
   MN_ClearMenus();         // put menu away
   D_StartTitle();
 }
