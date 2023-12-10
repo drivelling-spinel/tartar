@@ -71,7 +71,8 @@ made available as COD10SRC.ZIP.
   file (similar to ALLEGRO.CFG file that original ASETUP.EXE from Allegro
   library produced).
 
-- Sound caching is no longer optional and option is gone from Sound options
+### Sound caching is no longer optional and option is gone from Sound options
+  
   With MBF 2.0.4 lowlevel sound routines inclusion, sound effects are always
   cached at the start of the game. Option to control this is now gone.
 
@@ -394,3 +395,15 @@ look in a graphical editor had they loaded them.
 ## New CVARS
 
 This section lists all the new console variables introduced in Tartar.
+
+ - v_hires        - renderer resolution 
+ - v_scale_hi     - scale renderer output to higher resolution
+ - v_scale_aspect - scale renderer output to 4:3 aspect ratio
+ - v_page_flip    - video mode with page flipping
+ - v_show_fps     - show FPS counter
+ - r_fauxtrans    - enable "checkered" translucency
+ - r_watertrans   - enable translucent deep water
+ 
+ - smooth_turning - enable mouse turning smoothing
+ - mon_bloodcolor - monster bloor re-coloring
+ 
