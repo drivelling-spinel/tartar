@@ -237,7 +237,9 @@ CONSOLE_NETVAR(mon_distfriend, distfriend, cf_server, netcmd_mondistfriend) {}
 
 // blood recolor
 VARIABLE_INT(bloodcolor, NULL, 0, sizeof(bloodcolors)/sizeof(*bloodcolors) - 1, bloodcolors);
-CONSOLE_VARIABLE(mon_bloodcolor, bloodcolor, 0) {}
+CONSOLE_VARIABLE(mon_bloodcolor, bloodcolor, 0) {
+    R_RefreshTranslationTables();
+}
 
 void P_Chase_AddCommands();
 void P_Skin_AddCommands();

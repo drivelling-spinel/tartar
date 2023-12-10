@@ -649,7 +649,23 @@ void R_InitTranslationTables (void)
     {
       for(c=0; c<256; c++)
 	translationtables[i*256 + c] =
-          (c >= 0x70 && c <= 0x7f) || (c >= 0xb0 && c <= 0xbf) 
+          (c >= 0x70 && c <= 0x7f) || (c >= 0xb0 && c <= 0xbf && bloodcolor) 
+             ? translations[i].start +
+                ((c & 0xf) * (translations[i].number-1))/15
+             : c;
+    }
+}
+
+
+void R_RefreshTranslationTables (void)
+{
+  int i, c;
+  
+  for(i=0; i<TRANSLATIONCOLOURS; i++)
+    {
+      for(c=0xb0; c<=0xbf; c++)
+	translationtables[i*256 + c] =
+          bloodcolor  
              ? translations[i].start +
                 ((c & 0xf) * (translations[i].number-1))/15
              : c;
