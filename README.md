@@ -33,14 +33,16 @@ machines for retro gaming.
 ## Documentation
 
 1. [CHANGES](doc/changes.md)     - comprehensive list of changes in Tartar 
-                                   compared to the Eternity Engine version 
-                                   it is based on
-2. [AUTHORS](doc/authors.md)     - acknowledgements for authors of the ports 
+                                   milestone release compared to the 
+                                   Eternity Engine version it is based on
+2. [MAINTAIN](doc/maintain.md)   - changes in latest maintenance release  
+                                   not covered by the above doc
+3. [AUTHORS](doc/authors.md)     - acknowledgements for authors of the ports 
                                    Tartar is based on and their work
-3. [STAGE1](doc/STAGE1.TXT)      - templated (and outdated ;) ) readme one 
-                                   would expect to accompany any scene release
-4. [BUGS](doc/bugs.md)           - known issues in Tartar 
-5. [EXTRAS](doc/extras.md)       - notes on extras and goodies included with 
+4. [STAGE1](doc/STAGE1.TXT)      - templated (and outdated ) readme one 
+                                   would expect to accompany any Doom mod
+5. [BUGS](doc/bugs.md)           - list of known issues in Tartar 
+6. [EXTRAS](doc/extras.md)       - notes on extras and goodies included with 
                                    the distribution 
 
 ## Obtaining and installing Tartar
