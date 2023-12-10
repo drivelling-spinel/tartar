@@ -885,13 +885,13 @@ static void I_InitGraphicsMode(void)
   {
      int status=0;
 	 // Setup Page flipping, optionally combined with Vsync:
+     if (vesa_version<2 && page_flip)  {page_flip=0; MN_ErrorMsg(BADOPT);}  // won't work, would just be wasting frames
      if (use_vsync && !page_flip)      {use_vsync=0; MN_ErrorMsg(BADOPT);}
-         if (vesa_version<2 && use_vsync)  {use_vsync=0; MN_ErrorMsg(BADOPT);}
-         if (vesa_version<2 && page_flip)  {page_flip=0; MN_ErrorMsg(BADOPT);}  // won't work, would just be wasting frames
+     if (vesa_version<2 && use_vsync)  {use_vsync=0; MN_ErrorMsg(BADOPT);}
 	 if (vesa_version>=2)
 	 {
-     	if (in_page_flip && !page_flip) vesa_set_displaystart(0,0,0); // we may still be at the second page, from before
-		else if (!in_page_flip && page_flip)                          // we need to check success.                         
+     	if (in_page_flip && (!page_flip || safeparm)) vesa_set_displaystart(0,0,0); // we may still be at the second page, from before
+		else if (!in_page_flip && (page_flip && !safeparm))                          // we need to check success.                         
 		{
 		   if (page_flip)  status=vesa_set_displaystart(4,0,0);       // shake screen a little to verify. Voodoo 3: keep too multiples of 4, else fail.
                if (status==1) {page_flip=use_vsync=0; MN_ErrorMsg(BADOPT); } // function failed, cancel use
@@ -913,7 +913,7 @@ static void I_InitGraphicsMode(void)
   in_graphics_mode = 1;
   clearscreen = 0;
   in_textmode = false;
-  in_page_flip = page_flip;
+  in_page_flip = page_flip && !safeparm;
   in_hires = RESULTING_SCALE;
   setsizeneeded = true;
   //if (!safeparm) I_InitDiskFlash(); // Initialize disk icon
