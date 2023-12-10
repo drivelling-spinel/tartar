@@ -10,8 +10,6 @@
   Running in Windows 98 is recommended with 65535 DPMI memory in shortcut
   properties. For DOSBox enabling full 63Mb of memory is recommended.
 - Demos in Eviternity play outright weirdly.
-- Demos in Phobos Anomaly: Reborn go out of sync.
-- ChexQuest demos go out of sync.
 - With FILTERS directory filled with InstaDoom WAD-s Tartar exhausts DOS
   file handles very quickly, suggested CONFIG.SYS setting being FILES=70
 - Loading a game saved on E1-type exit special sector crahses Tartar
@@ -20,5 +18,4 @@
 - When loading a game where player skin was changed from marine, 
   player mobj sprite is retained, but player skin is set to marine 
 - Map30 in Eviternity has some visual glitches (HOM) at the beginning 
-  and no music
 - Jumping in Jumpwad loaded as PWAD results in red screen fade sometimes 
