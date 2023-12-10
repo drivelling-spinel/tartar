@@ -86,6 +86,8 @@ int MN_StringWidth(unsigned char *s);
 
 #define MAXMENUITEMS 128
 
+#define M_LINE (10)
+
 struct menuitem_s
 {
   // item types

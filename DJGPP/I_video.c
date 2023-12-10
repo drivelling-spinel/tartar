@@ -927,10 +927,10 @@ static void I_InitGraphicsMode(void)
 //-----------------------------------------------------------------------------
 void I_ResetScreen(void)
 {
+
   if (!in_graphics_mode)
   {
      setsizeneeded = true;
-     V_Init();
      return;
   }
 

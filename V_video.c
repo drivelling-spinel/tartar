@@ -1066,22 +1066,25 @@ void V_DrawBlock(int x, int y, int scrn, int width, int height, byte *src)
       byte *dest = screens[scrn] + (y<<hires)*(SCREENWIDTH<<hires)+(x<<hires);
 
       if (width)
-	while (height--)
-	  {
-	    byte *d = dest;
-	    int t = width;
+        while (height--)
+          {
+            byte *d = dest;
+            int t = width;
             int q, w;
-	    do
-              for(q = 0 ; q < (1 << hires) ; q ++ )
-                {
-                  for(w = 0; w < (1 << hires) ; w ++ )
-                    {
-                        d[q + w * (SCREENWIDTH << hires)] = *src++;
-                    }
-                }
+            do
+              {
+                for(q = 0 ; q < (1 << hires) ; q ++ )
+                  {
+                    for(w = 0; w < (1 << hires) ; w ++ )
+                      {
+                        d[q + w * (SCREENWIDTH << hires)] = *src;
+                      }
+                  }
+                  src++;
+              }
             while (d += (1 << hires), --t);
             dest += (SCREENWIDTH << hires << hires);
-	}
+          }
     }
   else
     {

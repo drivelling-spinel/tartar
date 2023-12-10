@@ -484,12 +484,10 @@ void V_Init(void)
   if (screens[0]) free(screens[0]);
   if (screens[1]) free(screens[1]);
   if (screens[2]) free(screens[2]);
-//  if (screens[3]) free(screens[3]);
 
   screens[0] = calloc(size, 1);
   screens[1] = calloc(size, 1);
   screens[2] = calloc(size, 1 <<rsize << rsize);
-//  screens[3] = calloc(size, 1);
 }
 
 /////////////////////////////

@@ -369,7 +369,7 @@ void D_Display (void)
   MN_Drawer();         // menu is drawn even on top of everything
   C_Drawer();          // but not over console
   NetUpdate();         // send out any new accumulation
-
+  
     //sf : now system independent
   if(v_ticker)
     V_FPSDrawer();
@@ -400,6 +400,7 @@ void D_PageTicker(void)
 
   if (/*!singledemo &&*/ --pagetic < 0)
     D_AdvanceDemo();
+    
 }
 
 //

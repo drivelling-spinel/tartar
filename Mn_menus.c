@@ -325,7 +325,6 @@ menu_t menu_features =
 {
   {
     {it_title,  FC_GOLD "features",     NULL,                   "M_FEAT"},
-    {it_gap},
     {it_runcmd, "multiplayer",          "mn_multi" },
     {it_runcmd, "load wad",             "mn_loadwad" },
     {it_runcmd, "demos",                "mn_demos" },
@@ -333,8 +332,8 @@ menu_t menu_features =
     {it_runcmd, "about",                "credits" },
     {it_end},
   },
-  100, 15,                              // x,y
-  3,                                    // start item
+  100, 1,                               // x,y
+  1,                                    // start item
   mf_background | mf_leftaligned        // skull menu
 };
 
@@ -355,7 +354,6 @@ menu_t menu_demos =
 {
   {
     {it_title,      FC_GOLD "demos",          NULL,             "m_demos"},
-    {it_gap},
     {it_info,       FC_GOLD "play demo"},
     {it_variable,   "demo name",              "mn_demoname"},
     {it_gap},
@@ -370,8 +368,8 @@ menu_t menu_demos =
     {it_gap},
     {it_end},
   },
-  150, 40,           // x,y
-  3,                // start item
+  150, 1,           // x,y
+  2,                // start item
   mf_background,    // full screen
 };
 
@@ -394,15 +392,14 @@ menu_t menu_loadwad =
 {
   {
     {it_title,     FC_GOLD "load wad",    NULL,                   "M_WAD"},
-    {it_gap},
     {it_info,      FC_GOLD "load wad"},
     {it_variable,  "wad name",          "mn_wadname"},
     {it_gap},
     {it_runcmd,    "load wad",          "addfile %mn_wadname; starttitle"},
     {it_end},
   },
-  150, 40,                     // x,y offsets
-  3,                          // starting item
+  150, 1,                     // x,y offsets
+  2,                          // starting item
   mf_background               // full screen 
 };
 
@@ -435,8 +432,6 @@ menu_t menu_multiplayer =
 {
   {
     {it_title,  FC_GOLD "multiplayer",  NULL,                   "M_MULTI"},
-    {it_gap},
-    {it_gap},
     {it_info,   FC_GOLD "connect:"},
     {it_runcmd, "serial/modem",         "mn_serial"},
     {it_runcmd, "tcp/ip",               "mn_tcpip"},
@@ -449,8 +444,8 @@ menu_t menu_multiplayer =
     {it_runcmd, "game settings",        "mn_multigame"},
     {it_end},
   },
-  100, 15,                                      // x,y offsets
-  4,                                            // starting item
+  100, 1,                                       // x,y offsets
+  2,                                            // starting item
   mf_background|mf_leftaligned,                 // fullscreen
 };
 
@@ -478,7 +473,6 @@ menu_t menu_multigame =
 {
   {
     {it_title,    FC_GOLD "multiplayer",        NULL,             "M_MULTI"},
-    {it_gap},
     {it_runcmd,   "done",                       "mn_startgame"},
     {it_gap},
     {it_info,     FC_GOLD "game settings"},
@@ -486,7 +480,6 @@ menu_t menu_multigame =
     {it_variable, "starting level",             "startlevel"},
     {it_toggle,   "skill level",                "skill"},
     {it_toggle,   "no monsters",                "nomonsters"},
-    {it_gap},
     {it_info,     FC_GOLD "auto-exit"},
     {it_variable, "time limit",                 "timelimit"},
     {it_variable, "frag limit",                 "fraglimit"},
@@ -494,8 +487,8 @@ menu_t menu_multigame =
     {it_runcmd,   "advanced..",                 "mn_advanced"},
     {it_end},
   },
-  130, 15,
-  2,                            // start
+  130, 1,
+  4,                            // start
   mf_background,                // full screen
 };
 
@@ -566,24 +559,21 @@ menu_t menu_advanced =
 {
   {
     {it_title,    FC_GOLD "advanced",           NULL,             "M_MULTI"},
-    {it_gap},
     {it_runcmd,   "done",                       "mn_prevmenu"},
     {it_gap},
     {it_toggle,   "fast monsters",              "fast"},
     {it_toggle,   "respawning monsters",        "respawn"},
-    {it_gap},
     {it_toggle,   "allow mlook",                "allowmlook"},
     {it_toggle,   "allow mlook with bfg",       "bfglook"},
     {it_toggle,   "allow autoaim",              "autoaim"},
     {it_variable, "weapon change time",         "weapspeed"},
-    {it_gap},
     {it_toggle,   "variable friction",          "varfriction"},
     {it_toggle,   "boom pusher objects",        "pushers"},
     {it_toggle,   "hurting floors(slime)",      "nukage"},
     {it_end},
   },
-  170, 15,
-  2,                            // start
+  170, 1,
+  3,                            // start
   mf_background,                // full screen
 };
 
@@ -608,7 +598,7 @@ menu_t menu_tcpip =
     {it_runcmd, "",                          "mn_prevmenu"},
     {it_end},
   },
-  180,15,                       // x,y offset
+  180,1,                        // x,y offset
   3,
   mf_background,                // full-screen
 };
@@ -627,19 +617,17 @@ menu_t menu_serial =
 {
   {
     {it_title,  FC_GOLD "Serial/modem",          NULL,           "M_SERIAL"},
-    {it_gap},
     {it_info,           FC_GOLD "settings"},
     {it_toggle,         "com port to use",      "com"},
     {it_variable,       "phone number",         "mn_phonenum"},
-    {it_gap},
     {it_info,           FC_GOLD "connect:"},
     {it_runcmd,         "null modem link",      "mn_ser_connect"},
     {it_runcmd,         "dial",                 "dial %mn_phonenum"},
     {it_runcmd,         "wait for call",        "mn_ser_answer"},
     {it_end},
   },
-  180,15,                       // x,y offset
-  3,
+  180,1,                        // x,y offset
+  2,
   mf_background,                // fullscreen
 };
 
@@ -660,7 +648,6 @@ menu_t menu_chatmacros =
 {
   {
     {it_title,  FC_GOLD "chat macros",           NULL,           "M_CHATM"},
-    {it_gap},
     {it_variable,       "0",            "chatmacro0"},
     {it_variable,       "1",            "chatmacro1"},
     {it_variable,       "2",            "chatmacro2"},
@@ -673,8 +660,8 @@ menu_t menu_chatmacros =
     {it_variable,       "9",            "chatmacro9"},
     {it_end}
   },
-  20,5,                                 // x, y offset
-  2,                                    // chatmacro0 at start
+  20,1,                                 // x, y offset
+  1,                                    // chatmacro0 at start
   mf_background,                        // full-screen
 };
 
@@ -694,16 +681,14 @@ menu_t menu_player =
 {
   {
     {it_title,  FC_GOLD "player setup",           NULL,           "M_PLAYER"},
-    {it_gap},
     {it_variable,       "player name",          "name"},
     {it_toggle,         "player colour",        "colour"},
     {it_toggle,         "player skin",          "skin"},
-    {it_gap},
     {it_toggle,         "handedness",           "lefthanded"},
     {it_end}
   },
-  150,5,                                // x, y offset
-  2,                                    // chatmacro0 at start
+  150,1,                                // x, y offset
+  1,                                    // chatmacro0 at start
   mf_background,                        // full-screen
   MN_PlayerDrawer
 };
@@ -919,7 +904,7 @@ void MN_LoadGameDrawer()
 {
   int i, y;
 
-  for(i=0, y=46; i<SAVESLOTS; i++, y+=16) // haleyjd
+  for(i=0, y=48; i<SAVESLOTS; i++, y+=2 * M_LINE) // haleyjd
     {
       MN_DrawLoadBox(45, y);
     }
@@ -1019,7 +1004,7 @@ void MN_SaveGameDrawer()
 {
    int i, y;
    
-   for(i = 0, y = 46; i < SAVESLOTS; i++, y += 16) // haleyjd
+   for(i = 0, y = 48; i < SAVESLOTS; i++, y += 2*M_LINE) // haleyjd
    {
       MN_DrawLoadBox(45, y);
    }
@@ -1116,15 +1101,12 @@ menu_t menu_options =
 {
   {
     {it_title,  FC_GOLD "options",              NULL,             "M_OPTTTL"},
-    {it_gap},
     {it_info,   FC_GOLD "input"},
     {it_runcmd, "key bindings",			"mn_keybindings"},
     {it_runcmd, "mouse options",                "mn_mouse"},
-    {it_gap},
     {it_info,   FC_GOLD "output"},
     {it_runcmd, "video options",                "mn_video"},
     {it_runcmd, "sound options",                "mn_sound"},
-    {it_gap},
     {it_info,   FC_GOLD "game options"},
     {it_runcmd, "features",                     "mn_features"},
     {it_runcmd, "compatibility",                "mn_compat"},
@@ -1132,15 +1114,14 @@ menu_t menu_options =
     {it_runcmd, "enemies",                      "mn_enemies"},
     {it_runcmd, "weapons",                      "mn_weapons"},
     {it_runcmd, "end game",                     "mn_endgame"},
-    {it_gap},
     {it_info,   FC_GOLD "game widgets"},
     {it_runcmd, "hud settings",                 "mn_hud"},
     {it_runcmd, "status bar",                   "mn_status"},
     {it_runcmd, "automap",                      "mn_automap"},
     {it_end},
   },
-  100, 15,                              // x,y offsets
-  3,                                    // starting item: first selectable
+  100, 1,                               // x,y offsets
+  2,                                    // starting item: first selectable
   mf_background|mf_leftaligned,         // draw background: not a skull menu
 };
 
@@ -1168,7 +1149,6 @@ menu_t menu_video =
 {
   {
     {it_title,        FC_GOLD "video",                NULL, "m_video"},
-    {it_gap},
     {it_info,         FC_GOLD "mode"},
     {it_toggle,       "renderer resolution",          "v_hires"},
     {it_toggle,       "scale to higher resolution",   "v_scale_hi"},
@@ -1178,7 +1158,6 @@ menu_t menu_video =
     {it_toggle,       "show fps",                     "v_show_fps"},
     {it_slider,       "gamma correction",             "gamma"},
     
-    {it_gap},
     {it_info,         FC_GOLD "rendering"},
     {it_runcmd,       "particle options",             "mn_particle"},
     {it_slider,       "screen size",                  "screensize"},
@@ -1186,14 +1165,13 @@ menu_t menu_video =
     {it_toggle,       "translucency",                 "r_trans"},
     {it_variable,     "translucency percentage",      "r_tranpct"},
     
-    {it_gap},
     {it_info,         FC_GOLD "misc."},
     {it_toggle,       "screenshot format",            "shot_type"},
     {it_toggle,       "text mode startup",            "textmode_startup"},
     
     {it_end},
   },
-  200, 15,              // x,y offset
+  200, 1,               // x,y offset
   2,                    // start on first selectable
   mf_background,        // full-screen menu
   MN_VideoModeDrawer
@@ -1227,17 +1205,15 @@ menu_t menu_particles =
 {
    {
       {it_title,        FC_GOLD "video",                NULL, "m_video"},
-      {it_gap},
       {it_toggle,       "render particle effects",     "draw_particles"},
-      {it_gap},
       {it_toggle,       "particle blood splats",       "bloodsplattype"},
       {it_toggle,       "particle bullet puffs",       "bulletpufftype"},
       {it_toggle,       "draw rocket trails",          "rocket_trails"},
       {it_toggle,       "draw grenade trails",         "grenade_trails"},
       {it_end},
    },
-   200, 15,              // x,y offset
-   2,                    // start on first selectable
+   200, 1,               // x,y offset
+   1,                    // start on first selectable
    mf_background,        // full-screen menu
 };
 
@@ -1257,24 +1233,21 @@ menu_t menu_sound =
 {
   {
     {it_title,      FC_GOLD "sound",                NULL, "m_sound"},
-    {it_gap},
     {it_info,       FC_GOLD "use setup.exe to select" },
     {it_info,       FC_GOLD "digi and midi cards"},
     {it_gap},
     {it_info,       FC_GOLD "volume"},
     {it_slider,     "sfx volume",                   "sfx_volume"},
     {it_slider,     "music volume",                 "music_volume"},
-    {it_gap},
     {it_info,       FC_GOLD "setup"},
     {it_toggle,     "sound channels",               "snd_channels"},
     {it_toggle,     "force reverse stereo",         "s_flippan"},
-    {it_gap},
     {it_info,       FC_GOLD "misc"},
     {it_toggle,     "pitched sounds",               "s_pitched"},
     {it_end},
   },
-  180, 15,                     // x, y offset
-  3,                           // first selectable
+  180, 1,                      // x, y offset
+  5,                           // first selectable
   mf_background,               // full-screen menu
 };
 
@@ -1292,25 +1265,21 @@ menu_t menu_mouse =
 {
   {
     {it_title,      FC_GOLD "mouse",                NULL,   "m_mouse"},
-      {it_gap},
       {it_toggle,     "enable mouse",                 "use_mouse"},
-      {it_gap},
       {it_info,       FC_GOLD "sensitivity"},
       {it_slider,     "horizontal",                   "sens_horiz"},
       {it_slider,     "vertical",                     "sens_vert"},
-      {it_gap},
       {it_info,       FC_GOLD "misc."},
       {it_toggle,     "invert mouse",                 "invertmouse"},
       {it_toggle,     "smooth turning",               "smooth_turning"},
       {it_toggle,     "enable joystick",              "use_joystick"},
-      {it_gap},
       {it_info,       FC_GOLD"mouselook"},
       {it_toggle,     "always mouselook",             "alwaysmlook"},
       {it_toggle,     "stretch sky",                  "r_stretchsky"},
       {it_end},
   },
-  200, 15,                      // x, y offset
-  2,                            // first selectable
+  200, 1,                       // x, y offset
+  1,                            // first selectable
   mf_background,                // full-screen menu
 };
 
@@ -1329,7 +1298,6 @@ menu_t menu_hud =
 {
   {
     {it_title,      FC_GOLD "hud settings",         NULL,      "m_hud"},
-    {it_gap},
     {it_info,       FC_GOLD "hud messages"},
     {it_toggle,     "messages",                     "messages"},
     {it_toggle,     "message colour",               "mess_colour"},
@@ -1338,19 +1306,17 @@ menu_t menu_hud =
     {it_variable,   "message time (ms)",            "mess_timer"},
     {it_toggle,     "obituaries",                   "obituaries"},
     {it_toggle,     "obituary colour",              "obcolour"},
-    {it_gap},
     {it_info,       FC_GOLD "full screen display"},
     {it_toggle,     "display type",                 "hu_overlay"},
     {it_toggle,     "hide secrets",                 "hu_hidesecrets"},
-    {it_gap},
     {it_info,       FC_GOLD "misc."},
     {it_toggle,     "crosshair type",               "crosshair"},
     {it_toggle,     "show frags in DM",             "show_scores"},
     {it_toggle,     "automap coords follow pointer",   "map_coords"},
     {it_end},
   },
-  200, 15,                             // x,y offset
-  3,
+  200, 1,                              // x,y offset
+  2,
   mf_background,
 };
 
@@ -1369,26 +1335,22 @@ menu_t menu_statusbar =
 {
   {
     {it_title,      FC_GOLD "status bar",           NULL,           "m_stat"},
-    {it_gap},
     {it_toggle,     "numbers always red",           "st_rednum"},
     {it_toggle,     "percent sign grey",            "st_graypct"},
     {it_toggle,     "single key display",           "st_singlekey"},
-    {it_gap},
     {it_info,       FC_GOLD "status bar colours"},
     {it_variable,   "ammo ok percentage",           "ammo_yellow"},
     {it_variable,   "ammo low percentage",          "ammo_red"},
-    {it_gap},
     {it_variable,   "armour high percentage",       "armor_green"},
     {it_variable,   "armour ok percentage",         "armor_yellow"},
     {it_variable,   "armour low percentage",        "armor_red"},
-    {it_gap},
     {it_variable,   "health high percentage",       "health_green"},
     {it_variable,   "health ok percentage",         "health_yellow"},
     {it_variable,   "health low percentage",        "health_red"},
     {it_end},
   },
-  200, 15,
-  2,
+  200, 1,
+  1,
   mf_background,
 };
 
@@ -1407,7 +1369,6 @@ menu_t menu_automap =
 {
   {
     {it_title,    FC_GOLD,                        NULL,         "m_auto"},
-    {it_gap},
     {it_automap,  "background colour",            "mapcolor_back"},
     {it_automap,  "walls",                        "mapcolor_wall"},
     {it_automap,  "closed door",                  "mapcolor_clsd"},
@@ -1430,8 +1391,8 @@ menu_t menu_automap =
 
     {it_end},
   },
-  200, 15,              // x,y
-  2,                    // starting item
+  200, 1,               // x,y
+  1,                    // starting item
   mf_background,        // fullscreen
 };
 
@@ -1450,7 +1411,6 @@ menu_t menu_weapons =
 {
   {
     {it_title,      FC_GOLD "weapons",              NULL,        "m_weap"},
-    {it_gap},
     {it_info,       FC_GOLD "weapon options"},
     {it_toggle,     "bfg type",                       "bfgtype"},
     {it_toggle,     "bobbing",                        "bobbing"},
@@ -1469,8 +1429,8 @@ menu_t menu_weapons =
     {it_variable,   "9th choice",                     "weappref_9"},
     {it_end},
   },
-  150, 15,                             // x,y offset
-  3,                                   // starting item
+  150, 1,                              // x,y offset
+  2,                                   // starting item
   mf_background,                       // full screen
 };
 
@@ -1488,8 +1448,6 @@ menu_t menu_compat =
 {
   {
     {it_title,      FC_GOLD "compatibility",        NULL,        "m_compat"},
-    {it_gap},
-    {it_toggle,   "use start map",                          "use_startmap"},
     
     {it_toggle,   "some objects don't hang over cliffs",    "comp_dropoff"},
     {it_toggle,   "torque simulation disabled",             "comp_falloff"},
@@ -1510,16 +1468,12 @@ menu_t menu_compat =
     {it_toggle,   "any monster can telefrag on map30",      "comp_telefrag"},
     {it_toggle,   "arch-vile resurrects invincible ghosts", "comp_vile"},
     
-    {it_toggle,   "zombie players can exit levels",         "comp_zombie"},
-    {it_toggle,   "use doom's stairbuilding method",        "comp_stairs"},
-    {it_toggle,   "use doom's floor motion behaviour",      "comp_floors"},
-    {it_toggle,   "use doom's linedef trigger model",       "comp_model"},
-    {it_toggle,   "linedef effects with sector tag = 0",    "comp_zerotags"},
-   
+    {it_gap},
+    {it_runcmd, "more..",                     "mn_compat2"},
     {it_end},
   },
-  270, 5,                     // x,y
-  2,                           // starting item
+  270, 1,                      // x,y
+  1,                           // starting item
   mf_background,               // full screen
 };
 
@@ -1528,12 +1482,36 @@ CONSOLE_COMMAND(mn_compat, 0)
   MN_StartMenu(&menu_compat);
 }
 
+menu_t menu_compat2 =
+{
+  {
+    {it_title,      FC_GOLD "compatibility",        NULL,        "m_compat"},
+    {it_toggle,   "zombie players can exit levels",         "comp_zombie"},
+    {it_toggle,   "use doom's stairbuilding method",        "comp_stairs"},
+    {it_toggle,   "use doom's floor motion behaviour",      "comp_floors"},
+    {it_toggle,   "use doom's linedef trigger model",       "comp_model"},
+    {it_toggle,   "linedef effects with sector tag = 0",    "comp_zerotags"},
+   
+    {it_end},
+  },
+  270, 1,                      // x,y
+  1,                           // starting item
+  mf_background,               // full screen
+};
+
+CONSOLE_COMMAND(mn_compat2, 0)
+{
+  MN_StartMenu(&menu_compat2);
+}
+
+
+
 // haleyjd: New compatibility/functionality options for Eternity
 menu_t menu_etccompat =
 {
   {
     {it_title, FC_GOLD "eternity options", NULL, "M_ETCOPT"},
-    {it_gap},
+    {it_toggle,   "use start map",                          "use_startmap"},
     {it_toggle, "terrain effects inactive", 		    "comp_terrain"},
     {it_toggle, "creatures may respawn outside map",        "comp_respawnfix"},
     {it_toggle, "falling damage inactive",                  "comp_fallingdmg"},
@@ -1542,8 +1520,8 @@ menu_t menu_etccompat =
     {it_toggle,   "MBF mushroom explosion frame in DEH",    "comp_mushroom"},   
     {it_end},
   },
-  270, 5,              // x, y
-  2,                    // starting item
+  270, 1,               // x, y
+  1,                    // starting item
   mf_background,	// full screen
 };
 
@@ -1561,7 +1539,6 @@ menu_t menu_enemies =
 {
   {
     {it_title,      FC_GOLD "enemies",              NULL,      "m_enem"},
-    {it_gap},
     {it_info,       FC_GOLD "monster options"},
     {it_toggle,     "monsters remember target",     "mon_remember"},
     {it_toggle,     "monster infighting",           "mon_infight"},
@@ -1570,17 +1547,14 @@ menu_t menu_enemies =
     {it_toggle,     "affected by friction",         "mon_friction"},
     {it_toggle,     "climb tall stairs",            "mon_climb"},
     {it_toggle,     "no height check melee attacks",   "comp_scratch"}, // joel
-    {it_gap},
     {it_toggle,     "color of blood",               "mon_bloodcolor"},
-    {it_gap},
     {it_info,       FC_GOLD "mbf friend options"},
-    {it_gap},
     {it_variable,   "friend distance",              "mon_distfriend"},
     {it_toggle,     "rescue dying friends",         "mon_helpfriends"},
     {it_end},
   },
-  200,15,                             // x,y offset
-  3,                                  // starting item
+  200,1,                              // x,y offset
+  2,                                  // starting item
   mf_background                       // full screen
 };
 
@@ -1680,11 +1654,9 @@ menu_t menu_keybindings =
   {
     {
         {it_title,  FC_GOLD "key bindings",          NULL,        "M_KEYBND"},
-	{it_gap},
 	{it_runcmd,       "weapon keys",           "mn_weaponkeys"},
 	{it_runcmd,       "environment",           "mn_envkeys"},
         {it_runcmd,       "extra keys",            "mn_extrakeys"},
-	{it_gap},
 	{it_info, FC_GOLD "basic movement"},
 	{it_binding,      "move forward",          "forward"},
 	{it_binding,      "move backward",         "backward"},
@@ -1695,17 +1667,15 @@ menu_t menu_keybindings =
 	{it_binding,      "strafe left",           "moveleft"},
 	{it_binding,      "strafe right",          "moveright"},
 	{it_binding,      "180 degree turn",       "flip"},
-	{it_gap},
 	{it_binding,      "mlook on",              "mlook"},
 	{it_binding,      "look up",               "lookup"},
 	{it_binding,      "look down",             "lookdown"},
 	{it_binding,      "center view",           "center"},
-	{it_gap},
 	{it_binding,      "use",                   "use"},
 	{it_end},
     },
-    150, 5,                       // x,y offsets
-    2,
+    150, 1,                       // x,y offsets
+    1,
     mf_background, // draw background: not a skull menu
   };
 
@@ -1723,7 +1693,6 @@ menu_t menu_weaponbindings =
   {
     {
       {it_title,  FC_GOLD "key bindings",          NULL,        "M_KEYBND"},
-	{it_gap},
 	{it_info, FC_GOLD "weapon keys"},
 	{it_binding,      "weapon 1",              "weapon1"},
 	{it_binding,      "weapon 2",              "weapon2"},
@@ -1735,13 +1704,12 @@ menu_t menu_weaponbindings =
 	{it_binding,      "weapon 8",              "weapon8"},
 	{it_binding,      "weapon 9",              "weapon9"},
 	{it_binding,      "weapon 10",             "weapon10"},
-	{it_gap},
 	{it_binding,      "next weapon",           "nextweapon"},
 	{it_binding,      "attack/fire",           "attack"},
 	{it_end},
     },
-    150, 5,                        // x,y offsets
-    3,
+    150, 1,                        // x,y offsets
+    2,
     mf_background,  // draw background: not a skull menu
   };
 
@@ -1759,11 +1727,9 @@ menu_t menu_envbindings =
   {
     {
       {it_title,  FC_GOLD "key bindings",          NULL,        "M_KEYBND"},
-	{it_gap},
 	{it_info,         FC_GOLD "environment"},
 	{it_binding,      "screen size up",        "screensize +"},
 	{it_binding,      "screen size down",      "screensize -"},
-	{it_gap},
 	{it_binding,      "load game",             "mn_loadgame"},
 	{it_binding,      "save game",             "mn_savegame"},
 	{it_binding,      "volume",                "mn_sound"},
@@ -1776,8 +1742,8 @@ menu_t menu_envbindings =
 	{it_binding,      "gamma correction",      "gamma /"},
 	{it_end},
     },
-    150, 5,                        // x,y offsets
-    3,
+    150, 1,                        // x,y offsets
+    2,
     mf_background,  // draw background: not a skull menu
   };
 
@@ -1796,17 +1762,15 @@ menu_t menu_extrabindings =
   {
     {
       {it_title,  FC_GOLD "key bindings",          NULL,        "M_KEYBND"},
-	{it_gap},
         {it_info,         FC_GOLD "extras"},
         {it_binding,      "next palette",          "pal_next"},
         {it_binding,      "prev palette",          "pal_prev"},
-	{it_gap},
         {it_binding,      "selfie stick",          "selfie"},
         {it_binding,      "screenshot",            "screenshot"},
 	{it_end},
     },
-    150, 5,                        // x,y offsets
-    3,
+    150, 1,                        // x,y offsets
+    1,
     mf_background,  // draw background: not a skull menu
   };
 
@@ -1854,6 +1818,7 @@ void MN_AddMenus()
   C_AddCommand(mn_sound);
   C_AddCommand(mn_weapons);
   C_AddCommand(mn_compat);
+  C_AddCommand(mn_compat2);
   C_AddCommand(mn_etccompat); // haleyjd: new eternity options menu
   C_AddCommand(mn_enemies);
   C_AddCommand(mn_hud);

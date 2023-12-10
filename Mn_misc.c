@@ -92,7 +92,7 @@ static void WriteCentredText(char *message)
 	  x = (SCREENWIDTH - V_StringWidth(tempbuf)) / 2;
 	  V_WriteText(tempbuf, x, y);
 	  addrover = tempbuf;  // reset addrover
-	  y += 7; // next line
+	  y += M_LINE - 1; // next line
 	}
       else      // add next char
 	{

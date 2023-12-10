@@ -156,7 +156,7 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
     (drawing_menu->flags & mf_skullmenu) ||
     (drawing_menu->flags & mf_leftaligned);
 
-  if(item->type == it_gap) return 8;    // skip drawing if a gap
+  if(item->type == it_gap) return M_LINE;    // skip drawing if a gap
 
   item->x = x; item->y = y;       // save x,y to item
  
@@ -189,7 +189,6 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
 	  return height + 1;   // 1 pixel gap
 	}
     }
-
   // draw description text
   
   if(item->type == it_title)
@@ -354,7 +353,7 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
       }
     }
   
-  return 8;   // text height
+  return M_LINE;   // text height
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -426,7 +425,7 @@ void MN_DrawMenu(menu_t *menu)
     {
       // make it flash
       if((menu_error_time / 8) % 2)
-	MN_WriteTextColoured(menu_error_message, CR_TAN, 10, 192);
+	MN_WriteTextColoured(menu_error_message, CR_TAN, 10, SCREENHEIGHT - M_LINE);
     }
   else
     {
@@ -449,7 +448,7 @@ void MN_DrawMenu(menu_t *menu)
 	  else
 	    helpmsg = "use left/right to change value";
 	}
-      MN_WriteTextColoured(helpmsg, CR_GOLD, 10, 192);
+      MN_WriteTextColoured(helpmsg, CR_GOLD, 10, SCREENHEIGHT - M_LINE);
     }
 }
 
@@ -982,7 +981,7 @@ void MN_WriteText(unsigned char *s, int x, int y)
       if (c == '\n')
 	{
 	  cx = x;
-          cy += 8;
+          cy += M_LINE;
 	  continue;
 	}
   

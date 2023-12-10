@@ -485,6 +485,7 @@ void C_Drawer()
       
       V_WriteText(tempstr, 0, current_height-C_LINE);
     }
+    
 }
 
 // updates the screen without actually waiting for d_display
