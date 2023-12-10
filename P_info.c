@@ -634,12 +634,9 @@ void P_LoadEpisodeInfo(int lumpnum)
       info_epis_start[info_epis_count] = curr_epis_start;
       info_epis_name[info_epis_count] = curr_epis_name;
       info_epis_count += 1;
-
-      usermsg("Episode %s(%d) definition found", curr_epis_name, curr_epis_num);
     }
 
 }
-
 
 #endif
 

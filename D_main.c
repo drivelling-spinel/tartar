@@ -72,6 +72,7 @@ static const char rcsid[] = "$Id: d_main.c,v 1.47 1998/05/16 09:16:51 killough E
 #include "g_bind.h" // haleyjd
 #include "d_dialog.h"
 #include "ex_stuff.h"
+#include "p_info.h"
 
 // DEHacked support - Ty 03/09/97
 // killough 10/98:
@@ -698,6 +699,21 @@ boolean D_HasWadInWadlist(const char * wadname)
   return D_HasFileInFilelist(wadname, ".WAD");
 }
 
+#ifdef EPISINFO
+static void D_ListEpisodes()
+{
+  int i = 0;
+
+  for(i = 0; i < info_epis_count ; i += 1)
+    {
+      if(i == 0)
+        {
+          usermsg(FC_GRAY "Additional episodes found:");
+        }
+      usermsg(FC_GRAY " %d " FC_RED "%s", info_epis_num[i], info_epis_name[i]);
+    }
+}
+#endif
         //sf: console command to list loaded files
 void D_ListWads()
 {
@@ -1427,7 +1443,10 @@ void D_SetGraphicsMode()
   D_ListWads();         // list wads to the console
   C_Printf("\n");       // leave a gap
 #endif
-  Ex_ListTapeWad();    
+  Ex_ListTapeWad();
+#ifdef EPISINFO
+  D_ListEpisodes();
+#endif
 }
 
 //

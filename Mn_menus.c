@@ -49,6 +49,7 @@
 #include "w_wad.h"
 #include "v_video.h"
 #include "d_dialog.h" // haleyjd
+#include "p_info.h"
 
 // menus: all in this file (not really extern)
 extern menu_t menu_newgame;
@@ -72,6 +73,10 @@ char *mn_wadname;            // wad to load
 char empty_slot[] = "empty slot";
 char *savegamenames[SAVESLOTS];
 byte savegamestates[SAVESLOTS];
+
+#ifdef EPISINFO
+static menu_t * Mn_BuildEpisodeMenu(void);
+#endif
 
 void MN_InitMenus()
 {
@@ -160,10 +165,14 @@ CONSOLE_COMMAND(mn_newgame, 0)
     }
   else
     {
+#ifdef EPISINFO
+      MN_StartMenu(Mn_BuildEpisodeMenu());
+#else
       // hack -- cut off thy flesh consumed if not retail
       if(gamemode != retail)
         menu_episode.menuitems[5].type = it_end;
       MN_StartMenu(&menu_episode);
+#endif
     }
 }
 
@@ -215,6 +224,106 @@ menu_t menu_episode =
   2,                   // select episode 1
   mf_skullmenu,        // skull menu
 };
+
+#ifdef EPISINFO
+static menu_t menu_episode_dynamic =
+{
+  {  
+    {it_title, "which episode?",             NULL,           "M_EPISOD"},
+    {it_gap},
+    {it_runcmd, "auto",     "mn_episode 0",  "M_WAD"},
+    {it_gap},
+    {it_end},
+  },
+  40, 30,              // x, y offsets
+  2,                   // select episode 1
+  mf_skullmenu,        // skull menu
+};
+
+#define SLADE_IDX 4
+
+static menu_t * Mn_BuildEpisodeMenu(void)
+{
+  menu_t * menu = &menu_episode_dynamic;
+  int builtin = gamemode == retail ? 4 : 3;
+  int extra = info_epis_count;
+  int position = 1;
+  int idx = SLADE_IDX;
+
+  if(builtin + extra + idx + 1 > MAXMENUITEMS)
+    {
+      extra = MAXMENUITEMS - idx - builtin - 1;
+    }
+
+  while(builtin + extra > 0)
+    {
+      int j = 0;
+      for(j = 0; info_epis_num[j] != position && j < info_epis_count ; j ++);
+
+      if(j == info_epis_count)
+        switch(position)
+          {
+          case 1:
+            menu->menuitems[idx].type = it_runcmd;
+            menu->menuitems[idx].description = "knee deep in the dead";
+            sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
+             "mn_episode %d", position);
+            menu->menuitems[idx].patch = "M_EPI1";
+            builtin -= 1;
+            idx += 1;
+            break;
+          case 2:
+            menu->menuitems[idx].type = it_runcmd;
+            menu->menuitems[idx].description = "the shores of hell";
+            sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
+              "mn_episode %d", position);
+            menu->menuitems[idx].patch = "M_EPI2";
+            builtin -= 1;
+            idx += 1;
+            break;
+          case 3:
+            menu->menuitems[idx].type = it_runcmd;
+            menu->menuitems[idx].description = "inferno!";
+            sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
+              "mn_episode %d", position);
+            menu->menuitems[idx].patch = "M_EPI3";
+            builtin -= 1;
+            idx += 1;
+            break;
+          case 4:
+            if(gamemode == retail)
+              {
+                menu->menuitems[idx].type = it_runcmd;
+                menu->menuitems[idx].description = "thy flesh consumed";
+                sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
+                  "mn_episode %d", position);
+                menu->menuitems[idx].patch = "M_EPI4";
+                builtin -= 1;
+                idx += 1;
+              }
+          default:
+            break;
+        }
+      else
+        {
+          menu->menuitems[idx].type = it_runcmd;
+          menu->menuitems[idx].description = info_epis_name[j];
+          sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
+            "mn_episode %d", position);
+          menu->menuitems[idx].patch = info_epis_pic[j];
+          extra -= 1;
+          idx += 1;
+        }
+
+      position += 1;
+    }
+
+    menu->menuitems[idx].type = it_end; 
+
+    return menu;
+}
+
+#endif
 
 // console command to select episode
 

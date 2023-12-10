@@ -379,7 +379,7 @@ $(O)/d_main.o: d_main.c doomdef.h z_zone.h m_swap.h version.h doomstat.h \
  c_net.h w_wad.h s_sound.h f_finale.h f_wipe.h m_argv.h m_misc.h \
  mn_engin.h i_sound.h i_video.h $(PLATFORM)/i_vgavbe.h g_game.h hu_stuff.h wi_stuff.h \
  am_map.h p_setup.h r_draw.h r_main.h d_main.h d_deh.h t_script.h \
- t_parse.h t_vari.h t_prepro.h g_bind.h d_dialog.h ex_stuff.h
+ t_parse.h t_vari.h t_prepro.h g_bind.h d_dialog.h ex_stuff.h p_info.h
  
 $(O)/d_net.o: d_net.c c_io.h doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
@@ -509,7 +509,7 @@ $(O)/mn_menus.o: mn_menus.c doomdef.h z_zone.h m_swap.h version.h \
  p_mobj.h p_skin.h sounds.h st_stuff.h d_event.h r_defs.h c_io.h \
  v_video.h r_data.h r_state.h p_chase.h v_misc.h c_runcmd.h d_deh.h \
  d_main.h dstrings.h d_englsh.h g_game.h hu_over.h i_video.h $(PLATFORM)/i_vgavbe.h \
- m_random.h mn_engin.h mn_misc.h r_draw.h s_sound.h w_wad.h d_dialog.h
+ m_random.h mn_engin.h mn_misc.h r_draw.h s_sound.h w_wad.h d_dialog.h p_info.h
  
 $(O)/mn_misc.o: mn_misc.c doomstat.h doomdata.h doomtype.h d_net.h \
  d_player.h d_items.h doomdef.h z_zone.h m_swap.h version.h p_pspr.h \
