@@ -74,6 +74,8 @@ char *info_endofgame;
 
 int  info_nobloodcolor;
 
+char * info_intermusic;
+
 char *info_sound_swtchn; // haleyjd: environment sounds
 char *info_sound_swtchx;
 char *info_sound_stnmov;
@@ -251,6 +253,7 @@ levelvar_t levelvars[]=
   {IVT_STRING,    "endofgame",    &info_endofgame},
   {IVT_STRING,    "intertext",    &info_intertext}, // haleyjd 12/13/01
   {IVT_INT,       "nobloodcolor", &info_nobloodcolor},
+  {IVT_STRING,    "intermusic",   &info_intermusic}, // haleyjd 12/13/01
   {IVT_END,       0,              0}
 };
 
@@ -317,6 +320,7 @@ void P_ClearLevelVars()
 {
   info_levelname = info_skyname = info_levelpic = "";
   info_music = "";
+  info_intermusic = "";
   info_creator = "unknown";
   info_interpic = "INTERPIC";
   info_partime = -1;

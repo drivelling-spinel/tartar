@@ -199,6 +199,11 @@ void F_StartFinale (void)
      // null-terminate the string
      finaletext[lumpLen] = '\0';
   }
+  
+  if(*info_intermusic)
+  {
+     S_ChangeMusicName(info_intermusic, true);
+  }
 
   finalestage = 0;
   finalecount = 0;

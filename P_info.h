@@ -52,6 +52,8 @@ extern char *info_endofgame;
 
 extern int info_nobloodcolor;
 
+extern char * info_intermusic;
+
 // map sound replacements
 
 extern char *info_sound_swtchn;
