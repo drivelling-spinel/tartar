@@ -60,6 +60,7 @@ rcsid[] = "$Id: p_setup.c,v 1.16 1998/05/07 00:56:49 killough Exp $";
 #include "p_partcl.h"
 #include "d_dialog.h"
 #include "d_io.h" // SoM 3/14/2002: strncasecmp
+#include "t_vari.h"
 
 void T_BuildGameArrays(void); // in t_array.c
 
@@ -1545,6 +1546,32 @@ void P_InitEternityVars(void)
      }
    else
      EternityMode = false;
+}
+
+
+//===============================================
+//
+// P_ApplyPersistentOptions
+//
+// For options that get saved in savegames as variables 
+// only override them if they have not been saved yet
+//
+//===============================================
+
+void P_ApplyPersistentOptions(void) 
+{
+    int bloodvar;
+    
+    bloodvar = T_GetGlobalIntVar("_private_bloodcolor", -1);
+    if(bloodvar < 0) {
+        if(info_nobloodcolor) {
+            R_RefreshTranslationTables(0);
+            prtclblood = 0;
+            return;
+        }
+    } 
+    prtclblood = bloodcolor;
+    R_RefreshTranslationTables(bloodcolor);
 }
 
 //----------------------------------------------------------------------------

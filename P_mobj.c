@@ -1521,8 +1521,8 @@ void P_SpawnBlood2(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage, mob
            bcolor = 0;
       }
    }
-  
-   th = _SpawnBloodInternal(x, y, z, dir, damage, bcolor << 4);
+   
+   th = _SpawnBloodInternal(x, y, z, dir, damage, prtclblood ? (bcolor << 4) : 0);
    if(bcolor) th->intflags |= ((1 << 15) << bcolor);
 }
 

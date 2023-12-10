@@ -1607,14 +1607,14 @@ default_t defaults[] = {
   {
     "comp_clighting",
     &default_comp[comp_clighting], &comp[comp_clighting],
-    1, {0,1}, dt_number, ss_comp, wad_yes,
-    "Switch SMMU coloured lighting on or off"
+    0, {0,1}, dt_number, ss_comp, wad_yes,
+    "Switch SMMU coloured lighting off by default for compatibility"
   },
 
   {
     "comp_talltex",
     &default_comp[comp_talltex], &comp[comp_talltex],
-    0, {0,1}, dt_number, ss_comp, wad_yes,
+    1, {0,1}, dt_number, ss_comp, wad_yes,
     "Workaround for rendering single patch textures more than 255 pixels high"
   },
 
@@ -1629,7 +1629,7 @@ default_t defaults[] = {
 };
 
 static char *defaultfile;
-static boolean defaults_loaded = false;      // killough 10/98
+boolean defaults_loaded = false;      // killough 10/98
 
 // killough 10/98: keep track of comments in .cfg files
 static struct { char *text; int line; } *comments;

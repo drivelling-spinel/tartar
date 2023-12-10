@@ -96,7 +96,7 @@ void R_InitBuffer(int width, int height);
 
 // Initialize color translation tables, for player rendering etc.
 void R_InitTranslationTables(void);
-void R_RefreshTranslationTables(void);
+void R_RefreshTranslationTables(int);
 
 // Rendering function.
 void R_FillBackScreen(void);

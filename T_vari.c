@@ -176,6 +176,31 @@ svariable_t *variableforname(script_t *script, char *name)
   return NULL;
 }
 
+
+int T_EnsureGlobalIntVar(char * name, int value) 
+{
+  svariable_t * var = variableforname(&global_script, name);
+  if(!var) {
+    var = variableforname(&levelscript, name);
+    if(!var) return T_EnsureGlobalIntVar(name, new_variable(&levelscript, name, svt_int)->value.i = value);
+    var = new_variable(&global_script, name, svt_int);
+  }
+  var->value.i = value;    
+  return var->value.i;
+}
+
+int T_GetGlobalIntVar(char * name, int default_value)
+{
+  svariable_t * var = variableforname(&global_script, name);
+  if(!var) {
+    var = variableforname(&levelscript, name);
+    if(!var) return default_value;
+    else return T_EnsureGlobalIntVar(name, var->value.i);
+  }
+  return var->value.i;
+}
+
+
         // free all the variables in a given script
 void clear_variables(script_t *script)
 {

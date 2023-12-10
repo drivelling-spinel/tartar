@@ -72,6 +72,8 @@ char *info_nextsecret;
 char *info_killfinale;
 char *info_endofgame;
 
+int  info_nobloodcolor;
+
 char *info_sound_swtchn; // haleyjd: environment sounds
 char *info_sound_swtchx;
 char *info_sound_stnmov;
@@ -248,6 +250,7 @@ levelvar_t levelvars[]=
   {IVT_STRING,    "killfinale",   &info_killfinale},
   {IVT_STRING,    "endofgame",    &info_endofgame},
   {IVT_STRING,    "intertext",    &info_intertext}, // haleyjd 12/13/01
+  {IVT_INT,       "nobloodcolor", &info_nobloodcolor},
   {IVT_END,       0,              0}
 };
 
@@ -323,6 +326,7 @@ void P_ClearLevelVars()
   info_sky2name   = "-";
   info_skydelta   = 0;
   info_sky2delta  = 0;
+  info_nobloodcolor = 0;
   
   LoadDefaultSoundNames(); // haleyjd
 

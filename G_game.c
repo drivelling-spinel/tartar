@@ -1166,6 +1166,7 @@ static void G_DoWorldDone(void)
    
    hub_changelevel = false;
    G_DoLoadLevel();
+   P_ApplyPersistentOptions();
    gameaction = ga_nothing;
    AM_clearMarks(); //jff 4/12/98 clear any marks on the automap
 }
@@ -1772,6 +1773,8 @@ static void G_DoLoadGame(void)
   //  for 'seamless' travel between levels
   if(hub_changelevel) 
     P_RestorePlayerPosition();
+    
+  P_ApplyPersistentOptions();    
 }
 
 //
@@ -1795,8 +1798,9 @@ void G_Ticker(void)
    {
       switch (gameaction)
       {
-      case ga_loadlevel:
-	 G_DoLoadLevel();
+      case ga_loadlevel: 
+	 G_DoLoadLevel(); 
+	 P_ApplyPersistentOptions(); 
 	 break;
       case ga_newgame:
 	 G_DoNewGame();
@@ -2473,6 +2477,7 @@ void G_ScrambleRand()
 void G_DoNewGame (void)
 {
    //G_StopDemo();
+   T_Init();
    G_ReloadDefaults();            // killough 3/1/98
    P_ClearHubs();                 // sf: clear hubs when starting new game
    
@@ -2599,6 +2604,8 @@ void G_InitNew(skill_t skill, char *name)
    //G_StopDemo();
    
    G_DoLoadLevel();
+   
+   P_ApplyPersistentOptions();   
 }
 
 //

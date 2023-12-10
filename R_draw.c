@@ -393,7 +393,7 @@ void R_DrawFuzzColumn(void)
       
       else do  
         {
-          lighttable_t * localmap = comp[comp_clighting] ? dc_colormap : fullcolormap;
+          lighttable_t * localmap = !comp[comp_clighting] ? dc_colormap : fullcolormap;
 
           // Lookup framebuffer, and retrieve
           //  a pixel that is either one column
@@ -468,7 +468,7 @@ void R_DrawFuzzColumn(void)
 
       do 
         {
-          lighttable_t * localmap = comp[comp_clighting] ? dc_colormap : fullcolormap;
+          lighttable_t * localmap = !comp[comp_clighting] ? dc_colormap : fullcolormap;
           // Lookup framebuffer, and retrieve
           //  a pixel that is either one column
           //  left or right of the current one.
@@ -657,7 +657,7 @@ void R_InitTranslationTables (void)
 }
 
 
-void R_RefreshTranslationTables (void)
+void R_RefreshTranslationTables (int color)
 {
   int i, c;
   
@@ -665,7 +665,7 @@ void R_RefreshTranslationTables (void)
     {
       for(c=0xb0; c<=0xbf; c++)
 	translationtables[i*256 + c] =
-          bloodcolor  
+          color  
              ? translations[i].start +
                 ((c & 0xf) * (translations[i].number-1))/15
              : c;

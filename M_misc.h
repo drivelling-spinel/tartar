@@ -44,6 +44,7 @@ boolean M_ParseOption(const char *name, boolean wad);    // killough 11/98
 void M_LoadOptions(void);                                // killough 11/98
 
 extern int screenshot_pcx;                               // killough 10/98
+extern boolean defaults_loaded;
 
 // phares 4/21/98:
 // Moved from m_misc.c so m_menu.c could see it.

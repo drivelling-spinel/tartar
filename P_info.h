@@ -50,6 +50,8 @@ extern char *info_nextsecret;
 extern char *info_killfinale;
 extern char *info_endofgame;
 
+extern int info_nobloodcolor;
+
 // map sound replacements
 
 extern char *info_sound_swtchn;

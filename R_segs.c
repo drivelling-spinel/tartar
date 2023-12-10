@@ -752,7 +752,7 @@ void R_StoreWallRange(const int start, const int stop)
         || frontsector->heightsec != -1
 
                 // sf: for coloured lighting
-        || (backsector->heightsec != frontsector->heightsec && comp[comp_clighting])
+        || (backsector->heightsec != frontsector->heightsec && !comp[comp_clighting])
 
         // killough 4/17/98: draw floors if different light levels
         || backsector->floorlightsec != frontsector->floorlightsec
@@ -775,7 +775,7 @@ void R_StoreWallRange(const int start, const int stop)
         // killough 4/17/98: draw ceilings if different light levels
         || backsector->ceilinglightsec != frontsector->ceilinglightsec
                 // sf: for coloured lighting
-        || (backsector->heightsec != frontsector->heightsec && comp[comp_clighting])
+        || (backsector->heightsec != frontsector->heightsec && !comp[comp_clighting])
         ;
 
       if (backsector->ceilingheight <= frontsector->floorheight

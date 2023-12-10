@@ -98,6 +98,7 @@ extern int monster_infighting, default_monster_infighting;
 extern int monkeys, default_monkeys;
 
 extern int bloodcolor;
+extern int prtclblood;
 
 // v1.1-like pitched sounds
 extern int pitched_sounds;

@@ -499,7 +499,7 @@ static void R_AddLine (seg_t *line)
       && backsector->ceilinglightsec == frontsector->ceilinglightsec
 
         // sf: coloured lighting
-      && (!comp[comp_clighting] || backsector->heightsec == frontsector->heightsec)
+      && (comp[comp_clighting] || backsector->heightsec == frontsector->heightsec)
       )
     return;
 

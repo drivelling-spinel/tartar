@@ -92,6 +92,9 @@ svalue_t getvariablevalue(svariable_t *v);
 void setvariablevalue(svariable_t *v, svalue_t newvalue);
 void clear_variables(script_t *script);
 
+int T_EnsureGlobalIntVar(char * name, int value);
+int T_GetGlobalIntVar(char * name, int default_value);
+
 svariable_t *add_game_int(char *name, int *var);
 svariable_t *add_game_string(char *name, char **var);
 svariable_t *add_game_mobj(char *name, mobj_t **mo);

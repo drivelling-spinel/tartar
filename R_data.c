@@ -396,7 +396,7 @@ static void R_GenerateLookup(int texnum, int *const errors)
   //
   // peridot: allow for compositing of any texture that is >255 tall
 
-  if ((comp[comp_talltex] && texture->height > 255)
+  if ((!comp[comp_talltex] && texture->height > 255)
     || (texture->patchcount > 1 && texture->height < 256))
     {
       // killough 12/98: Warn about a common column construction bug
@@ -415,7 +415,7 @@ static void R_GenerateLookup(int texnum, int *const errors)
             x1 = 0;
 
           for (x = x1 ; x<x2 ; x++)
-            if (count[x].patches > 1 || comp[comp_talltex])        // Only multipatched columns
+            if (count[x].patches > 1 || !comp[comp_talltex])        // Only multipatched columns
               {
                 const column_t *col = (column_t*)((byte*) realpatch+LONG(cofs[x]));
                 const byte *base = (const byte *) col;
@@ -457,7 +457,7 @@ static void R_GenerateLookup(int texnum, int *const errors)
             csize += 5;
           }
 
-        if (count[x].patches > 1 || (height > 255 && comp[comp_talltex]))       // killough 4/9/98
+        if (count[x].patches > 1 || (height > 255 && !comp[comp_talltex]))       // killough 4/9/98
           {
             // killough 1/25/98, 4/9/98:
             //
@@ -508,7 +508,7 @@ byte *R_GetColumn(int tex, int col)
 
 int R_HasMultipatchColumns(int tex)
 {
-  return !!texturecomposite[tex] && textureheight[tex] > 255 && comp[comp_talltex];
+  return !!texturecomposite[tex] && textureheight[tex] > 255 && !comp[comp_talltex];
 }
 
 //

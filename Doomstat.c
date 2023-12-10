@@ -115,6 +115,7 @@ int doom_weapon_toggles; // killough 10/98
 int monkeys, default_monkeys;
 
 int bloodcolor;
+int prtclblood;
 
 boolean cinema_pause = false; // haleyjd 08/22/01
 

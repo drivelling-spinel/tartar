@@ -43,6 +43,8 @@
 #include "p_inter.h"
 #include "p_spec.h"
 #include "r_draw.h"
+#include "t_vari.h"
+#include "m_misc.h"
 
 /***************************************************************************
                 'defines': string values for variables
@@ -238,7 +240,9 @@ CONSOLE_NETVAR(mon_distfriend, distfriend, cf_server, netcmd_mondistfriend) {}
 // blood recolor
 VARIABLE_INT(bloodcolor, NULL, 0, sizeof(bloodcolors)/sizeof(*bloodcolors) - 1, bloodcolors);
 CONSOLE_VARIABLE(mon_bloodcolor, bloodcolor, 0) {
-    R_RefreshTranslationTables();
+    prtclblood = bloodcolor;
+    if(defaults_loaded) T_EnsureGlobalIntVar("_private_bloodcolor", bloodcolor);
+    R_RefreshTranslationTables(bloodcolor);
 }
 
 void P_Chase_AddCommands();
