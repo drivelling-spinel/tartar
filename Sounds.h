@@ -328,7 +328,7 @@ typedef enum {
   // end minotaurus sounds
   // start ambient sounds
   sfx_brook1, // water
-  sfx_winde,   // joel - prevent eterntiy conflict
+//  sfx_winde,   // joel - prevent eterntiy conflict
   sfx_wind3,
   sfx_water1, // waterfall
   sfx_amb3,   // drip 1  
@@ -399,6 +399,15 @@ typedef enum {
   sfx_wind,
   sfx_wind1,
   sfx_cross, // joel: holy cross sound
+
+  sfx_mpstrt,
+  sfx_mpstop,
+  sfx_mstnmv,
+  sfx_mdropn,
+  sfx_mdrcls,
+  sfx_mbdopn,
+  sfx_mbdcls,
+
   NUMSFX
 } sfxenum_t;
 

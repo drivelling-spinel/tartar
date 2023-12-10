@@ -1370,6 +1370,7 @@ extern void A_MinotaurCharge();
 extern void A_MntrFloorFire();
 extern void A_ETCBossDeath();
 extern void A_AmbSound();
+extern void A_AmbSound2();
 extern void A_ColgSound();
 extern void A_ClericAtk();
 extern void A_SetInvulnerability(); // haleyjd 04/18/99
@@ -1543,6 +1544,7 @@ deh_bexptr deh_bexptrs[] =
   {A_MummySoul,		"A_MummySoul"},
   {A_BetaSkullAttack,   "A_BetaSkullAttack"}, // haleyjd: MBF comp.
   {A_PlayerStartScript, "A_PlayerStartScript"},
+  {A_AmbSound2,         "A_AmbSound2"},
   // This NULL entry must be the last in the list
   {NULL,             "A_NULL"},  // Ty 05/16/98
 };

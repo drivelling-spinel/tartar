@@ -248,7 +248,7 @@ sfxinfo_t S_sfx[] = {
   { "stfpow", sg_none,   92, 0, -1, -1, 0 },
   { "phohit", sg_none,   60, 0, -1, -1, 0 },
   { "brook1", sg_none,   32, 0, -1, -1, 0 },
-  { "winde",   sg_none,   32, 0, -1, -1, 0 }, // joel - prevent eternity conflict
+//  { "winde",   sg_none,   32, 0, -1, -1, 0 }, // joel - prevent eternity conflict
   { "wind3",  sg_none,   32, 0, -1, -1, 0 },
   { "water1", sg_none,   32, 0, -1, -1, 0 },
   { "amb3",   sg_none,   32, 0, -1, -1, 0 },
@@ -318,7 +318,14 @@ sfxinfo_t S_sfx[] = {
   { "wind", sg_none, 96, 0, -1, -1, 0 },
   { "wind1", sg_none, 96, 0, -1, -1, 0 },
   { "cross",  sg_none,   64, 0, -1, -1, 0 }, // joel: cross sound
-
+  // Somehow more Eternity TC sounds
+  { "mpstrt", sg_none,  100, 0, -1, -1, 0 },
+  { "mpstop", sg_none,  100, 0, -1, -1, 0 },
+  { "mstnmv", sg_none,  119, 0, -1, -1, 0 },
+  { "mdropn", sg_none,  100, 0, -1, -1, 0 },
+  { "mdrcls", sg_none,  100, 0, -1, -1, 0 },
+  { "mbdopn",  sg_none,  100, 0, -1, -1, 0 },
+  { "mbdcls",  sg_none,  100, 0, -1, -1, 0 },
 };
 sfxinfo_t chgun=
   { "chgun",  sg_none,   64, 0, -1, -1, 0 };

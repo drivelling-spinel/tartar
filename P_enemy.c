@@ -2895,7 +2895,7 @@ void A_ETCBossDeath(mobj_t *actor)
    EV_DoFloor(&dummyLine, lowerFloor);
 }
 
-/* joel - prevent eternity conflict
+/* joel - prevent eternity conflict */
 //
 // A_AmbSound
 //
@@ -2991,11 +2991,11 @@ void A_AmbSound(mobj_t *actor)
          S_StartSound(actor, actor->info->activesound);
          break;
    }
-}*/
+}
 
 // joel: cod ambient sound routine
 
-void A_AmbSound(mobj_t *actor)
+void A_AmbSound2(mobj_t *actor)
 {
   S_StartSound(actor, actor->info->seesound);
 }

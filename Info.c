@@ -236,7 +236,7 @@ void A_BetaSkullAttack();
 void A_Cross();           // joel: Holy Cross
 void A_CCyberAttack3();   // joel: new Cyberdemon third attack
 void A_CVileAttack();     // joel: new Archvile attack
-void A_AmbSound();        // joel: ambient sound routine
+void A_AmbSound2();        // joel: ambient sound routine
 // joel: legion action functions
 void A_Legion();
 
@@ -1817,24 +1817,24 @@ state_t states[NUMSTATES] = {
   {SPR_VILE,25,-1,NULL,S_NULL,0,0}, // S_CVILE_DIE10
 
 // joel: ambient sounds
-  {SPR_TROO,0,15,A_AmbSound,S_BUZZ2,0,0}, // S_BUZZ1
-  {SPR_TROO,0,114,A_AmbSound,S_BUZZ2,0,0}, // S_BUZZ2
-  {SPR_TROO,0,15,A_AmbSound,S_COMP2,0,0}, // S_COMP1
-  {SPR_TROO,0,198,A_AmbSound,S_COMP2,0,0}, // S_COMP2
-  {SPR_TROO,0,15,A_AmbSound,S_DRIP2,0,0}, // S_DRIP1
-  {SPR_TROO,0,436,A_AmbSound,S_DRIP2,0,0}, // S_DRIP2
-  {SPR_TROO,0,15,A_AmbSound,S_AFIRE2,0,0}, // S_AFIRE1
-  {SPR_TROO,0,75,A_AmbSound,S_AFIRE2,0,0}, // S_AFIRE2
-  {SPR_TROO,0,15,A_AmbSound,S_LAVA2,0,0}, // S_LAVA1
-  {SPR_TROO,0,61,A_AmbSound,S_LAVA2,0,0}, // S_LAVA2
-  {SPR_TROO,0,15,A_AmbSound,S_RIVER2,0,0}, // S_RIVER1
-  {SPR_TROO,0,127,A_AmbSound,S_RIVER2,0,0}, // S_RIVER2
-  {SPR_TROO,0,15,A_AmbSound,S_WFALL2,0,0}, // S_WFALL1
-  {SPR_TROO,0,89,A_AmbSound,S_WFALL2,0,0}, // S_WFALL2
-  {SPR_TROO,0,15,A_AmbSound,S_WIND2,0,0}, // S_WIND1
-  {SPR_TROO,0,203,A_AmbSound,S_WIND2,0,0}, // S_WIND2
-  {SPR_TROO,0,15,A_AmbSound,S_WIND1_2,0,0}, // S_WIND1_1
-  {SPR_TROO,0,117,A_AmbSound,S_WIND1_2,0,0}, // S_WIND1_2
+  {SPR_TROO,0,15,A_AmbSound2,S_BUZZ2,0,0}, // S_BUZZ1
+  {SPR_TROO,0,114,A_AmbSound2,S_BUZZ2,0,0}, // S_BUZZ2
+  {SPR_TROO,0,15,A_AmbSound2,S_COMP2,0,0}, // S_COMP1
+  {SPR_TROO,0,198,A_AmbSound2,S_COMP2,0,0}, // S_COMP2
+  {SPR_TROO,0,15,A_AmbSound2,S_DRIP2,0,0}, // S_DRIP1
+  {SPR_TROO,0,436,A_AmbSound2,S_DRIP2,0,0}, // S_DRIP2
+  {SPR_TROO,0,15,A_AmbSound2,S_AFIRE2,0,0}, // S_AFIRE1
+  {SPR_TROO,0,75,A_AmbSound2,S_AFIRE2,0,0}, // S_AFIRE2
+  {SPR_TROO,0,15,A_AmbSound2,S_LAVA2,0,0}, // S_LAVA1
+  {SPR_TROO,0,61,A_AmbSound2,S_LAVA2,0,0}, // S_LAVA2
+  {SPR_TROO,0,15,A_AmbSound2,S_RIVER2,0,0}, // S_RIVER1
+  {SPR_TROO,0,127,A_AmbSound2,S_RIVER2,0,0}, // S_RIVER2
+  {SPR_TROO,0,15,A_AmbSound2,S_WFALL2,0,0}, // S_WFALL1
+  {SPR_TROO,0,89,A_AmbSound2,S_WFALL2,0,0}, // S_WFALL2
+  {SPR_TROO,0,15,A_AmbSound2,S_WIND2,0,0}, // S_WIND1
+  {SPR_TROO,0,203,A_AmbSound2,S_WIND2,0,0}, // S_WIND2
+  {SPR_TROO,0,15,A_AmbSound2,S_WIND1_2,0,0}, // S_WIND1_1
+  {SPR_TROO,0,117,A_AmbSound2,S_WIND1_2,0,0}, // S_WIND1_2
 
   {SPR_POSS,4,10,A_FaceTarget,S_HardAssZombieman_ATK2}, // S_HardAssZombieman_ATK1
   {SPR_POSS,5,8,A_CyberAttack,S_HardAssZombieman_ATK3}, // S_HardAssZombieman_ATK2
