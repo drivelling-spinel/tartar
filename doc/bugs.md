@@ -15,23 +15,6 @@
 - With FILTERS directory filled with InstaDoom WAD-s Tartar exhausts DOS
   file handles very quickly, suggested CONFIG.SYS setting being FILES=70
 - Loading a game saved on E1-type exit special sector crahses Tartar
-- Before showing outtro or character cast intermission background is
-  first show for a second or so
+- Before showing outtro or character cast intermission background is first shown for a second or so
 
-The following bugs are expected to be fixed in the third maintenance release of Stage 3:
 
-- Weird texturing effects have been noticed in some maps e.g. diamonds 
-  at the start of Jumpwad MAP03 or huge chains in Eviternity MAP21 do not
-  render right
-- Math seems to go crazy on some of Eviternity maps (MAP15, MAP29, MAP30 
-  and MAP32) breaking rendering completely.
-- Top and bottom textures with tall patches sometimes render with glitches; 
-  this seems to be relevant for when very tall objects are in proximity, 
-  see for example skyscrapers in Jumpwad MAP02 if IDCLIP-ed to close enough.
-- Tartar crashes when loading Avactor MAP09.
-- Switching weapons while shooting crashes game
-- Loading from empty slot crashes the game
-- For maps with extreme extends automap zoom computation overflows which results 
-  automap going blank and random crashes
-- Saving game crashes Tartar on MAP04 of BOOMER.WAD
-- Finishing E?M5 takes to episode end and not E?M6
