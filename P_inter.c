@@ -179,6 +179,9 @@ boolean P_GiveWeapon(player_t *player, weapontype_t weapon, boolean dropped)
 {
   boolean gaveammo;
 
+  if(weapon == wp_cross && gamemission != cod)
+    return false;
+
   if(weapon == wp_grenade && !EternityMode) // haleyjd
     return false;
 
@@ -806,6 +809,8 @@ void P_KillMobj(mobj_t *source, mobj_t *target)
 
   if (target->tics < 1)
     target->tics = 1;
+
+  if (gamemission == chex) return;
 
   // Drop stuff.
   // This determines the kind of object spawned

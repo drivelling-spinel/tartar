@@ -29,7 +29,7 @@ RM=del
 CP=copy /y
         
 # the exe file name -sf
-EXE=$(O)/doom.exe
+EXE=$(O)/tartar.exe
         
 # options common to all builds
 CFLAGS_COMMON=-Wall
@@ -72,7 +72,7 @@ PLATOBJS =                  \
         $(O)/drawchkr.o     \
         $(O)/drawcol2.o
 
-build : $(EXE) $(O)/chex.exe $(O)/doom2.exe $(O)/cod.exe
+build : $(EXE) 
 
 
 $(O)/chex.exe : $(EXE)

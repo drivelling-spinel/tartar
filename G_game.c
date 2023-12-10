@@ -372,7 +372,7 @@ void G_BuildTiccmd(ticcmd_t* cmd)
 	action_weapon7 && gamemode != shareware ? wp_bfg :
 	action_weapon8 ? wp_chainsaw :
 	action_weapon9 && gamemode == commercial ? wp_supershotgun :
-	action_weapon10 ? wp_cross : // joel: cross select
+        action_weapon10 && gamemission == cod ? wp_cross : // joel: cross select
 	wp_nochange;
 
       // killough 3/22/98: For network and demo consistency with the
@@ -994,6 +994,12 @@ static void G_DoCompleted(void)
    {
       switch(gamemap)
       {
+      case 5:
+         if (gamemission == chex)
+         {
+            gameaction = ga_victory;
+            return;
+         }
       case 8:
 	 gameaction = ga_victory;
 	 return;

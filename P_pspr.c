@@ -227,7 +227,8 @@ int P_SwitchWeapon(player_t *player)
           newweapon = wp_grenade;
         break;
       case 11:
-        if (player->weaponowned[wp_cross] && player->ammo[am_faith])
+        if (player->weaponowned[wp_cross] && gamemission == cod &&
+           player->ammo[am_faith])
           newweapon = wp_cross;
         break; // joel: Holy Cross
       }

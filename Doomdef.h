@@ -73,6 +73,7 @@ typedef enum {
   pack_tnt,     // TNT mission pack
   pack_plut,    // Plutonia pack
   chex,         // Chex Quest
+  cod,          // Caverns of Darkness
   none
 } GameMission_t;
 

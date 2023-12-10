@@ -421,6 +421,8 @@ char buf[3];
 
   // So be it.
 
+  if (gamemission == chex) epsd = 1;
+
   idmusnum = -1; //jff 3/17/98 revert to normal level music on IDCLEV
 
         // sf: doom_printf

@@ -901,6 +901,8 @@ void IdentifyVersion (void)
   int         i;    //jff 3/24/98 index of args on commandline
   struct stat sbuf; //jff 3/24/98 used to test save path for existence
   char *iwad;
+  byte codfound, codlevfound;
+  int  l;
 
   // get config file from same directory as executable
   // killough 10/98
@@ -976,6 +978,17 @@ void IdentifyVersion (void)
 	      else
 		game_name = haswolflevels ? "DOOM II version" :
 		     "DOOM II version, german edition, no wolf levels";
+
+              for (codfound = codlevfound = i = 0; i<numwadfiles; i++)
+                {
+                  l = strlen(wadfiles[i]);
+                  codfound = codfound ||
+                    (l>=7 && !strnicmp(wadfiles[i]+l-7,"cod.wad",7));
+                  codlevfound = codlevfound ||
+                    (l>=10 && !strnicmp(wadfiles[i]+l-10,"codlev.wad",10));
+                 }
+
+              if (codfound && codlevfound) gamemission = cod;
 	      break;
 	    }
 	  // joel 10/16/88 end Final DOOM fix
@@ -1400,7 +1413,6 @@ void D_DoomMain(void)
   
   {
     char filestr[256];
-    char codlevstr[256];
     boolean isdir;
     // get smmu.wad from the same directory as smmu.exe
     // 25/10/99: use same name as exe
@@ -1416,17 +1428,7 @@ void D_DoomMain(void)
            if(!strcmp(wadfiles[i], filestr)) break;
           }
         if(i == numwadfiles) D_AddFile(filestr); 
-    } else {
-      int i;
-      sprintf(filestr, "./%s.wad", D_DoomExeName());
-      for(i=0; i<numwadfiles; i++)
-        {
-         if(!strcmp(wadfiles[i], filestr)) break;
-        }
-      if(i == numwadfiles) D_AddFile(filestr); 
     }
-    sprintf(codlevstr,"%scodlev.wad", D_DoomExeDir());
-    D_AddFile(codlevstr); // joel - add codlevel wad too
   }
 
   modifiedgame = false;         // reset, ignoring smmu.wad etc.
