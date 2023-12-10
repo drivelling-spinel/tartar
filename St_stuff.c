@@ -125,6 +125,9 @@ rcsid[] = "$Id: st_stuff.c,v 1.46 1998/05/06 16:05:40 jim Exp $";
 #define ST_ARMORX               221
 #define ST_ARMORY               (ST_Y + 3)
 
+#define ST_ARMOREXTRA           4
+#define ST_ARMOREXTRAX          234
+
 // Key icon positions.
 #define ST_KEY0WIDTH            8
 #define ST_KEY0HEIGHT           5
@@ -257,6 +260,9 @@ static st_multicon_t w_keyboxes[3];
 
 // armor widget
 static st_percent_t  w_armor;
+
+// armor widget
+static st_number_t  w_armorextra;
 
 // ammo widgets
 static st_number_t   w_ammo[4];
@@ -705,14 +711,28 @@ void ST_drawWidgets(boolean refresh)
     STlib_updatePercent(&w_health, cr_blue_status, refresh); //killough 2/28/98
 
   //jff 2/16/98 make color of armor depend on amount
-  if (*w_armor.n.num<armor_red)
-    STlib_updatePercent(&w_armor, cr_red, refresh);
-  else if (*w_armor.n.num<armor_yellow)
-    STlib_updatePercent(&w_armor, cr_gold, refresh);
-  else if (*w_armor.n.num<=armor_green)
-    STlib_updatePercent(&w_armor, cr_green, refresh);
+  if(!wolf3dmode)
+    {
+      if (*w_armor.n.num<armor_red)
+        STlib_updatePercent(&w_armor, cr_red, refresh);
+      else if (*w_armor.n.num<armor_yellow)
+        STlib_updatePercent(&w_armor, cr_gold, refresh);
+      else if (*w_armor.n.num<=armor_green)
+        STlib_updatePercent(&w_armor, cr_green, refresh);
+      else
+        STlib_updatePercent(&w_armor, cr_blue_status, refresh); //killough 2/28/98
+    }
   else
-    STlib_updatePercent(&w_armor, cr_blue_status, refresh); //killough 2/28/98
+    {
+      if (*w_armor.n.num<10000)
+        STlib_updateNum(&w_armorextra, cr_red, refresh);
+      else if (*w_armor.n.num<20000)
+        STlib_updateNum(&w_armorextra, cr_gold, refresh);
+      else if (*w_armor.n.num<30000)
+        STlib_updateNum(&w_armorextra, cr_green, refresh);
+      else
+        STlib_updateNum(&w_armorextra, cr_blue_status, refresh); //killough 2/28/98
+    }
 
   for (i=0;i<6;i++)
     STlib_updateMultIcon(&w_arms[i], refresh);
@@ -978,6 +998,16 @@ void ST_createWidgets(void)
                     tallnum,
                     &plyr->armorpoints,
                     &st_statusbaron, tallpercent);
+
+  // armor as score for Wolf3D mode
+  STlib_initNum(&w_armorextra,
+                ST_ARMOREXTRAX,
+                ST_ARMORY,
+                tallnum,
+                &plyr->armorpoints,
+                &st_statusbaron,
+                ST_ARMOREXTRA);
+
 
   // keyboxes 0-2
   STlib_initMultIcon(&w_keyboxes[0],
