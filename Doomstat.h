@@ -65,6 +65,8 @@ extern  boolean noasmxparm;   // checkparm of -noasmx   GB 2014
 #endif
 extern  boolean asmp6parm;    // checkparm of -asmp6    GB 2014
 extern  boolean safeparm;     // checkparm of -safe     GB 2014
+extern  boolean v12_compat;   // GB 2014
+extern  boolean v11_compat;
 
 extern  boolean nodemo;
 
@@ -397,6 +399,9 @@ extern int doom_weapon_toggles;   // killough 10/98
 
 extern boolean remove_slime_trails;
 
+extern int ORIG_FRICTION;
+extern int ORIG_FRICTION_FACTOR;
+extern fixed_t MAXMOVE;
 
 //=======================================================
 //

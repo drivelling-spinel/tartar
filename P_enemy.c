@@ -154,7 +154,7 @@ static boolean P_CheckMeleeRange(mobj_t *actor)
   return  // killough 7/18/98: friendly monsters don't attack other friends
     pl && !(actor->flags & pl->flags & MF_FRIEND) &&
     (P_AproxDistance(pl->x-actor->x, pl->y-actor->y) <
-     MELEERANGE - 20*FRACUNIT + pl->info->radius) &&
+       MELEERANGE + (v12_compat ? 0 : - 20*FRACUNIT + pl->info->radius)) &&
     P_CheckSight(actor, actor->target);
 }
 
@@ -1123,7 +1123,9 @@ void A_Chase(mobj_t *actor)
 
   // modify target threshold
   if (actor->threshold)
-    if (!actor->target || actor->target->health <= 0)
+    if (v12_compat)
+      actor->threshold--;
+    else if (!actor->target || actor->target->health <= 0)
       actor->threshold = 0;
     else
       actor->threshold--;
@@ -1387,10 +1389,13 @@ void A_SargAttack(mobj_t *actor)
   if (!actor->target)
     return;
   A_FaceTarget(actor);
-  if (P_CheckMeleeRange(actor))
+  if (v12_compat || P_CheckMeleeRange(actor))
     {
       int damage = ((P_Random(pr_sargattack)%10)+1)*4;
-      P_DamageMobj(actor->target, actor, actor, damage);
+      if(v12_compat)
+        P_LineAttack(actor, actor->angle, MELEERANGE, 0, damage);
+      else
+        P_DamageMobj(actor->target, actor, actor, damage);
     }
 }
 

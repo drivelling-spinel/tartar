@@ -460,10 +460,10 @@ boolean P_BlockThingsIterator(int x, int y, boolean func(mobj_t*))
 //
 
 // 1/11/98 killough: Intercept limit removed
-static intercept_t *intercepts, *intercept_p;
+intercept_t *intercepts, *intercept_p;  // GB 2014 removed static
 
 // Check for limit and double size if necessary -- killough
-static void check_intercept(void)
+void check_intercept(void) // GB 2014 removed static
 {
   static size_t num_intercepts;
   size_t offset = intercept_p - intercepts;

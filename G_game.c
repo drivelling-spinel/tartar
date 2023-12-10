@@ -1286,12 +1286,20 @@ static void G_DoPlayDemo(void)
 	  nomonsters = *demo_p++;
 	  consoleplayer = *demo_p++;
 	}
-      else
+      else                                // For demos from version <= 1.2
 	{
 	  episode = *demo_p++;
 	  map = *demo_p++;
-	  deathmatch = respawnparm = fastparm =
-	    nomonsters = consoleplayer = 0;
+          deathmatch = consoleplayer = 0;
+
+          v12_compat = true;
+          if(v11detected)
+            {
+              v11_compat = true;
+              ORIG_FRICTION = ORIG_FRICTION11;
+              ORIG_FRICTION_FACTOR = ORIG_FRICTION_FACTOR11;
+              MAXMOVE = MAXMOVE11;
+            }
 	}
     }
   else    // new versions of demos
@@ -1917,7 +1925,7 @@ void G_Ticker(void)
 	    // killough 2/14/98, 2/20/98 -- only warn in netgames and demos
 	    
 	    if((netgame || demoplayback) && 
-	       cmd->forwardmove > TURBOTHRESHOLD &&
+               cmd->forwardmove > TURBOTHRESHOLD && !v11_compat &&
 	       !(gametic&31) && ((gametic>>5)&3) == i)
 	    {
 	       doom_printf("%s is turbo!", players[i].name); // killough 9/29/98
@@ -2545,6 +2553,11 @@ void G_ReloadDefaults(void)
 
   // killough 3/31/98, 4/5/98: demo sync insurance
   demo_insurance = default_demo_insurance == 1;
+
+  ORIG_FRICTION = ORIG_FRICTION19;
+  ORIG_FRICTION_FACTOR = ORIG_FRICTION_FACTOR19;
+  MAXMOVE = MAXMOVE19;
+  v11_compat = v12_compat = false;
   
   G_ScrambleRand();
 }

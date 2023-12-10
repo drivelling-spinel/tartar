@@ -88,6 +88,7 @@ typedef struct
   sfxinfo_t *sfxinfo;  // sound information (if null, channel avail.)
   const mobj_t *origin;// origin of sound
   int handle;          // handle of the sound being played
+  int pitch;
 } channel_t;
 
 // the set of channels available
@@ -308,6 +309,22 @@ void S_StartSfxInfo(const mobj_t *origin, sfxinfo_t *sfx)
   // Check to see if it is audible, modify the params
   // killough 3/7/98, 4/25/98: code rearranged slightly
 
+  if (pitched_sounds)
+    {
+      // hacks to vary the sfx pitches
+      if ((sfx_id) >= sfx_sawup && (sfx_id) <= sfx_sawhit)
+        pitch += 8 - (M_Random()&15);
+      else
+        if ((sfx_id) != sfx_itemup && (sfx_id) != sfx_tink)
+          pitch += 16 - (M_Random()&31);
+
+      if (pitch<0)
+        pitch = 0;
+
+      if (pitch>255)
+        pitch = 255;
+    }
+
   if (!origin || origin == players[displayplayer].mo)
     sep = NORM_SEP;
   else
@@ -334,22 +351,7 @@ void S_StartSfxInfo(const mobj_t *origin, sfxinfo_t *sfx)
 	    origin->y == players[displayplayer].mo->y)
 	  sep = NORM_SEP;
     }
-  
-  if (pitched_sounds)
-    {
-      // hacks to vary the sfx pitches
-      if (sfx_id >= sfx_sawup && sfx_id <= sfx_sawhit)
-	pitch += 8 - (M_Random()&15);
-      else
-	if (sfx_id != sfx_itemup && sfx_id != sfx_tink)
-	  pitch += 16 - (M_Random()&31);
 
-      if (pitch<0)
-	pitch = 0;
-
-      if (pitch>255)
-	pitch = 255;
-    }
 
   // kill old sound
   // killough 12/98: replace is_pickup hack with singularity flag
@@ -372,6 +374,7 @@ void S_StartSfxInfo(const mobj_t *origin, sfxinfo_t *sfx)
 
   // Assigns the handle to one of the channels in the mix/output buffer.
   channels[cnum].handle = I_StartSound(sfx, volume, sep, pitch, priority);
+  channels[cnum].pitch = pitch;
 }
 
 void S_StartSound(const mobj_t *origin, int sfx_id)
@@ -478,7 +481,7 @@ void S_UpdateSounds(const mobj_t *listener)
                       volume = snd_SfxVolume;
                 }
 		*/
-	      
+
               // check non-local sounds for distance clipping
               // or modify their params
 
@@ -499,7 +502,7 @@ void S_UpdateSounds(const mobj_t *listener)
 		    )
                   S_StopChannel(cnum);
                 else
-                  I_UpdateSoundParams(c->handle, volume, sep, pitch);
+                  I_UpdateSoundParams(c->handle, volume, sep, c->pitch);
             }
           else   // if channel is allocated but sound has stopped, free it
             S_StopChannel(cnum);
@@ -586,6 +589,10 @@ int S_PreselectRandomMusic(boolean no_runnin)
     {
       min = mus_runnin;
       max = mus_read_m - 1;
+    }
+  else if(gamemode == shareware)
+    {
+      max = mus_e1m9;
     }
   if(no_runnin) min += 1;
 

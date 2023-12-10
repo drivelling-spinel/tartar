@@ -348,7 +348,7 @@ void P_TouchSpecialThing(mobj_t *special, mobj_t *toucher)
         // sf: remove beta
 
       player->armorpoints++;          // can go over 100%
-      if (player->armorpoints > max_armor && !wolf3dmode)
+      if (player->armorpoints > max_armor && !wolf3dmode && !v12_compat)
         player->armorpoints = max_armor;
       if (!player->armortype)
         player->armortype = green_armor_class;
@@ -1318,7 +1318,8 @@ void P_DamageMobj(mobj_t *target,mobj_t *inflictor, mobj_t *source, int damage)
 
   // killough 9/9/98: cleaned up, made more consistent:
 
-  if (source && source != target && source->type != MT_VILE &&
+  if (source && (source != target || v12_compat) &&
+      source->type != MT_VILE &&
       (!target->threshold || target->type == MT_VILE) &&
       ((source->flags ^ target->flags) & MF_FRIEND || 
        (monster_infighting && !wolf3dmode) || demo_version < 203))

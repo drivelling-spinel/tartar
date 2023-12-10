@@ -112,6 +112,10 @@ boolean noasmxparm;     // working -noasmx GB 2014
 #endif
 boolean asmp6parm;      // working -asmp6  GB 2014
 boolean safeparm;       // working -safe   GB 2014
+boolean v12_compat;     // GB 2014, for v1.2 WAD stock demos
+boolean v11_compat;
+boolean v11detected;
+
 #ifdef NORENDER
 boolean norenderparm;
 #endif
@@ -177,6 +181,7 @@ const char *const standard_iwads[]=
   "/plutonia.wad",
   "/tnt.wad",
   "/doom.wad",
+  "/doomu.wad",
   "/doom1.wad",
   "/freedo~2.wad",
   "/freedo~1.wad",
@@ -771,10 +776,11 @@ static void CheckIWAD(const char *iwadname,
 		      boolean *hassec)
 {
   FILE *fp = fopen(iwadname, "rb");
-  int ud, rg, sw, cm, sc, tnt, plut, hacx, freed;
+  int ud, rg, sw, cm, sc, tnt, plut, hacx, freed, v11 = 0;
   filelump_t lump;
   wadinfo_t header;
   const char *n = lump.name;
+
 
   if (!fp)
     I_Error("Can't open IWAD: %s\n",iwadname);
@@ -794,6 +800,7 @@ static void CheckIWAD(const char *iwadname,
 
   for (hacx=freed=ud=rg=sw=cm=sc=tnt=plut=0, header.numlumps = LONG(header.numlumps);
        header.numlumps && fread(&lump, sizeof lump, 1, fp); header.numlumps--)
+    *n=='S' && n[1]=='T' && n[3]=='B' && n[4]=='A' && n[5]=='R' && n[6] && !n[7] ? ++v11 :
     *n=='E' && n[2]=='M' && !n[4] ?
       n[1]=='4' ? ++ud : n[1]!='1' ? rg += n[1]=='3' || n[1]=='2' : ++sw :
     *n=='M' && n[1]=='A' && n[2]=='P' && !n[5] ?
@@ -813,9 +820,10 @@ static void CheckIWAD(const char *iwadname,
 		*hassec = sc >= 2, commercial) :
     hacx ? (*gmission = cm <= 5 ? none : hacx_reg , *hassec = sc > 0 , commercial) :
     ud >= 9 ? (*gmission = freed ? freedoom : doom, retail) :
-    rg >= 18 ? registered :
-    sw >= 9 ? shareware :
+    rg >= 18 ? (v11detected = v11 > 2 , registered) :
+    sw >= 9 ? (v11detected = v11 > 2, shareware) :
     indetermined;
+
 }
 
 // jff 4/19/98 Add routine to check a pathname for existence as
@@ -2020,6 +2028,8 @@ void D_DoomMain(void)
   DEBUGMSG("start main loop\n");
 
   oldgamestate = wipegamestate = gamestate;
+
+  redrawborder = true;
 
   while(1)
     {

@@ -1060,8 +1060,15 @@ void P_CrossSpecialLine(line_t *line, int side, mobj_t *thing)
 {
   int ok;
 
+  if (v12_compat)
+  {
+    if (line->special > 98 && line->special != 104)
+    {
+      return;
+    }
+  }
   //  Things that should never trigger lines
-  if(!thing->player)
+  else if(!thing->player)
   { 
      // haleyjd: change to check against MF2_NOCROSS flag instead of
      //          switching on type

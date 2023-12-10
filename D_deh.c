@@ -1876,6 +1876,7 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 
       // killough 11/98: really bail out on blank lines (break != continue)
       if (!*inbuffer) break;  // bail out with blank line between sections
+      if ('#' == *inbuffer) continue;
       if (!deh_GetData(inbuffer,key,&value,&strval,fpout)) // returns TRUE if ok
         {
           if (fpout) fprintf(fpout,"Bad data pair in '%s'\n",inbuffer);

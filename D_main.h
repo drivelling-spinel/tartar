@@ -65,6 +65,8 @@ extern boolean redrawsbar, redrawborder, redrawdlgdone;
 
 extern int use_continue;
 
+extern boolean v11detected;
+
 // Called by IO functions when input is detected.
 void D_PostEvent(event_t* ev);
 

@@ -505,7 +505,7 @@ int EV_DoFloor
         floor->sector = sec;
         floor->speed = FLOORSPEED * 4;
         floor->floordestheight = P_FindHighestFloorSurrounding(sec);
-        if (floor->floordestheight != sec->floorheight)
+        if (v12_compat || floor->floordestheight != sec->floorheight)
           floor->floordestheight += 8*FRACUNIT;
         break;
 

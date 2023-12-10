@@ -326,9 +326,14 @@ typedef enum {
 // linedefs. More friction can create mud, sludge,
 // magnetized floors, etc. Less friction can create ice.
 
-#define MORE_FRICTION_MOMENTUM 15000       // mud factor based on momentum
-#define ORIG_FRICTION          0xE800      // original value
-#define ORIG_FRICTION_FACTOR   2048        // original value
+#define MORE_FRICTION_MOMENTUM   15000       // mud factor based on momentum
+#define ORIG_FRICTION19          0xE800      // original value
+#define ORIG_FRICTION11          0xE800      
+#define ORIG_FRICTION_FACTOR19   2048        // original value
+#define ORIG_FRICTION_FACTOR11   900
+
+#define MAXMOVE19                (30*FRACUNIT)
+#define MAXMOVE11                (50*FRACUNIT)
 
 // sf: some useful macros
 //

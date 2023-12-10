@@ -432,7 +432,6 @@ struct mobj_s
 
                 // sf: gravity >>> defaultgravity
 #define DEFAULTGRAVITY  FRACUNIT
-#define MAXMOVE         (30*FRACUNIT)
 
 #define ONFLOORZ        D_MININT
 #define ONCEILINGZ      D_MAXINT

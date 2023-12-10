@@ -55,7 +55,11 @@ void P_MonsterFallingDamage(mobj_t *);
 
 void P_FallingDamage(player_t *);
 
-int gravity=FRACUNIT;
+int gravity=DEFAULTGRAVITY;
+
+int ORIG_FRICTION;
+int ORIG_FRICTION_FACTOR;
+fixed_t MAXMOVE;
 
 fixed_t FloatBobOffsets[64] =               // haleyjd 04/30/99: FloatBob
 {

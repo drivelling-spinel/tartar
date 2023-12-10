@@ -1848,7 +1848,10 @@ static boolean PIT_ChangeSector(mobj_t *thing)
       thing->skin = NULL;       // sf: clear the skin which will mess things
                                 // up
       P_SetMobjState(thing, S_GIBS);
-      thing->flags &= ~MF_SOLID;
+      if (!v12_compat)
+        {
+          thing->flags &= ~MF_SOLID;
+        }
       thing->height = thing->radius = 0;
       return true;      // keep checking
     }
