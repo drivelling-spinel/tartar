@@ -89,6 +89,99 @@ static fixed_t  bottomstep2;
 static short    *maskedtexturecol;
 
 //
+// R_FixWiggle()
+// Dynamic wall/texture rescaler, AKA "WiggleHack II"
+//  by Kurt "kb1" Baumgardner ("kb") and Andrey "Entryway" Budko ("e6y")
+//
+//  [kb] When the rendered view is positioned, such that the viewer is
+//   looking almost parallel down a wall, the result of the scale
+//   calculation in R_ScaleFromGlobalAngle becomes very large. And, the
+//   taller the wall, the larger that value becomes. If these large
+//   values were used as-is, subsequent calculations would overflow,
+//   causing full-screen HOM, and possible program crashes.
+//
+//  Therefore, vanilla Doom clamps this scale calculation, preventing it
+//   from becoming larger than 0x400000 (64*FRACUNIT). This number was
+//   chosen carefully, to allow reasonably-tight angles, with reasonably
+//   tall sectors to be rendered, within the limits of the fixed-point
+//   math system being used. When the scale gets clamped, Doom cannot
+//   properly render the wall, causing an undesirable wall-bending
+//   effect that I call "floor wiggle". Not a crash, but still ugly.
+//
+//  Modern source ports offer higher video resolutions, which worsens
+//   the issue. And, Doom is simply not adjusted for the taller walls
+//   found in many PWADs.
+//
+//  This code attempts to correct these issues, by dynamically
+//   adjusting the fixed-point math, and the maximum scale clamp,
+//   on a wall-by-wall basis. This has 2 effects:
+//
+//  1. Floor wiggle is greatly reduced and/or eliminated.
+//  2. Overflow is no longer possible, even in levels with maximum
+//     height sectors (65535 is the theoretical height, though Doom
+//     cannot handle sectors > 32767 units in height.
+//
+//  The code is not perfect across all situations. Some floor wiggle can
+//   still be seen, and some texture strips may be slightly misaligned in
+//   extreme cases. These effects cannot be corrected further, without
+//   increasing the precision of various renderer variables, and, 
+//   possibly, creating a noticable performance penalty.
+//   
+
+static int			max_rwscale = 64 * FRACUNIT;
+static int			heightbits = 12;
+static int			heightunit = (1 << 12);
+static int			invhgtbits = 4;
+ 
+static const struct
+{
+	int clamp;
+	int heightbits;
+}	
+	scale_values[8] = {
+		{2048 * FRACUNIT, 12}, {1024 * FRACUNIT, 12},
+		{1024 * FRACUNIT, 11}, { 512 * FRACUNIT, 11},
+		{ 512 * FRACUNIT, 10}, { 256 * FRACUNIT, 10},
+		{ 256 * FRACUNIT,  9}, { 128 * FRACUNIT,  9}
+	
+};
+
+void R_FixWiggle (sector_t *sector)
+{
+	static int	lastheight = 0;
+	int		height = (sector->ceilingheight - sector->floorheight) >> FRACBITS;
+
+	// disallow negative heights. using 1 forces cache initialization
+	if (height < 1)
+		height = 1;
+
+	// early out?
+	if (height != lastheight)
+	{
+		lastheight = height;
+
+		// initialize, or handle moving sector
+		if (height != sector->cachedheight)
+		{
+			sector->cachedheight = height;
+			sector->scaleindex = 0;
+			height >>= 7;
+
+			// calculate adjustment
+			while (height >>= 1)
+				sector->scaleindex++;
+		}
+
+		// fine-tune renderer for this wall
+		max_rwscale = scale_values[sector->scaleindex].clamp;
+		heightbits = scale_values[sector->scaleindex].heightbits;
+		heightunit = (1 << heightbits);
+		invhgtbits = FRACBITS - heightbits;
+	}
+}
+
+
+//
 // R_RenderMaskedSegRange
 //
 
@@ -277,7 +370,7 @@ static void R_RenderSegLoop (void)
   for ( ; rw_x < rw_stopx ; rw_x ++)
     {
       // mark floor / ceiling areas
-      int yh = bottomfrac>>HEIGHTBITS, yl = (topfrac+HEIGHTUNIT-1)>>HEIGHTBITS;
+      int yh = bottomfrac>>heightbits, yl = (topfrac+heightunit-1)>>heightbits;
       // no space above wall?
       int bottom = floorclip[rw_x]-1, top = ceilingclip[rw_x]+1;
 
@@ -295,10 +388,10 @@ static void R_RenderSegLoop (void)
           static char msgbuf[300];
           DEBUGMSG(">>>\n");
           sprintf(msgbuf, "rw_x=%d, yh=%d, yl=%d, topfrac=%d.%d, topstep=%d.%d, bottomfrac=%d.%d, bottomstep=%d.%d\n",
-            rw_x, yh, yl, topfrac>>HEIGHTBITS, (topfrac&0xfff) << 4,
-            topstep>>HEIGHTBITS, (topstep&0xfff) << 4,
-            bottomfrac>>HEIGHTBITS, (bottomfrac&0xfff) << 4,
-            bottomstep>>HEIGHTBITS, (bottomstep&0xfff) << 4);
+            rw_x, yh, yl, topfrac>>heightbits, (topfrac&0xfff) << invhgtbits,
+            topstep>>heightbits, (topstep&0xfff) << invhgtbits,
+            bottomfrac>>heightbits, (bottomfrac&0xfff) << invhgtbits,
+            bottomstep>>heightbits, (bottomstep&0xfff) << invhgtbits);
           DEBUGMSG(msgbuf);
           sprintf(msgbuf, "floorclip[rw_x]=%d, floorplane->top[rw_x]=%d, floorplane->bottom[rw_x]=%d\n",
             floorclip[rw_x], floorplane?floorplane->top[rw_x]:-1, floorplane?floorplane->bottom[rw_x]:-1);
@@ -349,7 +442,7 @@ static void R_RenderSegLoop (void)
 #ifdef TRANWATER
       if (markfloor2)
 	{
-	  int yw = bottomfrac2>>HEIGHTBITS;
+          int yw = bottomfrac2>>heightbits;
 	  
 	  if(yw < 0) yw = 0;
 	  if(yw >= viewheight) yw = viewheight-1;
@@ -430,7 +523,7 @@ static void R_RenderSegLoop (void)
           if (toptexture)
             {
               // top wall
-              int mid = pixhigh>>HEIGHTBITS;
+              int mid = pixhigh>>heightbits;
               pixhigh += pixhighstep;
 
               if (mid >= floorclip[rw_x])
@@ -467,7 +560,7 @@ static void R_RenderSegLoop (void)
 
           if (bottomtexture)          // bottom wall
             {
-              int mid = (pixlow+HEIGHTUNIT-1)>>HEIGHTBITS;
+              int mid = (pixlow+heightbits-1)>>heightbits;
               pixlow += pixlowstep;
 
               // no space above wall?
@@ -531,10 +624,10 @@ static void R_RenderSegLoop (void)
           static char msgbuf[300];
           DEBUGMSG("<<<\n");
           sprintf(msgbuf, "rw_x=%d, yh=%d, yl=%d, topfrac=%d.%d, topstep=%d.%d, bottomfrac=%d.%d, bottomstep=%d.%d\n",
-            rw_x, yh, yl, topfrac>>HEIGHTBITS, (topfrac&0xfff) << 4,
-            topstep>>HEIGHTBITS, (topstep&0xfff) << 4,
-            bottomfrac>>HEIGHTBITS, (bottomfrac&0xfff) << 4,
-            bottomstep>>HEIGHTBITS, (bottomstep&0xfff) << 4);
+            rw_x, yh, yl, topfrac>>heightbits, (topfrac&0xfff) << invhgtbits,
+            topstep>>heightbits, (topstep&0xfff) << invhgtbits,
+            bottomfrac>>heightbits, (bottomfrac&0xfff) << invhgtbits,
+            bottomstep>>heightbits, (bottomstep&0xfff) << invhgtbits);
           DEBUGMSG(msgbuf);
           sprintf(msgbuf, "floorclip[rw_x]=%d, floorplane->top[rw_x]=%d, floorplane->bottom[rw_x]=%d\n",
             floorclip[rw_x], floorplane?floorplane->top[rw_x]:-1, floorplane?floorplane->bottom[rw_x]:-1);
@@ -580,6 +673,43 @@ fixed_t R_PointToDist2(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2)
 
 
 //
+// R_ScaleFromGlobalAngle
+// Returns the texture mapping scale
+//  for the current line (horizontal span)
+//  at the given angle.
+// rw_distance must be calculated first.
+//
+// killough 5/2/98: reformatted, cleaned up
+// Dynamic WiggleFix Implementation - 2014/09/25
+
+fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
+{
+	int			anglea = ANG90 + (visangle - viewangle);
+	int			angleb = ANG90 + (visangle - rw_normalangle);
+	int			den = FixedMul(rw_distance, finesine[anglea >> ANGLETOFINESHIFT]);
+        fixed_t                 num = FixedMul(projection, finesine[angleb >> ANGLETOFINESHIFT]);
+	fixed_t 		scale;
+	
+	if (den > (num >> 16))
+	{
+		scale = FixedDiv(num, den);
+
+		// [kb] When this evaluates True, the scale is clamped,
+		//  and there will be some wiggling.
+		if (scale > max_rwscale)
+			scale = max_rwscale;
+		else if (scale < 256)
+			scale = 256;
+	}
+	else
+		scale = max_rwscale;
+
+	return scale;
+}
+
+
+
+//
 // R_StoreWallRange
 // A wall segment will be drawn
 //  between start and stop pixels (inclusive).
@@ -590,6 +720,10 @@ void R_StoreWallRange(const int start, const int stop)
   fixed_t sineval;
   angle_t distangle, offsetangle;
   int skipmid;
+
+  fixed_t dx, dy, a, c, ac, rwd_x_offset, rwd_y_offset;
+  fixed_t recentered_v1_x, recentered_v1_y, recentered_v2_x, recentered_v2_y;
+  char scaling_fudge;
 
   if (ds_p == drawsegs+maxdrawsegs)   // killough 1/98 -- fix 2s line HOM
     {
@@ -620,7 +754,7 @@ void R_StoreWallRange(const int start, const int stop)
   distangle = ANG90 - offsetangle;
   hyp = R_PointToDist (curline->v1->x, curline->v1->y);  
   sineval = finesine[distangle>>ANGLETOFINESHIFT];
-  rw_distance = FixedMul(hyp, sineval);
+  rw_distance = FixedMul (hyp, sineval);
 
   distangle += ANGLE_1;
   skipmid = distangle > 0 && distangle < (ANGLE_1 << 1);
@@ -631,6 +765,8 @@ void R_StoreWallRange(const int start, const int stop)
   ds_p->curline = curline;
   ds_p->colormap = scalelight;
   rw_stopx = stop+1;
+
+  R_FixWiggle(frontsector);
 
   // killough 1/6/98, 2/1/98: remove limit on openings
   // killough 8/1/98: Replaced code with a static limit 
@@ -925,48 +1061,48 @@ void R_StoreWallRange(const int start, const int stop)
     }
 
   // calculate incremental stepping values for texture edges
-  worldtop >>= 4;
-  worldbottom >>= 4;
+  worldtop >>= invhgtbits;
+  worldbottom >>= invhgtbits;
 
   topstep = -FixedMul (rw_scalestep, worldtop);
-  topfrac = (centeryfrac >> 4) - FixedMul (worldtop, rw_scale);
+  topfrac = (centeryfrac >> invhgtbits) - FixedMul (worldtop, rw_scale);
   
   if(topstep < -THRESH || topstep > THRESH)
     {
       topstep = 0;
       topfrac = 0;
-    }
+    } 
 
   bottomstep = -FixedMul (rw_scalestep,worldbottom);
-  bottomfrac = (centeryfrac >> 4) - FixedMul (worldbottom, rw_scale);
+  bottomfrac = (centeryfrac >> invhgtbits) - FixedMul (worldbottom, rw_scale);
   if(bottomstep < -THRESH || bottomstep > THRESH)
     {
       bottomstep = 0;
-      bottomfrac = viewheight << HEIGHTBITS;
-    }
+      bottomfrac = viewheight << heightbits;
+    } 
 
 #ifdef TRANWATER
   if (floorplane2)
     {
-      int worldplane = (floorplane2->height - viewz)>>4;
+      int worldplane = (floorplane2->height - viewz)>>invhgtbits;
       bottomstep2 = -FixedMul (rw_scalestep,worldplane);
-      bottomfrac2 = (centeryfrac >> 4) - FixedMul (worldplane, rw_scale);
+      bottomfrac2 = (centeryfrac >> invhgtbits) - FixedMul (worldplane, rw_scale);
     }
 #endif
 
   if (backsector)
     {
-      worldhigh >>= 4;
-      worldlow >>= 4;
+      worldhigh >>= invhgtbits;
+      worldlow >>= invhgtbits;
 
       if (worldhigh < worldtop)
         {
-          pixhigh = (centeryfrac>>4) - FixedMul (worldhigh, rw_scale);
+          pixhigh = (centeryfrac>>invhgtbits) - FixedMul (worldhigh, rw_scale);
           pixhighstep = -FixedMul (rw_scalestep,worldhigh);
         }
       if (worldlow > worldbottom)
         {
-          pixlow = (centeryfrac>>4) - FixedMul (worldlow, rw_scale);
+          pixlow = (centeryfrac>>invhgtbits) - FixedMul (worldlow, rw_scale);
           pixlowstep = -FixedMul (rw_scalestep,worldlow);
         }
     }

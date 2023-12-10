@@ -376,6 +376,7 @@ sector_t *R_FakeFlat(sector_t *sec, sector_t *tempsec,
               *ceilinglightlevel = s->ceilinglightsec == -1 ? s->lightlevel :
               sectors[s->ceilinglightsec].lightlevel; // killough 4/11/98
           }
+
       sec = tempsec;               // Use other sector
     }
   return sec;

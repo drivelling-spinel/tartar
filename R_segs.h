@@ -32,6 +32,9 @@ void R_StoreWallRange(int start, int stop);
 
 fixed_t R_PointToDist2(fixed_t x1, fixed_t y1, fixed_t x2, fixed_t y2);
 
+fixed_t R_ScaleFromGlobalAngle(angle_t visangle);
+
+
 #endif
 
 //----------------------------------------------------------------------------

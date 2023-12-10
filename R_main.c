@@ -222,31 +222,6 @@ angle_t R_PointToAngle2(fixed_t viewx, fixed_t viewy, fixed_t x, fixed_t y)
 }
 
 //
-// R_ScaleFromGlobalAngle
-// Returns the texture mapping scale
-//  for the current line (horizontal span)
-//  at the given angle.
-// rw_distance must be calculated first.
-//
-// killough 5/2/98: reformatted, cleaned up
-
-fixed_t R_ScaleFromGlobalAngle(angle_t visangle)
-{
-  int     anglea;
-  int     angleb;
-  int     den;
-  fixed_t num;
-
-  anglea = ANG90 + (visangle-viewangle);
-  angleb = ANG90 + (visangle-rw_normalangle);
-  den = FixedMul(rw_distance, finesine[anglea>>ANGLETOFINESHIFT]);
-  num = FixedMul(projection, finesine[angleb>>ANGLETOFINESHIFT]);
-
-  return den > num>>16 ? (num = FixedDiv(num, den)) > 64*FRACUNIT ?
-    64*FRACUNIT : num < 256 ? 256 : num : 64*FRACUNIT;
-}
-
-//
 // R_InitTextureMapping
 //
 // killough 5/2/98: reformatted
