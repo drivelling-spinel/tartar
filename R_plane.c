@@ -173,7 +173,7 @@ static void R_MapPlane(int y, int x1, int x2)
   if (!(ds_colormap = fixedcolormap))
     {
       index = distance >> LIGHTZSHIFT;
-      if (index >= MAXLIGHTZ )
+      if (index >= MAXLIGHTZ || wolflooks)
         index = MAXLIGHTZ-1;
       ds_colormap = planezlight[index];
     }
@@ -579,6 +579,9 @@ static void do_draw_plane(visplane_t *pl)
 
         if (light < 0)
           light = 0;
+
+        if (wolflooks)
+          light = LIGHTLEVELS-1;
 
         stop = pl->maxx + 1;
         pl->top[pl->minx-1] = pl->top[stop] = 0xffff;

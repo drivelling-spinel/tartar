@@ -130,17 +130,22 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
   lightnum = (R_FakeFlat(frontsector, &tempsec, NULL, NULL, false)
               ->lightlevel >> LIGHTSEGSHIFT)+extralight;
 
+  if(wolflooks)
+    lightnum = LIGHTLEVELS - 5;
+
   // haleyjd 08/11/00: optionally skip this to evenly apply colormap
   //                   to all walls -- never do it with custom colormaps
   if(MapUseFullBright && comp[comp_evenlight])
   {  
     if (curline->v1->y == curline->v2->y)
     {
-      lightnum--;
+      if(wolflooks) lightnum++;
+      else lightnum--;
     }
     else if (curline->v1->x == curline->v2->x)
     {
-        lightnum++;
+      if(wolflooks) lightnum--;
+      else lightnum++;
     }
   }
 
@@ -178,14 +183,18 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
     if (maskedtexturecol[dc_x] != D_MAXSHORT)
       {
         if (!fixedcolormap)      // calculate lighting
-          {                             // killough 11/98:
+          {                                    // killough 11/98:
             unsigned index = spryscale>>(LIGHTSCALESHIFT+hires);
 
-            if (index >=  MAXLIGHTSCALE )
+            if (index >=  MAXLIGHTSCALE)
               index = MAXLIGHTSCALE-1;
+
+            if (wolflooks)
+              index = MAXLIGHTSCALE-32;
 
             dc_colormap = walllights[index];
           }
+
 
         // killough 3/2/98:
         //
@@ -385,8 +394,11 @@ static void R_RenderSegLoop (void)
           // calculate lighting
           index = rw_scale>>(LIGHTSCALESHIFT+hires);  // killough 11/98
 
-          if (index >=  MAXLIGHTSCALE )
+          if (index >=  MAXLIGHTSCALE)
             index = MAXLIGHTSCALE-1;
+
+          if (wolflooks)
+            index = MAXLIGHTSCALE-32;
           dc_colormap = walllights[index];
           dc_x = rw_x;
           dc_iscale = 0xffffffffu / (unsigned)rw_scale;
@@ -862,6 +874,9 @@ void R_StoreWallRange(const int start, const int stop)
         {
           int lightnum = (frontsector->lightlevel >> LIGHTSEGSHIFT)+extralight;
 
+          if(wolflooks)
+            lightnum = LIGHTLEVELS - 5;
+
           // haleyjd 08/11/00: optionally skip this to evenly apply colormap
           //                   to all walls -- never do it with custom 
           //                   colormaps
@@ -869,12 +884,20 @@ void R_StoreWallRange(const int start, const int stop)
           {  
             if (curline->v1->y == curline->v2->y)
             {
-              lightnum--;
+              if(wolflooks)
+              {
+                if(!P_IsDoor(linedef)) lightnum++;
+              }
+              else lightnum--;
             }
             else if (curline->v1->x == curline->v2->x)
             {
-              lightnum++;
-            }
+              if(wolflooks)
+              {
+                if(!P_IsDoor(linedef)) lightnum--;
+              }
+              else lightnum++;
+            } 
           }
 
           if (lightnum < 0)

@@ -735,6 +735,9 @@ void R_AddSprites(sector_t* sec, int lightlevel)
 
   lightnum = (lightlevel >> LIGHTSEGSHIFT)+extralight;
 
+  if(wolflooks)
+    lightnum = LIGHTLEVELS - 1;
+
   if (lightnum < 0)
     spritelights = scalelight[0];
   else if (lightnum >= LIGHTLEVELS)
@@ -904,6 +907,9 @@ void R_DrawPlayerSprites(void)
              &floorlightlevel, &ceilinglightlevel, 0);
   lightnum = ((floorlightlevel+ceilinglightlevel) >> (LIGHTSEGSHIFT+1))
     + extralight;
+
+  if(wolflooks)
+    lightnum = LIGHTLEVELS - 1;
 
   if (lightnum < 0)
     spritelights = scalelight[0];

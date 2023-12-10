@@ -983,6 +983,27 @@ int P_CheckTag(line_t *line)
   return 0;
 }
 
+int P_IsDoor(line_t *line)
+{
+  switch (line->special)
+    {
+    case 1:   // Manual door specials
+    case 26:
+    case 27:
+    case 28:
+    case 31:
+    case 32:
+    case 33:
+    case 34:
+    case 117:
+    case 118:
+      return 1;
+    default:
+      return (unsigned)line->special >= GenDoorBase;
+    }
+}
+
+
 //
 // P_IsSecret()
 //
