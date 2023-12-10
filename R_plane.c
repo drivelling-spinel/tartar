@@ -367,6 +367,7 @@ static void R_MakeSpans(int x, int t1, int b1, int t2, int b2)
 }
 
 extern void R_DrawNewSkyColumn(void);
+extern void R_DrawTallSkyColumn(void);
 
 // haleyjd: moved here from r_newsky.c
 void do_draw_newsky(visplane_t *pl)
@@ -404,7 +405,10 @@ void do_draw_newsky(visplane_t *pl)
 #ifdef NORENDER
            if(!norender1)
 #endif
-             colfunc();
+             if(!comp[comp_talltex] && dc_texheight > 255)
+               R_DrawTallSkyColumn();
+             else
+               colfunc();
         }
 
       // now draw sky 1 with R_DrawNewSkyColumn (masked)
@@ -416,7 +420,13 @@ void do_draw_newsky(visplane_t *pl)
            dc_source =
              R_GetColumn(skyTexture,  
                (((an + xtoviewangle[x])) >> (ANGLETOSKYSHIFT))+offset);
-           R_DrawNewSkyColumn();
+#ifdef NORENDER
+           if(!norender1)
+#endif
+             if(!comp[comp_talltex] && dc_texheight > 255)
+               R_DrawTallSkyColumn();
+             else
+               R_DrawNewSkyColumn();
         }
    }
    else // one layer only
@@ -442,7 +452,10 @@ void do_draw_newsky(visplane_t *pl)
 #ifdef NORENDER
           if(!norender1)
 #endif
-             colfunc();
+             if(!comp[comp_talltex] && dc_texheight > 255)
+               R_DrawTallSkyColumn();
+             else
+               colfunc();
         }
    }
 }

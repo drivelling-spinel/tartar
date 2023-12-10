@@ -1200,6 +1200,87 @@ void R_DrawNewSkyColumn(void)
   }
 } 
 
+
+void R_DrawTallSkyColumn(void) 
+{ 
+  int              count; 
+  register byte    *dest;            // killough
+  register fixed_t frac;            // killough
+  fixed_t          fracstep;     
+  column_t * thisPost, * nextPost;
+  int postLen;
+
+  count = dc_yh - dc_yl + 1; 
+
+  if (count <= 0)    // Zero length, column does not exceed a pixel.
+    return; 
+                                 
+#ifdef RANGECHECK 
+  if ((unsigned)dc_x >= MAX_SCREENWIDTH
+      || dc_yl < 0
+      || dc_yh >= MAX_SCREENHEIGHT) 
+    I_Error ("R_DrawTallSkyColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
+#endif 
+
+  // Framebuffer destination address.
+  // Use ylookup LUT to avoid multiply with ScreenWidth.
+  // Use columnofs LUT for subwindows? 
+
+  dest = ylookup[dc_yl] + columnofs[dc_x];  
+
+  // Determine scaling, which is the only mapping to be done.
+
+  fracstep = dc_iscale; 
+  frac = dc_texturemid + (dc_yl-centery)*fracstep; 
+
+  thisPost = (column_t *)(dc_source - 3);
+  // panic if first post is offset (i.e. masked sky column)
+  if(thisPost->topdelta != 0)
+    return;
+  postLen = thisPost->length;
+  nextPost = (column_t *)(((byte *)thisPost) + postLen + 4);
+  // panic if second post does not start immediately after first finishes
+  if(nextPost->topdelta != postLen)
+    return;
+
+  {
+    register const byte *source = dc_source;            
+    register const lighttable_t *colormap = dc_colormap; 
+    register int heightmask = dc_texheight-1;
+    register const byte *tallSource = ((byte*)nextPost) + 3;
+    register const int thresh = postLen;
+    heightmask++;
+    heightmask <<= FRACBITS;
+      
+    if (frac < 0)
+      while ((frac += heightmask) <  0);
+    else
+      while (frac >= heightmask)
+        frac -= heightmask;
+      
+    do
+      {
+        // Re-map color indices from wall texture column
+        //  using a lighting/special effects LUT.
+        
+        // haleyjd
+        register int offs = frac >> FRACBITS;
+        if(offs < thresh)
+          {
+            *dest = colormap[source[offs]];
+          }
+        else
+          {
+            *dest = colormap[tallSource[offs - thresh]];
+          }         
+        dest += linesize;                     // killough 11/98
+        if ((frac += fracstep) >= heightmask)
+          frac -= heightmask;
+      } 
+    while (--count);
+  }
+} 
+
 //----------------------------------------------------------------------------
 //
 // $Log: r_draw.c,v $
