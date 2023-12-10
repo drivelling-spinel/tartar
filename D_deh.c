@@ -83,9 +83,22 @@ char *dehfgets(char *buf, size_t n, DEHFILE *fp)
   else
     {                                                // copy buffer
       char *p = buf;
-      while (n>1 && *fp->inp && fp->size &&
-             (n--, fp->size--, *p++ = *fp->inp++) != '\n')
-        ;
+      while (n>1 && /* *fp->inp && */ fp->size)
+        {
+          char c = (n--, fp->size--, *p++ = *fp->inp++);
+          if(c == '\n')
+            break;
+          if(!c && fp->size)
+            {
+              *(p-1) = ' ';
+              continue;
+            }
+          if(c == '\r' && fp->size && *fp->inp != '\n')
+            {
+              *(p-1) = '\n';
+              break;
+            }
+        }
       *p = 0;
     }
   return buf;                                        // Return buffer pointer
@@ -1625,12 +1638,13 @@ void ProcessExtraDehFile(extra_file_t extra, char *filename, char *outfilename, 
 
   if (filename)
     {
-      if (!(infile.inp = (void *) fopen(filename,"rt")))
+      infile.size = M_ReadFile(filename, &infile.lump);
+      if (infile.size < 0)
         {
           usermsg("-deh file %s not found",filename);
           return;  // should be checked up front anyway
         }
-      infile.lump = NULL;
+      infile.inp = infile.lump;
     }
   else  // DEH file comes from lump indicated by third argument
     {
