@@ -1,6 +1,5 @@
 # Comprehensive list of changes
 
-************************************************************************
 This file contains the description of what has been changed in Tartar 
 as compared to the sources of Caverns of Darkness that Joel Murdoch has 
 made available as COD10SRC.ZIP. 
@@ -9,12 +8,12 @@ made available as COD10SRC.ZIP.
 
 ### Features menu item has been moved from main menu into Options
   
-  This was done because vanilla TCs and Chex do not provide a patch
+  This was done because TCs for vanilla Doom and Chex do not provide a patch
   for Features, and it looks very out of place as a result
 
 ### Currently selected item in options menu is now flashing
   
-  Again, vanilla TCs and Chex use colored images for font glyphs 
+  Again, TCs for vanilla Doom and Chex use colored images for font glyphs 
   that dont's translate into one of the CR_... colors
   which makes selected menu item in Eternity options indistinguishable
   from other items
@@ -26,16 +25,16 @@ made available as COD10SRC.ZIP.
 
 ### New entry "Load WAD" added to Episode selection menu
 
-  By default Eternity would start new game not from E1M1 or MAP01
+  By default Eternity would start a new game not from E1M1 or MAP01
   but from the first changed map it detects if pwads with maps are 
-  loaded. This means that loading Tech Gone Bad would result new
-  game to start from E1M8, and if Sigil Compat is loaded, new games
+  loaded. This means that loading Tech Gone Bad would result with new
+  games starting from E1M8, and if Sigil Compat is loaded, new games
   will start from E2M1 in Doom 1. Unfortunatelly, this is less useful
   for pwads that modify several episodes. For example Alients TC would 
   start from E1M1 and not E2M1 as one would expect. In Tartar, when 
   starting new Doom 1 game player can always select the desired episode. 
   There is also an additional entry in the menu Load WAD (named so because
-  author didn't want to add new patches into the resource wad) that 
+  author didn't want to add new patches to the resource wad) that 
   will trigger default Eternity behaviour. With Doom 2, Final Doom and 
   Chex new games always start with the first changed map when a pwad
   with maps is loaded.
@@ -44,32 +43,32 @@ made available as COD10SRC.ZIP.
 
 ### Updated Alegro library and sound routines 
 
-  [allegro.h](/allegro.h) in Tartar comes from the version of Allegro found in 
+  [ALLEGRO.H](/ALLEGRO.H) in Tartar comes from the version of Allegro found in 
   [MBF 2.0.4](https://www.vogons.org/viewtopic.php?f=24&t=40857), and Tartar
   binaries are linked with liballegro produced from the sources that 
   the author of MBF 2.0.4 has shared. System dependent sound code has been
   replaced with that from MBF 2.0.4. This single change was the main driver 
   of the effort by the author, as he found previously available build of 
   Cavens of Darkness to be somewhat unstable when it came to sound and music 
-  on a modern "Frankenstein" system in native DOS. 
+  on a modern "Frankenstein" gaming system in native DOS. 
   
   For those curious, target system for Tartar development was eqipped with
   a Yamaha YMF744B-R based PCI sound card and an X3MB MIDI synthesizer
   connector to the MPU-401 port of the said card. It was intended to be used
   in Windows 98 with VXD drivers by Yamaha and in DOS with DSDMA utility.
 
-  Please refer to MBF 2.0.4 changelog included for the details on 
-  Allegro changes. Tartar source code does not include modified Allegro 
+  Please refer to [MBF 2.0.4 changelog](COPYRGHT\MBFUP204.TXT) for the details 
+  on Allegro changes. Tartar source code does not include modified Allegro 
   sources.
 
 ### Sound and MIDI card options have been removed from Sound options
 
-  Following the "change in policy" from MBF 2.0.4 inclusion it is no
-  longer possible to select sound card in Tartar options menu. Instead
-  player should use a separate SETUP.EXE configuration utility. This is
-  taken as is from MBF 2.0.4 in Tartar distribution and produces SETUP.CFG
-  file (similar to ALLEGRO.CFG file that original ASETUP.EXE from Allegro
-  library produced).
+  Following the "change in policy" from MBF 2.0.4 sound code inclusion 
+  it is no longer possible to select sound card in Tartar options menu. 
+  Instead player should use a separate SETUP.EXE configuration utility. 
+  This utility is taken as is from MBF 2.0.4 in Tartar distribution and 
+  produces SETUP.CFG file (similar to ALLEGRO.CFG file that original 
+  ASETUP.EXE from Allegro library produced).
 
 ### Sound caching is no longer optional and option is gone from Sound options
   
@@ -80,13 +79,13 @@ made available as COD10SRC.ZIP.
 
 ### VESA-based lowlevel routines replace Allegro ones for video
 
-  Low-level system video routines have been replaced by those by author  
-  of [MBF 2.0.4](https://www.vogons.org/viewtopic.php?f=24&t=40857).
-  The new routines use VESA API calls instead of Allegro and for improved
-  video cards compatibility. 
+  Low-level system video routines have been replaced by those developed 
+  by Gerwin for [MBF 2.0.4](https://www.vogons.org/viewtopic.php?f=24&t=40857).
+  The new routines use VESA API calls instead of Allegro library functions 
+  and have improved video cards compatibility. 
   
-  For the list of cards tested with MBF 2.0.4
-  please consult the readmes for that port, however it should be noted that
+  For the list of cards tested with MBF 2.0.4 please consult the included
+  changelog for that port, however it should be noted that Tartar's
   author was able to get high resolution modes work with the embedded
   video card by Intel that he had on the target system, which did not work
   with the DOS source ports he had previously tried. 
@@ -95,16 +94,16 @@ made available as COD10SRC.ZIP.
 
   It is no longer possible to directly select video mode in the options menu.
   Instead following MBF 2.0.4 example, video mode selection is done based
-  on the set of options that player sets in options menu. These options are
-  described in this section, and there is also a separate section of this 
-  file with the list option combinations suitable for some specific cases.
+  on the combination of options that player sets in options menu. These options 
+  are described in this section, and there is also a separate section of this 
+  file with the list option combinations recommended for some specific cases.
 
-### C Video, screenshots, renderer and graphics routines have been generalized
+### C video, screenshot, renderer and graphics routines have been generalized
 
-  All the routines that supported high resolution modes (i.e. 640x400 resolution
+  All C routines that had high resolution mode supported (i.e. 640x400 resolution
   in addition to 320x200) have been updated to support any resolution that
   is a power of 2 multiple of 320x200. In practical terms this means 1280x800
-  is now supported, but in theory C functions could work with e.g. 2560x1600
+  is now supported, but in theory these functions could work with e.g. 2560x1600
   as well. 
 
   This is **not true** for Assembler functions, which have only been provided
@@ -113,7 +112,7 @@ made available as COD10SRC.ZIP.
 
 ### Renderer resolution option has been added
 
-  Player can choose to render to 320x200, 640x400 and 1280x800
+  Player can choose to render to screen buffer of the following dimensions:
 
   - 320x200   rendered image will be output in 320x200 resolution
   - 640x400   rendered image will be output into 640x400 resolution if supported
@@ -139,7 +138,7 @@ made available as COD10SRC.ZIP.
               into 1280x1024 resolution with black bars on top and bottom
 
   Game resolution will be selected accordingly. No interpolation or filtering 
-  are performed while scaling; each pixel is simply drawn as 2x2 block of the
+  is performed while scaling; each pixel is simply drawn as 2x2 block of the
   same color. 
 
   Scaling of screen buffer is done in RAM, after which scaled screen buffer
@@ -148,22 +147,22 @@ made available as COD10SRC.ZIP.
   larger size screen buffer, and thus more memory than with scaling off
   at the same renderer resolution.
 
-  CVAR to enable/disable scaling is v_scale_hi or with scale_to_hires
-  option in the configuration file.
+  CVAR to enable/disable scaling is v_scale_hi, scale_to_hires is the 
+  corresponding option in the configuration file.
 
-### Option for scaling to a 4:3 resolition has been added
+### Option for stretching to a 4:3 resolution has been added
   
-  If activated without scaling to higher resolution being on:
+  If activated without scaling to higher resolution:
   - 320x200   rendered image will not be changed
   - 640x400   rendered image will not be changed if video card supports 640x400 
-              resolution, otherwise it will be scaled and output into 640x480 
-              without black bars on top and bottom
-  - 1280x800  rendered image will be scaled to 1280x960, and output 
-              into 1280x1024 with black bars on top and bottom
-              more narrow than when compared to 1280x800 image 
+              resolution, otherwise it will be stretched and output into 640x480 
+              _without_ black bars on top and bottom
+  - 1280x800  rendered image will be stretched to 1280x960, and output 
+              into 1280x1024 with black bars on top and bottom,
+              bars being narrower than for an unstreteched 1280x800 image 
               
-  No interpolation or filtering is performed while scaling.
-  In fact scaling is performed by simply outputting some of the screen
+  No interpolation or filtering is performed while stretching.
+  In fact stretching is performed by outputting some of the screen
   buffer lines twice. I.e. without scaling to higher resolution
   on some of the lines pixels will be drawn as 1x2 blocks of the same
   color. With scaling to higher resolution, on the same lines pixels
@@ -182,7 +181,7 @@ made available as COD10SRC.ZIP.
 ### Video page flipping can be explicitly set in Video options
   
   As in MBF 2.0.4, the option to enable page flipping via VESA API call in 
-  low-level vieo routines (taken from MBF 2.0.4) has been added. CVAR v_page_flip and 
+  low-level vieo routines has been added. CVAR v_page_flip and 
   configuration file option page_flip can be used to control it. 
 
 ### Waiting for retrace now follows MBF 2.0.4 logic 
@@ -192,7 +191,7 @@ made available as COD10SRC.ZIP.
 
 ### Option to show flashing disk icon when loading has been removed
   
-  Unlike Allegro counterparts, MBF 2.0.4 low level vide routines do not have 
+  Unlike Allegro counterparts, MBF 2.0.4 low level video routines do not have 
   generic purpose blitting functions, so rendring sprites at arbitrary moment in game 
   life cycle is no longer possible. One such case was the flashing disk/CD-ROM icon,
   and as it's no longer supported, option is gone for it from the menu.
@@ -206,9 +205,9 @@ made available as COD10SRC.ZIP.
   v_show_fps CVAR and show_fps configuration file option to switch FPS 
   output on or off.  
 
-  If FPS counter is on, Tartar will also display current video settings
+  If FPS counter is on, Tartar will additionally display current video settings
   (including actual mode that was configured) after they have been changed, 
-  or for a few seconds after new level is started or saved game is loaded.
+  or for a few seconds after new level was started or a saved game was loaded.
   These will also be shown in game only.
 
 ### Timed demo benchmarks have been removed from Video options menu 
@@ -217,21 +216,21 @@ made available as COD10SRC.ZIP.
   these were referring to the benchmark scores tied to a certain set of 
   video modes which no longer made sense with the changes described above. 
   This change has only removed timed demos from Options menu. Running with 
-  command line arguments should still be possible. 
+  command line arguments or from Features menu should still be possible. 
 
 ### Command line options from MBF 2.0.4 have been added
   
   - -nolfb   avoid using LFB modes with VESA routines 
   - -nopm    avoid using PM VESA functions
   - -safe    try the most compatible settings for video card
-  - -asmp6   choose P6-specific assembler optimized memory copy code 
-             regardless of the detected CPU family
+  - -asmp6   choose P6-specific assembler optimized code for 
+             copying memory blocks regardless of the detected CPU family
 
 ### Option to stretch skies is now persisted in configuration file
   
   Configuration file option stretchsky has been added to store it.
 
-### Experimental "checkered translucency" has been added
+### _Experimental_ "checkered translucency" has been added
   
   New translucency mode has been added that does not use tranmap file.
   Instead it renders either odd or even pixel of sprites and textures,
@@ -261,20 +260,24 @@ made available as COD10SRC.ZIP.
   menus, and then either set r_fauxtrans CVAR or change faux_translucency
   option in the configuration file.
 
-### Experimental "water transluency" code has been compiled in
+### _Experimental_ "water transluency" code has been compiled in
 
-  The TRANWATER preprocessor define is set to On for compiling Tartar,
+  The TRANWATER preprocessor define is set to ON for compiling Tartar,
   which causes experimental ("no feature") code for rendering Boom-style  
-  (i.e. line type 242) deep water surface as translucent to be called.
+  (i.e. line type 242) deep water surface as translucent to be included.
   Because this code results in nothing resembling translucent water surface, 
   it needs to be enabled explicitly with r_watertrans CVAR or 
   water_translucency option in the configuration file, both of which are 
   off by default. This will also only work if general translucency is  
-  enabled in options.  
+  enabled in options. Just to reiterate - this is broken, "no feature" code
+  included for study purpose only.
 
 ## Recommended video options for common use cases
 
-### 1. Classic 320x200
+Tartar only supports video modes with 8 bits per pixel, that is ones 
+capable of displaying 256 colors at once.
+
+### 1. Original 320x200
 
 Player has authentic retro or otherwise performance sensitive hardware,
 or interest in classic vanilla/BOOM/MBF experience.
@@ -289,8 +292,8 @@ or interest in classic vanilla/BOOM/MBF experience.
 
 ### 2. Classic MBF hires
 
-Player has access to slightly more powerful hardware including and a 
-CRT display and videocard that supports 640x400
+Player has access to slightly more powerful hardware including 
+a videocard that supports 640x400 and preferrably a CRT display.
 
 - Renderer resoltion - 640x400
 - Scale to higher resolution - No
@@ -300,8 +303,8 @@ CRT display and videocard that supports 640x400
 
 ### 3. MBF hires on a less compatilble computer
 
-Player has access to slightly more powerful hardware including and a 
-CRT display but their videocard only supports 640x480 and not 640x400
+Player has access to slightly more powerful hardware but
+but their videocard only supports 640x480 and not 640x400.
 
 - Renderer resoltion - 640x400
 - Scale to higher resolution - No
@@ -311,10 +314,10 @@ CRT display but their videocard only supports 640x480 and not 640x400
 
 ![usecase3.png](usecase3.png)
 
-### 4. Gaming system with a "classic" LCD monitor attached
+### 4. Gaming system with a retro LCD monitor attached
 
-Player has a "classic" 1280x1024 display with 5:4 aspect ratio and
-hadrware that is fast enough and has enough memory to handle this 
+Player has a 1280x1024 LCD display with 5:4 aspect ratio and
+hadrware that is fast enough and has enough memory to handle higher 
 resolution.
 
 - Renderer resoltion - 1280x800
@@ -326,10 +329,10 @@ resolution.
 ![usecase4.png](usecase4.png)
 
 
-### 5. Square pixel appreciation on a "classic" LCD monitor
+### 5. Square pixel appreciation on a retro LCD monitor
 
-Player has a "classic" 1280x1024 display with 5:4 aspect ratio,
-hadrware that is fast enought and has enough memory to handle this 
+Player has a 1280x1024 LCD display with 5:4 aspect ratio,
+hadrware that is fast enought and has enough memory to handle higher 
 resolution, and an appreciation for sprites looking the same they would
 look in a graphical editor had they loaded them.
 
@@ -355,11 +358,11 @@ look in a graphical editor had they loaded them.
 
 ### _Experimental_ filtering of mouse movement
   
-  Historically Eternity had been suffering from "jerky" mouse turning, as sharp 
+  Historically Eternity had been suffering from "jerky" mouse movement, as sharp 
   turns by the player could easily result in 360 (or more) degree turns in game. 
   Rather than fixing this at the source as SoM has done 
-  in [late 2008](https://web.archive.org/web/20090110014229/http://som.mancubus.net/),   
-  Tartar author has introduced filtering of exessive mouse readings
+  in [late 2008](https://web.archive.org/web/20090110014229/http://som.mancubus.net/),
+  Tartar author has introduced clamping of exessive mouse readings
   to prevent unexpected turning behavior. This change is specific to Tartar and
   makes mouse turns in Tartar "feel" different from other ports. There is no
   configuration option or CVAR to disable it. 
@@ -368,12 +371,13 @@ look in a graphical editor had they loaded them.
 
 ### _ETERNITY.WAD_ is always loaded as resource wad
 
-  SMMU and Eternity look for a resource WAD file to automatically load and that
-  contains sprites, patches and sounds necessary for the source port using the
-  name of the executable of the port. So, provided ETERNITY.EXE is run, the 
-  name of the WAD file to load would be ETERNITY.WAD, but if player renames
-  ETERNITY.EXE to FOOBAR.EXE, the name of the WAD file would be FOOBAR.WAD.
-  Tartar always looks for WAD file named ETERNITY.WAD. 
+  SMMU and Eternity automaticall load the resource WAD file that
+  contains sprites, patches and sounds necessary for the source port to work.
+  The WAD is looked for using the name of the executable of the port. 
+  So, provided ETERNITY.EXE is run, the name of the WAD file to load would be 
+  ETERNITY.WAD, but if player renames ETERNITY.EXE to FOOBAR.EXE, the name 
+  of the WAD file would be FOOBAR.WAD. Tartar always looks for WAD file 
+  named ETERNITY.WAD. 
   
   This allows players to, for example, rename TARTAR.EXE to DOOM.EXE and use a
   front end like DOOM-IT to load maps and mods with it.  
@@ -393,8 +397,8 @@ look in a graphical editor had they loaded them.
   C:\GAMES\DOOM2\TARTAR.EXE  
 
   If player runs the game from C:\GAMES\DOOM2 using command TARTAR\TARTAR.EXE
-  Tartar will load TARTAR.CFG and other needed files from C:\GAMES\TARTAR.
-  The following files will be picked up from that directory.
+  Tartar will load TARTAR.CFG and other files it needs from C:\GAMES\DOOM2\TARTAR,
+  and not C:\GAMES\DOOM2. The following files will be picked up from that directory:
 
   - TARTAR.CFG
   - ETERNITY.WAD
@@ -408,7 +412,7 @@ look in a graphical editor had they loaded them.
 ### Startup uses system code from MBF 2.0.4 
   
   That startup code has been merged with the one from MBF 2.0.4 probably
-  means better more stable behaviour when run under Windows NT family OS.
+  means more stable behaviour when run under Windows NT family OS.
   Author has not tested this however.
 
 ### Changing game speed with i_gamespeed CVAR requires a restart
@@ -423,16 +427,16 @@ look in a graphical editor had they loaded them.
   Eternity performs video and audio update every game loop, regardless 
   of whether new events to process are available, or next game tic 
   has started as per system timer. Tartar's author is not aware of the
-  rationale for this, but seeing absurdly high frame rates in lower 
-  resolution, has introduced new CVAR i_ticwait and configuration option
-  update_after_tic, that will limit the updates only to situations,
-  when new events are available or new tick has been registered 
-  by the system timer (the latter is to keep menus and game UI running 
-  even if there's no game or demo happenning).
+  rationale for this, but annoyed with the absurdly high frame rates 
+  in lower sresolution, has introduced new CVAR i_ticwait and 
+  configuration option update_after_tic, that limit the updates 
+  only to situations,  when new events are available or new tick has 
+  been registered by the system timer (the latter is to keep menus and 
+  game UI running even when there's no game or demo happenning).
 
   Author's preference is to run with the CVAR set to on, and little 
-  testing that has been made has not shown any effect on the gameplay,
-  aside from the desired capping of FPS with 35 + ~35/2 (giving around
+  testing that has been carried out has not shown any effect on the gameplay,
+  aside from the desired capping of FPS to 35 + ~35/2 (which is around
   50 fps while playing), however to maintain compatibilty with Eternity
   both CVAR and configuration option are off by default.
 
@@ -440,17 +444,17 @@ look in a graphical editor had they loaded them.
 
 ### Chex Quest can be loaded without dependency on any Doom assets
 
-  CHEX.WAD is considered among the names of the IWADs that Tartar 
+  CHEX.WAD is now among the names of the IWADs that Tartar 
   supports. Moreover it will be loaded even if a PWAD version is provided.
   In addition to loading CHEX.WAD without requiring any Doom IWAD,
   the following compatibility changes have been made in Tartar
-  (as per the recommendation in readme file of Simon Howard's  
+  (as per the recommendation in readme file of Simon Howard's 
   [DEH patch](https://www.doomworld.com/idgames/utils/exe_edit/patches/chexdeh) )
 
   - Game will stop after level 5
-  - Monsters will not produce drops 
+  - Monsters will not produce drops on death
   - No episode selection menu is presented at the start of the game 
-  - Cheat codes will always take playe to Episode 1 level, 
+  - Level selection cheat codes will always take player to an Episode 1 level, 
     regardless of the episode number typed
   
   It is recommended that CHEX.DEH by Simon Howard is loaded with CHEX.WAD,
@@ -458,7 +462,7 @@ look in a graphical editor had they loaded them.
   modifications for Chex internally.
 
   Implementation-wise Chex Quest is treated as a mission pack to registered
-  version of the game.
+  and retail versions of the game.
 
 ### Classic Caverns of Darkness TC for DOS can be loaded 
 
@@ -473,7 +477,8 @@ look in a graphical editor had they loaded them.
   wads to load, Tartar will **not** load ETERNITY.WAD and instead 
   load COD.WAD as resource wad in its place. It will also activate
   support for Caverns-related features, including special handling
-  of line types 274 and 275 which are different from SMMU and Eternity.
+  of line types 274 and 275 which is different from that in SMMU or 
+  Eternity.
 
   Implementation-wise Caverns of Darkness is treated as a mission pack
   to commercial version of the game.
@@ -504,7 +509,7 @@ look in a graphical editor had they loaded them.
   - Eternity ambient sound library (commented out by Murdoch)
     has been restored and made coexist with COD ambinet sounds
   - line types 274 and 275 have been restored to beahve as expected 
-    SMMU or Eternity, and only exhibit COD behavior if COD mission 
+    in SMMU or Eternity, and only exhibit COD behavior if COD mission 
     pack is detected by Tartar
 
 ## Gameplay changes
@@ -514,14 +519,14 @@ look in a graphical editor had they loaded them.
   Enemies menu in Tartar has option to enable re-coloring of blood splats into 
   other colors from the default red. Color can be set to blue, yellow or green.
   This will affect all blood splats and particle blood, but not gore, corpses,
-  decorations or wall textures. Screen fade into red when player is in pain is 
-  also not affected by this option. 
+  decorations or wall textures. Screen fading into red when player is in pain 
+  is also not affected by this option. 
   
-  Additionally intelligent mode is available (Auto in options) that:
+  Additionally "intelligent" mode is available (Auto in options) that:
   - changes all blood color to green in Chex 
   - re-colors Doom Barons and Knights blood color to green
   - re-colors Doom Cacodemons blood color to blue
-  - retains default color for all other splats (which is red, unless replaced ny pwads)
+  - retains default color for all other splats (which is red, unless replaced by pwads)
 
   CVAR mon_bloodcolor controls blood re-coloring, values are 0-4, 0 corresponds
   to no re-coloring, 4 - to auto (intelligent mode). The configuration file option
