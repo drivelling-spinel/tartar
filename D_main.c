@@ -386,6 +386,7 @@ void D_640PageDrawer(char *key);
 
 void D_PageDrawer(void)
 {
+  V_FillScreen(0, FG);
   if (pagename)
     {
       int l = W_CheckNumForName(pagename);
@@ -1927,6 +1928,7 @@ void D_ReInitWadfiles()
   R_Free();
   R_Init();
   P_Init();
+  I_RescanSounds();
 }
 
 void D_NewWadLumps(int handle)
@@ -1987,7 +1989,7 @@ void D_NewWadLumps(int handle)
 	S_Chgun();
       if(!strncmp(lumpinfo[i]->name, "DS", 2))
 	{
-      S_UpdateSound(i);
+          S_UpdateSound(i);
 	}
       
       // new music
@@ -2017,6 +2019,7 @@ void D_NewWadLumps(int handle)
 
   if(reset_finallevel)
     finallevel[0] = 0;
+
 }
 
 

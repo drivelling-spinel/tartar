@@ -222,7 +222,8 @@ int W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, cons
 
   if(!stricmp(lump->name, "DSBFG") && extra == EXTRA_SELFIE)
     {
-      lump->name[2] = 'Z';
+      char *c = lump->name;
+      c[2] = 'S'; c[3] = 'L'; c[4] = 'F';
       return 1;  
     }
 

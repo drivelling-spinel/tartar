@@ -51,7 +51,6 @@ int mus_card;   // jff 1/18/98
 //int default_snd_card;  // killough 10/98: add default_ versions
 //int default_mus_card;
 
-
 int detect_voices; //jff 3/4/98 enables voice detection prior to install_sound
 // not usable, just left out for linkage
 //jff 1/22/98 make these visible here to disable sound/music on install err
@@ -82,7 +81,7 @@ static SAMPLE *raw2SAMPLE(unsigned char *rawdata, int len)
 // This function loads the sound data from the WAD lump,
 //  for single sound.
 //
-static void *getsfx(char *sfxname, int *len)
+static void *getsfx(char *sfxname)
 {
   unsigned char *sfx, *paddedsfx;
   int  i;
@@ -105,10 +104,9 @@ static void *getsfx(char *sfxname, int *len)
   //  variable. Instead, we will use a
   //  default sound for replacement.
 
-  if ( W_CheckNumForName(name) == -1 )
-    sfxlump = W_GetNumForName("dspistol");
-  else
-    sfxlump = W_GetNumForName(name);
+  if ( W_CheckNumForName(name) == -1 ) return NULL;
+
+  sfxlump = W_GetNumForName(name);
 
   size = W_LumpLength(sfxlump);
 
@@ -125,16 +123,13 @@ static void *getsfx(char *sfxname, int *len)
   // This should interfere with zone memory handling,
   //  which does not kick in in the soundserver.
 
-  // Now copy and pad.
+  // Now copy and pad.                                
   memcpy(paddedsfx, sfx, size);
   for (i=size; i<paddedsize+8; i++)
     paddedsfx[i] = 128;
 
   // Remove the cached lump.
   Z_Free(sfx);
-
-  // Preserve padded length.
-  *len = paddedsize;
 
   // Return allocated padded data.
   return raw2SAMPLE(paddedsfx,paddedsize);  // killough 1/22/98: pass all data
@@ -208,6 +203,12 @@ static SAMPLE channel[NUM_CHANNELS];
 int I_StartSound(sfxinfo_t *sound, int vol, int sep, int pitch, int pri)
 {
   static int handle;
+
+  if(!sound->data)
+    {
+      I_Error("I_StartSound: no sample data ever loaded for sound ds%-6s\n", sound->name);
+      return;
+    }
 
   // move up one slot, with wraparound
   if (++handle >= NUM_CHANNELS)
@@ -290,12 +291,25 @@ void I_ShutdownSound(void)
 //char midi_desc[160];
 //char digi_desc[160];
 
+void I_RescanSounds(void)
+{
+  int i;  // killough 10/98: eliminate snd_c since we use default_snd_card now
+
+  // Initialize external data (all sounds) at start, keep static.
+  fputs("I_RescanSounds: Loading sound data",stdout); // killough 8/8/98 // GB 2014 added suffix
+
+  for (i=1; i<NUMSFX; i++) 
+    if (!S_sfx[i].link)   // Load data from WAD file.
+      S_sfx[i].data = getsfx(S_sfx[i].name);
+    else
+      { // Alias? Example is the chaingun sound linked to pistol.
+        // Previously loaded already?
+        S_sfx[i].data = S_sfx[i].link->data;
+      }
+}
 
 void I_InitSound(void)
 {
-  int lengths[NUMSFX];  // The actual lengths of all sound effects. -- killough
-  int i;  // killough 10/98: eliminate snd_c since we use default_snd_card now
-
   snd_card=1;
   mus_card=1;
 
@@ -374,19 +388,8 @@ void I_InitSound(void)
       if (!strcmp(digi_driver->name,"No sound")) {snd_card=0;} 
       if (!strcmp(midi_driver->name,"No sound")) {mus_card=0;}
     }
-
-  // Initialize external data (all sounds) at start, keep static.
-  fputs("I_InitSound: Load sound data",stdout); // killough 8/8/98 // GB 2014 added suffix
-
-  for (i=1; i<NUMSFX; i++) 
-    if (!S_sfx[i].link)   // Load data from WAD file.
-      S_sfx[i].data = getsfx(S_sfx[i].name, &lengths[i]);
-    else
-      { // Alias? Example is the chaingun sound linked to pistol.
-        // Previously loaded already?
-        S_sfx[i].data = S_sfx[i].link->data;
-        lengths[i] = lengths[(S_sfx[i].link - S_sfx)/sizeof(sfxinfo_t)];
-      }
+ 
+  I_RescanSounds();
 
   // GB 2014
   // Allegro load_ibk: Reads in a .IBK patch set file, for use by the Adlib driver.

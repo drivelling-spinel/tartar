@@ -1139,7 +1139,7 @@ void A_BFGsound(player_t *player, pspdef_t *psp)
 
 void A_SelfieSound(player_t *player, pspdef_t *psp)
 {
-  S_StartSound(player->mo, sfx_bfg);
+  S_StartSound(player->mo, sfx_selfie);
 }
 
 //

@@ -32,10 +32,9 @@
 #include "v_video.h"  // color ranges
 
 //
-// Background and foreground screen numbers
+// Background screen number for status bar
 //
 #define BG 4
-#define FG 0
 
 //
 // Typedefs of widgets

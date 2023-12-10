@@ -275,6 +275,7 @@ void F_Ticker(void)
             wipegamestate = -1;     // force a wipe
             if(gameepisode == 3)
 	       S_StartMusic(mus_bunny);
+            V_FillScreen(0, FG);
 	 }
 	 else if(!demo_compatibility && midstage)
 	 { 
@@ -432,6 +433,8 @@ void F_StartCast (void)
   castonmelee = 0;
   castattacking = false;
   S_ChangeMusicNum(mus_evil, true);
+
+  V_FillScreen(0, FG);
 }
 
 

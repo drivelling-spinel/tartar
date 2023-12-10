@@ -267,6 +267,44 @@ void V_CopyRect(int srcx, int srcy, int srcscrn, int width,
     }
 }
 
+
+void V_FillRect(int c, int width, int height, int destx, int desty, int destscrn )
+{
+  byte *dest;
+
+#ifdef RANGECHECK
+  if (destx<0||destx+width >SCREENWIDTH
+      || desty<0
+      || (unsigned)destscrn>4)
+    I_Error ("Bad V_FillRect");
+#endif
+
+  V_MarkRect (destx, desty, width, height);
+
+  if (hires)   // killough 11/98: hires support
+    {
+      width<<=hires;
+      height<<=hires;
+      dest = screens[destscrn]+(SCREENWIDTH<<hires)*(desty<<hires)+(destx<<hires);
+
+      for ( ; height>0 ; height--)
+	{
+          memset (dest, c, width);
+          dest += (SCREENWIDTH<<hires);
+	}
+    }
+  else
+    {
+      dest = screens[destscrn]+SCREENWIDTH*desty+destx;
+
+      for ( ; height>0 ; height--)
+	{
+          memcpy (dest, 0, width);
+	  dest += SCREENWIDTH;
+	}
+    }
+}
+
 //
 // V_DrawPatch
 //

@@ -330,13 +330,6 @@ void I_FinishUpdate(void)
    int effective_band = blackband;
    if (noblit || !in_graphics_mode) return;
      
-   if(in_hires && clearscreen)
-   {
-     clearscreen = 0;
-     if (linear) vesa_clear_pages_LFB   (2, 0x08);      // may be garbage left in video memory, 
-     else vesa_clear_pages_banked(2, 0x08);      // which will    
-   }
-
  //if (v12_compat)    M_DrawText2(1,10,CR_BLUE,true,"V12_COMPAT");   // debug
  //if (compatibility) M_DrawText2(1,16,CR_BLUE,true,"compatibility");// debug 
  //sprintf(mode_string,"vesa:%d mode:%xh w:%d h:%d banksize:%d BPS:%d",vesa_version,current_mode, screen_w, screen_h, mode_banksize, mode_BPS);
@@ -395,16 +388,47 @@ void I_FinishUpdate(void)
    
    if (!linear || safeparm)
    {                                                            // note: divide scroll offset /2 to test if pageflipping occurs
-      if (current_mode>255) vesa_blitscreen_banked(screens[0], size, scroll_offset); // VESA Banked (slower)
-	  else dosmemput(screens[0], SCREENWIDTH*ymax, 0xA0000);    // Mode 13h without nearptr
+      if (current_mode>255)
+      {
+          // don't have the means for testing this just yet
+          if (clearscreen)
+          {
+              clearscreen = 0;
+              if(blackband) vesa_clear_pages_banked(2, 0x08);      
+          }
+          vesa_blitscreen_banked(screens[0], size, scroll_offset); // VESA Banked (slower)
+      }
+          else dosmemput(screens[0], SCREENWIDTH*ymax, 0xA0000);    // Mode 13h without nearptr
    }
    else
    {  // 1/16/98 killough: optimization based on CPU type:
-      if (current_mode>255) 
+      if(clearscreen)
+      {
+          if(blackband)
+          {
+               // use the slow stuff, as this does not happen too often
+               const int band_bytes = effective_band * mode_BPS;
+               int i;
+               for(i = 0 ; i < 2 ; i ++)
+               {
+                   char * dst = (byte *) screen_base_addr + screen_h * i * mode_BPS;
+                   if(effective_band)
+                   {
+                     memset(dst, 0, band_bytes);
+                     memset(dst + size + band_bytes, 0, band_bytes);
+                   }
+                   else memset(dst + size, 0, screen_h * mode_BPS - size);
+                   if(!in_page_flip) break;
+               }
+          }
+          clearscreen = 0;
+      }
+
+      if (current_mode>255)
          dascreen = (byte *) screen_base_addr + scroll_offset*mode_BPS + effective_band*mode_BPS; // VESA LFB access
-           if (cpu_family >= 6 || asmp6parm) ppro_blit(dascreen,size);       // PPro, PII
-      else if (cpu_family >= 5) pent_blit(dascreen,size);       // Pentium (GB 2014: not used for Cx5x86, but it is a little slower anyways)
-      else                      memcpy(dascreen,screens[0],size); // Others
+      if (cpu_family >= 6 || asmp6parm) ppro_blit(dascreen,size);       // PPro, PII
+      else if (cpu_family >= 5)         pent_blit(dascreen,size);       // Pentium (GB 2014: not used for Cx5x86, but it is a little slower anyways)
+      else                              memcpy(dascreen,screens[0],size); // Others
    }
 
    if (in_page_flip) vesa_set_displaystart(0, scroll_offset, use_vsync); // hires hardware page-flipping (VBE 2.0 Only, Do not waste frames on 1.2)

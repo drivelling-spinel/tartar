@@ -43,6 +43,7 @@
 
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
+#define FG 0
 
 //jff 2/16/98 palette color ranges for translation
 //jff 2/18/98 conversion to palette lookups for speed
@@ -95,6 +96,9 @@ void V_Init (void);
 void V_CopyRect(int srcx,  int srcy,  int srcscrn, int width, int height,
 		int destx, int desty, int destscrn);
 
+void V_FillRect(int c, int width, int height,
+		int destx, int desty, int destscrn);
+
 // killough 11/98: Consolidated V_DrawPatch and V_DrawPatchFlipped
 
 void V_DrawPatchGeneral(int x,int y,int scrn,patch_t *patch, boolean flipped);
@@ -124,6 +128,8 @@ void V_GetBlock(int x, int y, int scrn, int width, int height, byte *dest);
 //          game palette
 
 byte V_FindBestColor(const byte *palette, int r, int g, int b);
+
+#define V_FillScreen(c, s) V_FillRect(c, SCREENWIDTH, SCREEN_LOWEST, 0, 0, s);
 
 #include "v_misc.h"
 
