@@ -181,6 +181,7 @@ char *s_GOTPLASMA   = GOTPLASMA;
 char *s_GOTSHOTGUN  = GOTSHOTGUN;
 char *s_GOTSHOTGUN2 = GOTSHOTGUN2;
 char *s_GOTCROSS    = GOTCROSS; // joel - cross pickup
+char *s_GOTSELFIE   = GOTSELFIE;
 char *s_PD_BLUEO    = PD_BLUEO;
 char *s_PD_REDO     = PD_REDO;
 char *s_PD_YELLOWO  = PD_YELLOWO;
@@ -518,6 +519,7 @@ deh_strs deh_strlookup[] = {
   {&s_GOTSHOTGUN,"GOTSHOTGUN"},
   {&s_GOTSHOTGUN2,"GOTSHOTGUN2"},
   {&s_GOTCROSS,"GOTCROSS"}, // joel: Cross pickup message
+  {&s_GOTSELFIE,"GOTSELFIE"},
   {&s_PD_BLUEO,"PD_BLUEO"},
   {&s_PD_REDO,"PD_REDO"},
   {&s_PD_YELLOWO,"PD_YELLOWO"},
@@ -950,31 +952,31 @@ void    lfstrip(char *);     // strip the \r and/or \n off of a line
 void    rstrip(char *);      // strip trailing whitespace
 char *  ptr_lstrip(char *);  // point past leading whitespace
 boolean deh_GetData(char *, char *, long *, char **, FILE *);
-boolean deh_procStringSub(char *, char *, char *, FILE *);
+boolean deh_procStringSub(char *, char *, char *, FILE *, extra_file_t);
 char *  dehReformatStr(char *);
 
 // Prototypes for block processing functions
 // Pointers to these functions are used as the blocks are encountered.
 
-void deh_procThing(DEHFILE *, FILE*, char *);
-void deh_procFrame(DEHFILE *, FILE*, char *);
-void deh_procPointer(DEHFILE *, FILE*, char *);
-void deh_procSounds(DEHFILE *, FILE*, char *);
-void deh_procAmmo(DEHFILE *, FILE*, char *);
-void deh_procWeapon(DEHFILE *, FILE*, char *);
-void deh_procSprite(DEHFILE *, FILE*, char *);
-void deh_procCheat(DEHFILE *, FILE*, char *);
-void deh_procMisc(DEHFILE *, FILE*, char *);
-void deh_procText(DEHFILE *, FILE*, char *);
-void deh_procPars(DEHFILE *, FILE*, char *);
-void deh_procStrings(DEHFILE *, FILE*, char *);
-void deh_procError(DEHFILE *, FILE*, char *);
-void deh_procBexCodePointers(DEHFILE *, FILE*, char *);
-void deh_procHelperThing(DEHFILE *, FILE *, char *); // haleyjd 9/22/99
+void deh_procThing(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procFrame(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procPointer(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procSounds(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procAmmo(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procWeapon(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procSprite(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procCheat(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procMisc(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procText(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procPars(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procStrings(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procError(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procBexCodePointers(DEHFILE *, FILE*, char *, extra_file_t extra);
+void deh_procHelperThing(DEHFILE *, FILE *, char *, extra_file_t extra); // haleyjd 9/22/99
 // haleyjd: handlers to fully deprecate the DeHackEd text section
-void deh_procBexSounds(DEHFILE *, FILE *, char *);
-void deh_procBexMusic(DEHFILE *, FILE *, char *);
-void deh_procBexSprites(DEHFILE *, FILE *, char *);
+void deh_procBexSounds(DEHFILE *, FILE *, char *, extra_file_t extra);
+void deh_procBexMusic(DEHFILE *, FILE *, char *, extra_file_t extra);
+void deh_procBexSprites(DEHFILE *, FILE *, char *, extra_file_t extra);
 
 // Structure deh_block is used to hold the block names that can
 // be encountered, and the routines to use to decipher them
@@ -982,7 +984,7 @@ void deh_procBexSprites(DEHFILE *, FILE *, char *);
 typedef struct
 {
   char *key;       // a mnemonic block code name
-  void (*const fptr)(DEHFILE *, FILE*, char *); // handler
+  void (*const fptr)(DEHFILE *, FILE*, char *, extra_file_t extra); // handler
 } deh_block;
 
 #define DEH_BUFFERMAX 1024 // input buffer area size, hardcodedfor now
@@ -1593,7 +1595,7 @@ void D_BuildBEXTables(void)
 // haleyjd 09/07/01: this can be called while in video mode now,
 // so printf calls needed to be converted to usermsg calls
 //
-void ProcessDehFile(char *filename, char *outfilename, int lumpnum)
+void ProcessExtraDehFile(extra_file_t extra, char *filename, char *outfilename, int lumpnum)
 {
   static FILE *fileout;       // In case -dehout was used
   DEHFILE infile, *filein = &infile;    // killough 10/98
@@ -1692,7 +1694,7 @@ void ProcessDehFile(char *filename, char *outfilename, int lumpnum)
           // killough 10/98:
           // Second argument must be NULL to prevent closing fileout too soon
 
-          ProcessDehFile(nextfile,NULL,0); // do the included file
+          ProcessExtraDehFile(extra,nextfile,NULL,0); // do the included file
 
           includenotext = oldnotext;
           if (fileout) fprintf(fileout,"...continuing with %s\n",filename);
@@ -1705,7 +1707,7 @@ void ProcessDehFile(char *filename, char *outfilename, int lumpnum)
             if (fileout)
               fprintf(fileout,"Processing function [%d] for %s\n",
                       i, deh_blocks[i].key);
-            deh_blocks[i].fptr(filein,fileout,inbuffer);  // call function
+            deh_blocks[i].fptr(filein,fileout,inbuffer,extra);  // call function
             break;  // we got one, that's enough for this block
           }
     }
@@ -1723,6 +1725,11 @@ void ProcessDehFile(char *filename, char *outfilename, int lumpnum)
     }
 }
 
+void ProcessDehFile(char *filename, char *outfilename, int lumpnum)
+{
+  ProcessExtraDehFile(EXTRA_NONE, filename, outfilename, lumpnum);
+}
+
 // ====================================================================
 // deh_procBexCodePointers
 // Purpose: Handle [CODEPTR] block, BOOM Extension
@@ -1731,12 +1738,13 @@ void ProcessDehFile(char *filename, char *outfilename, int lumpnum)
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procBexCodePointers(DEHFILE *fpin, FILE* fpout, char *line)
+void deh_procBexCodePointers(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
   int indexnum;
   char mnemonic[DEH_MAXKEYLEN];  // to hold the codepointer mnemonic
+  state_t *local_states = extra == EXTRA_SELFIE ? states2[1] : states2[0];
   int i; // looper
   boolean found; // know if we found this one during lookup or not
 
@@ -1778,7 +1786,7 @@ void deh_procBexCodePointers(DEHFILE *fpin, FILE* fpout, char *line)
           ++i;
           if (!stricmp(key,deh_bexptrs[i].lookup))
             {  // Ty 06/01/98  - add  to states[].action for new djgcc version
-              states[indexnum].action = deh_bexptrs[i].cptr; // assign
+              local_states[indexnum].action = deh_bexptrs[i].cptr; // assign
               if (fpout) fprintf(fpout,
                                  " - applied %p from codeptr[%d] to states[%d]\n",
                                  deh_bexptrs[i].cptr,i,indexnum);
@@ -1807,7 +1815,7 @@ void deh_procBexCodePointers(DEHFILE *fpin, FILE* fpout, char *line)
 // bit masks for monster attributes
 //
 
-void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line)
+void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
@@ -1816,6 +1824,8 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line)
   int ix;
   int *pix;  // Ptr to int, since all Thing structure entries are ints
   char *strval;
+
+  if(extra != EXTRA_NONE) return;
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
   if (fpout) fprintf(fpout,"Thing line: '%s'\n",inbuffer);
@@ -1931,12 +1941,13 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line)
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line)
+void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
+  state_t *local_states = extra == EXTRA_SELFIE ? states2[1] : states2[0];
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 
@@ -1959,25 +1970,25 @@ void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line)
       if (!stricmp(key,deh_state[0]))  // Sprite number
         {
           if (fpout) fprintf(fpout," - sprite = %ld\n",value);
-          states[indexnum].sprite = (spritenum_t)value;
+          local_states[indexnum].sprite = (spritenum_t)value;
         }
       else
         if (!stricmp(key,deh_state[1]))  // Sprite subnumber
           {
             if (fpout) fprintf(fpout," - frame = %ld\n",value);
-            states[indexnum].frame = value; // long
+            local_states[indexnum].frame = value; // long
           }
         else
           if (!stricmp(key,deh_state[2]))  // Duration
             {
               if (fpout) fprintf(fpout," - tics = %ld\n",value);
-              states[indexnum].tics = value; // long
+              local_states[indexnum].tics = value; // long
             }
           else
             if (!stricmp(key,deh_state[3]))  // Next frame
               {
                 if (fpout) fprintf(fpout," - nextstate = %ld\n",value);
-                states[indexnum].nextstate = (statenum_t)value;
+                local_states[indexnum].nextstate = (statenum_t)value;
               }
             else
               if (!stricmp(key,deh_state[4]))  // Codep frame (not set in Frame deh block)
@@ -1989,13 +2000,13 @@ void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line)
                 if (!stricmp(key,deh_state[5]))  // Unknown 1
                   {
                     if (fpout) fprintf(fpout," - misc1 = %ld\n",value);
-                    states[indexnum].misc1 = value; // long
+                    local_states[indexnum].misc1 = value; // long
                   }
                 else
                   if (!stricmp(key,deh_state[6]))  // Unknown 2
                     {
                       if (fpout) fprintf(fpout," - misc2 = %ld\n",value);
-                      states[indexnum].misc2 = value; // long
+                      local_states[indexnum].misc2 = value; // long
                     }
                   else
                     if (fpout) fprintf(fpout,"Invalid frame string index for '%s'\n",key);
@@ -2011,13 +2022,14 @@ void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line)
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line) // done
+void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // done
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
   int i; // looper
+  state_t *local_states = extra == EXTRA_SELFIE ? states2[1] : states2[0];
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
   // NOTE: different format from normal
@@ -2057,7 +2069,7 @@ void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line) // done
 
       if (!stricmp(key,deh_state[4]))  // Codep frame (not set in Frame deh block)
         {
-          states[indexnum].action = deh_codeptr[value];
+          local_states[indexnum].action = deh_codeptr[value];
           if (fpout) fprintf(fpout," - applied %p from codeptr[%ld] to states[%d]\n",deh_codeptr[value],value,indexnum);
           // Write BEX-oriented line to match:
           for (i=0;i<NUMSTATES;i++)
@@ -2085,12 +2097,14 @@ void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line) // done
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procSounds(DEHFILE *fpin, FILE* fpout, char *line)
+void deh_procSounds(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
+
+  if(extra != EXTRA_NONE) return;
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 
@@ -2154,12 +2168,14 @@ void deh_procSounds(DEHFILE *fpin, FILE* fpout, char *line)
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procAmmo(DEHFILE *fpin, FILE* fpout, char *line)
+void deh_procAmmo(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
+
+  if(extra != EXTRA_NONE) return;
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 
@@ -2200,12 +2216,13 @@ void deh_procAmmo(DEHFILE *fpin, FILE* fpout, char *line)
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line)
+void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
+  weaponinfo_t *local_weaponinfo = extra == EXTRA_SELFIE ? weaponinfo2[1] : weaponinfo2[0];
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 
@@ -2228,22 +2245,22 @@ void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line)
           continue;
         }
       if (!stricmp(key,deh_weapon[0]))  // Ammo type
-        weaponinfo[indexnum].ammo = value;
+        local_weaponinfo[indexnum].ammo = value;
       else
         if (!stricmp(key,deh_weapon[1]))  // Deselect frame
-          weaponinfo[indexnum].upstate = value;
+          local_weaponinfo[indexnum].upstate = value;
         else
           if (!stricmp(key,deh_weapon[2]))  // Select frame
-            weaponinfo[indexnum].downstate = value;
+            local_weaponinfo[indexnum].downstate = value;
           else
             if (!stricmp(key,deh_weapon[3]))  // Bobbing frame
-              weaponinfo[indexnum].readystate = value;
+              local_weaponinfo[indexnum].readystate = value;
             else
               if (!stricmp(key,deh_weapon[4]))  // Shooting frame
-                weaponinfo[indexnum].atkstate = value;
+                local_weaponinfo[indexnum].atkstate = value;
               else
                 if (!stricmp(key,deh_weapon[5]))  // Firing frame
-                  weaponinfo[indexnum].flashstate = value;
+                  local_weaponinfo[indexnum].flashstate = value;
                 else
                   if (fpout) fprintf(fpout,"Invalid weapon string index for '%s'\n",key);
     }
@@ -2258,7 +2275,7 @@ void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line)
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procSprite(DEHFILE *fpin, FILE* fpout, char *line) // Not supported
+void deh_procSprite(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // Not supported
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
@@ -2292,12 +2309,14 @@ void deh_procSprite(DEHFILE *fpin, FILE* fpout, char *line) // Not supported
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procPars(DEHFILE *fpin, FILE* fpout, char *line) // extension
+void deh_procPars(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // extension
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
   int indexnum;
   int episode, level, partime, oldpar;
+  
+  if(extra != EXTRA_NONE) return;
 
   // new item, par times
   // usage: After [PARS] Par 0 section identifier, use one or more of these
@@ -2379,7 +2398,7 @@ void deh_procPars(DEHFILE *fpin, FILE* fpout, char *line) // extension
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procCheat(DEHFILE *fpin, FILE* fpout, char *line) // done
+void deh_procCheat(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // done
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
@@ -2387,6 +2406,8 @@ void deh_procCheat(DEHFILE *fpin, FILE* fpout, char *line) // done
   char *strval = "";  // pointer to the value area
   int ix, iy;   // array indices
   char *p;  // utility pointer
+  
+  if(extra != EXTRA_NONE) return;
 
   if (fpout) fprintf(fpout,"Processing Cheat: %s\n",line);
 
@@ -2453,11 +2474,13 @@ void deh_procCheat(DEHFILE *fpin, FILE* fpout, char *line) // done
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procMisc(DEHFILE *fpin, FILE* fpout, char *line) // done
+void deh_procMisc(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // done
 {
    char key[DEH_MAXKEYLEN];
    char inbuffer[DEH_BUFFERMAX];
    long value;      // All deh values are ints or longs
+
+  if(extra != EXTRA_NONE) return;
    
    strncpy(inbuffer,line,DEH_BUFFERMAX);
    while(!dehfeof(fpin) && *inbuffer && (*inbuffer != ' '))
@@ -2528,7 +2551,7 @@ void deh_procMisc(DEHFILE *fpin, FILE* fpout, char *line) // done
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procText(DEHFILE *fpin, FILE* fpout, char *line)
+void deh_procText(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX*2];  // can't use line -- double size buffer too.
@@ -2537,6 +2560,7 @@ void deh_procText(DEHFILE *fpin, FILE* fpout, char *line)
   int usedlen;  // shorter of fromlen and tolen if not matched
   boolean found = FALSE;  // to allow early exit once found
   char* line2 = NULL;   // duplicate line for rerouting
+  int selfie = 0;
 
   // Ty 04/11/98 - Included file may have NOTEXT skip flag set
   if (includenotext) // flag to skip included deh-style text
@@ -2563,6 +2587,13 @@ void deh_procText(DEHFILE *fpin, FILE* fpout, char *line)
       inbuffer[totlen++] = c;
     inbuffer[totlen]='\0';
   }
+  
+  if (fpout) fprintf(fpout,
+                     "Processing Text (key=%s, from=%d, to=%d, buffer=\"%s\")\n",
+                     key, fromlen, tolen, inbuffer);  
+  
+  if(!strncmp(inbuffer, GOTSELFIE, fromlen)) selfie += 1;
+  if(extra != EXTRA_NONE && (extra == EXTRA_SELFIE && !selfie)) return;
 
   // if the from and to are 4, this may be a sprite rename.  Check it
   // against the array and process it as such if it matches.  Remember
@@ -2645,13 +2676,13 @@ void deh_procText(DEHFILE *fpin, FILE* fpout, char *line)
           inbuffer[fromlen] = '\0';
         }
 
-      deh_procStringSub(NULL, inbuffer, line2, fpout);
+      deh_procStringSub(NULL, inbuffer, line2, fpout, extra);
     }
   free(line2); // may be NULL, ignored by free()
   return;
 }
 
-void deh_procError(DEHFILE *fpin, FILE* fpout, char *line)
+void deh_procError(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
   char inbuffer[DEH_BUFFERMAX];
 
@@ -2668,7 +2699,7 @@ void deh_procError(DEHFILE *fpin, FILE* fpout, char *line)
 //          line  -- current line in file to process
 // Returns: void
 //
-void deh_procStrings(DEHFILE *fpin, FILE* fpout, char *line)
+void deh_procStrings(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
@@ -2727,7 +2758,7 @@ void deh_procStrings(DEHFILE *fpin, FILE* fpout, char *line)
       if (*holdstring) // didn't have a backslash, trap above would catch that
         {
           // go process the current string
-          found = deh_procStringSub(key, NULL, holdstring, fpout);  // supply keyand not search string
+          found = deh_procStringSub(key, NULL, holdstring, fpout, extra);  // supply keyand not search string
 
           if (!found)
             if (fpout) fprintf(fpout,
@@ -2748,10 +2779,14 @@ void deh_procStrings(DEHFILE *fpin, FILE* fpout, char *line)
 //          fpout     -- file stream pointer for log file (DEHOUT.TXT)
 // Returns: boolean: True if string found, false if not
 //
-boolean deh_procStringSub(char *key, char *lookfor, char *newstring, FILE *fpout)
+boolean deh_procStringSub(char *key, char *lookfor, char *newstring, FILE *fpout, extra_file_t extra)
 {
   boolean found; // loop exit flag
   int i;  // looper
+  int selfie = 0;
+  
+  if(!strcmp(lookfor, GOTSELFIE)) selfie += 1;
+  if(extra != EXTRA_NONE && (extra == EXTRA_SELFIE && !selfie)) return false;
 
   found = false;
   for (i=0;i<deh_numstrlookup;i++)
@@ -2759,6 +2794,13 @@ boolean deh_procStringSub(char *key, char *lookfor, char *newstring, FILE *fpout
       found = lookfor ?
         !stricmp(*deh_strlookup[i].ppstr,lookfor) :
         !stricmp(deh_strlookup[i].lookup,key);
+      
+      // it's a hack, as we _know_ selfie pickup message follows BFG
+      if(found && selfie && lookfor) 
+        {
+          selfie = 0;
+          found = false;
+        }
 
       if (found)
         {
@@ -2814,11 +2856,13 @@ boolean deh_procStringSub(char *key, char *lookfor, char *newstring, FILE *fpout
 // rewiring of the DOG thing.  I feel this is a waste of effort, and so
 // have added this new [HELPER] BEX block
 
-void deh_procHelperThing(DEHFILE *fpin, FILE *fpout, char *line)
+void deh_procHelperThing(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t extra)
 {
   char key[DEH_MAXKEYLEN];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
+
+  if(extra != EXTRA_NONE) return;
 
   strncpy(inbuffer,line,DEH_BUFFERMAX);
   while (!dehfeof(fpin) && *inbuffer && (*inbuffer != ' '))
@@ -2849,7 +2893,7 @@ void deh_procHelperThing(DEHFILE *fpin, FILE *fpout, char *line)
 // Supports sprite name substitutions without requiring use
 // of the DeHackEd Text block
 //
-void deh_procBexSprites(DEHFILE *fpin, FILE *fpout, char *line)
+void deh_procBexSprites(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t extra)
 {
    char key[DEH_MAXKEYLEN];
    char inbuffer[DEH_BUFFERMAX];
@@ -2857,6 +2901,8 @@ void deh_procBexSprites(DEHFILE *fpin, FILE *fpout, char *line)
    char *strval;  // holds the string value of the line
    char candidate[5];
    int  rover;
+
+   if(extra != EXTRA_NONE) return;
 
    if(fpout)
       fprintf(fpout,"Processing sprite name substitution\n");
@@ -2907,7 +2953,7 @@ void deh_procBexSprites(DEHFILE *fpin, FILE *fpout, char *line)
 }
 
 // ditto for sound names
-void deh_procBexSounds(DEHFILE *fpin, FILE *fpout, char *line)
+void deh_procBexSounds(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t extra)
 {
    char key[DEH_MAXKEYLEN];
    char inbuffer[DEH_BUFFERMAX];
@@ -2915,6 +2961,8 @@ void deh_procBexSounds(DEHFILE *fpin, FILE *fpout, char *line)
    char *strval;  // holds the string value of the line
    char candidate[7];
    int  rover, len;
+
+   if(extra != EXTRA_NONE) return;
    
    if(fpout)
       fprintf(fpout,"Processing sound name substitution\n");
@@ -2966,7 +3014,7 @@ void deh_procBexSounds(DEHFILE *fpin, FILE *fpout, char *line)
 }
 
 // ditto for music names
-void deh_procBexMusic(DEHFILE *fpin, FILE *fpout, char *line)
+void deh_procBexMusic(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t extra)
 {
    char key[DEH_MAXKEYLEN];
    char inbuffer[DEH_BUFFERMAX];
@@ -2975,6 +3023,8 @@ void deh_procBexMusic(DEHFILE *fpin, FILE *fpout, char *line)
    char candidate[7];
    int  rover, len;
    
+   if(extra != EXTRA_NONE) return;
+
    if(fpout)
       fprintf(fpout,"Processing music name substitution\n");
    

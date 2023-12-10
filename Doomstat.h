@@ -427,6 +427,8 @@ extern int default_playpal_wad;      // idx of that last loaded wad with PLAYPAL
                                      // preceding those autoloaded at the end
 extern char ** dyna_playpal_wads;    // names of the wad containing a PLAYPAL lump
 
+boolean selfieMode;
+
 #endif
 
 //----------------------------------------------------------------------------

@@ -266,7 +266,9 @@ typedef enum
   SPR_TRE3, // joel: new COD objects
   SPR_CROS, // joel: sprite set for Holy Cross
   SPR_CRSS, // joel: pickup sprite
-
+  
+  SPR_SELF,   // selfie stick
+    
   NUMSPRITES  // counter of how many there are
 } spritenum_t;
 
@@ -1990,6 +1992,7 @@ typedef struct
 
 // these are in info.c
 extern state_t  states[NUMSTATES];
+extern state_t  *states2[2];
 extern char *sprnames[];             // 1/17/98 killough
 
 // ********************************************************************

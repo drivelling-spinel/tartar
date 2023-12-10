@@ -131,6 +131,7 @@
 #define GOTSHOTGUN2 "You got the super shotgun!"
 // joel: Holy Cross pickup message
 #define GOTCROSS    "you got the holy cross. use it wisely!"
+#define GOTSELFIE   "You got the BFG9000!  Oh, yes."
 
 //
 // P_Doors.C

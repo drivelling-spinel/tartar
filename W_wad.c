@@ -194,8 +194,20 @@ int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_
       int i = 0;
 
       for(i = 0 ; i < 3 ; i += 1)
-        if(!stricmp(names[i], lump->name)) return 1;
+        if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
 
+      return 0;
+    }
+    
+  if(extra == EXTRA_SELFIE)
+    {
+      static char * names[] = { "SELF", "DSBFG" };
+      int i = 0;
+
+      for(i = 0 ; i < 1 ; i += 1)
+        {
+          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
+        }
       return 0;
     }
 
@@ -207,6 +219,12 @@ int W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, cons
   char * tmpname;
 
   if(!W_ShouldKeepLump(lump, lumpnum, wadname, extra)) return 0;
+
+  if(!stricmp(lump->name, "DSBFG") && extra == EXTRA_SELFIE)
+    {
+      lump->name[2] = 'Z';
+      return 1;  
+    }
 
   if(stricmp(lump->name, "PLAYPAL")) return 1;
 
@@ -407,7 +425,6 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
       if(!W_DynamicLumpFilterProc(lump_p, i, basename, extra))
         {
           i--;
-          lump_p--;
           numlumps--;
           continue;
         }

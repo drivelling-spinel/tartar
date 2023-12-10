@@ -77,6 +77,9 @@ static const char rcsid[] = "$Id: d_main.c,v 1.47 1998/05/16 09:16:51 killough E
 // Add lump number as third argument, for use when filename==NULL
 void ProcessDehFile(char *filename, char *outfilename, int lump);
 
+void ProcessExtraDehFile(extra_file_t extra, char *filename, char *outfilename, int lump);
+boolean selfieMode;
+
 // killough 10/98: support -dehout filename
 static char *D_dehout(void)
 {
@@ -1627,7 +1630,7 @@ void D_DoomMain(void)
      usermsg("debug output to stdout\n");
      debugfile = stdout;
   }
-
+  
   // haleyjd: need to do this before M_LoadDefaults
   C_InitPlayerName();
  
@@ -2107,7 +2110,33 @@ int D_DetectAndLoadFilters()
 
 int D_DetectAndLoadSelfie()
 {
-  return 0;
+  struct stat sbuf;
+  char filestr[256];
+  char * files[] = { "selfie.wad", "selfie.deh" };
+  int i = 0, found = 0;
+
+  selfieMode = false;
+  
+  *filestr = 0;
+  for(i = 0; i < 2 ; i++)
+    {
+      sprintf(filestr, "%s%s", D_DoomExeDir(), files[i]);
+      if(!stat(filestr, &sbuf)) found += 1;
+    }
+    
+  if(found != i) return 0;
+
+  sprintf(filestr, "%s%s", D_DoomExeDir(), files[0]);
+  if(W_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
+
+  memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
+  memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
+  sprintf(filestr, "%s%s", D_DoomExeDir(), files[1]);
+  ProcessExtraDehFile(EXTRA_SELFIE, filestr, D_dehout(), 0);
+  selfieMode = true;
+  C_Printf("%s\n",s_GOTSELFIE);
+  
+  return 1;
 }
 
 void D_DetectAndLoadExtras(void)

@@ -147,7 +147,10 @@ weaponinfo_t    weaponinfo[NUMWEAPONS] =
     S_CROSS1,
     S_NULL
   },  
+
 };
+
+weaponinfo_t *weaponinfo2[2] = {weaponinfo, weaponinfo};
 
 //----------------------------------------------------------------------------
 //

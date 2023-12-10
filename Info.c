@@ -99,7 +99,7 @@ char *sprnames[NUMSPRITES+1] = {
   "CROS", // joel: cross stuff
   "CRSS",
 
-  NULL
+  "SELF"
 };
 
 // ********************************************************************
@@ -1990,7 +1990,10 @@ state_t states[NUMSTATES] = {
   {SPR_BOSS,10,8,NULL,S_CBOSS_RAISE6}, // S_CBOSS_RAISE5
   {SPR_BOSS,9,8,NULL,S_CBOSS_RAISE7},  // S_CBOSS_RAISE6
   {SPR_BOSS,8,8,NULL,S_CBOSS_RUN1},  // S_CBOSS_RAISE7
+  
 };
+
+state_t *states2[2] = {states, states};
 
 // ********************************************************************
 // Object "Thing" definitions

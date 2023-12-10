@@ -70,7 +70,7 @@ static const int recoil_values[] = {    // phares
   0,  // wp_chainsaw
   80,  // wp_supershotgun
   100, // wp_grenade     haleyjd: bug fix!
-  0,  // wp_cross joel: no recoil on cross
+  0   // wp_cross joel: no recoil on cross,
 };
 
 //

@@ -192,6 +192,8 @@ extern char *s_GOTSHOTGUN2; // = GOTSHOTGUN2;
 // joel - cross message
 extern char *s_GOTCROSS;
 
+extern char *s_GOTSELFIE;
+
 //
 // P_Doors.C
 //
