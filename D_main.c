@@ -153,7 +153,6 @@ char firstlevel[9] = "";
 //jff 4/19/98 list of standard IWAD names
 const char *const standard_iwads[]=
 {
-  "/hacxsw.wad",
   "/hacx.wad",
   "/chex.wad",
   "/doom2f.wad",

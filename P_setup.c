@@ -181,7 +181,7 @@ void P_LoadVertexes (int lump)
 
 void P_LoadSegs (int lump)
 {
-  int  i;
+  int i;
   byte *data;
 
   numsegs = W_LumpLength(lump) / sizeof(mapseg_t);
@@ -227,7 +227,7 @@ void P_LoadSegs (int lump)
 void P_LoadSubsectors (int lump)
 {
   byte *data;
-  int  i;
+  int i;
 
   numsubsectors = W_LumpLength (lump) / sizeof(mapsubsector_t);
   subsectors = Z_Malloc(numsubsectors*sizeof(subsector_t),PU_LEVEL,0);
@@ -238,7 +238,7 @@ void P_LoadSubsectors (int lump)
   for (i=0; i<numsubsectors; i++)
     {
       subsectors[i].numlines  = SHORT(((mapsubsector_t *) data)[i].numsegs );
-      subsectors[i].firstline = (unsigned short)SHORT(((mapsubsector_t *) data)[i].firstseg);
+      subsectors[i].firstline = SHORT(((mapsubsector_t *) data)[i].firstseg);
     }
 
   Z_Free (data);
@@ -834,7 +834,7 @@ void P_GroupLines (void)
 
   // look up sector number for each subsector
   for (i=0; i<numsubsectors; i++)
-    subsectors[i].sector = segs[subsectors[i].firstline].sidedef->sector;
+    subsectors[i].sector = segs[(unsigned short)(subsectors[i].firstline)].sidedef->sector;
 
   // count number of lines in each sector
   for (i=0; i<numlines; i++)
