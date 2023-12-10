@@ -442,14 +442,28 @@ void P_LoadSectors (int lump)
 //
 // killough 5/3/98: reformatted, cleaned up
 
+void P_LoadNodes32 (int lump);
+
 void P_LoadNodes (int lump)
 {
   byte *data;
   int  i;
-
-  numnodes = W_LumpLength (lump) / sizeof(mapnode_t);
-  nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);
+  size_t sz;
+  
+  sz = W_LumpLength(lump);
+  if(sz % sizeof(mapnode_t)) return;
+  
   data = W_CacheLumpNum (lump, PU_STATIC);
+  if(sz > 8 && !strncmp("xNd4", data, 4) && 0 == ((long *)data)[1])
+  {
+    Z_Free(data);
+    P_LoadNodes32(lump);
+    return; 
+  }
+  
+  numnodes = sz / sizeof(mapnode_t);
+  nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);
+
 
   for (i=0; i<numnodes; i++)
     {
@@ -477,6 +491,42 @@ void P_LoadNodes (int lump)
     }
 
   Z_Free (data);
+}
+
+void P_LoadNodes32 (int lump)
+{
+  byte *data;
+  int  i;
+  size_t sz;
+  
+  sz = W_LumpLength(lump);
+  if((sz - 8) % sizeof(mapnodeext_t)) return;
+  
+  numnodes = (sz - 8) / sizeof(mapnodeext_t);
+  nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);
+  data = W_CacheLumpNum (lump, PU_STATIC) + 8;
+
+  for (i=0; i<numnodes; i++)
+    {
+      node_t *no = nodes + i;
+      mapnodeext_t *mn = (mapnodeext_t *) data + i;
+      int j;
+
+      no->x = SHORT(mn->x)<<FRACBITS;
+      no->y = SHORT(mn->y)<<FRACBITS;
+      no->dx = SHORT(mn->dx)<<FRACBITS;
+      no->dy = SHORT(mn->dy)<<FRACBITS;
+
+      for (j=0 ; j<2 ; j++)
+	{
+	  int k;
+          no->children[j] = LONG(mn->children[j]);
+	  for (k=0 ; k<4 ; k++)
+            no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
+	}
+    }
+
+  Z_Free (data - 8);
 }
 
 //
@@ -1533,6 +1583,7 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
   }
 
   if (!numnodes) P_LoadNodes(lumpnum+ML_NODES);
+  if (!numnodes) P_LoadNodes32(lumpnum+ML_NODES);
 
   level_error = !numsubsectors || !numsegs || !numnodes;
   

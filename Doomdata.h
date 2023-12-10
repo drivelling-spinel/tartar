@@ -162,7 +162,6 @@ __attribute__ ((packed))
 #endif
 mapsubsector_t;
 
-// wait, what... 32 bit subsectors?! with a 16 bit node table? WTF?
 typedef struct {
   short numsegs;
   int firstseg;
@@ -220,6 +219,22 @@ typedef struct {
 __attribute__ ((packed))
 #endif
 mapnode_t;
+
+typedef struct {
+  short x;  // Partition line from (x,y) to x+dx,y+dy)
+  short y;
+  short dx;
+  short dy;
+  // Bounding box for each child, clip against view frustum.
+  short bbox[2][4];
+  // If NF_SUBSECTOR its a subsector, else it's a node of another subtree.
+  unsigned children[2];
+} 
+#ifdef __GNUC__ 
+__attribute__ ((packed))
+#endif
+mapnodeext_t;
+
 
 // Thing definition, position, orientation and type,
 // plus skill/visibility flags and attributes.
