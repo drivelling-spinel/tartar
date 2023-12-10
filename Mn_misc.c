@@ -347,7 +347,7 @@ void MN_DrawTartar(void)
               "\n"
               FC_GRAY "Programming:" FC_RED " Ludicrous_peridot\n"
               FC_GRAY "Includes code and assets by Eternity Engine\n"
-              FC_GRAY "and ZDoom contributors\n"
+              FC_GRAY "PrBoom and ZDoom contributors\n"
               FC_GRAY "See " FC_RED "ABOUT" FC_GRAY " for Eternity Engine credits\n"
               FC_GRAY "Also includes code from MBF 2.04 by " FC_RED "Gerwin\n"
 	      "\n"

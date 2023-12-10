@@ -344,7 +344,7 @@ void D_Display (void)
 
   // clean up border stuff
   if (gamestate != oldgamestate && gamestate != GS_LEVEL)
-    I_ResetPalette();
+    ST_Stop();
 
   oldgamestate = wipegamestate = gamestate;
 

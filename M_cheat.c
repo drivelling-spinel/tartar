@@ -801,7 +801,14 @@ CONSOLE_COMMAND(nextmus, cf_notnet)
 
 CONSOLE_COMMAND(shuffle, cf_notnet)
 {
-   const char * mus = S_ChangeToRandomMusic();
+   const char * mus = NULL;
+   if(demoplayback || demorecording)
+     {
+        player_printf(&players[consoleplayer], "No shuffle when playing or recording demos");
+        return;
+     }
+
+   mus = S_ChangeToRandomMusic();
    if(mus)
       player_printf(&players[consoleplayer], "%cNow playing %c%s",
          128+mess_colour, 128 + CR_GOLD, mus);
