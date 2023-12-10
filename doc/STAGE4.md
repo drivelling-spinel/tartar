@@ -18,6 +18,10 @@ List of features for Stage 4 and their current completion state
 [ 0% ]   Loading officer and mutant enemies from Mac edition of Wolfendoom as extras
          and an option to spawn them in maps intead of their PWAD-defined versions
 
+[ 0% ]   Loading Arctic Wolf and Arctic Wolf SE additional enemies as extras
+         so that they can be spawned in the second part of the game
+         allowing playthrough of the whole mod without swapping PWAD-s 
+
 [ 99%]   Fix for SSG frames in Actic Wolf and Rheingold
 
 [100%]   Detect sampling rate in both big endian and little endian
