@@ -1119,7 +1119,10 @@ void R_StoreWallRange(const int start, const int stop)
 
   if (markfloor)
     if (floorplane)     // killough 4/11/98: add NULL ptr checks
-      floorplane = R_CheckPlane (floorplane, rw_x, rw_stopx-1);
+      if(!comp[comp_vpdup] && markceiling && ceilingplane == floorplane)
+        floorplane = R_DupPlane (floorplane, rw_x, rw_stopx - 1);
+      else
+        floorplane = R_CheckPlane (floorplane, rw_x, rw_stopx-1);
     else
       markfloor = 0;
 

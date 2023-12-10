@@ -96,10 +96,16 @@
 #define GOTYELWCARD "Picked up a yellow keycard."
 #define GOTREDCARD  "Picked up a red keycard."
 
+#define GOTBLUESKUL "Picked up a blue skull key."
+#define GOTYELWSKUL "Picked up a yellow skull key."
+#define GOTREDSKULL "Picked up a red skull key."
+
 // joel: new COD keycard messages
-#define GOTBLUESKUL "Picked up a green keycard."
-#define GOTYELWSKUL "Picked up a black keycard."
-#define GOTREDSKULL "Picked up a purple keycard."
+#define GOTGREENCARD "Picked up a green keycard."
+#define GOTBLACKCARD "Picked up a black keycard."
+#define GOTPURPLCARD "Picked up a purple keycard."
+
+
 
 #define GOTINVUL    "Invulnerability!"
 #define GOTBERSERK  "Berserk!"
@@ -147,9 +153,12 @@
 #define PD_REDC     "You need a red card to open this door"
 #define PD_YELLOWC  "You need a yellow card to open this door"
 // joel: new key open messages
-#define PD_BLUES    "You need a green card to open this door"
-#define PD_REDS     "You need a purple card to open this door"
-#define PD_YELLOWS  "You need a black card to open this door"
+#define PD_GREENS   "You need a green card to open this door"
+#define PD_PURPLS   "You need a purple card to open this door"
+#define PD_BLACKS   "You need a black card to open this door"
+#define PD_BLUES    "You need a blue skull to open this door"
+#define PD_REDS     "You need a red skull to open this door"
+#define PD_YELLOWS  "You need a yellow skull to open this door"
 #define PD_ANY      "Any key will open this door"
 #define PD_ALL3     "You need all three keys to open this door"
 #define PD_ALL6     "You need all six keys to open this door"

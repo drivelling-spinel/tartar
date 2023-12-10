@@ -52,6 +52,7 @@ visplane_t *R_FindPlane(
                         fixed_t yoffs );
 
 visplane_t *R_CheckPlane(visplane_t *pl, int start, int stop);
+visplane_t *R_DupPlane(visplane_t *pl, int start, int stop);
 
 extern int visplane_view;
 

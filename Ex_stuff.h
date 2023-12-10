@@ -85,6 +85,8 @@ int Ex_SetWolfendoomSkin();
 void Ex_EnsureCorrectArcticPart(int lev);
 int Ex_InsertRelatedWads(const char * wadname, const int index);
 
+int Ex_IsSigilGarbageEpisode(const char * name, const char * patch);
+
 #ifdef BOSSACTION
 boolean Ex_TryBossAction(mobj_t * dead, state_t * current);
 #endif

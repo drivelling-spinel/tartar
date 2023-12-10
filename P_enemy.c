@@ -2278,6 +2278,9 @@ void A_BossDeath(mobj_t *mo)
 
     }
 
+  if(!flag)
+    return;
+
   // make sure there is a player alive for victory
   for (i=0; i<MAXPLAYERS; i++)
     if (playeringame[i] && players[i].health > 0)

@@ -307,6 +307,33 @@ visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel,
 }
 
 //
+// R_DupPlane
+//
+// cph 2003/04/18 - create duplicate of existing visplane and set initial range
+
+visplane_t *R_DupPlane(visplane_t *pl, int start, int stop)
+{
+  unsigned hash = visplane_hash(pl->picnum, pl->lightlevel, pl->height);
+  visplane_t *new_pl = new_visplane(hash);
+
+  new_pl->height = pl->height;
+  new_pl->picnum = pl->picnum;
+  new_pl->lightlevel = pl->lightlevel;
+  new_pl->colormap = pl->colormap;
+  new_pl->xoffs = pl->xoffs;           // killough 2/28/98
+  new_pl->yoffs = pl->yoffs;
+  new_pl->trans = pl->trans;
+
+  pl = new_pl;
+  pl->minx = start;
+  pl->maxx = stop;
+  pl->pad1 = pl->pad2 = 0xffff;
+  memset(pl->top, 0xff, sizeof pl->top);
+
+  return pl;
+}
+
+//
 // R_CheckPlane
 //
 visplane_t *R_CheckPlane(visplane_t *pl, int start, int stop)

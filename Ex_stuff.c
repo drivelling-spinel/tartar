@@ -119,13 +119,11 @@ static char *arctic_part2_wad = 0, *arctic_part2_deh = 0;
 static int Ex_DetectAndLoadSigilShims(char * filename)
 {
     struct stat sbuf;
-    const char * tapename = "SIGIL";
+    const char * tapename = "SIGIL_II";
 
     ExtractFileBase(filename, filestr, sizeof(filestr) - 1);
     if(strnicmp(filestr, "SIGIL", 5))
       return 0;
-    if(!strnicmp(filestr, "SIGIL2", 6))
-      tapename = "SIGIL2";
 
     assert(strlen(D_DoomExeDir()) + strlen(tapename) + 10 <= sizeof(tapestr));
     sprintf(tapestr, "%sshims/%s", D_DoomExeDir(), tapename);
@@ -1110,54 +1108,19 @@ int Ex_CheckKDiKDiZDWads(const char * wadname, const int index)
   return c;                         
 }
 
-
-int Ex_CheckSigilWads(const char * wadname, const int index) 
+int Ex_IsSigilGarbageEpisode(const char * name, const char * patch)
 {
-  int c = 0;
-  char *cpy = 0;
-  char **fnames;
-  int numwads;
-  int i;
-
-  ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
-  if(strnicmp(filestr, "SIGIL2", 6))
-    return 0;
-
-  for(i = strlen(wadname) - 1 ; i >= 0 && wadname[i] != '/' && wadname[i] != '\\' ; i -= 1);
-  assert(++i < sizeof(filestr) - 1);
-  *filestr = 0;
-  strncpy(filestr, wadname, i);
-  filestr[i] = 0;
-
-  numwads = Ex_FindAllWads(filestr, &fnames);
-  for(i = 0 ; !c && i < numwads ; i += 1)
-    {
-      ExtractFileBase(fnames[i], filestr, sizeof(filestr) - 1);
-      if(!strnicmp(filestr, "SIGIL", 5) && strnicmp(filestr, "SIGIL2", 6))
-        {
-          assert(strlen(filestr) + 5 <= sizeof(filestr));
-          AddDefaultExtension(filestr, ".wad");
-          cpy = strdup(filestr);
-          c = Ex_InsertResWadIfMissing(wadname, index + 1, cpy);
-          free(cpy);
-        }
-    }
-
-  if(numwads)
-    {
-      for(i = 0 ; i < numwads ; i += 1) free(fnames[i]);
-      free(fnames);
-    }
-  return c;                         
+  if(!stricmp(name, "SIGIL") || !stricmp(name, "SIGIL II"))
+    return W_CheckNumForName(patch) < 0;
+  return 0;
 }
-
 
 typedef int (related_wad_func_t)(const char *, const int);
 related_wad_func_t *related_wad_funcs[] = { Ex_Check1stEncWads,
   Ex_CheckArcticWads, Ex_CheckArcticSeWads,
   Ex_CheckBTSXWads, Ex_CheckKDiKDiZDWads,
   Ex_CheckOriginalWads, Ex_CheckNoctWads,
-  Ex_CheckSpearWads, Ex_CheckSigilWads };
+  Ex_CheckSpearWads };
 
 int Ex_InsertRelatedWads(const char * wadname, const int index)
 {

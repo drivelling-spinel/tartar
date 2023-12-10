@@ -337,13 +337,16 @@ static menu_t * Mn_BuildEpisodeMenu(void)
         }
       else
         {
-          menu->menuitems[idx].type = it_runcmd;
-          menu->menuitems[idx].description = info_epis_name[j];
-          sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
-            "mn_episode %d", position);
-          menu->menuitems[idx].patch = info_epis_pic[j];
+          if(!Ex_IsSigilGarbageEpisode(info_epis_name[j], info_epis_pic[j]))
+            {
+              menu->menuitems[idx].type = it_runcmd;
+              menu->menuitems[idx].description = info_epis_name[j];
+              sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
+                "mn_episode %d", position);
+              menu->menuitems[idx].patch = info_epis_pic[j];
+              idx += 1;
+            }
           extra -= 1;
-          idx += 1;
         }
 
       position += 1;
@@ -503,6 +506,7 @@ menu_t menu_tartar =
     {it_toggle,   "Disable support for tall textures",      "comp_talltex"},   
     {it_toggle,   "Remove slime trails (Firelines way)",    "p_rmslime"},
     {it_toggle,   "Apply wiggly wall fix (kb1 & e8y)",      "r_wigglefix"},
+    {it_toggle,   "HOM with sky on both floor & ceiling",   "comp_vpdup"},
     {it_info, FC_GOLD "Tartar options",   NULL, },
     {it_toggle,     "End game after the last custom map",    "detectfinal"},
     {it_toggle,     "Wait for game tic to refresh screen",   "i_ticwait"},
@@ -512,7 +516,6 @@ menu_t menu_tartar =
     {it_info, FC_GOLD "Wolfendoom options",   NULL, },
     {it_togglehint, "Armor for score only and no infights",  "wolfendoom", "hint_wolfendoom"},
     {it_toggle,     "Wolf3D look and feel mode",             "wolflooks"},
-    {it_runcmd,     "More tartar options...", "mn_tartar_more"},
     {it_end},    
   },
   233, 1,                               // x,y
@@ -547,6 +550,7 @@ menu_t menu_features =
     {it_runcmd, "demos",                "mn_demos" },
     {it_gap},
     {it_runcmd, "Start in arcade mode", "use_continue 1; mn_newgame"},
+    {it_runcmd, "Set tip message",      "mn_tartar_more"},
     {it_runcmd, "Restart level",        "mn_reborn" },
     {it_gap},
     {it_runcmd, "about",                "credits" },

@@ -347,7 +347,7 @@ void MN_DrawTartar(void)
 
   V_DrawDistortedBackground("FLAT14", screens[0]);
 
-  V_WriteText(FC_GRAY "Tartar: Stage  5 testing (2021-2023)\n"
+  V_WriteText(FC_GRAY "Tartar: Stage  5 (2021-2024)\n"
               FC_BLUE "\"Modern\" " FC_GREEN "DOS " FC_RED "Doom " FC_GREEN "port \n"
               "for " FC_BLUE "\"modern\" " FC_GREEN "retro machines\n"
               "\n"

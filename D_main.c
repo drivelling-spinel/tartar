@@ -73,6 +73,7 @@ static const char rcsid[] = "$Id: d_main.c,v 1.47 1998/05/16 09:16:51 killough E
 #include "d_dialog.h"
 #include "ex_stuff.h"
 #include "p_info.h"
+#include "dstrings.h"
 
 // DEHacked support - Ty 03/09/97
 // killough 10/98:
@@ -641,7 +642,6 @@ void D_AddFile(char *file)
   wadfiles[numwadfiles+1] = NULL;
   numwadfiles++;
 }
-
 
 void D_InsertFile(char *file, int index)
 {
@@ -1462,7 +1462,7 @@ static int D_CheckRelatedWads()
       int j = Ex_InsertRelatedWads(wadfiles[i], i);
       n += j;
       i += j + 1;
-    } 
+    }
   return n;
 }
 
@@ -1652,6 +1652,15 @@ void D_DoomMain(void)
         sprintf(filestr, "%seternity.wad", D_DoomExeDir());
         D_InsertFile(filestr, 1); 
      }
+  else if(codlevfound)
+    {
+      s_GOTBLUESKUL = GOTGREENCARD;
+      s_GOTYELWSKUL = GOTBLACKCARD;
+      s_GOTREDSKULL = GOTPURPLCARD;
+      s_PD_BLUES    = PD_GREENS; 
+      s_PD_REDS     = PD_PURPLS; 
+      s_PD_YELLOWS  = PD_BLACKS; 
+    }
      
   if (!(p = M_CheckParm("-playdemo")) || p >= myargc-1)    // killough
     if ((p = M_CheckParm ("-fastdemo")) && p < myargc-1)   // killough

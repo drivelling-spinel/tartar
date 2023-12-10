@@ -147,6 +147,7 @@ enum {
   comp_everyline,
   comp_clighting,
   comp_talltex,
+  comp_vpdup,
   COMP_TOTAL=32  // Some extra room for additional variables
 };
 

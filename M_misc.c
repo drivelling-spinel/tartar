@@ -1681,6 +1681,13 @@ default_t defaults[] = {
     "Workaround for renderer wiggly wall artifact"
   },
 
+  {
+    "comp_vpdup",
+    &default_comp[comp_vpdup], &comp[comp_vpdup],
+    0, {0,1}, dt_number, ss_comp, wad_yes,
+    "Suppress a fix for sky texture on same sector's floor and ceiling"
+  },
+
 
   {NULL}         // last entry
 };
