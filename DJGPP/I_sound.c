@@ -77,6 +77,31 @@ static SAMPLE *raw2SAMPLE(unsigned char *rawdata, int len)
   return spl;
 }
 
+char msgbuf[256];
+
+static SAMPLE *wav2SAMPLE(unsigned char *rawdata, int len)
+{
+  SAMPLE *spl = malloc(sizeof(SAMPLE));
+  int channels = *(short *)(rawdata+22);
+  int i = 0;
+  
+  spl->bits = *(short *)(rawdata+34);
+  spl->freq = *(int *)(rawdata+24);
+  spl->len = *(int *)(rawdata+40) >> (spl->bits >> 4);
+  spl->priority = 255;
+  spl->loop_start = 0;
+  spl->loop_end = spl->len;
+  spl->param = -1;
+  spl->data = rawdata + 44;
+  
+  // Allegro does this for some reason
+  for(i = 0; i < spl->len && spl->bits == 16; i += 1) ((char *)spl->data)[1 + (i << 1)] ^= 0x80;
+  
+  _go32_dpmi_lock_data(rawdata+8, len);   // killough 3/8/98: lock sound data
+  return spl;
+}
+
+
 //
 // This function loads the sound data from the WAD lump,
 //  for single sound.
@@ -114,7 +139,7 @@ static void *getsfx(char *sfxname)
 
   // Pads the sound effect out to the mixing buffer size.
   // The original realloc would interfere with zone memory.
-  paddedsize = ((size-8 + (SAMPLECOUNT-1)) / SAMPLECOUNT) * SAMPLECOUNT;
+  paddedsize = size-8;
 
   // Allocate from zone memory.
   paddedsfx = (unsigned char*) Z_Malloc(paddedsize+8, PU_STATIC, 0);
@@ -125,11 +150,11 @@ static void *getsfx(char *sfxname)
 
   // Now copy and pad.                                
   memcpy(paddedsfx, sfx, size);
-  for (i=size; i<paddedsize+8; i++)
-    paddedsfx[i] = 128;
 
   // Remove the cached lump.
   Z_Free(sfx);
+
+  if(!strncmp("RIFF", paddedsfx, 4)) return wav2SAMPLE(paddedsfx,paddedsize); 
 
   // Return allocated padded data.
   return raw2SAMPLE(paddedsfx,paddedsize);  // killough 1/22/98: pass all data
@@ -410,8 +435,8 @@ void I_InitSound(void)
   // Finished initialization.
   puts("\nI_InitSound: sound module ready");    // killough 8/8/98
 
-  //rest(4000);
-  //sleep(8); //uncomment for debugging
+//  rest(4000);
+//  sleep(8); //uncomment for debugging
 }
 
 ///
