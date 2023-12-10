@@ -177,7 +177,7 @@ default_t defaults[] = {
   {
     "show_fps",
     &show_fps, NULL,
-    1, {0,1}, dt_number, ss_gen, wad_no,
+    0, {0,1}, dt_number, ss_gen, wad_no,
     "1 to show frames per second and video mode on screen"
   },
   {

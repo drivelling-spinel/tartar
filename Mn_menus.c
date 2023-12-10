@@ -1475,25 +1475,46 @@ CONSOLE_COMMAND(mn_particle, 0)
 // Sound Options
 //
 
+menu_t menu_sound_advanced =
+{
+  {
+    {it_title,      FC_GOLD "sound",                NULL, "m_sound"},
+    {it_info,       FC_GOLD "warning: for advanced use only" },
+    {it_gap},
+    {it_info,       FC_GOLD "use setup.exe to select" },
+    {it_info,       FC_GOLD "digi and midi cards"},
+    {it_info,       FC_GOLD "and number of digi channels"},
+    {it_gap},
+    {it_toggle,     "simultaneously handled sounds", "snd_channels"},
+    {it_toggle,     "force reverse stereo",          "s_flippan"},
+    {it_end},
+  },
+  210, 1,                      // x, y offset
+  7,                           // first selectable
+  mf_background,               // full-screen menu
+};
+
+CONSOLE_COMMAND(mn_sound_advanced, 0)
+{
+  MN_StartMenu(&menu_sound_advanced);
+}
+
+
 menu_t menu_sound =
 {
   {
     {it_title,      FC_GOLD "sound",                NULL, "m_sound"},
-    {it_info,       FC_GOLD "use setup.exe to select" },
-    {it_info,       FC_GOLD "digi and midi cards"},
-    {it_gap},
     {it_info,       FC_GOLD "volume"},
     {it_slider,     "sfx volume",                   "sfx_volume"},
     {it_slider,     "music volume",                 "music_volume"},
-    {it_info,       FC_GOLD "setup"},
-    {it_toggle,     "sound channels",               "snd_channels"},
-    {it_toggle,     "force reverse stereo",         "s_flippan"},
     {it_info,       FC_GOLD "misc"},
     {it_toggle,     "pitched sounds",               "s_pitched"},
+    {it_gap},
+    {it_runcmd,     "Advanced sound options...",    "mn_sound_advanced"},
     {it_end},
   },
   180, 1,                      // x, y offset
-  5,                           // first selectable
+  2,                           // first selectable
   mf_background,               // full-screen menu
 };
 
@@ -2072,6 +2093,7 @@ void MN_AddMenus()
   C_AddCommand(mn_video);
   C_AddCommand(mn_particle);  // haleyjd: particle options menu
   C_AddCommand(mn_sound);
+  C_AddCommand(mn_sound_advanced);
   C_AddCommand(mn_weapons);
   C_AddCommand(mn_compat);
   C_AddCommand(mn_compat2);
