@@ -991,6 +991,10 @@ void P_CrossSpecialLine(line_t *, int side, mobj_t *thing); // killough 11/98
 
 void P_PlayerInSpecialSector(player_t *player);
 
+// semi-private function that bypasses validations
+void P_TriggerSpecialLine(line_t *line);
+
+
 // p_lights
 
 void P_SpawnFireFlicker(sector_t *sector);

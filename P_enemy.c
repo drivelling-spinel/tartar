@@ -49,6 +49,7 @@ rcsid[] = "$Id: p_enemy.c,v 1.22 1998/05/12 12:47:10 phares Exp $";
 #include "c_runcmd.h"
 #include "w_wad.h"
 #include "p_partcl.h"
+#include "p_info.h"
 
 extern fixed_t FloatBobOffsets[64]; // haleyjd: Float Bobbing
 
@@ -2178,8 +2179,18 @@ void A_BossDeath(mobj_t *mo)
   line_t    junk;
   int       i;
   unsigned int flag = 0; // haleyjd
-
-  if (gamemode == commercial)
+  int tag;
+  
+  if(!strcmp(info_bossaction_clear, "false"))
+    {
+       return;
+    }
+    
+  if (info_bossaction_thingtype == mo->info->doomednum)
+    {
+      flag = MF2_MAP07BOSS1;
+    }  
+  else if (gamemode == commercial)
     {
       if (gamemap != 7)
         return;
@@ -2286,14 +2297,23 @@ void A_BossDeath(mobj_t *mo)
   }
 
   // victory!
-  if ( gamemode == commercial)
+  tag = info_bossaction_tag ? info_bossaction_tag : 666;
+  
+  if (info_bossaction_linespecial)
+    {
+       junk.tag = tag;
+       junk.special = info_bossaction_linespecial;
+       P_TriggerSpecialLine(&junk);
+       return;
+    }    
+  else if ( gamemode == commercial)
     {
       if (gamemap == 7)
         {
           //if (mo->type == MT_FATSO)
 	  if(mo->flags2 & MF2_MAP07BOSS1)
             {
-              junk.tag = 666;
+              junk.tag = tag;
               EV_DoFloor(&junk,lowerFloorToLowest);
               return;
             }
@@ -2301,7 +2321,7 @@ void A_BossDeath(mobj_t *mo)
           //if (mo->type == MT_BABY)
 	  if(mo->flags2 & MF2_MAP07BOSS2)
             {
-              junk.tag = 667;
+              junk.tag = tag + 1;
               EV_DoFloor(&junk,raiseToTexture);
               return;
             }
@@ -2312,7 +2332,7 @@ void A_BossDeath(mobj_t *mo)
       switch(gameepisode)
         {
         case 1:
-          junk.tag = 666;
+          junk.tag = tag;
           EV_DoFloor(&junk, lowerFloorToLowest);
           return;
           break;
@@ -2321,13 +2341,13 @@ void A_BossDeath(mobj_t *mo)
           switch(gamemap)
             {
             case 6:
-              junk.tag = 666;
+              junk.tag = tag;
               EV_DoDoor(&junk, blazeOpen);
               return;
               break;
 
             case 8:
-              junk.tag = 666;
+              junk.tag = tag;
               EV_DoFloor(&junk, lowerFloorToLowest);
               return;
               break;

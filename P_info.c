@@ -86,6 +86,12 @@ char *info_sound_doropn;
 char *info_sound_dorcls;
 char *info_sound_pstart;
 
+
+char *info_bossaction_clear;
+int info_bossaction_thingtype;
+int info_bossaction_tag;
+int info_bossaction_linespecial;
+
 void P_LowerCase(char *line);
 void P_StripSpaces(char *line);
 static void P_RemoveEqualses(char *line);
@@ -253,8 +259,14 @@ levelvar_t levelvars[]=
   {IVT_STRING,    "endofgame",    &info_endofgame},
   {IVT_STRING,    "intertext",    &info_intertext}, // haleyjd 12/13/01
   {IVT_INT,       "nobloodcolor", &info_nobloodcolor},
-  {IVT_STRING,    "intermusic",   &info_intermusic}, // haleyjd 12/13/01
+  {IVT_STRING,    "intermusic",   &info_intermusic}, 
+  {IVT_INT,       "bossaction-thingtype",       &info_bossaction_thingtype},
+  {IVT_INT,       "bossaction-tag",             &info_bossaction_tag},
+  {IVT_INT,       "bossaction-linespecial",     &info_bossaction_linespecial},
+  {IVT_STRING,    "bossaction-clear",           &info_bossaction_clear}, 
   {IVT_END,       0,              0}
+
+
 };
 
 void P_ParseLevelVar(char *cmd)
@@ -331,6 +343,10 @@ void P_ClearLevelVars()
   info_skydelta   = 0;
   info_sky2delta  = 0;
   info_nobloodcolor = 0;
+  
+  info_bossaction_clear = "false";
+  info_bossaction_thingtype = info_bossaction_tag = info_bossaction_linespecial = 0;
+  
   
   LoadDefaultSoundNames(); // haleyjd
 
