@@ -1,0 +1,194 @@
+*********************-= Team Eternity Presents =-*********************
+
+                         The Eternity Engine
+
+                         Version: 3.29 Final
+                           Release: "Gamma"
+
+      Coded by: James "Quasar" Haley and Steven "SoM" McGranahan
+                    
+    Based on SMMU - "Smack My Marine Up" by Simon "fraggle" Howard
+
+               Start map by Derek "Afterglow" Mac Donald         
+      
+       Special Thanks To:  Lee Killough, Matt Denham, DooMWiz, 
+        Colin Phipps, fraggle, Nemesis, Carnevil, Randy Heit, 
+       Julian, Joel Murdoch, and all members of Team Eternity. 
+                   
+**********************************************************************
+
+DISCLAIMER:
+
+This software is covered by NO WARRANTY, implicit or otherwise, including
+the implied warranties of merchantability and fitness for a particular
+purpose. The authors of this software accept no responsibility for any ill
+effects caused by its use and will not be held liable for any damages, even
+if they have been made aware of the possibility of these damages.
+
+Bug reports and feature requests will be appreciated. Please see the end of
+this document for information on bugs fixed in this version, and on bugs we
+already know about that haven't been fixed yet.
+
+Please email haleyjd@hotmail.com with any concerns.
+
+**** FEATURES ****
+
+Eternity is the newest source port to inherit the banner of BOOM. Descended
+from MBF, it attempts to carry on the effort to put editability, reliability,
+and compatibility first. From SMMU it also gains the momentum to give the player
+new options rather than to dictate DOOM purity.
+
+Eternity includes FULL BOOM compatibility, as well as most features added in
+MBF and SMMU (exceptions include MBF's beta emulation support which is not
+included, and SMMU v3.30's thing script area). In addition, Eternity adds many
+more, including these:
+
+* TerrainTypes
+  
+  Effects that can be triggered by an object hitting the floor. These are
+  editable by the user and can be associated with any flat. The TerrainEd
+  utility can be used to generate a TERTYPES lump which can be inserted into
+  your wad.
+  
+* New Thing Flags
+
+  Multiple new effects can be achieved by placing flags in the Bits2 field of
+  things in a DeHackEd or BEX patch. These flags are covered in ETCDEH.TXT.
+  
+* Helper Specification
+
+  By using a [HELPER] block in a DeHackEd or BEX file you can easily specify
+  the type of helper creature the player has when using the -dogs command-line
+  parameter.
+    
+* Extensions to FraggleScript
+
+  Eternity includes a large and growing number of features that extend the
+  FraggleScript scripting language. Up to 256 scripts can now be defined for
+  each level, things have access to scripts via the StartScript pointer, numerous
+  new functions for all types of purposes exist, including the new FraggleScript
+  heads-up pic display inspired by SoM's DOOM Legacy implementation.
+  
+* Custom Sound Substitution Per Level
+  
+  Through the SMMU map header information, Eternity can specify custom sounds
+  for environmental actions independently for each level. This allows levels of
+  multiple themes to co-exist in the same TC or megawad without need for large
+  clumsy lumps of data.
+  
+* Double Skies and Lightning
+
+  Eternity has special features for skies including double skies which allow
+  one sky to be drawn transparently on top of another and allowing both to scroll
+  without use of scrolling linedefs, and lightning, which when enabled, causes
+  flashes of light and appropriate sounds in all sky sectors on a level.
+  
+* Full Keybinding System
+  
+  Based on but more powerful than SMMU v3.30's keybinding system, Eternity
+  can rebind most keys in the game (those which are not dynamically bindable can 
+  still be set through the config file). KEYS.CSC console script contains default 
+  bindings and can be edited by the user if desired.
+  
+* Dialog
+  
+  Characters can interact with the player by starting compiled dialog scripts.
+  
+* Bug Fixes
+
+  This port has addressed most known issues in SMMU v3.21, as well as many
+  bugs from MBF and even original DOOM. This includes most of the fixes from
+  the PRBoom port, which enable more robust demo compatibility and better memory 
+  usage.
+
+I'm certain to have left out some cool things, so check all the editing docs
+for more information!
+
+**** Features New to Version 3.29 Gamma ****
+
+These include some of the major features added in the latest version:
+
+* Windows Support
+ 
+  Eternity is now available for both DOS and Windows!
+  
+* Particle Event System, Other Particle Enhancements
+
+  Particle events can now be attached to frames. Editing support for
+  DeHackEd is not complete yet, but will be available in the future.
+  Bullet puffs are now lighter, both puffs and blood can use either
+  sprites or particles, or both, bullet puff particles now respond to 
+  TerrainTypes when they are enabled, changing color to reflect the type 
+  of surface being shot, and finally, particle fountains in multiple
+  colors are available, with doomednums in the range of 9027 - 9033
+  (this matches zdoom exactly).
+  
+* Quicksave and Quickload
+
+  Quicksave and Quickload features have been restored to their previous
+  functionality. Can be bound on the Environment keys menu.
+
+**** COMING SOON ****
+
+These are features planned to debut in future versions of the Eternity Engine:
+
+* Priority *
+
+* Sound sequences
+* Extended map format - ExtraData
+* EDF -- Eternity Defnition Files for fully customizable things, frames, weapons
+* More TerrainTypes, including a scriptable type for max customizability
+
+* Long-Term Goals *
+
+* Polyobjects
+* Fully-functioning Hub System (currently disabled due to bugs, sorry)
+* Special Heretic Edition
+* Fully-functioning network code (currently broken, see below)
+
+
+**** Revision History ****************************************************
+
+3.29 "Gamma" 07/04/02
+
+* Final release for v3.29. Massive changes all over. First version to
+  include Windows support. SoM is now co-programmer.
+
+3.29 Development Beta 5 10/02/01
+
+* Minor release to demonstrate dialog, primarily
+
+3.29 Public Beta 4 06/30/01
+
+* Fixed a good number of bugs once again. Improved portability with Julian's
+  help, major feature is working demo recording. See info below and changelog
+  for more info, as usual.
+
+3.29 Public Beta 3 05/10/01
+
+* Fixed a large number of bugs, added several interesting features. See
+  bug list below, and the changelog, for more information.
+
+3.29 Public Beta 2 01/09/01
+
+* Fixed mouse buttons - problem was leftover code in I_GetEvent() that
+  caused the mouse button variables to never be asserted - code was
+  unreachable because of an assignment of the variable buttons to 
+  lastbuttons.
+  
+3.29 Public Beta 1 01/08/01
+
+* Initial Release
+
+**** Bugs Fixed, Known Issues ********************************************
+
+Please see the Eternity changelog for information on bugs fixed.
+
+* Known Issues in 3.29 "Gamma":
+
+- Network code is incomplete and totally broken. Needs overhaul for
+  Windows.
+
+- MCI MIDI is unstable on many Windows systems. Should be addressed in
+  next version.
+

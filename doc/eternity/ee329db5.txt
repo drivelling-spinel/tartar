@@ -1,0 +1,77 @@
+--- Team Eternity Presents ---
+
+     The Eternity Engine
+   v3.29 Development Beta 5
+
+------------------------------
+
+This is a special development beta release of the Eternity Engine
+intended to demonstrate new features added up until now, but
+not intended to be a complete, stable product.
+
+Terms of the normal Eternity Engine license apply to this
+package, see http://doomworld.com/eternity/ for more information.
+
+Email haleyjd@hotmail.com with any questions or to report bugs.
+
+=============================
+New Features in This Version:
+=============================
+
+* Particle system
+  
+  Adapted from zdoom, the particle system allows low-bandwidth,
+  high-impact effects for blood, smoke, fountains, environmental
+  ambience, etc.  All effects are optional and can be independently
+  enabled or disabled via the menus and console.  
+  
+  Thanks due to Randy Heit for much of the code.
+
+* MapInfo Extensions
+
+  Added nextsecret field to allow customizable secret exit
+  destinations for any level. Also added an exitsecret function
+  to FraggleScript to help support this new feature.
+
+* Translucent text
+
+  FraggleScript strings can now specify translucency using the
+  \z escape.
+
+* Fully functional dialogue system
+
+  startdialogue function for FraggleScript can run compiled dialogue
+  scripts which can display text, character names and pictures,
+  and call back into FraggleScript to play sounds, move the game
+  camera, and change thing angles.  Cinematic pause can stop
+  player and monster movement during dialogues and other events.
+
+===========================
+Bugs Fixed in This Version:
+===========================
+
+* Mouse double-clicking actions should now work, and the buttons
+  which can be double-clicked to generate a use action can be
+  set in the configuration file, independent of any action bound
+  to those mouse buttons by the keybinding system.
+
+* Joystick buttons no longer generate double-click events.
+
+* Setting player name via menu should not crash the game.
+
+* More robust handling of text in heads-up and finale systems with
+  respect to tabs and characters with no font glyph.
+
+* Walkcam should be able to move again.
+
+* Removed monster falling damage.
+
+* Restored default global translucency %age to 66%
+
+* Player bobbing properly recorded as a demo- and net-sync critical
+  variable. Bobbing console command is now a netcmd.
+
+* Several printf calls in video mode removed.
+
+* Sprites properly clipped w.r.t. deep water when viewed from a 
+  camera.

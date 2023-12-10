@@ -1,0 +1,112 @@
+Eternity TC Current Things Reference
+
+This will be updated frequently.
+
+Name		     Editor Number   Dehacked Number
+
+Maulotaur *, ArchDemon  -- 6001	  --	145
+Swamp Tree 1, tall 	-- 6002	  --	157
+Swamp Tree 2 		-- 6003	  --	158
+Tree w/ Leaves 		-- 6004	  --	159
+Destructable Tree 	-- 6005	  --	160
+Roof Moss 1		-- 6006	  --	161
+Roof Moss 2		-- 6007	  --	162
+Cleric **, Human Enemy  -- 6008	  --	163
+Maulotaur Torch, lit    -- 6009	  --	165
+Maulotaur Torch, unlit  -- 6010	  --	166
+Fog Spawner             -- 6011	  --	174
+Leader Cleric Boss * ** -- 6015	  --	178
+Horned Column           -- 6016	  --	179
+Wooden Barrel           -- 6017	  --	180
+Hanging Skull           -- 6018	  --	181
+Wall Torch              -- 6019	  --	182
+Chandelier              -- 6020	  --	183
+Meat Clever             -- 6021	  --	184
+Beer Stein 1            -- 6022	  --	185
+Beer Stein 2            -- 6023	  --	186
+Overturned Cup          -- 6024	  --	187
+Cup                     -- 6025	  --	188
+Suit of Armor           -- 6026	  --	189
+Tree Stump, burnt       -- 6027	  --	190
+Tree Stump, cut         -- 6028	  --	191
+Small Tan Gargoyle      -- 6029	  --	192
+Tall Tan Gargoyle       -- 6030	  --	193
+Mushroom                -- 6031	  --	194
+Cauldron, unlit         -- 6032	  --	195
+Swamp Vine              -- 6033	  --	196
+Hanging Corpse, bloody  -- 6034	  --	197
+Sitting Corpse          -- 6035	  --	198
+Impaled Corpse          -- 6036	  --	199
+Hanging Corpse          -- 6037	  --	200
+Tombstone 1             -- 6038	  --	201
+Tombstone 2             -- 6039	  --	202
+Tombstone 3             -- 6040	  --	203
+Small Rock              -- 6041	  --	204
+Large Rock              -- 6042	  --	205
+Inert Human Guard       -- 6043	  --	206
+Helper Dwarf *          -- 6044	  --	207
+Talking Dwarf *         -- 6045	  --	208
+Talking Guard *         -- 6046	  --	209
+Inert Cyberdemon Guard  -- 6047	  --	210
+Cyberguard Boss *	-- 6048	  --	211
+Dwarf Alterego ***	-- 6049	  --	212
+Grenade Launcher	-- 6050	  --	214
+M15 Grenade, Pickup	-- 6051	  --	215
+Total Invisibility	-- 6052	  --	216
+Necronomicon, inert *	-- 6053	  --	221
+Hub key 1		-- 6054   --	222
+Hub key 2		-- 6055   --	223
+Hub key 3		-- 6056   --	224
+Hub key 4		-- 6057   --	225
+Hub key 5		-- 6058   --	226
+Hub key 6		-- 6059   --	227
+Hub key 7		-- 6060	  --	228
+Hub key 8		-- 6061	  --	229
+Hub key 9		-- 6062	  --	230
+Hub key 10		-- 6063	  --	231
+Hub key 11		-- 6064	  -- 	232
+Arachnophyte		-- 6065	  --	233
+Halif's Golem ***	-- 6066   -- 	239
+
+
+* Not to be used on any map without explicit approval, with the
+  exception that one Helper Dwarf object should be placed near player 
+  starts for all maps between MAP03 and MAP07, and tenatively in
+  the Halcyon sub-episode. 
+  
+  The Necronomicon is a story object and will only exist in MAP03 and 
+  MAP18. Minotaurus is the boss of MAP28 only. The Leader Cleric is 
+  for use only in MAP17 and MAP19. Talking objects are inert copies of 
+  their active counterparts and are to be used only in explicitly 
+  approved dialog sequences.
+  
+  The cyberguard boss can be used in any map, but only with
+  discretion, as a normal cyberdemon would be used.
+
+** To be used in medieval-themed levels only. The Cleric enemy
+   is only to be used in Halcyon maps (MAP16-MAP19).
+
+*** Do not place directly on map. The Golem and Alterego are
+    present for testing purposes only, and will instantly die when
+    the level starts due to the way in which they are spawned by
+    Halif (walking counter must be initialized by either
+    DwarfLDOCMagic or DwarfFWAEMagic codepointers).
+
+Ambient Sounds
+---------------------------------
+Wind 			-- 7001
+Water, babbling 	-- 7002
+Water, rushing  	-- 7003
+Laughing 		-- 7004
+Dripping 		-- 7005
+Forest Sounds Collage * -- 7006
+Swamp Sounds Collage *  -- 7007
+Big bubble sound        -- 7008
+Shlurp Sound            -- 7009
+Falling rocks sound     -- 7010
+Chains                  -- 7011
+Gong                    -- 7012
+Bubbling lava           -- 7013
+Lich laughter           -- 7014
+
+* Use only one of these per level (they make full-volume sounds)

@@ -1,0 +1,82 @@
+===========================================================================
+Archive Maintainer      : Upload to source. Uploaded with permission bof
+                          Joel Murdoch.
+Primary purpose         : Source port; No levels included
+===========================================================================
+Title                   : Caverns of Darkness Engine source code
+Filename                : cod10src.zip
+Release date            : 05/04/02 (May 4, 2002)
+Author                  : Joel Murdoch of The Chaos Crew. Uploaded with
+                          permission by Rick ''Redneckerz'' Commandeur 
+                          from the Doomworld Forums. 
+Email Address           : [redacted]
+Other Files By Author   : cc-cod.zip
+Misc. Author Info       : The Chaos Crew is: G.B. Jackson, Joel Murdoch,
+                          Christopher Lutz, Lord Nokturnus,
+                          Emil Brundage, Justus Johnson
+
+Description             : This is the source code for the custom 
+                          Caverns of Darkness engine by Joel Murdoch of the 
+                          Chaos Crew. It is an early build of the Eternity 
+                          engine (v.3.29) with some very minor tweaks. 
+                          It has been uploaded to /idgames in 2020 by 
+                          request of Rick ''Redneckerz'' Commandeur of the 
+                          Doomworld forums for historical preservation 
+                          purposes only. 
+
+Additional Credits to   : Rick ''Redneckerz/Red'' Commandeur (Uploader),
+                          id Software (duh), Team TNT for the BOOM engine,
+                          Lee Killough and James Haley for
+                          additional coding support
+                          Gothic DM Team, Nick Baker, and
+                          Roger Ritenour for graphics
+                          www.DoomWorld.com for hosting
+===========================================================================
+* What is included *
+
+New levels              : None
+Sounds                  : No
+Music                   : No
+Graphics                : No
+Dehacked/BEX Patch      : No
+Demos                   : No
+Other                   : Source code files
+Other files required    : No
+
+
+* Play Information *
+
+Game                    : DOOM 2
+Single Player           : Designed for
+Cooperative 2-4 Player  : No
+Deathmatch 2-4 Player   : No
+Other game styles       : None
+Difficulty Settings     : Not implemented
+
+
+* Construction *
+
+Base                    : The Eternity Engine, v.3.29
+Build Time              : W-A-Y too long
+Editor(s) used          : All sorts
+
+
+* Copyright / Permissions *
+
+Authors MAY the contents of this file as a base for
+modification or reuse.  Permissions have been obtained from original
+authors for any of their resources modified or included in this file.
+
+(delete one of these two paragraphs:)
+
+You MAY distribute this file, provided you include this text
+file, with no modifications.  You may distribute this file in any
+electronic format (BBS, Diskette, CD, etc) as long as you include
+this file intact.  I have received permission from the original
+authors of any modified or included content in this file to allow
+further distribution.
+
+
+* Where to get the file that this text file describes *
+
+The Usual: ftp://archives.gamers.org/pub/idgames/ and mirrors

@@ -1,0 +1,220 @@
+***********************-= Team Eternity Presents =-***********************
+
+                           The Eternity Engine
+
+                              Version: 3.31
+                          Release: Public Beta 7
+
+        Coded by: James "Quasar" Haley and Steven "SoM" McGranahan
+                    
+      Based on SMMU - "Smack My Marine Up" by Simon "fraggle" Howard
+
+                 Start map by Derek "Afterglow" Mac Donald         
+      
+          Special Thanks To:  Lee Killough, the TeamTNT BOOM Team,
+            Matt Denham, DooMWiz, Colin Phipps, fraggle, Nemesis, 
+             Carnevil, Randy Heit, Julian, Joel Murdoch, schepe,
+         aurikan, all Eternity Engine beta testers, and all members 
+                             of Team Eternity.
+                   
+**************************************************************************
+
+**** COPYRIGHT ***********************************************************
+
+The Eternity Engine is distributed under the terms of the GNU General 
+Public License. For more information, see the file "COPYING" included in 
+the distribution archive.
+
+Copyright holders in this work, along with the source of their code,
+include (but may not be limited to) the following:
+
+id Software ............ GPL DOOM source distribution
+Chi Hoang .............. Original DosDOOM port
+Lee Killough ........... TeamTNT's BOOM, MBF
+Jim Flynn .............. BOOM
+Rand Phares ............ BOOM
+Ty Halderman ........... BOOM
+Stan Gula .............. BOOM
+Simon Howard ........... SMMU
+Colin Phipps ........... PRBOOM
+Florian Schulze ........ PRBOOM
+Randy Heit ............. ZDOOM
+Martin Hedenfalk ....... libConfuse cfg parser library
+DJ Delorie ............. DJGPP libc
+James Haley ............ Original code
+Steven McGranahan ...... Original code
+
+If you believe you own code in this work and have not been given credit,
+please contact the author. No one has been intentionally omitted for any
+reason personal or otherwise.
+
+Eternity also makes use of the following, which do not impact its copy-
+right:
+
+Sam Lantinga et al. .... SDL and SDL Mixer libraries (http://www.libsdl.org)
+  * Source code for these libraries is available via CVS or tar.gz from this
+    site.
+
+ITB CompuPhase, Inc. ... Small AMX and compiler
+
+
+**** DISCLAIMER ****
+
+This software is covered by NO WARRANTY, implicit or otherwise, including
+the implied warranties of merchantability and fitness for a particular
+purpose. The authors of this software accept no responsibility for any ill
+effects caused by its use and will not be held liable for any damages, 
+even if they have been made aware of the possibility of these damages.
+
+Bug reports and feature requests will be appreciated.
+
+Please email haleyjd@hotmail.com with any concerns.
+
+
+**** DESCRIPTION *********************************************************
+
+Eternity is the newest source port to inherit the banner of BOOM. 
+Descended from MBF, it attempts to carry on the effort to put editability, 
+reliability, and compatibility first. From SMMU it also gains the momentum
+to give the player new options rather than to dictate DOOM purity.
+
+Eternity includes FULL BOOM compatibility, as well as most features added 
+in MBF and SMMU. In addition, Eternity adds many more. Check out the ex-
+tensive documentation package for full information.
+
+
+**** Features New to Version 3.31 Public Beta 7 **************************
+
+These include some of the major features added in the latest version:
+
+* High Resolution Support
+
+  Eternity now supports several new video modes, including true 320x240 
+  and 640x480, as well as 800x600 and 1024x768.
+
+* Portal Improvements
+
+  A few problems were repaired in the portal system, and line type 296 has
+  been adjusted to use a new anchor line type 299, so that it can be 
+  attached to the same sector as a 295 line. See the Editing Reference for
+  full information.
+
+* New Codepointer
+
+  HealthJump allows "frame scripting" of actions depending on an object's 
+  health. See the Codepointer Reference for more information.
+    
+**** COMING SOON *********************************************************
+
+These are features planned to debut in future versions of the Eternity 
+Engine:
+
+** ULTRA-HIGH PRIORITY **
+Expect to see these VERY soon:
+
+* Small Scripting Engine (Almost ready for use!)
+* ExtraData - extended map format (This too!)
+
+* Priority *
+
+* Consolidated font engine with support for better menu and console 
+  font(s)
+* Complete Heretic support
+* Improved Particle Effects
+* More TerrainTypes, including a scriptable type
+* Working hub system
+
+* Long-Term Goals *
+
+* Sound sequences
+* Polyobjects
+* Fully-functioning network code (currently broken, see below)
+
+
+**** Revision History ****************************************************
+
+3.31 Public Beta 7 04/11/04
+
+* High resolution support enabled via generalization of the screen 
+  drawing code. Some minor fixes to portals, and a new codepointer just 
+  for good measure.
+
+3.31 Public Beta 6 02/29/04
+
+* A huge amount of progress toward all current goals for the engine.
+  Portals, the brain child of SoM, are the major stars of this release.
+  Small and ExtraData are on the verge of becoming available to users 
+  for editing.
+
+3.31 Public Beta 5 12/17/03
+
+* Several minor bug fixes over beta 4, including 3D object clipping and
+  file drag-and-drop. Incremental improvements to EDF and to several
+  parameterized codepointers.
+
+3.31 Public Beta 4 11/29/03
+
+* Most effort put into improving EDF, largely via user feature requests.
+  Major progress has been made toward working ExtraData as well. The
+  Heretic status bar is now implemented.
+
+3.31 Public Beta 3 08/08/03
+
+* A long time in coming, and a ton of features to show for the delay.
+  EDF steals the show for this release.
+
+3.31 Public Beta 2 03/05/03
+
+* New BFGs, object z clipping, movable 3DMidTex lines, tons more Heretic
+  support, and some really nasty bugs fixed. Also first version to use
+  SDL_mixer for better sound.
+
+3.31 Public Beta 1 09/11/02
+
+* Prelim. Heretic support, 3DMIDTEX flag, zdoom-style translucency, and
+  some other stuff now in. And of course, bug fixes galore.
+
+3.29 "Gamma" 07/04/02
+
+* Final release for v3.29. Massive changes all over. First version to
+  include Windows support. SoM is now co-programmer.
+
+3.29 Development Beta 5 10/02/01
+
+* Minor release to demonstrate dialog, primarily
+
+3.29 Public Beta 4 06/30/01
+
+* Fixed a good number of bugs once again. Improved portability with 
+  Julian's help, major feature is working demo recording. See info below
+  and changelog for more info, as usual.
+
+3.29 Public Beta 3 05/10/01
+
+* Fixed a large number of bugs, added several interesting features. See
+  bug list below, and the changelog, for more information.
+
+3.29 Public Beta 2 01/09/01
+
+* Fixed mouse buttons - problem was leftover code in I_GetEvent() that
+  caused the mouse button variables to never be asserted - code was
+  unreachable because of an assignment of the variable buttons to 
+  lastbuttons.
+  
+3.29 Public Beta 1 01/08/01
+
+* Initial Release
+
+
+**** Bugs Fixed, Known Issues ********************************************
+
+Please see the Eternity changelog for information on bugs fixed.
+
+* Known Issues in 3.31 Public Beta 7:
+
+- Start map is temporarily disabled due to incompleteness of Small 
+  scripting system.
+
+- Network code is incomplete and totally broken. Needs overhaul for
+  Windows.
+

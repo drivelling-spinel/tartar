@@ -1,0 +1,1635 @@
+The Eternity Engine v3.29 Console Reference
+--------------------------------------------
+
+This reference contains information on useful console commands and
+variables that work with the Eternity console, as well as pointers
+on console command syntax.
+
+================================
+Table of Contents
+================================
+   
+   * Console Commands
+      * Core Commands
+          flood, delay, alias, cmdlist, quote, echo, dumplog
+      * Menus
+          mn_clearmenus, mn_newgame, mn_quit, mn_episode, mn_multi,
+          mn_prevmenu, mn_etccompat, mn_multigame, mn_advanced, newgame,
+          mn_weaponkeys, mn_keybindings, mn_features, mn_tcpip, mn_demos,
+          mn_weapons, mn_loadwad, mn_status, mn_hud, mn_mouse, mn_sound,
+          mn_vidmode, mn_particle, mn_video, mn_endgame, mn_options,
+          mn_savegame, mn_load, mn_player, mn_envkeys, mn_chatmacros,
+          mn_serial, credits, help, mn_enemies, mn_compat, mn_automap
+      * Keybindings
+      	  listactions, bind, unbindall, unbind, listkeys
+      * Networking
+          disconnect, playerinfo, frags, kick, say
+      * Cheats
+          god, noclip, nuke
+      * Video Options
+          v_modelist, animshot
+      * Player Options
+          listskins, listwads
+      * FraggleScript Commands
+          t_run, t_running
+      * Demos
+          timedemo, playdemo, stopdemo
+      * Gameplay
+          pause, i_error, spawn, endgame, starttitle, quit, map, kill,
+          addfile
+
+   * Console Variables
+      * Console
+          c_speed, c_height, textmode_startup
+      * Networking variables
+          com
+      * Gametype / Deathmatch
+          skill, nomonsters, respawn, fraglimit, bfgtype, deathmatch,
+         weapspeed, timelimit, fast, turbo, startlevel
+      * Demo options
+          cooldemo, demo_insurance
+      * Player variables
+          name, skin, colour, walkcam, chasecam, numhelpers
+      * Input options
+          alwaysmlook, invertmouse, sens_horiz, sens_vert, smooth_turning,
+          use_joystick, use_mouse
+      * Environment / Physics variables
+          autoaim, allowmlook, bobbing, pushers, nukage, varfriction,
+          recoil, bfglook
+      * AI variables
+          mon_infight, mon_avoid, mon_climb, mon_friction, mon_remember,
+          mon_backing, mon_helpfriends, mon_distfriend
+      * Heads-up System variables
+          messages, mess_colour, mess_lines, mess_timer, mess_scrollup,
+          hu_overlay, hu_hidesecrets, show_scores, obituaries, ob_colour,
+          crosshair
+      * Automap variables
+          mapcolor_rkey, mapcolor_bkey, mapcolor_ykey, mapcolor_rdor, 
+          mapcolor_bdor, mapcolor_ydor, mapcolor_frnd, mapcolor_wall, 
+          mapcolor_clsd, mapcolor_tele, mapcolor_secr, mapcolor_exit,
+          mapcolor_unsn, mapcolor_sprt, mapcolor_hair, mapcolor_sngl, 
+          mapcolor_back, mapcolor_fchg, map_coords
+      * Status Bar variables
+          ammo_red, ammo_yellow, health_red, health_yellow, health_green,
+          armor_red, armor_yellow, armor_green, st_rednum, st_singlekey,
+          st_graypct
+      * Rendering variables
+          r_showgun, r_showhom, r_blockmap, r_homflash, r_planeview, r_zoom, 
+          r_stretchsky, r_precache, r_trans, r_tranpct, r_swirl, gamma,
+          draw_particles, bloodsplattype, bulletpufftype, rocket_trails,
+          grenade_trails, lefthanded
+      * Video variables
+          v_diskicon, v_retrace, v_mode, v_ticker, show_vpo, shot_type,
+          screensize
+      * Sound options
+          detect_voices, snd_card, mus_card, sfx_volume, music_volume,
+          s_flippan, s_precache, s_pitched, snd_channels
+      * Chat Macros
+          chatmacro0, chatmacro1, chatmacro2, chatmacro3, chatmacro4, 
+          chatmacro5, chatmacro6, chatmacro7, chatmacro8, chatmacro9
+      * Weapon Preferences
+          weappref_0, weappref_1, weappref_2, weappref_3, weappref_4, 
+          weappref_5, weappref_6, weappref_7, weappref_8 
+      * DOOM Compatibility Vector
+          comp_telefrag, comp_dropoff, comp_vile, comp_pain, comp_skull, 
+          comp_blazing, comp_doorlight, comp_model, comp_god, comp_falloff, 
+          comp_floors, comp_skymap, comp_pursuit, comp_doorstuck, 
+          comp_staylift, comp_zombie, comp_stairs, comp_infcheat, 
+          comp_zerotags, comp_terrain, comp_respawnfix, comp_fallingdmg, 
+          comp_evenlight, comp_smmuline, 
+      * Constants
+          rngseed, creator, version, ver_date, ver_name
+
+
+================================          
+Notes on special command syntax:
+================================
+
+Commands which take parameters may accept numbers, strings, or members
+of a predefined set of values.
+
+  ex:
+  $ delay 50
+  $ spawn 249 1
+  $ name Quasar
+  $ hu_overlay distributed
+
+If string arguments contain whitespace, they must be in quotations. Quotations
+around strings are otherwise optional.
+
+  ex:
+  $ echo "This has to be in quotes"
+  $ i_error "R_FindVisplane: no more visplanes!"
+
+Multiple commands can be run from one prompt by separating them with a
+semicolon.
+
+  ex:
+  $ delay; kill
+
+Variables of type integer, named-value, on / off, and yes / no can be
+affected by the following operators:
+
++:  Affixed to the end of the variable, it will increment it to the next
+    valid value, but no higher than the maximum allowed.
+    
+    ex:
+    $ screensize +
+    
+-:  Affixed to the end of the variable, it will decrement it to the next
+    lower valid value, but no lower than the minimum allowed.
+    
+    ex:
+    $ screensize -
+    
+/:  Toggles through the variable values from minimum to maximum, wrapping
+    around to the minimum value again when it is maxed out. This is most
+    useful with two-state yes/no and on/off variables.
+    
+    ex:
+    $ hu_overlay /
+
+================================
+Notes on Notation
+================================
+
+In the list below, command arguments enclosed in brackets are optional.
+Commands typically have some default behavior when the arguments they
+expect are not provided, although this is often to simply print usage
+information.
+
+An ellipsis (...) signifies that the command will accept any number of
+arguments and will amalgamate them into one continuous string.          
+
+====================================================================
+
+====================================================================
+Console Commands
+====================================================================
+
+Console commands carry out a particular action when sent to the
+console.
+
+=====================================================================
+Core Commands
+=====================================================================
+
+These commands are for manipulating the console itself.
+
+Synopsis of Commands:
+
+	* flood		* echo
+	* delay		* dumplog
+	* alias
+	* cmdlist
+	* quote
+	
+* flood
+
+  Writes 300 garbage characters to the console. Usefulness is of debate.
+  
+* delay <amt>
+
+  Delays the running of the next console command by either 1, or if
+  provided, by amt game tics.
+  
+* alias <newcmdname> <command>
+
+  alias alone will list all currently defined aliases.
+  Providing newcmdname alone will remove that alias if it exists.
+  Providing newcmdname and a valid console command will create "newcmdname"
+  as an alias to that command, allowing shortcuts.
+  
+  In order to make an alias take parameters, use the special variable
+  "%opt", as such:
+  
+  alias "mycommand" "hu_overlay %opt"
+  
+* cmdlist
+
+  Displays all user-visible console commands.
+  
+* quote
+
+  Just for fun, displays a random quote from IRC.
+  
+* echo msg
+
+  Echoes a string message to the console. As with all console strings,
+  the string should be in quotes if it contains whitespace.
+  
+* dumplog filename
+
+  Dumps the current state of the console message buffer to the
+  specified file as ASCII text. The text will be appended to the 
+  file if it already exists, allowing multiple use of a single log file.
+  
+=====================================================================
+Menus
+=====================================================================
+
+These commands display and affect various aspects of the menu system.
+
+Synopsis of Commands:
+	
+	* mn_clearmenus	* mn_prevmenu	* mn_weaponkeys
+	* mn_newgame	* mn_etccompat  * mn_keybindings
+	* mn_quit	* mn_multigame  * mn_features
+	* mn_episode	* mn_advanced	* mn_tcpip
+	* mn_multi	* newgame	* mn_demos
+	
+	* mn_weapons	* mn_sound	* mn_options	* mn_chatmacros
+	* mn_loadwad	* mn_vidmode	* mn_savegame	* mn_serial
+	* mn_status	* mn_particle	* mn_load	* credits
+	* mn_hud	* mn_video	* mn_player	* help
+	* mn_mouse	* mn_endgame	* mn_envkeys	* mn_enemies
+	
+	* mn_compat
+	* mn_automap
+
+
+* mn_clearmenus
+
+  Deactivates any active menu and returns to the game
+  
+* mn_newgame
+
+  Displays the New Game menu or takes the player to the start map,
+  depending on their configuration.
+  
+* mn_quit
+
+  Displays a prompt asking the user if they want to quit.
+  
+* mn_episode
+
+  Displays the episode selection screen for Ultimate DOOM.  
+  Flags: not in network games
+  
+* mn_multi
+
+  Displays the multiplayer options menu.
+  
+* mn_prevmenu
+
+  Returns user to the last menu they viewed, or to the game if the present
+  menu is the highest-most in that chain.
+  
+* mn_etccompat
+
+  Displays the Eternity Compatibility Options menu.
+  
+* mn_multigame
+
+  Displays a setup menu for multiplayer sessions.
+
+* mn_advanced
+
+  Displays multiplayer advanced options menu.
+  Flags: server-only
+  
+* newgame
+
+  Clears any active menus and starts a new game.
+  Flags: not in network games
+  
+* mn_weaponkeys
+
+  Displays the weapon keybinding menu.
+  
+* mn_keybindings
+
+  Displays primary keybindings menu.
+  
+* mn_features
+
+  Displays the Features menu.
+  
+* mn_tcpip
+
+  Displays the (functionless) TCP/IP options menu.
+  
+* mn_demos
+
+  Displays the Demos menu
+  Flags: not in a network game
+  
+* mn_weapons
+
+  Displays the weapons preferences menu
+  
+* mn_loadwad
+
+  Displays the WAD file loading menu.  Does not function if the
+  shareware IWAD is in use.
+  Flags: not in a network game
+  
+* mn_status
+
+  Displays the status bar options menu.
+  
+* mn_hud
+
+  Displays the heads-up display options menu.
+  
+* mn_mouse
+
+  Displays the mouse options menu.
+  
+* mn_sound
+
+  Displays the sound options menu.
+  
+* mn_vidmode
+
+  Displays the video mode options menu.
+  
+* mn_particle
+
+  Displays the particle effects options menu.
+  
+* mn_video
+
+  Displays the video options menu.
+
+* mn_endgame
+
+  Prompts the user to end the current game and return to the title screen.
+  
+* mn_options
+
+  Displays the main options menu.
+
+* mn_savegame
+
+  Displays the save game menu. Will not display if not in a level.
+  
+* mn_load slotnum
+
+  Loads the save game from save slot slotnum.
+  
+* mn_loadgame
+
+  Displays the load game menu.
+  
+* mn_player
+
+  Displays the player setup menu.
+  
+* mn_envkeys
+
+  Displays the environment keybindings menu.
+  
+* mn_chatmacros
+
+  Displays the chat macros menu.
+  
+* mn_serial
+
+  Displays the serial connection setup menu.
+  
+* credits
+
+  Displays game engine / game credits.
+  
+* help
+
+  Displays built-in and user-provided help screens. See the BOOM editing
+  reference on how to provide up to 99 custom help screens.
+  
+* mn_enemies
+
+  Displays enemy AI options menu.
+  
+* mn_compat
+
+  Displays the DOOM compatibility options menu.
+  
+* mn_automap
+
+  Displays the automap options menu.
+
+=====================================================================
+Keybindings
+=====================================================================
+
+These commands allow manipulation of the dynamic keybinding system.
+
+Synopsis of Commands:
+
+	* listactions
+	* bind
+	* unbindall
+	* unbind
+	* listkeys
+
+* listactions
+
+  Displays a list of all bindable actions, aside from console
+  commands.
+  
+* bind keyname actionname
+
+  Binds the specified action to the specified key. actionname is
+  a string and should be enclosed in quotes if it contains
+  whitespace. actionname may specify any valid action or console
+  command.
+  
+* unbindall
+
+  Releases *all* dynamic keybindings. Use with caution!
+  
+* unbind keyname
+
+  Unbinds the specified key from any action.
+  
+* listkeys
+
+  Displays a list of all bindable key names. Not all bindable key codes
+  correspond to pressable keys however. Most pressable keys have obvious
+  names which correspond to those on the keyboard.
+
+=====================================================================
+Networking
+=====================================================================  
+
+Synopsis of Commands:
+
+	* disconnect
+	* playerinfo
+	* frags
+	* kick
+	* say
+	
+* disconnect
+
+  Disconnects from any ongoing network game and sets full-screen
+  console mode.
+  Flags: only in network games
+  
+* playerinfo
+
+  Displays name information for all connected players.
+  
+* frags
+
+  Displays the current frag count for all players.
+  
+* kick playernum
+
+  Kicks the player with the specified player number from the game.
+  Player numbers can be retrieved with playerinfo.
+  Flags: server-only
+  
+* say ...
+
+  Sends all arguments as a single message to all players in a network
+  game.
+  Flags: net command
+  
+=====================================================================
+Cheats
+=====================================================================
+
+These commands provide an alternative method of entering some cheat
+codes.
+
+Synopsis of Commands:
+
+	* god
+	* noclip
+	* nuke
+
+* god
+
+  Toggles god mode (IDDQD) on or off.
+  Flags: not in network games, only in levels
+  
+* noclip
+
+  Toggles no clipping (IDCLIP) on or off.
+  Flags: not in network games, only in levels
+  
+* nuke
+
+  Kills all enemies on the level, and if there are no enemies, kills
+  all friends on the level.
+  Flags: server-only, only in level, net command
+  
+=====================================================================
+Video Options
+=====================================================================
+
+Synopsis of Commands:
+
+	* v_modelist
+	* animshot
+	
+* v_modelist
+
+  Prints a list of available video modes to the console.
+  
+* animshot numframes
+
+  Takes the given number of consecutive screenshots for the purpose
+  of making a crude animation. Would be useful for animated GIFs
+  or AVI movies.  This command will make the game run very slow,
+  however, and will eat up disk space quickly, so use it with
+  care.
+	
+=====================================================================
+Player Options
+=====================================================================
+
+Synopsis of Commands:
+
+	* listskins
+	* listwads
+	
+* listskins
+
+  Lists names of all available player skins.
+  
+* listwads
+
+  Lists all currently loaded WAD files.
+	
+=====================================================================
+FraggleScript Commands
+=====================================================================
+
+These commands allow interaction with the FraggleScript interpreter.
+
+Synopsis of Commands:
+	
+	* t_run
+	* t_running
+	
+* t_run scriptnum
+
+  Attempts to run a script with the given number on the current
+  level. scriptnum should be between 0 and 255.
+  Flags: only in levels
+	
+* t_running
+
+  Lists all currently running scripts
+
+=====================================================================
+Demos
+=====================================================================  
+
+These commands are related to playing / recording demos.
+For all of these commands, the demo specified by demoname must have
+been added in either a WAD or on the command-line with the -file
+option. Demos cannot be played directly from a file name.
+
+Synopsis of Commands:
+
+	* timedemo
+	* playdemo
+	* stopdemo
+	
+* timedemo demoname showmenu
+
+  Starts the given demo as a time demo, in which the framerate of the
+  game can be measured.  If showmenu is set to 1, a meter comparing
+  the framerate against that of a "fast" machine will be displayed after
+  the demo is complete. Otherwise, the framerate will be printed to the 
+  console as a number.
+  Flags: not in a network game
+  
+* playdemo demoname
+
+  Plays the given demo normally.
+  Flags: not in a network game
+  
+* stopdemo
+
+  Stops any currently playing demo and drops to console.
+  Flags: not in a network game
+
+=====================================================================
+Gameplay
+=====================================================================
+
+These commands directly affect gameplay in various ways.
+
+Synopsis of Commands:
+
+	* pause		* quit
+	* i_error	* map
+	* spawn		* kill
+	* endgame	* addfile
+	* starttitle
+	
+* pause
+
+  Pauses or unpauses the game.
+  Flags: server-only
+  
+* i_error ...
+
+  Simulates an internal game engine error. Prints any arguments provided
+  as a single string when the game exits.
+  
+* spawn objecttype <friend>
+
+  Spawns a map object of the given internal type (DeHackEd number minus 1)
+  in front of the player. If <friend> is provided and is a non-zero number,
+  the object will be friendly. This command is for developers.
+  Flags: not in a network game, only in levels, hidden
+  
+* endgame
+
+  Drops to console mode.
+  Flags: not in a network game
+  
+* starttitle
+
+  Returns the game to the title screen / demo / credits loop.
+  Flags: not in a network game
+  
+* quit
+
+  Plays a random monster sound and exits the game normally, with no prompt.
+  
+* map mapname
+
+  Transfers game play to the given map. mapname may be the name of a WAD
+  file to load, as well as the name of a map header itself.
+  
+  Examples:
+  	map E1M1
+  	map w00t.wad
+  
+  Flags: server-only, net command
+  
+* kill
+
+  Causes the player to commit suicide.
+  Flags: only in level, net command
+  
+* addfile wadfilename
+
+  Adds the specified wad file at run-time. Some features will not
+  function completely as expected when WADs are loaded at run-time, so
+  for maximum compatibility always use the command line to load files.
+  Flags: not in network games, buffered command
+  
+
+=====================================================================
+Console Variables
+=====================================================================
+
+Variables differ from commands in that they are assigned values rather
+than performing actions directly.
+
+================================
+Console
+================================
+
+Synopsis:
+	* c_speed
+	* c_height
+	* textmode_startup
+	
+* c_speed
+	type: integer
+	value range: 1 - 200
+	value = speed at which console descends/recedes
+	
+* c_height
+	type: integer
+	value range: 20 - 200
+	value = normal height of the console in pixels
+	
+* textmode_startup
+	type: on / off
+	on  = game starts in text mode like the original DOOM
+	off = game starts in console mode with graphics
+
+================================
+Networking variables
+================================
+
+Synopsis:
+	* com
+	
+* com
+	type: integer
+	value range: 1 - 4
+	value = com port to use for serial connections
+		
+================================
+Game type / Deathmatch options
+================================	
+
+Synopsis:
+
+	* skill		* deathmatch	* startlevel
+	* nomonsters	* weapspeed
+	* respawn	* timelimit
+	* fraglimit	* fast
+	* bfgtype	* turbo
+	
+* skill
+	type: named values
+	values: "im too young to die", "hey not too rough", "hurt me plenty",
+                "ultra violence", "nightmare"
+	value = game skill level
+	Flags: netvar, server-only
+
+* nomonsters
+	type: on / off
+	on  = monsters will not be spawned at level start
+	off = monsters will spawn normally
+	Flags: netvar, server-only
+	
+* respawn
+	type: on / off
+	on  = normal monsters will respawn shortly after death
+	off = normal monsters do not respawn
+	Flags: netvar, server-only
+
+* fraglimit
+	type: integer
+	value range: 0 - 100
+	value = max number of frags that can be achieved before the level exits
+	Flags: netvar, server-only
+	
+* bfgtype
+	type: named values
+	values: bfg9000, classic, bfg11k
+	value = type of BFG which all players will use
+	Flags: netvar, server-only
+	
+* deathmatch
+	type: named values
+	values: co-op, deathmatch, altdeath, trideath
+	value = determines rules used in multiplayer games
+	Flags: netvar, server-only
+
+* weapspeed
+	type: integer
+	value range: 1 - 200	
+	value = speed at which weapon changes occur
+	Flags: netvar, server-only
+
+* timelimit
+	type: integer
+	value range: 0 - 100
+	value = max number of minutes a level can be played before moving
+	        on to next level
+	Flags: netvar, server-only
+
+* fast
+	type: on / off
+	on  = monsters move faster and are more aggressive
+	off = monsters move normally
+	Flags: netvar, server-only
+
+* turbo
+	type: integer
+	value range: 10 - 400	
+	value = turbo scale factor for walking/running
+	
+* startlevel
+	type: string
+	value = name of first level to start new games
+
+================================
+Demo options
+================================
+
+Synopsis:
+	* cooldemo
+	* demo_insurance
+	
+* cooldemo
+	type: on / off
+	on  = if the level has intermission cameras, the view will move
+	      between them randomly during the demo
+	off = demos are normal even in levels with intermission cameras
+	
+* demo_insurance
+	type: named values
+	values: off, on, "when recording"
+	value = determines whether or not extra steps should be taken to
+	        ensure that demos will remain in sync
+		
+================================
+Player variables
+================================
+
+Synopsis:
+	* name		* numhelpers
+	* skin
+	* colour
+	* walkcam
+	* chasecam
+
+* name
+	type: string
+	value = name of console player
+	Flags: netvar
+	
+* skin
+	type: string
+	value = console player's current skin
+	Flags: netvar
+	-> skin names can be retrieved with the listskins command
+
+* colour
+	type: named values
+	values: green, indigo, brown, red, tomato, dirt, blue, gold, sea,
+	        black, purple, vomit, pink, cream, white
+	value = consoleplayer's clothing color
+	Flags: netvar
+
+* walkcam
+	type: on / off
+	on  = the player controls a walkcam
+	off = the player has a normal viewpoint
+	Flags: not in network games
+	
+* chasecam
+	type: on / off
+	on  = the player views himself from a following camera
+	off = the player has a normal viewpoint
+	
+* numhelpers
+	type: integer
+	value range: 0 - 3
+	value = number of helper creatures that spawn with the player
+	Flags: not in network game
+
+================================
+Input options
+================================
+
+Synopsis:
+	* alwaysmlook	 * use_joystick
+	* invertmouse	 * use_mouse
+	* sens_horiz
+	* sens_vert
+	* smooth_turning
+	
+* alwaysmlook
+	type: on / off
+	on  = mouse movements are always interpreted as mlook
+	off = mouse movements may be interpreted as player movement
+	
+* invertmouse
+	type: on / off
+	on  = mlook mouse movements are reversed -- "arcade style"
+	off = mlook mouse movements correspond to physical mouse movement
+
+* sens_horiz
+	type: integer
+	value range: 0 - 64
+	value = relative horizontal sensitivity of the mouse
+	
+* sens_vert
+	type: integer
+	value range: 0 - 48
+	value = relative vertical sensitivity of the mouse
+	
+* smooth_turning
+	type: on / off
+	on  = mouse turning is smoothed by the game
+	off = raw mouse turning is used
+
+* use_joystick
+	type: yes / no
+	yes = enables use of joystick/gamepad cross pad and buttons
+	no  = joystick/gamepad is disabled
+	
+	* NOTE: the joystick must be calibrated through the 
+	        Allegro configuration program.
+	
+* use_mouse
+	type: yes / no
+	yes = enables use of mouse tracking and buttons
+	no  = mouse is disabled
+	
+================================
+Environment / Physics variables
+================================
+
+Synopsis:
+	* autoaim	* varfriction
+	* allowmlook	* recoil
+	* bobbing	* bfglook
+	* pushers
+	* nukage
+	
+* autoaim
+	type: on / off
+	on  = the game engine assists players with aiming automatically
+	off = players must aim precisely
+	Flags: netvar, server-only
+
+* allowmlook
+	type: on / off
+	on  = players may use mlook
+	off = players may not use mlook
+	Flags: netvar, server-only
+	
+* bobbing
+	type: on / off
+	on  = players see themselves bob about like chickens
+	off = players see themselves scoot around like robots on wheels
+	Flags: netvar, server-only
+	
+* pushers
+	type: on / off
+	on  = objects are affected by wind, current, conveyors
+	off = objects are not affected by wind, current, conveyors
+	Flags: netvar, server-only
+
+* nukage
+	type: on / off
+	on  = damaging sectors hurt players as normal
+	off = damaging sectors are harmless
+	Flags: netvar, server-only
+
+* varfriction
+	type: on / off
+	on  = players experience variable friction
+	off = players always experience normal friction
+	Flags: netvar, server-only
+	
+* recoil
+	type: on / off
+	on  = players experience recoil when firing weapons
+	off = players do not experience recoil
+	Flags: netvar, server-only
+
+* bfglook
+	type: named values
+	values: off, on, fixedgun
+	value = ability to mlook with BFG -- fixedgun allows mlook to occur,
+	        but will not allow the unfair effects of BFG mlooking
+	Flags: netvar, server-only
+
+================================	
+AI variables
+================================
+
+Synopsis:
+	* mon_infight	* mon_backing
+	* mon_avoid	* mon_helpfriends
+	* mon_climb	* mon_distfriend
+	* mon_friction
+	* mon_remember
+	
+* mon_infight
+	type: on / off
+	on  = monsters will fight with each other when provoked
+	off = monsters will fight only with players and friends
+	Flags: netvar, server-only
+		
+* mon_avoid
+	type: on / off
+	on  = monsters will avoid damaging sectors if possible
+	off = monsters are naive about damaging sectors
+	Flags: netvar, server-only
+	
+* mon_climb
+	type: on / off
+	on  = monsters can climb tall stairs
+	off = monsters cannot navigate tall stairs
+	Flags: netvar, server-only
+	
+* mon_friction
+	type: on / off
+	on  = monsters are affected by sector friction attributes
+	off = monsters always experience normal friction
+	Flags: netvar, server-only
+	
+* mon_remember
+	type: on / off
+	on  = monsters remember their last enemy after making a kill
+	off = monsters track only one enemy and may fall asleep if it is killed
+	Flags: netvar, server-only
+	
+* mon_backing
+	type: on / off
+	on  = monsters may intelligently back out of a fight if hurt
+	off = monsters savagely fight to the death
+	Flags: netvar, server-only
+		
+* mon_helpfriends
+	type: on / off
+	on  = friends may help other friends with low health
+	off = friends will pursue their own targets without regard to others
+	Flags: netvar, server-only
+	
+* mon_distfriend
+	type: integer
+	value range: 0 - 1024
+	value = average distance friends attempt to remain from players
+	Flags: netvar, server-only
+
+================================
+Heads-up system variables
+================================
+
+Synopsis:
+	* messages	* hu_overlay	 * crosshair
+	* mess_colour	* hu_hidesecrets
+	* mess_lines	* show_scores
+	* mess_timer	* obituaries
+	* mess_scrollup	* ob_colour
+
+* messages
+	type: on / off
+	on  = HUD messages will be displayed in the upper left corner
+	off = HUD messages are not displayed
+
+* mess_colour
+	type: named values
+	values: brick, tan, gray, green, brown, gold, red, blue, orange, yellow
+	value = color of normal HUD messages
+	
+* mess_lines
+	type: integer
+	value range: 0 - 14
+	value = number of lines in the HUD message widget
+		
+* mess_timer
+	type: integer
+	value range: 0 - 100000
+	value = length of time messages appear
+	
+* mess_scrollup
+	type: yes / no
+	yes = the HUD message widget can be scrolled to see previous messages
+	no  = the HUD message widget cannot be scrolled
+	
+* hu_overlay
+	type: named values
+	values: off, "boom style", flat, distributed
+	value = style / activation state of HUD
+	
+* hu_hidesecrets
+	type: yes / no
+	yes = kills/items/secrets statistics are not displayed on the HUD
+	no  = kills/items/secrets statistics are displayed on the HUD
+	
+* show_scores
+	type: on / off
+	on  = a player frags chart will be show when you die
+	off = no frags chart is displayed
+
+* obituaries
+	type: on / off
+	on  = obituaries are shown when a player dies
+	off = no obituaries are shown
+		
+* obcolour
+	type: named values
+	values: brick, tan, gray, green, brown, gold, red, blue, orange, yellow
+	value = color of obituary messages
+	
+* crosshair
+	type: named values
+	values: none, cross, angle
+	value = shape / presence of the aiming crosshairs
+	
+================================
+Automap variables
+================================
+
+Synopsis:
+	* mapcolor_rkey	* mapcolor_ydor	* mapcolor_secr	* mapcolor_sngl
+	* mapcolor_bkey	* mapcolor_frnd	* mapcolor_exit	* mapcolor_back
+	* mapcolor_ykey	* mapcolor_wall	* mapcolor_unsn * mapcolor_fchg
+	* mapcolor_rdor	* mapcolor_clsd	* mapcolor_sprt * map_coords
+	* mapcolor_bdor	* mapcolor_tele	* mapcolor_hair
+	
+* mapcolor_rkey
+	type: integer
+	value range: 0 - 255
+	value = color of red key objects on map
+	
+* mapcolor_bkey
+	type: integer
+	value range: 0 - 255
+	value = color of blue key objects on map
+	
+* mapcolor_ykey
+	type: integer
+	value range: 0 - 255
+	value = color of yellow key objects on map
+	
+* mapcolor_rdor
+	type: integer
+	value range: 0 - 255
+	value = color of red key doors on map
+	
+* mapcolor_bdor
+	type: integer
+	value range: 0 - 255
+	value = color of blue key doors on map
+	
+* mapcolor_ydor
+	type: integer
+	value range: 0 - 255
+	value = color of yellow key doors on map
+
+* mapcolor_frnd
+	type: integer
+	value range: 0 - 255
+	value = color of friends when in IDDTx2 mode
+	
+* mapcolor_wall
+	type: integer
+	value range: 0 - 255
+	value = color of normal walls
+	
+* mapcolor_clsd
+	type: integer
+	value range: 0 - 255
+	value = color of closed doors / areas
+	
+* mapcolor_tele
+	type: integer
+	value range: 0 - 255
+	value = color of teleportal lines
+	
+* mapcolor_secr
+	type: integer
+	value range: 0 - 255
+	value = color of secret sector boundaries
+	
+* mapcolor_exit
+	type: integer
+	value range: 0 - 255
+	value = color of exit lines
+	
+* mapcolor_unsn
+	type: integer
+	value range: 0 - 255
+	value = color of computer map unseen lines
+	
+* mapcolor_sprt
+	type: integer
+	value range: 0 - 255
+	value = color of normal map objects
+	
+* mapcolor_hair
+	type: integer
+	value range: 0 - 255
+	value = color of map pointer
+	
+* mapcolor_sngl
+	type: integer
+	value range: 0 - 255
+	value = color of player arrow in single-player game
+
+* mapcolor_back
+	type: integer
+	value range: 0 - 255
+	value = color of automap background
+	
+* mapcolor_fchg
+	type: integer
+	value range: 0 - 255
+	value = color of lines at floor height changes
+	
+* map_coords
+	type: on / off
+	on  = automap coordinates follow the pointer in non-follow mode
+	off = automap coordinates always show player coordinates
+	
+================================
+Status Bar variables
+================================
+
+Synopsis:
+	* ammo_red	* armor_red	* st_graypct
+	* ammo_yellow	* armor_yellow
+	* health_red	* armor_green
+	* health_yellow	* st_rednum
+	* health_green	* st_singlekey
+	
+* ammo_red
+	type: integer
+	value range: 0 - 100
+	value = ammo amount at which status bar numbers turn red
+
+* ammo_yellow
+	type: integer
+	value range: 0 - 100
+	value = ammo amount at which status bar numbers turn yellow
+	
+* health_red
+	type: integer
+	value range: 0 - 200
+	value = health amount at which status bar numbers turn red
+	
+* health_yellow
+	type: integer
+	value range: 0 - 200
+	value = health amount at which status bar numbers turn yellow
+	
+* health_green
+	type: integer
+	value range: 0 - 200
+	value = health amount at which status bar number turn green
+
+* armor_red
+	type: integer
+	value range: 0 - 200
+	value = armor amount at which status bar number turn red
+
+* armor_yellow
+	type: integer
+	value range: 0 - 200
+	value = armor amount at which status bar numbers turn yellow
+	
+* armor_green
+	type: integer
+	value range: 0 - 200
+	value = armor amount at which status bar numbers turn green
+	
+* st_rednum
+	type: yes / no
+	yes = status bar numbers are always red
+	no  = status bar numbers change color to reflect condition
+
+* st_singlekey
+	type: yes / no
+	yes = status bar key icons show only one key type even if both
+	      are possessed (skull vs key)
+	no  = status bar key icons display a double key icon if both
+	      keys are possessed
+
+* st_graypct
+	type: yes / no
+	yes = if status bar numbers change colors, the percent sign will
+	      be gray rather than changing along with the numbers
+	no  = if status bar numbers change colors, the percent sign will
+	      change colors as well -- otherwise it will be red as normal
+	
+================================
+Rendering variables
+================================
+
+Synopsis:
+	* r_showgun	* r_zoom	* r_swirl	 * rocket_trails
+	* r_showhom	* r_stretchsky	* gamma		 * grenade_trails
+	* r_blockmap	* r_precache	* draw_particles * lefthanded
+	* r_homflash	* r_trans	* bloodsplattype
+	* r_planeview	* r_tranpct	* bulletpufftype
+	
+* r_showgun
+	type: yes / no
+	yes = weapon sprites are drawn as normal
+	no  = no weapon sprites are drawn
+	
+* r_showhom
+	type: yes / no
+	yes = HOM will appear as a red or flashing red area on the screen
+	no  = HOM will appear as a simple lack of screen-redraw	
+	
+* r_blockmap
+	type: on / off
+	on  = the game engine will rebuild blockmaps at run-time
+	off = the game engine will use prebuilt blockmaps when available
+	
+* r_homflash
+	type: on / off
+	on  = when HOM detection is enabled, it will flash between red 
+	      and black
+	off = HOM detection appears as solid red
+	
+	*** This option is important if the user may have an epileptic
+	    condition triggered by flashing solid color patterns. It is
+	    recommended of course that such persons do not play video
+	    games at any rate.
+	    
+* r_planeview
+	type: on / off
+	on  = visplanes are separated by thin black lines
+	off = visplanes are not visible to the user
+	
+	This option is just for technical interest.
+	
+* r_zoom
+	type: integer
+	value range: 0 - 8192
+	value = zoom level of the game camera
+	
+* r_stretchsky
+	type: on / off
+	on  = short skies will be stretched to accomidate up/down look
+	off = short skies are tiled (very ugly!)
+	
+* r_precache
+	type: on / off
+	on  = various graphics will be precached at the start of the level
+	off = graphics are loaded as needed (shorter start up time, but
+	      can result in loss of framerate)
+
+* r_trans
+	type: on / off
+	on  = general translucency is enabled
+	off = general translucency is disabled (can improve framerate)
+	
+* r_tranpct
+	type: integer
+	value range: 0 - 100
+	value = general global translucency percentage
+
+* r_swirl
+	type: on / off
+	on  = all animated flats use a swirling effect
+	off = animated flats behave normally
+	
+	* NOTE: this option is just for testing / fun -- swirling can be
+	        achieved for individual flats through the ANIMATED lump.
+	        	
+* gamma
+	type: integer
+	value range: 0 - 4
+	value = gamma correction level
+	
+* draw_particles
+	type: on / off
+	on  = individually enabled particle effects are drawn
+	off = no particle effects are drawn
+	
+* bloodsplattype
+	type: on / off
+	on  = blood splats use particles
+	off = blood splats use sprites
+	
+* bulletpufftype
+	type: on / off
+	on  = bullet puffs use particles
+	off = bullet puffs use sprites
+
+* rocket_trails
+	type: on / off
+	on  = rockets have a smoke trail effect
+	off = rockets are normal
+	
+* grenade_trails
+	type: on / off
+	on  = grenades have a smoke trail effect
+	off = grenades are normal
+	
+* lefthanded
+	type: named values
+	values: right, left
+	value = handedness of player -- left causes weapon sprites to be
+	        flipped
+	        
+	* NOTE: due to discrepancies in the original weapon graphics,
+	        left vs right handedness is illy-defined and is a popular
+	        subject of debate on forums, channels, and sites. This
+	        feature is just for fun.
+
+================================
+Video variables
+================================
+
+Synopsis:
+	* v_diskicon	* shot_type
+	* v_retrace	* screensize
+	* v_mode
+	* v_ticker
+	* show_vpo
+	
+* v_diskicon
+	type: on / off
+	on  = flashing disk icon is used to indicate disk access
+	off = disk access is silent
+	
+* v_retrace
+	type: yes / no
+	yes = drawing waits for vertical retrace (vsynch)
+	no  = drawing does not wait for vsynch (may cause display tearing)
+	
+* v_mode
+	type: named values
+	values: use v_modelist command to view available modes
+	value = video mode
+	
+* v_ticker
+	type: named values
+	values: off, chart, classic
+	value = presence / appearance of an FPS ticker
+	        classic is the original FPS ticker enabled through -devparm
+	        in DOOM
+	
+* show_vpo
+	type: yes / no
+	yes = a VPO indicator will be displayed when the number of visplanes
+	      is at the approximate level where DOOM would have exited
+	no  = no VPO indicator will be shown
+	
+	* NOTE: due to a more efficient visplane splitting algorithm
+	        developed in BOOM, Eternity uses fewer visplanes than DOOM
+	        did. Due to this discrepancy, Eternity actually adds a small
+	        number to the number of visplanes to estimate when overflows
+	        would occur. This means that the appearance of the VPO 
+	        indicator is only to be taken as a warning that the threshold 
+	        is near, and not that a VPO may occur at an exact location.
+		
+* shot_type
+	type: named values
+	values: bmp, pcx
+	value = file type written when screenshots are taken
+	
+* screensize
+	type: integer
+	value range: 0 - 8
+	value = size of game screen
+
+================================
+Sound options
+================================
+
+Synopsis:
+	* detect_voices	* s_flippan
+	* snd_card	* s_precache
+	* mus_card	* s_pitched
+	* sfx_volume	* snd_channels
+	* music_volume
+	
+* detect_voices
+	type: yes / no
+	yes = Allegro will attempt to autodetect the number of hardware
+	      voices available
+	no  = Allegro will use a specified default number of voices
+	
+* snd_card
+	type: named values
+	values: autodetect, none, SB, "SB 1.0", "SB 1.5", "SB 2.0", 
+	        "SB Pro", SB16, GUS
+	value = type of sound driver to be used by Allegro
+	        
+	        autodetect = Allegro will attempt to autodetect the card type
+	        none = digital sound will be disabled
+	        
+* mus_card
+	type: named values
+	values: autodetect, none, adlib, OPL2, 2xOPL2, OPL3, "SB MIDI", 
+	        MPU-401, GUS, DIGMID, AWE32
+	value = type of MIDI driver to be used by Allegro
+	
+	        autodetect = Allegro will attempt to autodetect the synth
+	        none = MIDI output will be disabled
+	        
+* sfx_volume
+	type: integer
+	value range = 0 - 15
+	value = base volume for digital sound effects
+	
+* music_volume
+	type: integer
+	value range: 0 - 15
+	value = base volume for MIDI synthesis
+	
+* s_flippan
+	type: on / off
+	on  = forces reversal of stereo sound channels
+	off = stereo sound will be normal for the card/driver/other settings
+	
+	* NOTE: on and off for this variable do not equate to flipped or
+	        non-flipped in the same way for every combination of
+	        sound card and Allego configuration. If your sound is
+	        right, turning on s_flippan will make it wrong. If your sound
+	        is wrong, try this to make it right.
+	        
+* s_precache
+	type: on / off
+	on  = sounds will be precached at the beginning of the game
+	off = sounds will be loaded as they are used
+	
+	* NOTE: off will make load times shorter, but will degrade
+	        performance. on may require more system memory.
+	        
+* s_pitched
+	type: on / off
+	on  = emulates crappy DOOM v1.1 variable-pitched sound effects
+	off = sounds always play at real pitch
+	
+* snd_channels
+	type: integer
+	value range: 0 - 128
+	value = number of software channels to maintain
+	
+	* NOTE: this has nothing to do with the number of available
+	        hardware channels, which, unless you are very rich, is
+	        probably nowhere near 128 :P
+	        
+	        This value affects the number of sounds the game will
+	        *attempt* to play at one time. If set too low, you will
+	        lose sound unnecessarily. Setting it too high has no
+	        particularily ill effect but will use more memory and take 
+	        slightly more time to process.
+	        
+================================
+Chat Macros
+================================
+
+Chat macros are stored in variables "chatmacro0" through "chatmacro9"
+All are of type string and reflect the chat macros usable in multiplayer.
+
+================================
+Weapon Preferences
+================================
+
+Weapon preferences are stored in variables "weappref_0" through
+"weappref_8".
+
+Weapon preferences are named-value variables and use the following values:
+
+   fist, pistol, shotgun, chaingun, "rocket launcher", "plasma gun",
+   bfg, chainsaw, "double shotgun"
+   
+================================
+DOOM Compatibility Vector
+================================
+
+The compatibility vector can be accessed with the following variables.
+All variables are of the on / off type and are server-only net commands.
+The purpose of these variables is explained in documentation which
+comes with the Eternity Engine.
+
+* comp_telefrag	* comp_blazing	 * comp_floors	  * comp_zombie
+* comp_dropoff	* comp_doorlight * comp_skymap	  * comp_stairs
+* comp_vile	* comp_model	 * comp_pursuit	  * comp_infcheat
+* comp_pain	* comp_god	 * comp_doorstuck * comp_zerotags
+* comp_skull	* comp_falloff	 * comp_staylift  * comp_terrain
+
+* comp_respawnfix
+* comp_fallingdmg
+* comp_evenlight
+* comp_smmuline
+	        
+================================
+Misc. Configuration
+================================
+
+Synopsis:
+	* use_startmap
+	* i_gamespeed
+	* i_ledsoff
+	
+* use_startmap
+	type: named values
+	values: ask, no, yes
+	value = determines whether the game should use the menu or the
+	        start map to start new games. "ask" is used to indicate
+	        that the user has not chosen a value. The game will prompt
+	        the player to decide the next time the game is started.
+
+* i_gamespeed
+	type: integer
+	value range: 0 - 500
+	value = percentage of real time at which the game clock runs
+
+* i_ledsoff
+	type: yes / no
+	yes = keyboard LEDs will remain off regardless of lock states
+	no  = keyboard LEDs will toggle on/off with presses of lock keys
+	
+================================
+Constants
+================================
+
+These variables are read-only and cannot be set to a new value.
+
+Synopsis:
+	* rngseed
+	* creator
+	* version
+	* ver_date
+	* ver_name
+	
+* rngseed
+	type: integer
+	value = current random number generator seed
+	
+* creator
+	type: string
+	value = author of current map as specified via MapInfo
+	
+* version
+	type: integer
+	value = whole-number version of this Eternity Engine build
+	
+* ver_date
+	type: string
+	value = date on which this Eternity Engine executable was compiled
+	
+* ver_name
+	type: string
+	value = special name of this Eternity Engine version
+        
