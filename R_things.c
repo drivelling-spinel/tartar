@@ -663,11 +663,11 @@ void R_ProjectSprite (mobj_t* thing)
   vis->colour = thing->colour;
   if (thing->intflags & MIF_BLOODBLUE)
     {
-      if(info_wolfcolor & woco_any) vis->colour = 10;
-      else vis->colour = 6;
+      if(info_wolfcolor & woco_any) vis->colour = 19;
+      else vis->colour = 16;
     }
-  else if (thing->intflags & MIF_BLOODGREEN) vis->colour = 15;
-  else if (thing->intflags & MIF_BLOODYELLOW) vis->colour = 7;
+  else if (thing->intflags & MIF_BLOODGREEN) vis->colour = 17;
+  else if (thing->intflags & MIF_BLOODYELLOW) vis->colour = 18;
 
   vis->scale = xscale;
   vis->gx = thing->x;

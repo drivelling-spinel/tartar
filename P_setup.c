@@ -1799,8 +1799,8 @@ void P_ApplyPersistentOptions(void)
       }
     else
       {
-        prtclblood = bloodcolor;
         R_RefreshTranslationTables(bloodcolor);
+        prtclblood = bloodcolor;
       }
     if(bloodvar >= 0)
       {

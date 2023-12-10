@@ -629,12 +629,17 @@ translat_t translations[] =
     {152, 8},      // felt?
     {0,   1},      // bleeacckk!!
     {250, 5},      // purple
-//    {168, 8}, // bright pink, kinda
+    {168, 8}, // bright pink, kinda
     {216, 8},      // vomit yellow
     {16,  16},     // pink                       
     {56,  8},      // cream
     {88,  8},      // white
-    {112, 16}      // good old green again
+
+
+    {200, 8},      // blue
+    {112, 16},     // good old green again
+    {160, 8},      // gold
+    {250, 5},      // purple
 };
 
 // sf : rewritten
@@ -643,13 +648,13 @@ void R_InitTranslationTables (void)
 {
   int i, c;
   
-  translationtables = Z_Malloc(256 * TRANSLATIONCOLOURS, PU_STATIC, 0);
+  translationtables = Z_Malloc(256 * (TRANSLATIONCOLOURS + 4), PU_STATIC, 0);
   
-  for(i=0; i<TRANSLATIONCOLOURS; i++)
+  for(i=0; i<TRANSLATIONCOLOURS + 4; i++)
     {
       for(c=0; c<256; c++)
 	translationtables[i*256 + c] =
-          (c >= 0x70 && c <= 0x7f) || (c >= 0xb0 && c <= 0xbf && bloodcolor) 
+          (c >= 0x70 && c <= 0x7f) || (i >= TRANSLATIONCOLOURS && c >= 0xb0 && c <= 0xbf && bloodcolor) 
              ? translations[i].start +
                 ((c & 0xf) * (translations[i].number-1))/15
              : c;
@@ -661,7 +666,7 @@ void R_RefreshTranslationTables (int color)
 {
   int i, c;
   
-  for(i=0; i<TRANSLATIONCOLOURS; i++)
+  for(i=TRANSLATIONCOLOURS ; i < TRANSLATIONCOLOURS + 4 ; i++)
     {
       for(c=0xb0; c<=0xbf; c++)
 	translationtables[i*256 + c] =
