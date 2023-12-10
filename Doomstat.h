@@ -393,6 +393,9 @@ extern int flashing_hom; // killough 10/98
 
 extern int doom_weapon_toggles;   // killough 10/98
 
+extern boolean remove_slime_trails;
+
+
 //=======================================================
 //
 // haleyjd: Eternity Stuff

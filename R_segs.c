@@ -599,7 +599,6 @@ void R_StoreWallRange(const int start, const int stop)
   linedef->flags |= ML_MAPPED;
 
   // calculate rw_distance for scale calculation
-  // TODO: hopefully R_PointToAngle2 func does what I think
   rw_normalangle = curline->angle + ANG90;
   offsetangle = abs(rw_normalangle-rw_angle1);
 

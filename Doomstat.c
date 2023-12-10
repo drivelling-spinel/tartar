@@ -127,6 +127,8 @@ int drawgrenadetrails;
 
 int forceFlipPan; // haleyjd 12/08/01
 
+boolean remove_slime_trails;
+
 //----------------------------------------------------------------------------
 //
 // $Log: doomstat.c,v $

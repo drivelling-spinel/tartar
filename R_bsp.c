@@ -242,7 +242,7 @@ int R_DoorClosed(void)
   return
 
     // if door is closed because back is shut:
-    backsector->ceilingheight <= frontsector->floorheight
+    backsector->ceilingheight <= backsector->floorheight
 
     // preserve a kind of transparent door/lift special effect:
     && (backsector->ceilingheight >= frontsector->ceilingheight ||

@@ -944,6 +944,14 @@ CONSOLE_COMMAND(p_dumphubs, 0)
   P_DumpHubs();
 }
 
+
+VARIABLE_BOOLEAN(remove_slime_trails, NULL, onoff);
+
+CONSOLE_VARIABLE(p_rmslime, remove_slime_trails, cf_buffered)
+{
+  C_Printf("p_rmslime change will take effect on next level start");
+}
+
 #ifdef NORENDER
 VARIABLE_BOOLEAN(norender1, NULL, onoff);
 VARIABLE_INT(norender2, NULL, -1, 1280, NULL);
@@ -1046,6 +1054,8 @@ void R_AddCommands()
    C_AddCommand(gamma);
 
    C_AddCommand(p_dumphubs);
+   
+   C_AddCommand(p_rmslime);
 
    C_AddCommand(pal_curr);
    C_AddCommand(pal_next);
