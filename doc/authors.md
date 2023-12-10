@@ -20,7 +20,7 @@ covering their work listed below.
    as a basis for [Eternity Engine](COPYRGHT/ee331b7-dos.txt) - 
    game engine for Eternity TC project.
 
-5. Eternity Enigine also contained portions of code from
+5. Eternity Engine also contained portions of code from
    [ZDoom by Randy Heit](COPYRGHT/zdoomcode-license.txt). 
 
 6. Starting with version [3.29 developer beta 5](eternity/ee329db5.txt),
