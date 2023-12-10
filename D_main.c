@@ -1204,6 +1204,12 @@ static void D_ProcessDehCommandLine(void)
   // ty 03/09/98 end of do dehacked stuff
 }
 
+void D_DehackedFile(char * file)
+{
+  if (access(file, F_OK)) I_Error("Cannot find .deh or .bex file named %s", file);
+  ProcessDehFile(file, D_dehout(), 0);  
+}
+
 // killough 10/98: support preloaded wads
 
 static void D_ProcessWadPreincludes(void)

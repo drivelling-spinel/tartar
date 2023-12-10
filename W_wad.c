@@ -186,8 +186,14 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
     printf(" adding %s\n",filename);   // killough 8/8/98
   startlump = numlumps;
 
+  if (strlen(filename) > 4 && 
+    (!strcasecmp(filename+strlen(filename)-4, ".deh" ) || !strcasecmp(filename+strlen(filename)-4, ".bex" )))
+    {
+      D_DehackedFile(filename);
+      return false;    
+    }  
   // killough:
-  if (strlen(filename)<=4 || strcasecmp(filename+strlen(filename)-4, ".wad" ))
+  else if (strlen(filename)<=4 || strcasecmp(filename+strlen(filename)-4, ".wad" ))
     {
       // single lump file
       fileinfo = &singleinfo;
