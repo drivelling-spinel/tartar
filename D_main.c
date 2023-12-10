@@ -1405,7 +1405,7 @@ static int D_CheckRelatedWads()
     {
       int j = Ex_InsertRelatedWads(wadfiles[i], i);
       n += j;
-      i += j ? j : 1;
+      i += j + 1;
     } 
   return n;
 }

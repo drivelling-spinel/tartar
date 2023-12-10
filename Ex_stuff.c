@@ -731,31 +731,27 @@ int Ex_InsertResWadIfMissing(const char * wadname, int index, const char * reswa
   if(D_HasWadInWadlist(reswadname)) return 0;
   for(i = strlen(wadname) - 1 ; i >= 0 && wadname[i] != '/' && wadname[i] != '\\' ; i -= 1);
   assert(++i + strlen(reswadname) < sizeof(filestr));
-  *filestr=0;
   strncpy(filestr, wadname, i);
+  filestr[i] = 0;
   strcat(filestr, reswadname);
   if(stat(filestr, &sbuf)) return 0;
   D_InsertFile(filestr, index);  
   return 1;
 }
 
-static char * WOLFDOOM_PWADS[] = {"1ST_ENC.WAD", "AFTERMTH.WAD"};
-static char * WOLFDOOM_RES_WADS[] = { "WLFGFX.WAD", "WLFSND.WAD", "WLFST.WAD", "WLFTXT.WAD" };
-
-int Ex_Check1stEncWads(const char * wadname, const int index) 
+int Ex_CheckWadsGeneralized(const char * wadname, const int index, char * pwads[], int pwads_count, char * reswads[], int reswads_count) 
 {
   int i;
   ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
   assert(strlen(filestr) + 5 <= sizeof(filestr));
   AddDefaultExtension(filestr, ".wad");
-  for( i = 0 ; i < sizeof(WOLFDOOM_PWADS) / sizeof(*WOLFDOOM_PWADS) ; i += 1)
+  for( i = 0 ; i < pwads_count ; i += 1)
     {
-      if(!stricmp(filestr, WOLFDOOM_PWADS[i]))
+      if(!stricmp(filestr, pwads[i]))
         {
           int c = 0, j;
-          *filestr = 0;
-          for( j = 0 ; j < sizeof(WOLFDOOM_RES_WADS) / sizeof(*WOLFDOOM_RES_WADS) ; j += 1)
-            c += Ex_InsertResWadIfMissing(wadname, index + c, WOLFDOOM_RES_WADS[j]);
+          for( j = 0 ; j < reswads_count; j += 1)
+            c += Ex_InsertResWadIfMissing(wadname, index + c, reswads[j]);
           return c;
         }
     }
@@ -763,24 +759,78 @@ int Ex_Check1stEncWads(const char * wadname, const int index)
   return 0;
 }
 
+
+static char * WOLFDOOM_PWADS[] = {"1ST_ENC.WAD", "AFTERMTH.WAD"};
+static char * WOLFDOOM_RES_WADS[] = { "WLFGFX.WAD", "WLFSND.WAD", "WLFST.WAD", "WLFTXT.WAD" };
+
+int Ex_Check1stEncWads(const char * wadname, const int index) 
+{
+  return Ex_CheckWadsGeneralized(wadname, index, WOLFDOOM_PWADS, sizeof(WOLFDOOM_PWADS) / sizeof(*WOLFDOOM_PWADS),
+    WOLFDOOM_RES_WADS, sizeof(WOLFDOOM_RES_WADS) / sizeof(*WOLFDOOM_RES_WADS));
+}
+
 int Ex_CheckNoctWads(const char * wadname, const int index) 
 {
+  ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
+  assert(strlen(filestr) + 5 <= sizeof(filestr));
+  AddDefaultExtension(filestr, ".wad");
+  if(!stricmp(filestr, "NOCT.WAD"))
+    {
+      return Ex_InsertResWadIfMissing(wadname, index + 1, "NOCT15.WAD");
+    }
+
   return 0;
 }
 
 int Ex_CheckOriginaltWads(const char * wadname, const int index) 
 {
+  ExtractFileBase(wadname, filestr, sizeof(filestr) - 1);
+  assert(strlen(filestr) + 5 <= sizeof(filestr));
+  AddDefaultExtension(filestr, ".wad");
+  if(!stricmp(filestr, "ORIGINAL.WAD"))
+    {
+      return Ex_InsertResWadIfMissing(wadname, index + 1, "ORIG15.WAD");
+    }
+
   return 0;
 }
+
+static char * ARCTIC_PWADS[] = { "GFX1.WAD", "GFX2.WAD"};
+static char * ARCTIC_RES_WADS[] = { "ARCTIC.WAD", "ARC_FIX.WAD" };
+static char * ARCTIC_RES_WADS2[] = { "PISTOL.WAD", "ARCTICSN.WAD" };
+
+static char * ARCTIC_PWADS3[] = { "ARCTIC.WAD" };
+static char * ARCTIC_RES_WADS3[] = { "ARC_FIX.WAD", "PISTOL.WAD", "GFX1.WAD", "ARCTICSN.WAD" };
+
 
 int Ex_CheckArctictWads(const char * wadname, const int index) 
 {
-  return 0;
+  // option 1 - GFX1 or GFX2
+  int c = Ex_CheckWadsGeneralized(wadname, index, ARCTIC_PWADS, sizeof(ARCTIC_PWADS) / sizeof(*ARCTIC_PWADS),
+    ARCTIC_RES_WADS, sizeof(ARCTIC_RES_WADS) / sizeof(*ARCTIC_RES_WADS));
+  c += Ex_CheckWadsGeneralized(wadname, index + c + 1, ARCTIC_PWADS, sizeof(ARCTIC_PWADS) / sizeof(*ARCTIC_PWADS),
+    ARCTIC_RES_WADS2, sizeof(ARCTIC_RES_WADS2) / sizeof(*ARCTIC_RES_WADS2));
+  if(c != 0) return c;
+  
+  return Ex_CheckWadsGeneralized(wadname, index + 1, ARCTIC_PWADS3, sizeof(ARCTIC_PWADS3) / sizeof(*ARCTIC_PWADS3),
+    ARCTIC_RES_WADS3, sizeof(ARCTIC_RES_WADS3) / sizeof(*ARCTIC_RES_WADS3));
 }
+
+static char * ARCTICSE_PWADS[] = { "ARCTGFX1.WAD", "ARCTGFX2.WAD"};
+static char * ARCTICSE_RES_WADS[] = { "ARCTIC.WAD", "ARCTLEV.WAD" };
+
+
+static char * ARCTICSE_PWADS3[] = { "ARCTIC.WAD"};
+static char * ARCTICSE_RES_WADS3[] = { "ARCTLEV.WAD", "ARCTGFX1.WAD" };
 
 int Ex_CheckArctictSeWads(const char * wadname, const int index) 
 {
-  return 0;
+  int c = Ex_CheckWadsGeneralized(wadname, index, ARCTICSE_PWADS, sizeof(ARCTICSE_PWADS) / sizeof(*ARCTICSE_PWADS),
+    ARCTICSE_RES_WADS, sizeof(ARCTICSE_RES_WADS) / sizeof(*ARCTICSE_RES_WADS));
+  if(c) return c;
+
+  return Ex_CheckWadsGeneralized(wadname, index + 1, ARCTICSE_PWADS3, sizeof(ARCTICSE_PWADS3) / sizeof(*ARCTICSE_PWADS3),
+    ARCTICSE_RES_WADS3, sizeof(ARCTICSE_RES_WADS3) / sizeof(*ARCTICSE_RES_WADS3));
 }
 
 typedef int (related_wad_func_t)(const char *, const int);
