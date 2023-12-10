@@ -49,6 +49,8 @@ _(this is documentation for a work in progress version of Tartar)_
 - Stereo image is more pronounced with stereo separation computation "copied" from Hexen source, 
   replacing original MBF code, and slight volume adjusment applied to sound sources behind the player
 - WAV format sound effect lumps with "metadata" are now supported
+- Native Doom format sound effect lumps with big-endian headers are now supported
+  (these are found in some PWADs originating from Mac computers, in particular old versions of Wolfendoom)
 
 ### Gameplay changes and bugfixes
 
@@ -56,8 +58,14 @@ _(this is documentation for a work in progress version of Tartar)_
 - Intermission text is no longer cut off completely if a line which is too long to fit on the screen is encountered
 - "Tall" sky textures (e.g. 256 pixel and higher) that have two "posts" per "column" are rendered without a "tutti-frutti" horizontal line
 - "Tall" sky textures are no longer vertically misplaced 
-- Intermission text display has been shifted a few pixels to the left to accommodate for longer strings in some PWADS 
+- Dehacked patches for PWADs originating from Mac computers can now be read, e.g. those for Wolfendoom   
+  (CR-terminated lines are supported and sporadic '\0' characters are ignored)
 - Leaving map via a "death" (or "suicide") exit starts next level at "pistol start", does not leavel player in a "zombie" state
+- New configuration propertry `hide_weapon_on_flash` has been added, designed to be used exclusively from OPTIONS lumps inside PWADs.   
+  The value is a per-weapont-type bit mask (as per weapontype_t enum) that has set bit in case when weapon main sprite
+  has to be suppressed when weapon flash is displayed.   
+  The intended use is with compatibility WAD-s for Wolfendoom, where this addresses weapon sprite issues the PWADs have.
+- Intermission text display has been shifted a few pixels to the left to accommodate for longer strings in some PWADS 
 - New `intermusic` property has been added to MAPINFO to select particular song to play during intermission (outtro) screen
 - New set of "boss action" properties has been added to MAPINFO following UMAPINFO standard as an example.   
   Code for these properties needs preprocessor definition `BOSSACTION` to be compiled in, which is set by default. 
@@ -93,3 +101,19 @@ Here's an exmple of MAPINFO lump with these new properties:
 
 - `Hydrosphere.wad` "helper" WAD is included with the release. Look for it under GOODIES\TAPE directory.
 - `KDiKDi_A.WAD` "helper" WAD has been updated to reflect better "tall" sky textures supported by the source port. 
+- "Helper" WADs have been included for the following PWADs form [Wolfendoom PWAD Collection](http://lazrojas.com/wolfendoom),   
+  that adress weapon sprite issues:
+  + Fist Encounter (aka Wolfendoom)        - `wlfgfx.wad`   
+    _also fixes Aftermath by Bruce Ryder_
+  + Second Encounter                       - `2nd_enc.wad`
+  + Treasure Hunt                          - `hunt.wad`
+  + Die Fuehrer, Die                       - `die.wad`
+  + Astrostein ep1                         - `astro.wad`
+  + Astrostein ep2                         - `astro2.wad`
+  + Astrostein ep3                         - `astro3.wad`
+  + Totenhaus                              - `toten.wad`
+  + Operation Eisenman                     - `eisen.wad`
+  + Atctic Wolf (original)                 - `gfx1.wad` and `gfx2.wad`
+  + Rheingold ep1                          - `rhein1.wad`
+  + Rheingold ep2                          - `rhein2.wad`
+  + Halten Sie                             - `halten.wad`
