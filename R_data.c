@@ -1210,8 +1210,7 @@ int R_TextureNumForName(const char *name)  // const added -- killough
     if (i == -1)
     {
       C_Printf("R_TextureNumForName: %.8s not found\n", name);
-      level_error = true;
-      return -1;
+      return 1;
     }
   }
   return i;
