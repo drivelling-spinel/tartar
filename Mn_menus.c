@@ -349,6 +349,7 @@ menu_t menu_tartar =
     {it_togglehint, "Armor for score only and no infights",  "wolfendoom", "hint_wolfendoom"},
     {it_toggle,     "Wolf3D look and feel mode",             "wolflooks"},
     {it_toggle,     "Play random music at map start",        "randmus"},
+    {it_toggle,     "Doom version which colors to immitate", "v_gammastyle"},
     {it_gap},
     {it_runcmd,     "More...", "mn_tartar_more"},
     {it_end},    

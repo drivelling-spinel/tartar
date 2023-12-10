@@ -328,7 +328,11 @@ static void cheat_fa()
         
   // You can't own weapons that aren't in the game // phares 02/27/98
   for (i=0;i<NUMWEAPONS-1;i++) // joel - no cross with cheat
+#if defined(STBAR11)
+    if (!(
+#else
     if (!(((i == wp_plasma || i == wp_bfg) && gamemode == shareware) ||
+#endif
           (i == wp_supershotgun && gamemode != commercial) ||
           (i == wp_grenade && !EternityMode))) // haleyjd 11/7/99
       plyr->weaponowned[i] = true;

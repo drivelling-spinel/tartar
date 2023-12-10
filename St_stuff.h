@@ -99,6 +99,13 @@ extern int sts_traditional_keys;  // display keys the traditional way
 
 extern int st_palette;    // exporting current palette to handle dynamic updates
 
+#if defined(STBAR11)
+extern int st_mode_left;
+extern int st_mode_right;
+
+#define ST_NUMWEAPONS           6
+#endif
+
 
 // Number of status faces.
 #define ST_NUMPAINFACES         5

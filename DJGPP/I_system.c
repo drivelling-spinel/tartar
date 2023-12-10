@@ -318,7 +318,7 @@ void I_EndDoom(void)
 
 VARIABLE_BOOLEAN(leds_always_off, NULL,     yesno);
 VARIABLE_INT(realtic_clock_rate, NULL,  0, 500, NULL);
-VARIABLE_BOOLEAN(update_after_tic, NULL,     yesno);
+VARIABLE_BOOLEAN(update_after_tic, NULL,    yesno);
 
 CONSOLE_VARIABLE(i_gamespeed, realtic_clock_rate, 0)
 {

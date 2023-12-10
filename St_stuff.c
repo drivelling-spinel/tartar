@@ -195,14 +195,39 @@ static st_stateenum_t st_gamestate;
 // whether left-side main status bar is active
 static boolean st_statusbaron;
 
+#if defined(STBAR11)
+// whether left-side main status bar is active
+static boolean st_statusbaronl;
+// whether right-side main status bar is active
+static boolean st_statusbaronr;
+#endif
+
 // !deathmatch && st_statusbaron
 static boolean st_armson;
 
 // !deathmatch
 static boolean st_fragson;
 
+#if defined(STBAR11)
+static boolean st_weapon;
+#endif
+
 // main bar left
 static patch_t *sbar;
+
+#if defined(STBAR11)
+// main bar bits (left, right, alt)
+static patch_t *sbarml;
+static patch_t *sbarmr;
+static patch_t *sbaral;
+static patch_t *sbarar;
+static patch_t *sbarch;
+#endif
+
+#if defined(STBAR11)
+static patch_t *stweap[ST_NUMWEAPONS];
+#endif
+
 
 // 0-9, tall numbers
 static patch_t *tallnum[10];
@@ -243,6 +268,24 @@ int armor_red;     // armor amount less than which status is red
 int armor_yellow;  // armor amount less than which status is yellow
 int armor_green;   // armor amount above is blue, below is green
 
+#if defined(STBAR11)
+typedef enum
+{
+  stl_norm,
+  stl_alt,
+} e_stl;
+
+typedef enum
+{
+  str_norm,
+  str_alt,
+  str_chat
+} e_str;
+
+int st_mode_left;
+int st_mode_right;
+#endif
+
  // in deathmatch only, summary of frags stats
 static st_number_t w_frags;
 
@@ -251,6 +294,10 @@ static st_percent_t w_health;
 
 // weapon ownership widgets
 static st_multicon_t w_arms[6];
+
+#if defined(STBAR11)
+static st_binicon_t w_weap[ST_NUMWEAPONS];
+#endif
 
 // face status widget
 static st_multicon_t w_faces;
@@ -312,12 +359,59 @@ void ST_TryStop()
   ST_Stop();
 }
 
+#if defined(STBAR11)
+static void ST_DrawStbarInternal()
+{
+  patch_t *l = NULL, *r = NULL;
+
+  switch(st_mode_left) {
+    case stl_alt:
+      l = sbaral;
+      break;
+    case stl_norm:
+    default:
+      l = sbarml;
+  }
+
+  switch(st_mode_right) {
+    case str_alt:
+      r = sbarar;
+      break;
+    case str_chat:
+      r = sbarch;
+      break;
+    case str_norm:
+    default:
+      r = sbarmr;
+  }
+
+  if(!l || !r)
+    {
+      V_DrawPatch(ST_X, 0, BG, sbar);
+    }
+  else
+    {
+      V_DrawPatch(ST_X, 0, BG, l);
+      V_DrawPatch(ST_X2, 0, BG, r);
+    }
+
+}
+#endif
+
 void ST_refreshBackground(void)
 {
   if (st_statusbaron)
     {
+#if defined(STBAR11)
+      ST_DrawStbarInternal();
+#else
       V_DrawPatch(ST_X, 0, BG, sbar);
+#endif
 
+#if defined(STBAR11)
+    if (st_statusbaronr)
+      {
+#endif
       // killough 3/7/98: make face background change with displayplayer
       if (netgame)                      //sf: new colours
         V_DrawPatchTranslated(ST_FX, 0, BG, faceback,
@@ -326,13 +420,23 @@ void ST_refreshBackground(void)
                         cr_red, -1);
 
       if (!deathmatch) V_DrawPatch(ST_ARMSBGX, ST_ARMSBGY - ST_Y, BG, armsbg);
+#if defined(STBAR11)
+      }
+#endif
 
       V_CopyRect(ST_X, 0, BG, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, FG);
 
           // faces
       STlib_initMultIcon(&w_faces,  ST_FACESX, ST_FACESY, 
        players[displayplayer].skin->from_extras ? default_faces :
-       players[displayplayer].skin->faces, &st_faceindex, &st_statusbaron);
+       players[displayplayer].skin->faces, &st_faceindex,
+#if defined(STBAR11)
+       &st_statusbaronr
+#else
+       &st_statusbaron
+#endif
+       );
+
     }
 }
 
@@ -613,12 +717,28 @@ void ST_updateWidgets(void)
   ST_updateFaceWidget();
 
   // used by w_arms[] widgets
-  st_armson = st_statusbaron && !deathmatch;
+  st_armson = 
+#if defined(STBAR11)
+  st_statusbaronr
+#else
+  st_statusbaron
+#endif
+  && !deathmatch;
 
   // used by w_frags widget
-  st_fragson = deathmatch && st_statusbaron;
+  st_fragson = deathmatch &&
+#if defined(STBAR11)
+  st_statusbaronr
+#else
+  st_statusbaron
+#endif
+  ;
 
   st_fragscount = plyr->totalfrags;     // sf 15/10/99 use totalfrags
+
+#if defined(STBAR11)
+  st_weapon = st_mode_right == str_alt;
+#endif
 }
 
 void ST_Ticker(void)
@@ -680,10 +800,22 @@ void ST_drawWidgets(boolean refresh)
   weaponinfo_t *local_weaponinfo = EXTRA_PLAYER_WEAPONS(plyr);
 
   // used by w_arms[] widgets
-  st_armson = st_statusbaron && !deathmatch;
+  st_armson =
+#if defined(STBAR11)
+  st_statusbaronr
+#else
+  st_statusbaron
+#endif
+  && !deathmatch;
 
   // used by w_frags widget
-  st_fragson = deathmatch && st_statusbaron;
+  st_fragson = deathmatch &&
+#if defined(STBAR11)
+  st_statusbaronr
+#else
+  st_statusbaron
+#endif
+  ;
 
   //jff 2/16/98 make color of ammo depend on amount
   if (*w_ready.num*100 < ammo_red*plyr->maxammo[local_weaponinfo[w_ready.data].ammo])
@@ -701,6 +833,10 @@ void ST_drawWidgets(boolean refresh)
       STlib_updateNum(&w_maxammo[i], NULL, refresh);
     }
 
+#if defined(STBAR11)
+  if(st_statusbaronl)
+    {
+#endif
   //jff 2/16/98 make color of health depend on amount
   if (*w_health.n.num<health_red)
     STlib_updatePercent(&w_health, cr_red, refresh);
@@ -710,7 +846,14 @@ void ST_drawWidgets(boolean refresh)
     STlib_updatePercent(&w_health, cr_green, refresh);
   else
     STlib_updatePercent(&w_health, cr_blue_status, refresh); //killough 2/28/98
+#if defined(STBAR11)
+    }
+#endif
 
+#if defined(STBAR11)
+  if(st_statusbaronr)
+    {
+#endif
   //jff 2/16/98 make color of armor depend on amount
   if(!wolf3dmode)
     {
@@ -734,9 +877,18 @@ void ST_drawWidgets(boolean refresh)
       else
         STlib_updateNum(&w_armorextra, cr_blue_status, refresh); //killough 2/28/98
     }
+#if defined(STBAR11)
+    }
+#endif
 
   for (i=0;i<6;i++)
     STlib_updateMultIcon(&w_arms[i], refresh);
+
+#if defined(STBAR11)
+  for (i=0;i<ST_NUMWEAPONS;i++)
+    if(stweap[i])
+      STlib_updateBinIcon(&w_weap[i], refresh);
+#endif
 
   STlib_updateMultIcon(&w_faces, refresh);
 
@@ -766,10 +918,40 @@ void ST_diffDraw(void)
   ST_drawWidgets(false);
 }
 
+#if defined(STBAR11)
+static void ST_updateLeftRight()
+{
+  switch(st_mode_left) {
+    case stl_alt:
+      st_statusbaronl = st_statusbaron && !sbaral;
+      break;
+    case stl_norm:
+    default:
+      st_statusbaronl = st_statusbaron;
+  }
+
+  switch(st_mode_right) {
+    case str_alt:
+      st_statusbaronr = st_statusbaron && !sbarar;
+      break;
+    case str_chat:
+      st_statusbaronr = st_statusbaron && !sbarch;
+      break;
+    case str_norm:
+    default:
+      st_statusbaronr = st_statusbaron;
+  }
+
+}
+#endif
+
 void ST_Drawer(st_fullscreen_style fullscreen, boolean refresh)
 {
   st_statusbaron = (fullscreen != ST_FULL_OFF) || automapactive;
   st_firsttime = st_firsttime || refresh;
+#if defined(STBAR11)
+  ST_updateLeftRight();
+#endif
 
   ST_doPaletteStuff();  // Do red-/gold-shifts from damage/items
 
@@ -809,6 +991,18 @@ void ST_loadGraphics(void)
       keys[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
     }
 
+#if defined(STBAR11)
+  // weapon icons
+  for (i=0;i<ST_NUMWEAPONS;i++)  
+    {
+      sprintf(namebuf, "STWEAP%d", i);
+      if(W_CheckNumForName(namebuf) >= 0)
+        {
+          stweap[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
+        }
+    }
+#endif
+
   // arms background
   armsbg = (patch_t *) W_CacheLumpName("STARMS", PU_STATIC);
 
@@ -830,7 +1024,37 @@ void ST_loadGraphics(void)
   faceback = (patch_t *) W_CacheLumpName("STFB0", PU_STATIC);
 
   // status bar background bits
-  sbar = (patch_t *) W_CacheLumpName("STBAR", PU_STATIC);
+  if(W_CheckNumForName("STBAR") >= 0)
+    {
+      sbar = (patch_t *) W_CacheLumpName("STBAR", PU_STATIC);
+    }
+
+#if defined(STBAR11)
+  if(W_CheckNumForName("STABARL") >= 0)
+    {
+      sbaral = (patch_t *) W_CacheLumpName("STABARL", PU_STATIC);
+    }
+
+  if(W_CheckNumForName("STABARR") >= 0)
+    {
+      sbarar = (patch_t *) W_CacheLumpName("STABARR", PU_STATIC);
+    }
+
+  if(W_CheckNumForName("STMBARL") >= 0)
+    {
+      sbarml = (patch_t *) W_CacheLumpName("STMBARL", PU_STATIC);
+    }
+
+  if(W_CheckNumForName("STMBARR") >= 0)
+    {
+      sbarmr = (patch_t *) W_CacheLumpName("STMBARR", PU_STATIC);
+    }
+
+  if(W_CheckNumForName("STCHAT") >= 0)
+    {
+      sbarch = (patch_t *) W_CacheLumpName("STCHAT", PU_STATIC);
+    }
+#endif
 
   ST_CacheFaces(default_faces, "STF");
 }
@@ -897,7 +1121,27 @@ void ST_unloadGraphics(void)
   for (i=0;i<NUMCARDS+3;i++)  //jff 2/23/98 unload double key patches too
     Z_ChangeTag(keys[i], PU_CACHE);
 
-  Z_ChangeTag(sbar, PU_CACHE);
+#if defined(STBAR11)
+  for (i=0;i<ST_NUMWEAPONS;i++)
+    if(stweap[i])
+      Z_ChangeTag(stweap[i], PU_CACHE);
+#endif
+
+  if(sbarml)
+    Z_ChangeTag(sbar, PU_CACHE);
+
+#if defined(STBAR11)
+  if(sbarml)
+    Z_ChangeTag(sbarml, PU_CACHE);
+  if(sbarmr)
+    Z_ChangeTag(sbarmr, PU_CACHE);
+  if(sbaral)
+    Z_ChangeTag(sbaral, PU_CACHE);
+  if(sbarar)
+    Z_ChangeTag(sbarar, PU_CACHE);
+  if(sbarch)
+    Z_ChangeTag(sbarch, PU_CACHE);
+#endif
 
   // killough 3/7/98: free each face background color
   for (i=0;i<MAXPLAYERS;i++)
@@ -950,7 +1194,11 @@ void ST_createWidgets(void)
                 ST_AMMOY,
                 tallnum,
                 &plyr->ammo[local_weaponinfo[plyr->readyweapon].ammo],
+#if defined(STBAR11)
+                &st_statusbaronl,
+#else
                 &st_statusbaron,
+#endif
                 ST_AMMOWIDTH );
 
   // the last weapon type
@@ -962,7 +1210,11 @@ void ST_createWidgets(void)
                     ST_HEALTHY,
                     tallnum,
                     &plyr->health,
+#if defined(STBAR11)
+                    &st_statusbaronl,
+#else
                     &st_statusbaron,
+#endif
                     tallpercent);
 
   // weapons owned
@@ -974,6 +1226,49 @@ void ST_createWidgets(void)
                          arms[i], (int *) &plyr->weaponowned[i+1],
                          &st_armson);
     }
+
+#if defined(STBAR11)
+  if(stweap[0])
+    STlib_initBinIcon(&w_weap[0],
+                       110,
+                       ST_Y + 5,
+                       stweap[0], (int *) &plyr->weaponowned[2],
+                       &st_weapon); 
+  if(stweap[1])
+    STlib_initBinIcon(&w_weap[1],
+                       153,
+                       ST_Y + 4,
+                       stweap[1], (int *) &plyr->weaponowned[3],
+                       &st_weapon); 
+
+  if(stweap[2])
+    STlib_initBinIcon(&w_weap[2],
+                       191,
+                       ST_Y + 4,
+                       stweap[2], (int *) &plyr->weaponowned[4],
+                       &st_weapon);
+
+  if(stweap[3])
+    STlib_initBinIcon(&w_weap[3],
+                       111,
+                       ST_Y + 15,
+                       stweap[3], (int *) &plyr->weaponowned[5],
+                       &st_weapon);
+
+  if(stweap[4])
+    STlib_initBinIcon(&w_weap[4],
+                       152,
+                       ST_Y + 12,
+                       stweap[4], (int *) &plyr->weaponowned[7],
+                       &st_weapon);
+
+  if(stweap[5])
+    STlib_initBinIcon(&w_weap[5],
+                       191,
+                       ST_Y + 11,
+                       stweap[5], (int *) &plyr->weaponowned[6],
+                       &st_weapon);   
+#endif
 
   // frags sum
   STlib_initNum(&w_frags,
@@ -990,7 +1285,12 @@ void ST_createWidgets(void)
                      ST_FACESY,
                      default_faces,
                      &st_faceindex,
-                     &st_statusbaron);
+#if defined(STBAR11)
+                     &st_statusbaronr
+#else
+                     &st_statusbaron
+#endif
+                     );
 
   // armor percentage - should be colored later
   STlib_initPercent(&w_armor,
@@ -998,7 +1298,12 @@ void ST_createWidgets(void)
                     ST_ARMORY,
                     tallnum,
                     &plyr->armorpoints,
-                    &st_statusbaron, tallpercent);
+#if defined(STBAR11)
+                    &st_statusbaronr,
+#else
+                    &st_statusbaron,
+#endif
+                    tallpercent);
 
   // armor as score for Wolf3D mode
   STlib_initNum(&w_armorextra,
@@ -1006,7 +1311,11 @@ void ST_createWidgets(void)
                 ST_ARMORY,
                 tallnum,
                 &plyr->armorpoints,
+#if defined(STBAR11)
+                &st_statusbaronr,
+#else
                 &st_statusbaron,
+#endif
                 ST_ARMOREXTRA);
 
 
@@ -1016,21 +1325,36 @@ void ST_createWidgets(void)
                      ST_KEY0Y,
                      keys,
                      &keyboxes[0],
-                     &st_statusbaron);
+#if defined(STBAR11)
+                     &st_statusbaronr
+#else
+                     &st_statusbaron
+#endif
+                     );
 
   STlib_initMultIcon(&w_keyboxes[1],
                      ST_KEY1X,
                      ST_KEY1Y,
                      keys,
                      &keyboxes[1],
-                     &st_statusbaron);
+#if defined(STBAR11)
+                     &st_statusbaronr
+#else
+                     &st_statusbaron
+#endif
+                     );
 
   STlib_initMultIcon(&w_keyboxes[2],
                      ST_KEY2X,
                      ST_KEY2Y,
                      keys,
                      &keyboxes[2],
-                     &st_statusbaron);
+#if defined(STBAR11)
+                     &st_statusbaronr
+#else
+                     &st_statusbaron
+#endif
+                     );
 
   // ammo count (all four kinds)
   STlib_initNum(&w_ammo[0],
@@ -1038,7 +1362,11 @@ void ST_createWidgets(void)
                 ST_AMMO0Y,
                 shortnum,
                 &plyr->ammo[0],
+#if defined(STBAR11)
+                &st_statusbaronr,
+#else
                 &st_statusbaron,
+#endif
                 ST_AMMO0WIDTH);
 
   STlib_initNum(&w_ammo[1],
@@ -1046,7 +1374,11 @@ void ST_createWidgets(void)
                 ST_AMMO1Y,
                 shortnum,
                 &plyr->ammo[1],
+#if defined(STBAR11)
+                &st_statusbaronr,
+#else
                 &st_statusbaron,
+#endif
                 ST_AMMO1WIDTH);
 
   STlib_initNum(&w_ammo[2],
@@ -1054,7 +1386,11 @@ void ST_createWidgets(void)
                 ST_AMMO2Y,
                 shortnum,
                 &plyr->ammo[2],
+#if defined(STBAR11)
+                &st_statusbaronr,
+#else
                 &st_statusbaron,
+#endif
                 ST_AMMO2WIDTH);
 
   STlib_initNum(&w_ammo[3],
@@ -1062,7 +1398,11 @@ void ST_createWidgets(void)
                 ST_AMMO3Y,
                 shortnum,
                 &plyr->ammo[3],
+#if defined(STBAR11)
+                &st_statusbaronr,
+#else
                 &st_statusbaron,
+#endif
                 ST_AMMO3WIDTH);
 
   // max ammo count (all four kinds)
@@ -1071,7 +1411,11 @@ void ST_createWidgets(void)
                 ST_MAXAMMO0Y,
                 shortnum,
                 &plyr->maxammo[0],
+#if defined(STBAR11)
+                &st_statusbaronr,
+#else
                 &st_statusbaron,
+#endif
                 ST_MAXAMMO0WIDTH);
 
   STlib_initNum(&w_maxammo[1],
@@ -1079,7 +1423,11 @@ void ST_createWidgets(void)
                 ST_MAXAMMO1Y,
                 shortnum,
                 &plyr->maxammo[1],
+#if defined(STBAR11)
+                &st_statusbaronr,
+#else
                 &st_statusbaron,
+#endif
                 ST_MAXAMMO1WIDTH);
 
   STlib_initNum(&w_maxammo[2],
@@ -1087,7 +1435,11 @@ void ST_createWidgets(void)
                 ST_MAXAMMO2Y,
                 shortnum,
                 &plyr->maxammo[2],
+#if defined(STBAR11)
+                &st_statusbaronr,
+#else
                 &st_statusbaron,
+#endif
                 ST_MAXAMMO2WIDTH);
 
   STlib_initNum(&w_maxammo[3],
@@ -1095,7 +1447,11 @@ void ST_createWidgets(void)
                 ST_MAXAMMO3Y,
                 shortnum,
                 &plyr->maxammo[3],
+#if defined(STBAR11)
+                &st_statusbaronr,
+#else
                 &st_statusbaron,
+#endif
                 ST_MAXAMMO3WIDTH);
 }
 
@@ -1157,6 +1513,13 @@ CONSOLE_VARIABLE(st_graypct, sts_pct_always_gray, 0) {}
 CONSOLE_VARIABLE(st_rednum, sts_always_red, 0) {}
 CONSOLE_VARIABLE(st_singlekey, sts_traditional_keys, 0) {}
 
+#if defined(STBAR11)
+VARIABLE_INT(st_mode_left, NULL, 0, 1, NULL);
+VARIABLE_INT(st_mode_right, NULL, 0, 2, NULL);
+CONSOLE_VARIABLE(st_left, st_mode_left, 0) { st_firsttime = true; }
+CONSOLE_VARIABLE(st_right, st_mode_right, 0) { st_firsttime = true; }
+#endif
+
 void ST_AddCommands()
 {
   C_AddCommand(ammo_red);
@@ -1173,6 +1536,11 @@ void ST_AddCommands()
   C_AddCommand(st_graypct);
   C_AddCommand(st_rednum);
   C_AddCommand(st_singlekey);
+
+#if defined(STBAR11)
+  C_AddCommand(st_left);
+  C_AddCommand(st_right);
+#endif
 }
 
 //----------------------------------------------------------------------------

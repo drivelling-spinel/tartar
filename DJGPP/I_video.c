@@ -252,6 +252,10 @@ int  modeswitched=0;
 int disk_icon;
 //static BITMAP *diskflash, *old_data;
 
+int gammastyle;
+char *gammastyles[] = {"Doom 1.9", "Doom 1.1"};
+
+
 //-----------------------------------------------------------------------------
 void I_UpdateNoBlit (void){}
 
@@ -729,7 +733,7 @@ void I_EndRead(void)
 }
 
 //-----------------------------------------------------------------------------
-void I_SetPalette(byte *palette)
+void I_SetPaletteDoom19(byte *palette)
 {
   int i;
 
@@ -748,6 +752,35 @@ void I_SetPalette(byte *palette)
     }
 
 }
+
+void I_SetPaletteDoom11(byte *palette)
+{
+  int i;
+
+  if (!in_graphics_mode)             // killough 8/11/98
+    return;
+
+  if (!timingdemo)
+    while (!(inportb(0x3da) & 8));
+
+  outportb(0x3c8,0);
+  for (i=0;i<256;i++)
+    {
+      byte rr = *palette++;
+      byte gg = *palette++;
+      byte bb = *palette++;
+      byte r = 0, g = 0, b = 0;
+      if(rr > 3) r = rr - 3 + (rr >> 6);
+      if(gg > 3) g = gg - 3 + (gg >> 6);
+      if(bb > 3) b = bb - 3 + (bb >> 6);
+      outportb(0x3c9,r >> 2);
+      outportb(0x3c9,g >> 2);
+      outportb(0x3c9,b >> 2);
+    }
+}
+
+
+void (*I_SetPalette)(byte *) = I_SetPaletteDoom19;
 
 //-----------------------------------------------------------------------------
 void I_ShutdownGraphics(void)
@@ -984,6 +1017,12 @@ void I_InitGraphics(void)
   Z_CheckHeap();
 }
 
+int I_ValidatePaletteFunc()
+{
+  I_SetPalette = gammastyle ?
+    usegamma ? I_SetPaletteDoom19 : I_SetPaletteDoom11 : I_SetPaletteDoom19;
+}
+
 /************************
         CONSOLE COMMANDS
  ************************/
@@ -1046,6 +1085,14 @@ VARIABLE_INT(usejoystick, NULL,         0, 1, yesno);
 CONSOLE_VARIABLE(use_mouse, usemouse, 0) {}
 CONSOLE_VARIABLE(use_joystick, usejoystick, 0) {}
 
+VARIABLE_INT(gammastyle, NULL, 0, sizeof(gammastyles)/sizeof(*gammastyles) - 1, gammastyles);
+CONSOLE_VARIABLE(v_gammastyle, gammastyle, 0)
+{
+  if(gammastyle && usegamma)
+    usegamma = 4;
+  I_ResetPalette();  
+}
+
 void I_Video_AddCommands()
 {
   C_AddCommand(use_mouse);
@@ -1058,6 +1105,7 @@ void I_Video_AddCommands()
   C_AddCommand(v_show_fps);
   C_AddCommand(v_scale_hi);
   C_AddCommand(v_scale_aspect);
+  C_AddCommand(v_gammastyle);
 }
 
 

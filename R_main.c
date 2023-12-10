@@ -884,6 +884,9 @@ CONSOLE_COMMAND(pal_list, 0)
 
 CONSOLE_VARIABLE(gamma, usegamma, 0)
 {
+    if(gammastyle)
+      if(usegamma == 3) usegamma = 0;
+      else if(usegamma) usegamma = 4;
         // change to new gamma val
     I_ResetPalette ();
 }

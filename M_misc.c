@@ -1653,6 +1653,13 @@ default_t defaults[] = {
     "Play random music track at level start"
   },
 
+  {
+    "gammastyle",
+    &gammastyle, NULL,
+    0, {0, 1}, dt_number, ss_none, wad_no,
+    "When set immitate colors of earlier versions of Doom"
+  },
+
   {NULL}         // last entry
 };
 

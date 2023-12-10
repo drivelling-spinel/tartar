@@ -49,7 +49,16 @@ patch_t*    sttminus;
 //
 void STlib_init(void)
 {
-  sttminus = (patch_t *) W_CacheLumpName("STTMINUS", PU_STATIC);
+  sttminus =
+#if defined(STBAR11)
+  NULL;
+  if(W_CheckNumForName("STTMINUS") >= 0)
+    {    
+      sttminus = (patch_t *) W_CacheLumpName("STTMINUS", PU_STATIC);
+    }
+#else
+  (patch_t *) W_CacheLumpName("STTMINUS", PU_STATIC);
+#endif;
 }
 
 //
@@ -157,7 +166,7 @@ void STlib_drawNum
 
   // draw a minus sign if necessary
   //jff 2/16/98 add color translation to digit output
-  if (neg)
+  if (neg && sttminus)
     if (outrng && !sts_always_red)
       V_DrawPatchTranslated(x - 8, n->y, FG, sttminus,outrng,0);
     else //jff 2/18/98 allow use of faster draw routine from config

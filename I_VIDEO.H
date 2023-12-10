@@ -49,7 +49,7 @@ void I_InitGraphics (void);
 void I_ShutdownGraphics(void);
 
 // Takes full 8 bit values.
-void I_SetPalette (byte* palette);
+extern void (*I_SetPalette)(byte*);
 
 void I_UpdateNoBlit (void);
 void I_FinishUpdate (void);
@@ -80,6 +80,7 @@ extern int fps;
 extern char mode_string[];
 extern int blackband;
 extern int clearscreen;
+extern int gammastyle;
 
 #endif
 
