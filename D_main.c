@@ -1982,13 +1982,12 @@ void D_NewWadLumps(int handle)
 	  if(!*wad_firstlevel && strcmp(name, "START") )
 	    strncpy(wad_firstlevel, name, 8);
 	}
-      
       // new sound
       if(!strncmp(lumpinfo[i]->name, "DSCHGUN",8)) // chaingun sound
 	S_Chgun();
       if(!strncmp(lumpinfo[i]->name, "DS", 2))
 	{
-	  S_UpdateSound(i);
+      S_UpdateSound(i);
 	}
       
       // new music
@@ -2107,6 +2106,10 @@ int D_DetectAndLoadFilters()
   return loaded;
 }
 
+void A_TakeSelfie();
+void A_SelfieSound();
+void A_FirePlasma();
+void A_BFGsound();
 
 int D_DetectAndLoadSelfie()
 {
@@ -2137,6 +2140,8 @@ int D_DetectAndLoadSelfie()
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {
       if(states2[1][i].sprite == SPR_BFGG) states2[1][i].sprite = SPR_SELF;
+      if(states2[1][i].action == A_FirePlasma) states2[1][i].action = A_TakeSelfie;
+      if(states2[1][i].action == A_BFGsound) states2[1][i].action = A_SelfieSound;
     }
   weaponinfo2[1][wp_bfg].ammo = am_noammo;
   selfieMode = true;

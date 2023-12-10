@@ -240,6 +240,9 @@ void A_AmbSound2();        // joel: ambient sound routine
 // joel: legion action functions
 void A_Legion();
 
+void A_TakeSelfie();
+void A_SelfieSound();
+
 // ********************************************************************
 // State or "frame" information
 // ********************************************************************
@@ -9648,6 +9651,34 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 		0, //flags2
     S_NULL   // raisestate
   },
+
+  {   // MT_SELFFLASH - by default same as MT_PLASMA
+    -1,   // doomednum
+    S_PLASBALL,   // spawnstate
+    1000,   // spawnhealth
+    S_NULL,   // seestate
+    sfx_plasma,   // seesound
+    8,    // reactiontime
+    sfx_None,   // attacksound
+    S_NULL,   // painstate
+    0,    // painchance
+    sfx_None,   // painsound
+    S_NULL,   // meleestate
+    S_NULL,   // missilestate
+    S_PLASEXP,    // deathstate
+    S_NULL,   // xdeathstate
+    sfx_firxpl,   // deathsound
+    25*FRACUNIT,    // speed
+    13*FRACUNIT,    // radius
+    8*FRACUNIT,   // height
+    100,    // mass
+    5,    // damage
+    sfx_None,   // activesound
+    MF_NOBLOCKMAP|MF_MISSILE|MF_DROPOFF|MF_NOGRAVITY|MF_TRANSLUCENT, // flags // phares
+    MF2_NOCROSS,
+    S_NULL    // raisestate
+  }
+  
 };
 
 //----------------------------------------------------------------------------

@@ -191,9 +191,6 @@ static st_stateenum_t st_gamestate;
 // whether left-side main status bar is active
 static boolean st_statusbaron;
 
-// !deathmatch
-static boolean st_notdeathmatch;
-
 // !deathmatch && st_statusbaron
 static boolean st_armson;
 
@@ -247,9 +244,6 @@ static st_number_t w_frags;
 
 // health widget
 static st_percent_t w_health;
-
-// arms background
-static st_binicon_t  w_armsbg;
 
 // weapon ownership widgets
 static st_multicon_t w_arms[6];
@@ -309,6 +303,7 @@ void ST_refreshBackground(void)
                 (char*)translationtables + 256*(plyr->colormap-1) :
                         cr_red, -1);
 
+      if (!deathmatch) V_DrawPatch(ST_ARMSBGX, ST_ARMSBGY - ST_Y, BG, armsbg);
 
       V_CopyRect(ST_X, 0, BG, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, FG);
 
@@ -582,9 +577,6 @@ void ST_updateWidgets(void)
   // refresh everything if this is him coming back to life
   ST_updateFaceWidget();
 
-  // used by the w_armsbg widget
-  st_notdeathmatch = !deathmatch;
-
   // used by w_arms[] widgets
   st_armson = st_statusbaron && !deathmatch;
 
@@ -693,8 +685,6 @@ void ST_drawWidgets(boolean refresh)
     STlib_updatePercent(&w_armor, cr_green, refresh);
   else
     STlib_updatePercent(&w_armor, cr_blue_status, refresh); //killough 2/28/98
-
-  STlib_updateBinIcon(&w_armsbg, refresh);
 
   for (i=0;i<6;i++)
     STlib_updateMultIcon(&w_arms[i], refresh);
@@ -925,14 +915,6 @@ void ST_createWidgets(void)
                     &plyr->health,
                     &st_statusbaron,
                     tallpercent);
-
-  // arms background
-  STlib_initBinIcon(&w_armsbg,
-                    ST_ARMSBGX,
-                    ST_ARMSBGY,
-                    armsbg,
-                    &st_notdeathmatch,
-                    &st_statusbaron);
 
   // weapons owned
   for(i=0;i<6;i++)

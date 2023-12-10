@@ -1825,8 +1825,6 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   int *pix;  // Ptr to int, since all Thing structure entries are ints
   char *strval;
 
-  if(extra != EXTRA_NONE) return;
-
   strncpy(inbuffer,line,DEH_BUFFERMAX);
   if (fpout) fprintf(fpout,"Thing line: '%s'\n",inbuffer);
 
@@ -1837,6 +1835,12 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   // Note that the mobjinfo[] array is base zero, but object numbers
   // in the dehacked file start with one.  Grumble.
   --indexnum;
+  
+  if(extra != EXTRA_NONE)
+    {
+      if(extra == EXTRA_SELFIE && indexnum == MT_PLASMA) indexnum = MT_SELFFLASH;
+      else return;
+    }
 
   // now process the stuff
   // Note that for Things we can look up the key and use its offset
@@ -2593,7 +2597,7 @@ void deh_procText(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
                      key, fromlen, tolen, inbuffer);  
   
   if(!strncmp(inbuffer, GOTSELFIE, fromlen)) selfie += 1;
-  if(extra != EXTRA_NONE && (extra == EXTRA_SELFIE && !selfie)) return;
+  if(!(extra == EXTRA_NONE || (extra == EXTRA_SELFIE && selfie))) return;
 
   // if the from and to are 4, this may be a sprite rename.  Check it
   // against the array and process it as such if it matches.  Remember
@@ -2786,7 +2790,7 @@ boolean deh_procStringSub(char *key, char *lookfor, char *newstring, FILE *fpout
   int selfie = 0;
   
   if(!strcmp(lookfor, GOTSELFIE)) selfie += 1;
-  if(extra != EXTRA_NONE && (extra == EXTRA_SELFIE && !selfie)) return false;
+  if(!(extra == EXTRA_NONE || (extra == EXTRA_SELFIE && selfie))) return false;
 
   found = false;
   for (i=0;i<deh_numstrlookup;i++)

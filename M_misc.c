@@ -2097,9 +2097,12 @@ boolean WritePCXfile(char *filename, byte *data, int width,
 	*pack++ = *data++;
       }
 
-  for (i = 0 ; i < width * band ; i++)
+  for (i = 0 ; i < width * band  ; i++)
     *pack++ = 0;
 
+  for (i = width * (band * 2 + height) ; i < pcx->hres * pcx->vres  ; i++)
+    *pack++ = 0;
+    
   // write the palette
 
   *pack++ = 0x0c; // palette ID byte
@@ -2237,10 +2240,12 @@ boolean WriteBMPfile(char *filename, byte *data, int width,
       for (i = 0 ; i < width * band ; i++)
         SafeWrite(&zero, sizeof(char), 1, st);
       for (i = 0 ; i < height ; i++)
-	SafeWrite(data+(height-1-i)*width,sizeof(byte),wid,st);
+      	SafeWrite(data+(height-1-i)*width,sizeof(byte),wid,st);
       for (i = 0 ; i < width * band ; i++)
         SafeWrite(&zero, sizeof(char), 1, st);
-
+      for (i = width * (band * 2 + height) ; i < bmih.biWidth * bmih.biHeight ; i++)
+        SafeWrite(&zero, sizeof(char), 1, st);
+        
       fclose(st);
     }
   return I_EndRead(), true;       // killough 10/98
@@ -2291,7 +2296,7 @@ void M_ScreenShot (void)
 	  // killough 10/98: detect failure and remove file if error
 	  // killough 11/98: add hires support
 	  if (!(success = (screenshot_pcx ? WritePCXfile : WriteBMPfile)
-                (lbmname,linear, SCREENWIDTH<<scale, CORRECT_ASPECT(SCREENHEIGHT)<<scale, blackband, pal)))
+                (lbmname,linear, SCREENWIDTH<<scale, CORRECT_ASPECT(EFFECTIVE_HEIGHT)<<scale, screenSize > 8 ? 0 : blackband, pal)))
 	    {
 	      int t = errno;
 	      remove(lbmname);
@@ -2306,13 +2311,7 @@ void M_ScreenShot (void)
   // 1/18/98 killough: replace "SCREEN SHOT" acknowledgement with sfx
   // players[consoleplayer].message = "screen shot"
   if(success) usermsg("screenshot taken: %s", lbmname);
-
-  // killough 10/98: print error message and change sound effect if error
-  S_StartSound(NULL, !success ? doom_printf(errno ? strerror(errno) :
-					"Could not take screenshot"), sfx_oof :
-               sfx_tink);        // just tink, no radio
-				// tink is in doom2 too
-
+  else doom_printf(errno ? strerror(errno) : "Could not take screenshot");        
 }
 
 //----------------------------------------------------------------------------

@@ -2297,6 +2297,8 @@ typedef enum {
   Trigger_Revenant,
   Trigger_Mancubus,
 
+  MT_SELFFLASH,
+
   NUMMOBJTYPES  // Counter of how many there are
 
 } mobjtype_t;

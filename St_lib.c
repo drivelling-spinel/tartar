@@ -293,7 +293,7 @@ void STlib_updateMultIcon
 	  //	  I_Error("updateMultIcon: y - ST_Y < 0");
 	  return;
 	}
-	  
+       V_CopyRect(x, y-ST_Y, BG, w, h, x, y, FG);	  
     }
     if (*mi->inum != -1)  // killough 2/16/98: redraw only if != -1 
       V_DrawPatch(mi->x, mi->y, FG, mi->p[*mi->inum]);

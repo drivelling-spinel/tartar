@@ -1965,7 +1965,7 @@ void G_Ticker(void)
       AM_Ticker(); 
       HU_Ticker();
       if(currentdialog) // haleyjd: dialog
-	 DLG_Ticker();
+	       DLG_Ticker();
    }
    else if(paused & 2 );
    else if(gamestate == GS_INTERMISSION) WI_Ticker();

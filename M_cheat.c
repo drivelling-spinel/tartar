@@ -692,7 +692,7 @@ boolean M_FindCheats(int key)
 
 CONSOLE_COMMAND(selfie, 0)
 {
-  if(!plyr || !selfieMode) return;
+  if(!plyr || !selfieMode || gamestate != GS_LEVEL) return;
   
   if(!(plyr->cheats & CF_SELFIE)) {
     plyr->pendingweapon = wp_selfie;

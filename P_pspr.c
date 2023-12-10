@@ -43,6 +43,7 @@ rcsid[] = "$Id: p_pspr.c,v 1.13 1998/05/07 00:53:36 killough Exp $";
 #include "r_things.h"
 #include "s_sound.h"
 #include "sounds.h"
+#include "c_runcmd.h"
 
 int weapon_speed = 6;
 int default_weapon_speed = 6;
@@ -770,6 +771,20 @@ void A_FirePlasma(player_t *player, pspdef_t *psp)
   P_SpawnPlayerMissile(player->mo, MT_PLASMA);
 }
 
+
+//
+// A_TakeSelfie
+//
+
+void A_TakeSelfie(player_t *player, pspdef_t *psp)
+{
+  A_FireSomething(player, P_Random(pr_plasma) & 1);
+  P_SpawnPlayerMissile(player->mo, MT_SELFFLASH);
+  C_RunTextCmd("screenshot");
+  C_RunTextCmd("animshot 3");
+}
+
+
 //
 // P_BulletSlope
 // Sets a slope so a near miss is at aproximately
@@ -1119,6 +1134,15 @@ void A_BFGsound(player_t *player, pspdef_t *psp)
 }
 
 //
+// A_SelfieSound
+//
+
+void A_SelfieSound(player_t *player, pspdef_t *psp)
+{
+  S_StartSound(player->mo, sfx_bfg);
+}
+
+//
 // P_SetupPsprites
 // Called at start of level for each player.
 //
@@ -1151,7 +1175,7 @@ void P_MovePsprites(player_t *player)
   // a -1 tic count never changes
 
   for (i=0; i<NUMPSPRITES; i++, psp++)
-    if (psp->state && psp->tics != -1 && !--psp->tics)
+    if (psp->state && psp->tics != -1 && !--psp->tics) 
       P_SetPsprite(player, i, psp->state->nextstate);
 
   player->psprites[ps_flash].sx = player->psprites[ps_weapon].sx;

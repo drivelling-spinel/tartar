@@ -119,6 +119,7 @@ void P_ArchivePlayers (void)
     if (playeringame[i])
       {
         int      j;
+        state_t * local_states = (players[i].cheats & CF_SELFIE) ? states2[1] : states2[0];
         player_t *dest;
 
         PADSAVEP();
@@ -128,7 +129,7 @@ void P_ArchivePlayers (void)
         for (j=0; j<NUMPSPRITES; j++)
           if (dest->psprites[j].state)
             dest->psprites[j].state =
-              (state_t *)(dest->psprites[j].state-states);
+              (state_t *)(dest->psprites[j].state-local_states);
       }
 }
 
@@ -143,31 +144,34 @@ void P_UnArchivePlayers (void)
     if (playeringame[i])
       {
         int j;
+        state_t * local_states;
 
         PADSAVEP();
 
-	// sf: when loading a hub level using save games,
-	//     do not change the player data when crossing
-	//     levels: ie. retain the same weapons etc.
-
-	if(!hub_changelevel)
-	  {
-	    memcpy(&players[i], save_p, sizeof(player_t));
-	    for (j=0 ; j<NUMPSPRITES ; j++)
-	      if (players[i].psprites[j].state)
-		players[i].psprites[j].state =
-		  &states[ (int)players[i].psprites[j].state ];
-	  }
+	      // sf: when loading a hub level using save games,
+	      //     do not change the player data when crossing
+	      //     levels: ie. retain the same weapons etc.
+  
+    	  if(!hub_changelevel)
+	        {
+	          memcpy(&players[i], save_p, sizeof(player_t));
+	          local_states = (players[i].cheats & CF_SELFIE) ? states2[1] : states2[0];
+    	      for (j=0 ; j<NUMPSPRITES ; j++)
+	            if (players[i].psprites[j].state)
+	              {
+		              players[i].psprites[j].state = &local_states[ (int)players[i].psprites[j].state ];
+		            } 
+	        }
 	
         save_p += sizeof(player_t);
 
         // will be set when unarc thinker
         players[i].mo = NULL;
         players[i].attacker = NULL;
-	players[i].skin = &marine;  // reset skin
-	players[i].attackdown = players[i].usedown = false;  // sf
-	players[i].cmd.buttons = 0;    // sf
-      }
+    	  players[i].skin = &marine;  // reset skin
+    	  players[i].attackdown = players[i].usedown = false;  // sf
+    	  players[i].cmd.buttons = 0;    // sf
+     }
 }
 
 
