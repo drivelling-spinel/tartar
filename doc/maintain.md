@@ -169,7 +169,7 @@ _Note that this is documentation for a work in progress version of Tartar_
   subsector structure. As a result maps on the scale of MAP32 of 
   Eviternity have their geometry loaded and displayed correctly now
 - Finishing 5th map of any Doom 1 episode no longer takes players
-  to episode end. THis behaviour is retained for Chex Quest
+  to episode end. This behaviour is retained for Chex Quest
   (it was in fact only intended for Chex Quest originally)
 - `force_load <slot>` CCMD has been added that takes advantage of
   original MBF code to override savegame compatibility checks
@@ -187,12 +187,13 @@ _Note that this is documentation for a work in progress version of Tartar_
   Unlike similar UMAPINFO property, setting endpic to the lump's name
   will not result in the game ending with the level completion nor will 
   Doom 2 character cast be skipped. 
-  Here is an example of how MAPINFO is used to show an
-  ending screen before proceeding to the character cast.
+
+Here is an example of how MAPINFO is used to show an 
+ending screen before proceeding to the character cast.
 
     [level info]
-    endofgame=true
-    endpic=END1
+    endofgame=true 
+    endpic=END1 
 
 
 
