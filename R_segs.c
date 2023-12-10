@@ -256,7 +256,7 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
   mceilingclip = ceilingclip; \
   floorclip[dc_x] = dc_yh + 1; \
   ceilingclip[dc_x] = dc_yl - 1; \
-  R_DrawMaskedColumn((column_t *)((byte *)dc_source - 3)); \
+  R_DrawMaskedColumn2((column_t *)((byte *)dc_source - 3)); \
   floorclip[rw_x] = local_floor; \
   ceilingclip[rw_x] = local_ceiling; \
 } \
