@@ -63,6 +63,7 @@ extern int use_startmap;
 extern int detect_finallevel;
 extern boolean redrawsbar, redrawborder, redrawdlgdone;
 
+extern int use_continue;
 
 // Called by IO functions when input is detected.
 void D_PostEvent(event_t* ev);

@@ -2074,6 +2074,48 @@ void G_PlayerReborn(int player)
       p->maxammo[i] = maxammo[i];
 }
 
+void G_PlayerContinue(int player)
+{
+   player_t *p;
+   int i;
+   
+   p = &players[player];
+
+   p->damagecount = 0;
+   p->bonuscount = 0;
+   p->attacker = NULL;
+
+   p->usedown = p->attackdown = true;  // don't do anything immediately
+   p->playerstate = PST_LIVE;
+   p->health = initial_health / 2;  // Ty 03/12/98 - use dehacked values
+   for(i = 0; i < NUMAMMO; i++)
+   {
+      unsigned pa = p->ammo[i];
+      int clip = clipammo[i];
+      if(i == am_gren && !EternityMode) continue;
+      if(i == am_faith) continue;
+      if(!pa && i == am_clip &&
+         !p->weaponowned[wp_pistol] && !p->weaponowned[wp_chaingun])
+            continue;
+      if(!pa && i == am_shell &&
+         !p->weaponowned[wp_shotgun] && !p->weaponowned[wp_supershotgun])
+            continue;
+      if(!pa && i == am_cell &&
+         !p->weaponowned[wp_plasma] && !p->weaponowned[wp_bfg])
+            continue;
+      if(!pa && i == am_misl && !p->weaponowned[wp_missile]) continue;
+      if(!pa && i == am_gren && !p->weaponowned[wp_grenade]) continue;
+
+      if (gameskill == sk_baby || gameskill == sk_nightmare)
+         clip <<= 1;
+      p->ammo[i] /= 2;
+      if(p->ammo[i] < clip) p->ammo[i] = clip;
+
+   }
+   if(p->ammo[am_clip] < initial_bullets) p->ammo[am_clip] = initial_bullets;
+}
+
+
 //
 // G_CheckSpot
 // Returns false if the player cannot be respawned
@@ -2198,11 +2240,21 @@ void G_DoReborn(int playernum)
 
    if(!netgame)
    {
+      int cont = T_GetGlobalIntVar("_private_continue", -1);
+      if(cont > 1)
+      {
+         mobj_t * corpse = players[playernum].mo;
+         unsigned ammo = 0;
+         T_EnsureGlobalIntVar("_private_continue", 1);
+         corpse->player = NULL;
+         P_ContinuePlayer(playernum, corpse);
+      }
+
       // reload level from scratch
       // sf: use P_HubReborn, so that if in a hub, we restart from the
       // last time we entered this level
       // normal levels are unaffected
-      P_HubReborn();
+      else P_HubReborn();
    }
    else
    {                               // respawn at the start
@@ -2375,7 +2427,7 @@ void G_DeferedInitNew(skill_t skill, char *levelname)
       d_episode = 1;
    
    d_skill = skill;
-   
+
    gameaction = ga_newgame;
 }
 
@@ -2490,6 +2542,12 @@ void G_DoNewGame (void)
    deathmatch = false;
    basetic = gametic;             // killough 9/29/98
    
+   if(use_continue)
+     {
+       T_EnsureGlobalIntVar("_private_continue", 1);
+     }
+   use_continue = 0;
+
    G_InitNew(d_skill, d_mapname);
    gameaction = ga_nothing;
 }

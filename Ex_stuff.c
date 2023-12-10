@@ -897,7 +897,7 @@ static char * ARCTIC_RES_WADS[] = { "ARCTIC.WAD", "ARC_FIX.WAD" };
 static char * ARCTIC_RES_WADS2[] = { "PISTOL.WAD", "ARCTICSN.WAD" };
 
 static char * ARCTIC_PWADS3[] = { "ARCTIC.WAD" };
-static char * ARCTIC_RES_WADS3[] = { "ARC_FIX.WAD", "PISTOL.WAD", "GFX1.WAD", "ARCTIC1.DEH", "ARCTICSN.WAD" };
+static char * ARCTIC_RES_WADS3[] = { "ARC_FIX.WAD", "PISTOL.WAD", "GFX1.WAD", "ARCTICSN.WAD" };
 
 #ifdef ARCTIC_STUFF
 void Ex_CheckArcticPartWads(const char * wadname,

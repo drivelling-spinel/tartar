@@ -179,12 +179,11 @@ svariable_t *variableforname(script_t *script, char *name)
 
 int T_EnsureGlobalIntVar(char * name, int value) 
 {
-  svariable_t * var = variableforname(&global_script, name);
-  if(!var) {
-    var = variableforname(&levelscript, name);
-    if(!var) return T_EnsureGlobalIntVar(name, new_variable(&levelscript, name, svt_int)->value.i = value);
-    var = new_variable(&global_script, name, svt_int);
-  }
+  svariable_t * var = variableforname(&levelscript, name);
+  if(!var) return T_EnsureGlobalIntVar(name, new_variable(&levelscript, name, svt_int)->value.i = value);
+  var->value.i = value;
+  var = variableforname(&global_script, name);
+  if(!var) return T_EnsureGlobalIntVar(name, new_variable(&global_script, name, svt_int)->value.i = value);
   var->value.i = value;    
   return var->value.i;
 }

@@ -284,6 +284,15 @@ void P_DeathThink (player_t* player)
 
   if (player->cmd.buttons & BT_USE)
     player->playerstate = PST_REBORN;
+
+  if (player->cmd.buttons & BT_ATTACK)
+    {
+      int cont = T_GetGlobalIntVar("_private_continue", -1);
+      if(cont  > 0) {
+        T_EnsureGlobalIntVar("_private_continue", 2);
+        player->playerstate = PST_REBORN;
+      }
+    }
 }
 
 //

@@ -1185,6 +1185,70 @@ void P_SpawnPlayer (mapthing_t* mthing)
 }
 
 
+void P_ContinuePlayer (int pidx, mobj_t* corpse)
+{
+  player_t* p;
+  fixed_t   x, y, z;
+  mobj_t*   mobj;
+  int       i;
+
+  // not playing?
+
+  if (!playeringame[pidx])
+    return;
+
+  p = &players[pidx];
+
+  if (p->playerstate == PST_REBORN)
+    G_PlayerContinue (pidx);
+
+  x    = corpse->x;
+  y    = corpse->y;
+  z    = corpse->z;
+  mobj = P_SpawnMobj (x,y,z, MT_PLAYER);
+
+  // set color translations for player sprites
+
+//  if (mthing->type > 1)
+  mobj->colour = players[pidx].colormap; //sf
+
+  mobj->angle      = corpse->angle;
+  mobj->player     = p;
+  mobj->health     = p->health;
+  mobj->skin       = p->skin;
+  mobj->sprite     = p->skin->sprite;
+
+  p->mo            = mobj;
+  p->playerstate   = PST_LIVE;
+  p->refire        = 0;
+  p->damagecount   = 0;
+  p->bonuscount    = 0;
+  p->extralight    = 0;
+  p->fixedcolormap = 0;
+  p->viewheight    = VIEWHEIGHT;
+  p->viewz         = mobj->z + VIEWHEIGHT;
+
+  p->momx = p->momy = 0;   // killough 10/98: initialize bobbing to 0.
+
+  // setup gun psprite
+
+  P_SetupPsprites (p);
+
+  // give all cards in death match mode
+
+  if (deathmatch)
+    for (i = 0 ; i < NUMCARDS ; i++)
+      p->cards[i] = true;
+
+  if(pidx == consoleplayer)
+    S_StartSound(mobj, sfx_oof);   // killough 4/25/98, 12/98
+
+  if(pidx == displayplayer)
+      P_ResetChasecam(); //sf
+
+}
+
+
 //
 // P_SpawnMapThing
 // The fields of the mapthing should

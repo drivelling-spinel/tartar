@@ -357,6 +357,7 @@ menu_t menu_features =
     {it_runcmd, "load wad",             "mn_loadwad" },
     {it_runcmd, "demos",                "mn_demos" },
     {it_gap},
+    {it_runcmd, "Start in continue mode", "use_continue 1; mn_newgame"},
     {it_runcmd, "Tartar options",       "mn_tartar" },
     {it_gap},
     {it_runcmd, "about",                "credits" },
@@ -368,6 +369,10 @@ menu_t menu_features =
   1,                                    // start item
   mf_background | mf_leftaligned        // skull menu
 };
+
+VARIABLE_INT(use_continue, NULL, 0, 1, onoff);
+CONSOLE_VARIABLE(use_continue, use_continue, 0) {}
+
 
 CONSOLE_COMMAND(mn_features, 0)
 {
@@ -1918,6 +1923,7 @@ void MN_AddMenus()
   C_AddCommand(force_load);
 
   C_AddCommand(mn_tartar);
+  C_AddCommand(use_continue);
 
   MN_CreateSaveCmds();
 }

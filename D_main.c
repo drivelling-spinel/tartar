@@ -103,6 +103,7 @@ char *csc_files[MAXLOADFILES];
 
 int textmode_startup = 0;  // sf: textmode_startup for old-fashioned people
 int use_startmap = -1;     // default to -1 for asking in menu
+int use_continue = 0;
 boolean devparm;           // started game with -devparm
 boolean nolfbparm;      // working -nolfb  GB 2014
 boolean nopmparm;       // working -nopm   GB 2014

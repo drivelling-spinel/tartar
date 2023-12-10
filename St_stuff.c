@@ -385,6 +385,8 @@ void ST_updateFaceWidget(void)
   static int  priority = 0;
   boolean     doevilgrin;
 
+          
+
   if (priority < 10)
     {
       // dead
@@ -394,6 +396,15 @@ void ST_updateFaceWidget(void)
           st_faceindex = ST_DEADFACE;
           st_facecount = 1;
         }
+
+      // continue
+      else if (st_faceindex == ST_DEADFACE)
+        {
+          priority = 9;
+          st_facecount = ST_TURNCOUNT;
+          st_faceindex = ST_calcPainOffset() + ST_OUCHOFFSET;
+        }
+
     }
 
   if (priority < 9)
@@ -533,6 +544,7 @@ void ST_updateFaceWidget(void)
         }
 
     }
+
 
   // look left or look right if the facecount has timed out
   if (!st_facecount)
