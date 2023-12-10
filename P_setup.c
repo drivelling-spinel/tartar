@@ -144,6 +144,10 @@ size_t     num_deathmatchstarts;   // killough
 mapthing_t *deathmatch_p;
 mapthing_t playerstarts[MAXPLAYERS];
 
+
+static char msgbuf[256];
+
+
 //
 // P_LoadVertexes
 //
@@ -185,8 +189,12 @@ void P_LoadSegs (int lump)
 {
   int i;
   byte *data;
+  size_t sz;
 
-  numsegs = W_LumpLength(lump) / sizeof(mapseg_t);
+  sz = W_LumpLength(lump);
+  
+  if(sz % sizeof(mapseg_t)) return;
+  numsegs = sz / sizeof(mapseg_t);
   segs = Z_Malloc(numsegs*sizeof(seg_t),PU_LEVEL,0);
   memset(segs, 0, numsegs*sizeof(seg_t));
   data = W_CacheLumpNum(lump,PU_STATIC);
@@ -215,10 +223,85 @@ void P_LoadSegs (int lump)
       if (ldef->flags & ML_TWOSIDED && (unsigned short)(ldef->sidenum[side^1])!=0xffff)
         li->backsector = sides[(unsigned short)(ldef->sidenum[side^1])].sector;
       else
-	li->backsector = 0;
+        li->backsector = 0;
     }
 
   Z_Free (data);
+}
+
+
+// for those weird segs with 32 bit vertex references...
+
+void P_LoadSegs32 (int lump)
+{
+  int i;
+  byte *data;
+  size_t sz;
+
+  sz = W_LumpLength(lump);
+  if(sz % sizeof(mapsegext_t)) return;
+  numsegs = W_LumpLength(lump) / sizeof(mapsegext_t);
+  segs = Z_Malloc(numsegs*sizeof(seg_t),PU_LEVEL,0);
+  memset(segs, 0, numsegs*sizeof(seg_t));
+  data = W_CacheLumpNum(lump,PU_STATIC);
+
+  for (i=0; i<numsegs; i++)
+    {
+      seg_t *li = segs+i;
+      mapsegext_t *ml = (mapsegext_t *) data + i;
+
+      int side, linedef;
+      line_t *ldef;
+
+      li->v1 = &vertexes[LONG(ml->v1)];
+      li->v2 = &vertexes[LONG(ml->v2)];
+
+      li->angle = (SHORT(ml->angle))<<16;
+      li->offset = (SHORT(ml->offset))<<16;
+      linedef = (unsigned short)SHORT(ml->linedef);
+      ldef = &lines[linedef];
+      li->linedef = ldef;
+      side = SHORT(ml->side);
+      li->sidedef = &sides[(unsigned short)(ldef->sidenum[side])];
+      li->frontsector = sides[(unsigned short)(ldef->sidenum[side])].sector;
+      // killough 5/3/98: ignore 2s flag if second sidedef missing:
+      if (ldef->flags & ML_TWOSIDED && (unsigned short)(ldef->sidenum[side^1])!=0xffff)
+        li->backsector = sides[(unsigned short)(ldef->sidenum[side^1])].sector;
+      else
+        li->backsector = 0;
+    }
+
+  Z_Free (data);
+}
+
+static void P_ValidateSegs()
+{
+  int i;
+  seg_t *seg = segs;
+  if(!numsegs) return;
+  
+  for(i = 0; i < numsegs ; i +=1, seg++)
+  {
+    if(seg->v1 - vertexes < 0) break;
+    if(seg->v1 - vertexes >= numvertexes) break;     
+    if(seg->v2 - vertexes < 0) break;
+    if(seg->v2 - vertexes >= numvertexes) break;
+    if(seg->linedef - lines < 0) break;
+    if(seg->linedef - lines >= numlines) break;
+    if(seg->sidedef - sides < 0) break;
+    if(seg->sidedef - sides >= numsides) break;
+  }
+  
+  if(i < numsegs)
+  {
+    sprintf(msgbuf, "seg=%d, v1=%ld, v2=%ld, linedef=%ld, sidedef=%ld\n", i, seg->v1 - vertexes,
+      seg->v2 - vertexes, seg->linedef - lines, seg->sidedef - sides);
+    DEBUGMSG(msgbuf);  
+  
+    numsegs = 0;
+    Z_Free(segs);
+    segs = 0;
+  }
 }
 
 //
@@ -230,8 +313,11 @@ void P_LoadSubsectors (int lump)
 {
   byte *data;
   int i;
-
-  numsubsectors = W_LumpLength (lump) / sizeof(mapsubsector_t);
+  size_t sz;
+  
+  sz = W_LumpLength(lump);
+  if(sz % sizeof(mapsubsector_t)) return;
+  numsubsectors = sz / sizeof(mapsubsector_t);
   subsectors = Z_Malloc(numsubsectors*sizeof(subsector_t),PU_LEVEL,0);
   data = W_CacheLumpNum(lump, PU_STATIC);
 
@@ -244,6 +330,54 @@ void P_LoadSubsectors (int lump)
     }
 
   Z_Free (data);
+}
+
+void P_LoadSubsectors32 (int lump)
+{
+  byte *data;
+  int i;
+  size_t sz;
+
+  sz = W_LumpLength(lump);
+  if(sz % sizeof(mapsubsectorext_t)) return;
+  numsubsectors = sz / sizeof(mapsubsectorext_t);
+  subsectors = Z_Malloc(numsubsectors*sizeof(subsector_t),PU_LEVEL,0);
+  data = W_CacheLumpNum(lump, PU_STATIC);
+
+  memset(subsectors, 0, numsubsectors*sizeof(subsector_t));
+
+  for (i=0; i<numsubsectors; i++)
+    {
+      subsectors[i].numlines  = SHORT(((mapsubsectorext_t *) data)[i].numsegs );
+      subsectors[i].firstline = LONG(((mapsubsectorext_t *) data)[i].firstseg);
+    }
+
+  Z_Free (data);
+}
+
+static void P_ValidateSubsectors()
+{
+  int i;
+  subsector_t *ss = subsectors;
+  
+  if(!numsubsectors) return;
+  
+  for(i = 0; i < numsubsectors ; i += 1, ss += 1)
+  {
+    if((unsigned short) ss->firstline >= numsegs) break;
+    if((unsigned short) ss->firstline + (unsigned short) ss->numlines > numsegs) break;
+  }
+  
+  if(i < numsubsectors)
+  {
+    sprintf(msgbuf, "ss=%d, ss->firstline=%d, ss->numlines=%d\n", i, (unsigned) ss->firstline, (unsigned) ss->numlines);
+    DEBUGMSG(msgbuf);
+    
+    numsubsectors = 0;
+    Z_Free(subsectors);
+    subsectors = 0;
+  }
+  
 }
 
 //
@@ -345,8 +479,6 @@ void P_LoadNodes (int lump)
   Z_Free (data);
 }
 
-char msgbuf[256];
-
 //
 // P_LoadThings
 //
@@ -398,7 +530,7 @@ void P_LoadThings(int lump)
             dont_spawn = true;
 	 }
       }
-
+      
       // non SMMU stuff from Eternity or COD will
       // only be loaded when appropriate
       if(mt->type < 5001 || mt->type > 5004)
@@ -676,7 +808,7 @@ byte * P_LoadSubsectorsExtended(byte * data)
       subsectors[i].numlines = LONG(*(long *)data);
       data += sizeof(long);
       subsectors[i].firstline = first;
-      first += subsectors[i].numlines;
+      first += (unsigned short) subsectors[i].numlines;
     }
 
   return data;
@@ -1376,9 +1508,31 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
   numnodes = numsegs = numsubsectors = 0;
   P_LoadExtended  (lumpnum+ML_NODES);  
   P_LoadBlockMap  (lumpnum+ML_BLOCKMAP);             // killough 3/1/98
-  if (!numsubsectors) P_LoadSubsectors(lumpnum+ML_SSECTORS);
-  if (!numsegs)       P_LoadSegs      (lumpnum+ML_SEGS);
-  if (!numnodes)      P_LoadNodes     (lumpnum+ML_NODES);
+  if (!numsegs)
+  {
+    P_LoadSegs(lumpnum+ML_SEGS);
+    P_ValidateSegs();
+  }
+  if (!numsegs)
+  {
+    // should these go hand by hand?
+    P_LoadSegs32(lumpnum+ML_SEGS);
+    P_ValidateSegs();
+    P_LoadSubsectors32(lumpnum+ML_SSECTORS);
+    P_ValidateSubsectors();
+  }
+  if (!numsubsectors) 
+  {
+    P_LoadSubsectors(lumpnum+ML_SSECTORS);
+    P_ValidateSubsectors();
+  }
+  if (!numsubsectors) 
+  {
+    P_LoadSubsectors32(lumpnum+ML_SSECTORS);
+    P_ValidateSubsectors();
+  }
+
+  if (!numnodes) P_LoadNodes(lumpnum+ML_NODES);
 
   level_error = !numsubsectors || !numsegs || !numnodes;
   

@@ -96,7 +96,7 @@ static boolean P_CrossSubsector(int num, register los_t *los)
     I_Error("P_CrossSubsector: ss %i with numss = %i", num, numsubsectors);
 #endif
 
-  for (count = subsectors[num].numlines; --count >= 0; seg++)  // check lines
+  for (count = (unsigned short)subsectors[num].numlines; --count >= 0; seg++)  // check lines
     {
       line_t *line = seg->linedef;
       divline_t divl;
