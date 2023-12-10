@@ -13,22 +13,37 @@ machines for retro gaming.
     - classic Caverns of Darkness TC for DOS
     - what remains from the cancelled Eternity TC
     - Chex Quest without dependency on any Doom assets
-- Includes numerous smaller changes that are seen by the author as 
-  quality of life improvements 
+- Includes numerous quality of life improvements including 
+  auto-loading of WAD files, compatibility improvements and
+  bugfixes  
+- Treats certain popular WADs as first class mods improving
+  player's experience with them:
+  - InstaDoom by @linguica
+  - Intemission Maps by @oliacym
+  - No Rest for the Living via a "helper WAD"  
+- New display (game view) size for higher resolutions and 
+  new translucency mode
+- {DEV} Can load more complex (i.e. "more contemporary") maps
+  than the Eternity Engine version it is based on. Some but 
+  not all maps from Eviternity, Ancient Aliens and Sunlust can
+  be played for example
+
+* Note that {DEV} glyphie above - features that are only available
+  in the experimental dev version are marked like that throughout 
+  the readme-s
 
 ## Documentation
 
-1. [CHNG2022](doc/CHNG2022.md) - comprehensive list of changes in Tartar 
-                                 compared to the version released during 
-                                 Christmas period of 2021
-2. [AUTHORS](doc/authors.md)  - acknowledgements for authors of the ports Tartar 
-                                is based on and their work
-3. [README](doc/TARTAR.TXT)   - templated readme one would expect to accompany 
-                                any Doom related relea
-4. [BUGS](doc/bugs.md)        - known issues in Tartar 
-5. [EXTRAS](doc/extras.md)    - notes on extras and goodies included with the
-                                binary distribution 
-
+1. [CHANGES](doc/changes.md)     - comprehensive list of changes in Tartar 
+                                   compared to the Eternity Engine version 
+                                   it is based on
+2. [AUTHORS](doc/authors.md)     - acknowledgements for authors of the ports 
+                                   Tartar is based on and their work
+3. [STAGE1](doc/STAGE1.TXT)      - templated (and outdated ;) ) readme one 
+                                   would expect to accompany any scene release
+4. [BUGS](doc/bugs.md)           - known issues in Tartar 
+5. [EXTRAS](doc/extras.md)       - notes on extras and goodies included with 
+                                   the distribution 
 
 ## Obtaining and installing Tartar
 
@@ -36,13 +51,17 @@ Tartar distribution is available following the link below:
 
 <https://mega.nz/folder/V50HiaSJ#yZa2LjO_kJB3Vs4tvlR3cQ>
 
-There, TARTAR directory contains the the port TARTAR.EXE and additional 
-assets and files required to run it. EXTRAS document above describes the
-contents of DEMOS and EXTRAS directories.
+There, TESTING directory contains the the testing version of the port 
+including TARTAR.EXE and additional assets and files required to run it. 
+EXTRAS document above describes the contents of DEMOS and EXTRAS directories. 
+DEV directory contains current experimental development version of the port.
+
+If you are looking for the 2021 Christmas binary, which was previously
+under TARTAR directory - it's available under STAGES/STAGE1.
 
 ### Playing Doom with TARTAR
 
-1. Download TARTAR directory contents from the above link (MEGA has means 
+1. Download STAGE2 directory contents from the above link (MEGA has means 
    to download directory as a ZIP archive)
 
 2. For a quick and simple start either 
@@ -58,12 +77,16 @@ contents of DEMOS and EXTRAS directories.
 
 4. Run TARTAR.EXE to play 
 
+5. Also be sure to check [EXTRAS](doc/extras.md) for explanation on best 
+   way of playing No Rest for the Living Doom II PWAD and for guides on
+   installing extra mods with Tartar.
+
 ### Playing Caverns of Darkness with Tartar
 
 1. Download Caverns of Darkness TC distribution and unzip the contents 
    into a separate directory
 
-2. Download TARTAR directory contents from the above link (MEGA has means 
+2. Download STAGE2 directory contents from the above link (MEGA has means 
    to download directory as a ZIP archive) and copy everything there 
    to the same directory as COD **except do not** copy KEYS.CSC 
    and retain the one shipped with the TC.
@@ -74,6 +97,41 @@ contents of DEMOS and EXTRAS directories.
    on screen instructions to configure sound and music card.
 
 5. Run TARTAR.EXE -file COD.WAD CODLEV.WAD to play
+
+### Installing popular fix packs with Tartar
+
+Tartar's WAD autoloading makes it easy to add fix packs
+to the installation. Suggested WAD-s to try out include:
+  - Doom Sound Bulb by @SeanTheBermanator
+  - Hi Res Doom Sound Effects Pack by @perkristian
+  - Doom 2 Minor Sprite Fixing Project by @revenant100
+
+Follow the below steps to have them installed with Tartar
+
+1. Install Tartar
+
+2. Drop the desired fix pack WAD into FIXES directory
+
+3. Or if Tartar will be used with multiple IWADs drop the WAD into
+   a subdirectory of FIXES that has name matching the name of the IWAD
+   the fix pack is to be loaded with. For example:
+   
+  C:\GAMES\TARTAR\
+  C:\GAMES\TARTAR\TARTAR.EXE
+  ...
+  C:\GAMES\TARTAR\FIXES\
+  C:\GAMES\TARTAR\FIXES\Doom_Sound_Bulb.wad  
+  C:\GAMES\TARTAR\FIXES\DOOM\
+  C:\GAMES\TARTAR\FIXES\DOOM\D1SPFX20.WAD
+  C:\GAMES\TARTAR\FIXES\DOOM2\
+  C:\GAMES\TARTAR\FIXES\DOOM2\D2SPFX20.WAD
+
+4. Start Tartar as you would normally do and enjoy improved Doom experience
+
+5. Should you want to play a certain PWAD without any of the fix packs loaded
+   start Tartar with a command similar to the below one:
+   
+   TARTAR.EXE -noload -file NUTS.WAD
 
 ## On the name of the port
 

@@ -38,8 +38,50 @@ made available as COD10SRC.ZIP.
   will trigger default Eternity behaviour. With Doom 2, Final Doom and 
   Chex new games always start with the first changed map when a pwad
   with maps is loaded.
+ 
+### Additional key bindings 
+  
+  Additional key bindings submenu for palette and screenshot-related commands 
+  have been added under Key Bindings/Extras.
+  
+### Select WAD menu entry under Features has been removed
+  
+  It never worked in the first place
 
-## Sound 
+### New compatibility options 
+  New compatibility options have been added under Eternity Options to control:
+  - MBF "mushroom explosion" compatibility
+  - Checking every special line player crosses, including if player is blocked
+    from moving by a wall or other object 
+  - {DEV} SMMU colored lighting
+
+### {DEV} Character rendering suited for fonts with height of up to 10 pixels
+  
+  Option menus and Save/Load Game menus are more spacious and allow character 
+  glyphs of up to 10 pixes in height to be output without getting cut by screen
+  borders. Because of this some of the empty space that was used for menu 
+  formatting is now gone and Compatibility menu is split into two screens.
+  Players can go into the second screen via "MORE..." entry at the bottom of 
+  the first one.
+  
+  Author's goal with this change was primarily to support Ancient Aliens fonts.
+
+### Menus background change
+
+  Menu background is using the same texture MBF and subsequent versions of
+  Eternity Engine used. In case when Caverns of Darkness are loaded or
+  Tartar is in Eternity TC mode, the background used in SMMU and the version of
+  Eternity Engine Tartar is based on will be used as before.
+
+### Quick save and quick load has been restored (again)
+
+  Options to assign Quick save and Quick load keys have been restored in
+  the Options menu under Key Bindings/Environment and KEYS.CSC shipped with 
+  all versions of Tartar has been updated to include default key assignment 
+  for them, making quick save and quick load features operate in Tartar 
+  for all players out of the box.
+
+## Sound
 
 ### Updated Alegro library and sound routines 
 
@@ -74,6 +116,31 @@ made available as COD10SRC.ZIP.
   
   With MBF 2.0.4 lowlevel sound routines inclusion, sound effects are always
   cached at the start of the game. Option to control this is now gone.
+  
+### Sound effects cache is refreshed every time new wad is added
+  
+  Sound effects cache is refreshed every time new wad is added or set of wads 
+  is added to register all newly added sounds
+  
+### Pistol sound is no longer used as substitute for every missing sound
+
+### Sound effects are no longer padded with noise to ensure set length
+
+### MUS file conversion failure are more graceful
+
+  When recoverable issues are encountered during MUS file conversion to MIDI, 
+  instead of stopping the music for level, attempt to go on with the conversion
+  
+### WAV sound format is supported
+
+  Sound effect lumps in WAD format are read and both 8-bit and 16-bit
+  samples are supported. Paired with Allegro's support of 16-bit cards
+  this allows for much clearer sounding sound effects in mods, such as 
+  for example [Doom Sound Bulb](https://www.doomworld.com/forum/topic/110822).
+  Tested with DOSBox SoundBlaster 16 emulation and SB Audigy VxD in Windows 9x.
+
+### Sound effects are no longer padded to set 
+
 
 ## Video
 
@@ -208,7 +275,6 @@ made available as COD10SRC.ZIP.
   If FPS counter is on, Tartar will additionally display current video settings
   (including actual mode that was configured) after they have been changed, 
   or for a few seconds after new level was started or a saved game was loaded.
-  These will also be shown in game only.
 
 ### Timed demo benchmarks have been removed from Video options menu 
   
@@ -223,6 +289,7 @@ made available as COD10SRC.ZIP.
   - -nolfb   avoid using LFB modes with VESA routines 
   - -nopm    avoid using PM VESA functions
   - -safe    try the most compatible settings for video card
+             also (specific to Tartar) avoid using paging
   - -asmp6   choose P6-specific assembler optimized code for 
              copying memory blocks regardless of the detected CPU family
 
@@ -230,9 +297,9 @@ made available as COD10SRC.ZIP.
   
   Configuration file option stretchsky has been added to store it.
 
-### _Experimental_ "checkered translucency" has been added
+### "Checkered translucency" has been added
   
-  New translucency mode has been added that does not use tranmap file.
+  New translucency mode has been added that does not use TRANMAP file.
   Instead it renders either odd or even pixel of sprites and textures,
   depending on the number of line being drawn. This results in 50%
   translucency effect when used with intended equipment, e.g. a CRT
@@ -249,8 +316,9 @@ made available as COD10SRC.ZIP.
   that translucent objects act as opaque for other translucent objects
   and will block them. Also, in addition to applying this to all 
   objects in game for which general transparency applies, code applies 
-  this to fuzz-ed objects, like Specter monster or player with invisibility 
-  powerup. 
+  this to player sprites (arms) when in invisible state. Fuzz-ed objects 
+  like Specter or other players with Invisibility powerup are rendered
+  with the slightly modified fuzz effect. 
   
   ![comptran.png](comptran.png) 
   _comparison of no transparency, tranmap-based general transparency 
@@ -260,18 +328,114 @@ made available as COD10SRC.ZIP.
   menus, and then either set r_fauxtrans CVAR or change faux_translucency
   option in the configuration file.
 
-### _Experimental_ "water transluency" code has been compiled in
+### Experimental "water transluency" code can been compiled in
 
-  The TRANWATER preprocessor define is set to ON for compiling Tartar,
-  which causes experimental ("no feature") code for rendering Boom-style  
-  (i.e. line type 242) deep water surface as translucent to be included.
-  Because this code results in nothing resembling translucent water surface, 
-  it needs to be enabled explicitly with r_watertrans CVAR or 
-  water_translucency option in the configuration file, both of which are 
-  off by default. This will also only work if general translucency is  
-  enabled in options. Just to reiterate - this is broken, "no feature" code
-  included for study purpose only.
+  When enabled this which causes experimental ("no feature") code 
+  for rendering Boom-style  (i.e. line type 242) deep water surface as 
+  translucent to be included. In fact this code results in nothing 
+  resembling translucent water surface even if it is enabled explicitly 
+  with r_watertrans CVAR or water_translucency option in the configuration file,
+  both of which are off by default. This will also only work if 
+  general translucency is enabled in options. 
+  
+  The TRANWATER preprocessor define is not set for compiling Tartar,
+  since otherwise this enables broken, "no feature" code.
 
+### TRANMAP is not generated in case when "checkered" translucency is enabled
+
+  When "checkered" translucency is enabled with r_fauxtrans CVAR,
+  translucency map file (TRANMAP) is neither generated nor used at all.
+
+### TRANMAP is not cached between runs 
+
+  Translucency map file (TRANMAP) is no longer cached between runs and 
+  is instead generated using the palette of currently loaded WADs or 
+  upon on the fly palette switch; it is still saved to disk every time 
+  e.g for the purpose of being used as a lump
+  
+### Page flipping is never used if -safe command argument is present
+  
+  -safe command line argument prevents page flipping from being used 
+  regardless of the setting in Video Options; one use case for this is 
+  when running in DOSBox with 1280x1024 resolution selected
+
+### Palettes (PLAYPAL-s) can be cycled on the fly when multple are loaded
+
+  Palettes from currently loaded WADs can be cycled through on the fly 
+  with new bindable pal_next, pal_prev console commands. 
+  PLAYPAL, COLORMAP (and TRANMAP in case translucency is enabled) lumps 
+  are cycled in sync while cycling through palettes.
+  
+### New screen size beyond "fullscreen"
+
+  If players increase screen size past "fullscreen" (i.e. screen size 
+  with BOOM-style HUD appearing instead of status bar) 
+  newly implemented "extended" screen size is selected 
+  for which Tartar will attempt to take advantage of all 
+  available screen space to show both "fullscreen" player view and status bar;
+  HUD will not be displayed in this screen size. 
+  See below examples of output with different display sizes 
+  in 1280x1024 resultion.
+
+![size9.png](size9.png)
+  _"Full", "extended" and "normal" screen sizes (left to right)_
+
+![size9aspect.png](size9aspect.png)
+  _Same with 4x3 aspect ratio switched on in Video Options_
+
+### Fuzz effect is more pronounced now
+  
+  Fuzz effect is more "blocky" in higher resolutions, making Specters and 
+  invisible other players look less "airy" and also hopefully reducing
+  noticeable artifacts and "moire" with the effect itself.
+  
+  More on the issues with fuzz effect as ID have implemented it can probably
+  be found n the apocryphical "Why I left Doom, Lee Killough May 1999.htm",
+  but alas author does not have a copy of that.
+
+### Graphics are clipped to screen boundaries when rendered
+
+  Strict validation of patches (graphics) boundaries is gone, in particular
+  for vertical extents. This was done to more easily handle rendering outside
+  of the conventional game view rectangle that is a multiple of 320x200 
+  after the new more extensive screen size was introduced, that places
+  status bar below that rectangle.
+  
+  If extents of the patch (grpahics) to be rendered fall outside of screen,
+  only the visible part will be output. This in particular allows for
+  rendering of wide-screen friendly assets from more modern WAD-s.
+
+  {DEV} No error message spamming occurs in for boundaries checking when
+  rendering patches (graphics).
+
+### {DEV} Rendering troubleshooting aids
+
+  Tartar introduces a set of debugging aids to help narrow down certain
+  glitch or crash to a particular feature of the scene being rendered.
+  When compiled with NORENDER preprocessor define, Tartar gets a -norender
+  command line argument that activates a range of CVAR-s and debugcolumn 
+  CCMD.
+  
+  - r_norender1          - switches sky rendering on or off
+  - r_norender2 [number] - when number is set to a non-negative value
+                           only the screen column with that number 
+                           will be shown (numbering starts with 0)
+  - r_norender3          - switches sprites rendering on or off 
+  - r_norender4          - no action
+  - r_norender5          - switches top textures rendering
+  - r_norender6          - switches mid textures rendering
+  - r_norender7          - switches bottom textures rendering
+  - r_norender8          - switches masked textures rendering
+  - r_norender9          - switches floor and ceiling rendering
+  - r_norender0          - switches all of the above on/off at once
+  - debugcolumn          - dumps information on visplanes and clipping
+                           for a single particular screen column
+                           set with r_norender2; needs -debugfile
+                           
+  It is advised that KEYS.CSC is used to assign keys for activatning the
+  various rendering aids and triggering column rendering dump.
+  
+  
 ## Recommended video options for common use cases
 
 Tartar only supports video modes with 8 bits per pixel, that is ones 
@@ -350,13 +514,13 @@ look in a graphical editor had they loaded them.
   
   Configuration file option for it is smooth_turning, same name as for CVAR.
 
-### _Experimental_ smoother mouse turning
+### Even smoother mouse turning
   
   Mouse turning smoothing takes 4 samples into account for _extra_
   smooth turning when smooth turning is activated in options menu.
   Previously 2 samples were used.
 
-### _Experimental_ filtering of mouse movement
+### Filtering of mouse movement
   
   Historically Eternity had been suffering from "jerky" mouse movement, as sharp 
   turns by the player could easily result in 360 (or more) degree turns in game. 
@@ -393,8 +557,8 @@ look in a graphical editor had they loaded them.
   C:\GAMES\DOOM2\DOOM2.WAD  
   ...  
   C:\GAMES\DOOM2\TARTAR\  
-  C:\GAMES\DOOM2\TARTAR.CFG  
-  C:\GAMES\DOOM2\TARTAR.EXE  
+  C:\GAMES\DOOM2\TARTAR\TARTAR.CFG  
+  C:\GAMES\DOOM2\TARTAR\TARTAR.EXE  
 
   If player runs the game from C:\GAMES\DOOM2 using command TARTAR\TARTAR.EXE
   Tartar will load TARTAR.CFG and other files it needs from C:\GAMES\DOOM2\TARTAR,
@@ -440,6 +604,163 @@ look in a graphical editor had they loaded them.
   50 fps while playing), however to maintain compatibilty with Eternity
   both CVAR and configuration option are off by default.
 
+### Keypress processing has been reorganized 
+  Keypress processing has been reorganized  to allow bindable console commands 
+  in most of the game screens, including title screen, intermission and automap.
+  This may cause actions to trigger from keypresses in game screens where 
+  players would not expect this at all, so author tried his best to ensure 
+  players experiece does not suffer and, for example, cheats work as expected.
+  
+  Additionally, console when opened is displayed on top of all other widgets
+  including Menus, and players cannot interact with other widgets than console
+  while it is on.
+    
+### Additional IWAD names to search for on startup
+  
+  FreeDOOM, FreeDM, The People's Doom and HacX IWAD names have been added 
+  to the list of IWAD filenames Tartar searches for during startup.
+  
+### Overlay HUD is initialized earlier 
+
+  Overlay HUD is initialized earlier and operates on more game screens; 
+  only relevant widgets will be shown, e.g. no crosshairs in title or 
+  intermission screens, but screen resolution details, for example, 
+  will be visible there.
+  
+### BOOM-style HUD variant choice change
+  
+  BOOM-style HUD variant is no longer toggled by pressing + when already at max
+  screen size; players can still use F5 key for that.
+  
+### Screenshot taking changes
+  
+  Screenshot taking changes is no longer a "game action" (one example of a game 
+  action is finishing a level) and bindable screenshot CCMD has been added for 
+  taking screenshots, as well as Menu option to assign a key to it.
+  
+  Screenshot filename is output in console every time a screenshot is saved and 
+  no sound is produced anymore.
+  
+### "Helper" WADs introduced
+  New -tape command line argument allows to specify a *single* WAD to be
+  loaded before all other WAD-s (before both PWAD-s and *even the IWAD*) 
+  in such way that its lumps are "immutable" and cannot be ovrridden by lumps
+  with the same names from subsequently loaded WAD-s. 
+  
+  This can be used to patch a certain lump with some specific contents
+  regardless of WAD-s load order and without influencing lump numbering, 
+  the most obvious use case being including updates to FraggleScript or mapinfo
+  by patching map marker lumps.
+  
+  Additionally a helper WAD will be loaded automatically (unless neiter -tape
+  nor -noload command line argument is provided on startup) if case when 
+  in the TAPE directory side by side with TARTAR.EXE a WAD file is found with
+  the same name as one of the PWAD-s Tartar has on the list of WAD-s to load.
+  Only one helper WAD will be loaded, meaning that if two or more PWAD-s
+  on the list to load have matching helper WAD-s in TAPE directory, the first
+  PWAD on the list gets its helper.
+  
+  Take for example this directory layout
+
+  C:\GAMES\DOOM2\  
+  C:\GAMES\DOOM2\DOOM2.WAD
+  C:\GAMES\DOOM2\NERVE.WAD
+  ...
+  C:\GAMES\DOOM2\TARTAR\  
+  C:\GAMES\DOOM2\TARTAR\TARTAR.EXE  
+  C:\GAMES\DOOM2\TARTAR\ETERNITY.WAD
+  ...
+  C:\GAMES\DOOM2\TARTAR\TAPE  
+  C:\GAMES\DOOM2\TARTAR\TAPE\NERVE.WAD  
+  C:\GAMES\DOOM2\TARTAR\TAPE\LONGTREK.WAD
+  
+  Then starting Tartar with this command from C:\GAMES\DOOM2
+  TARTAR\TARTAR.EXE -file NERVE.WAD
+  
+  will result in TARTAR\TAPE\NERVE.WAD being loaded before DOOM2.WAD,
+  ETERNITY.WAD and NERVE.WAD. 
+  
+  See [EXTRAS](extras.md) for further notes on usage and information
+  about included sample helper WAD-s.
+  
+### Autoloading of WAD-s (also based on IWAD-s)
+
+  Tartar will automatically add WAD-s found in FIXES directory to the list
+  of WAD-s to load, putting them straight after the IWAD on the list of 
+  files to load. This is a convenient way to include into WAD load lists
+  popular fix packs without specifying them manually with -file command line
+  argument.
+  
+  If inside the FIXES directory a directory exists that matches the name of
+  the IWAD (e.g. FIXES\DOOM, FIXES\DOOM2 or FIXES\TNT) WAD-s found in that 
+  directory will also be added to the list of WAD-s to load.
+  
+  For example, let's consider this directory layout
+
+  C:\GAMES\DOOM2\  
+  C:\GAMES\DOOM2\DOOM2.WAD
+  C:\GAMES\DOOM2\NERVE.WAD
+  ...
+  C:\GAMES\DOOM2\TARTAR\
+  C:\GAMES\DOOM2\TARTAR\TARTAR.EXE
+  C:\GAMES\DOOM2\TARTAR\ETERNITY.WAD
+  ...
+  C:\GAMES\DOOM2\TARTAR\FIXES\
+  C:\GAMES\DOOM2\TARTAR\FIXES\Doom_Sound_Bulb.wad  
+  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM\
+  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM\D1SPFX20.WAD
+  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM2\
+  C:\GAMES\DOOM2\TARTAR\FIXES\DOOM2\D2SPFX20.WAD
+  
+  Then starting Tartar with this command from C:\GAMES\DOOM2
+  TARTAR\TARTAR.EXE -file NERVE.WAD
+  
+  will have D2SPFX20.WAD and Doom_Sound_Bulb.wad added to list of WAD-s to load
+  after DOOM2.wad and before ETERNITY.WAD and NERVE.WAD.
+  
+  Players can control this behaviour with -noload command line argument which
+  prevent any fixes from being loaded and -fixes command line argument
+  which allows to specify a directory in which to look for fix packs instead of
+  the default FIXES directory.
+  
+### RELEASE build confiuguration used for compilation
+
+  Build has been switched to RELEASE configuration from DEBUG and extra checks
+  around array sizes and memory management are no longer compiled in by default.
+  If original Eternity Engine authors are to be believed this is detrimental
+  for one's sanity, but how does one find out if not by trying?
+
+### Command line argument changes
+
+  Starting the game with -devparm no longer locks it up at an early stage
+  and allows game to run despite severe error detected 
+  (up until the stage where it eventually crashes) .
+
+  -noload argument is respected Tartar code and will cause it to avoid loading
+  any PWAD aside from the ones provided explicitly by the player and ETERNITY.WAD
+  E.g. none of the _fixes_, _helper_ or _extra_ WADs will be loaded and
+  none of the WAD and DEH files specified in the configuration file will be
+  loaded either.
+  
+### {DEV} Support for extended node-builder format  
+
+  Tartar can load node, segs and vertex information in extended format as
+  described in [ZDoom wiki](https://zdoom.org/wiki/Node). Only uncompressed
+  node data is supported.
+  
+  To accomodate for increased number of nodes supported by the extended format
+  BSP node table has been extended to 32 bits per node id for all maps. 
+  Segs offset and angle computation has been added to map data parsing routine. 
+  The formulas for that computation are somewhat empiric, and need further work.
+  
+  Additionally, since support of the format allows Tartar to load maps of 
+  recently released WAD-s like Sunlust, Ancient Alients, Eviternity or 
+  Jumpwad, workarounds have been provided for visual glitches and crashes,
+  caused by Tartar's arithmentic functions not being exatcly suitable for
+  very tall objects found on maps of these WAD-s.
+  
+  At the time of writing this is still an experimental feature.
+
 ## WADS compatibility
 
 ### Chex Quest can be loaded without dependency on any Doom assets
@@ -482,7 +803,11 @@ look in a graphical editor had they loaded them.
 
   Implementation-wise Caverns of Darkness is treated as a mission pack
   to commercial version of the game.
-
+  
+  Additionally placing of actors with doomednum 5003 on maps has 
+  been reenabled when Caverns of Darkness are detected and will not
+  result in an SMMU camera being placed in their place intead.
+  
 ### Assets from the cancelled Eternity TC can be loaded
 
   Tartar source code retains features that were originally planned for the 
@@ -511,8 +836,108 @@ look in a graphical editor had they loaded them.
   - line types 274 and 275 have been restored to beahve as expected 
     in SMMU or Eternity, and only exhibit COD behavior if COD mission 
     pack is detected by Tartar
+  - CoD actors would only be spawned when CoD is loaded with certain 
+    actors replacing Eternity TC ones in case the same Doomednum is 
+    used for both
+  
+  Message is output to console when Eternity TC Mode is activated.
 
-## Gameplay changes
+### Changes for better MBF compatibility
+
+  - Commander Keen suffering sounds have been restored (were cut 
+    by Murdoch) and will be played regardless of game mode or 
+    mission pack
+  - Original Doom Chaingunner attack sound has been restored; the "special"
+    chaingun sound is only used for the attack in Eternity TC mode or 
+    with Caverns of Darkness loaded
+  - {DEV} SMMU colored lightning is off by default with a menu option under
+    Eternity Options and new CVAR (comp_clighting) to enable it. When on it 
+    was producing rendering artifacts with more complex MBF-compatible maps.
+  - Eternity TC actors would now be spawned only while in Eternity TC mode
+    or with Caverns of Darkness loaded
+  - MBF mushroom effect behaviour is supported by default. Players can switch
+    to how SMMU and early Eternity Engine (mis-)behaved via a menu option
+    under Eternity Options or via comp_mushroom configuration option.
+  
+### Doom 2 PWADs with more than 32 maps are supported
+
+  In case there's MAP33, game will load it and subsequent maps after MAP 30 is 
+  completed. Doom 2 cast of characters will be displayed after the final map
+  in the WAD is completed by the player. This can be switched off with
+  detect_finallevel configuration file parameter.
+  
+
+### Map to end game after is autodetected in Doom 2 PWADs
+  
+  In case Doom 2 PWAD does not replace all of the maps - for example a PWAD
+  that replaces MAP01 - MAP11 and ends with a text screen that it replaces 
+  with DeHackEd to explain that player's mission has been acomplished. In this
+  scenario Tartar will display Doom2 cast of characters screen after that
+  and will not load MAP12 automatically. This can be switched off with
+  detect_finallevel configuration file parameter.
+
+### More relaxed graphic resources checks
+  
+  - Texture definition checks are more relaxed and Tartar would log the errors 
+    it detects rather than quit immediately; related error messages are now 
+    also more friendly.
+  - Upon encountering textures with missing patches or sprites with no 
+    rotations when loading wads Tartar would no longer immediately 
+    quit or crash.
+  - {DEV} Non-power-of-2 wide texutes are now fully loaded and displayed.
+  - {DEV} If missing patches are referenced from texture definition no error 
+    message is recorded and transparent columns are produced instead.
+
+### Demo handling improvements
+
+  If expected demo lump is missing or is of zero size Tartar will not attempt
+  playing it, rather than going into indetermined state.
+
+  New command line argument -nodemo has been added for the player to suppress 
+  demo playback if it's found to be choppy or jittery for particular WADs.
+
+### Maps with more that 32k sides or lines are supported
+
+  Maps with more that 32k sides or lines no longer crash the game
+  (e.g. Eviternity Dehydration or Imperator can be loaded).
+
+### Graceful handling of loading errors
+
+  When loading a map that Tartar would not be able to handle it drops to 
+  console showing an error message rather than crashing. 
+  
+  {DEV} Similarly, when saved game is loaded that needs WAD files 
+  that are not loaded Tartar will not go into undetermined state but will 
+  rather drop to console showing an error message.
+
+### {DEV} Being blocked by a wall does not prevent specials from triggering
+
+  MBF, SMMU and Eternity Engine behaviour was that in case when a wall or
+  another object prevented player from moving, line specials they may have 
+  nevertheless had crossed wouldn't have beeen checked. An example of this 
+  can be found at the exit of Strain MAP07, where vanilla Doom 2 allows 
+  the player to exit, while MBF does not.
+  
+  Tartar introduces an experimental workaround for this, which is enabled
+  by default and can be controlled with comp_everyline configuration file
+  property and via Eternity Options menu. When workaround is on Tartar
+  will check each and every line accessible to the player for special 
+  effect trigger, not stopping at the first triggered line, nor aborting
+  when a wall or another object is detected that blocks player from 
+  moving.
+  
+
+### Other WAD compatibility changes
+
+  - WADs with SS_/FF_START but no corresponding S_/F_START lumps are supported.
+  - Maps with empty REJECT lumps no longer crash the game.
+  - Tartar can load PWAD-s as IWAD-s. For example CHEX.WAD will be loaded.
+    as IWAD regardless whether it is a PWAD or IWAD version and when players
+    specify an IWAD of their choice with -iwad command line argument Tartar
+    will not enforce that it is in fact a PWAD.
+    
+
+## Gameplay changes and bugfixes
 
 ### Option for blood re-coloring including "intelligent" mode has bee added
   
@@ -523,27 +948,137 @@ look in a graphical editor had they loaded them.
   is also not affected by this option. 
   
   Additionally "intelligent" mode is available (Auto in options) that:
-  - changes all blood color to green in Chex 
+  - changes all blood color to green in Chex, except player bleed yellow
   - re-colors Doom Barons and Knights blood color to green
   - re-colors Doom Cacodemons blood color to blue
-  - retains default color for all other splats (which is red, unless replaced by pwads)
+  - Doom players bleed yellow when invincible
+  - re-colors Doom blood color to green for [Roaches]
+    (https://www.doomworld.com/idgames/combos/ludicrous)
+  - retains default color for all other splats (which is red, 
+    unless replaced by PWADs)
 
   CVAR mon_bloodcolor controls blood re-coloring, values are 0-4, 0 corresponds
   to no re-coloring, 4 - to auto (intelligent mode). The configuration file option
   is bloodcolor.
 
-## New CVARS
+### DeHackEd-related bugfixes
+
+  - BEX-style string definitions without a space before equals sign 
+    are correctly processed
+  - Mnemonically-specified flags (and flags2) for Things (bits and bits2
+    attributes to be exact) in DEH patches are now applied
+  - DEH attributes parsing for Things uses non-case-sensitive comparison and 
+    tolerates both presense of spaces and absence of spaces before equals sign
+  - Encountering unknown codepointer name in DEH file no longer causes a crash
+
+### Additional Bugfixes
+  - Automap shows correct level time, not an arbitrary value like before
+  - Arms numbers panel in status bar use correct background 
+  - {DEV} Automap no longer displays spaghetti monster for maps with "bigger
+    than normal" extents due to scaling boundaries not computed correctly.
+  - {DEV} Very far objects no longer "bleed" into player's view due to atan 
+    computation overflows.
+    
+## Extras
+
+### InstaDoom filters
+
+  WADs found in FILTERS directory will be loaded automatically upon startup 
+  with all but PLAYPAL, COLORMAP and TRANMAP stripped from them. 
+  These have special treatment and will not override the lumps from WADs 
+  players may have loaded with -file command line argument, but will be 
+  available for on the fly palette cycling with pal_next. 
+  
+  Use pal_list console command to print the list of loaded palette WADs 
+  (both player-specified and extras). 
+
+![playpals.png](playpals.png)
+  _PLAYPAL from GINZA.WAD and WALDEN.WAD cycled while in a HacX map_
+
+### InstaDoom selfie-stick
+
+  If both SELFIE.WAD and SELFIE.DEH from Instadoom are found side by side
+  with TARTAR.EXE, players are given selfie stick and can switch to it for
+  selfie-making with bindable selfie CCMD. 
+  
+  All other weapons, including plasma gun and BFG, retain their normal 
+  behaviour. Press Fire to take selfies with the stick out; taking selfie 
+  makes 3 screenshot and does not require ammo; to remove the stick just 
+  switch to any other weapon.
+
+### Custom intermission maps
+
+  [Doom 2 intermission maps](https://www.doomworld.com/forum/topic/129057) 
+  by @olyacim are supported, however as the author is still working on the
+  version with patch-based graphics (as opposed to the PNG-based versions
+  for GZDoom he has released) the support was only tested with experimental 
+  modified WAD-s @olyacim has kindly shared. 
+  
+  If one of the intermission maps WAD-s is found side by side with TARTAR.EXE
+  and no PWAD-s are loaded, intermission screens will use images by @olyacim 
+  with blood splats and "you are here" arrow. Secert maps use standard DOOM2
+  INTERPIC as background for intermission screens and background animations are
+  not implemented.
+  
+  If any PWAD is loaded standard INTERPIC is used for all maps; newly 
+  introduced -wimaps command line switch can be used to force custom 
+  intermissions to be used even with PWAD-s. Running Tartar with -noload 
+  command line argument will prevent loading of custom intermisson map WAD-s.
+  
+![d2intmap.png](d2intmap.png)
+  _4 out of 5 levels of DOOM II 2nd "episode" conquered_
+
+  The following PWAD-s will be auto-loaded if found by Tartar:
+  
+  - INTMAPD2.WAD - used with DOOM2.WAD IWAD; is also a dependency for
+                   the helper WAD for LONGTREK (A Long Trek Back Home)
+                   included with Tartar distribution.
+  - INTMAPEV.WAD - used with TNT.WAD IWAD
+  - INTMAPPL.WAD - used with PLUTONIA.WAD IWAD  
+  - INTMAPNR.WAD - auto-loaded but not used on its own. Contains graphics for
+                   No Rest for The Living (NERVE.WAD) and is dependent by
+                   the helper WAD for NERVE included with Tartar distribution.
+
+
+## New CVARS, CCMDS and configuration parameters
 
 This section lists all the new console variables introduced in Tartar.
 
- - v_hires        - renderer resolution 
- - v_scale_hi     - scale renderer output to higher resolution
- - v_scale_aspect - scale renderer output to 4:3 aspect ratio
- - v_page_flip    - video mode with page flipping
- - v_show_fps     - show FPS counter
- - r_fauxtrans    - enable "checkered" translucency
- - r_watertrans   - enable translucent deep water
- - i_ticwait      - wait for new tick before video/audio updates
- - smooth_turning - enable mouse turning smoothing
- - mon_bloodcolor - monster bloor re-coloring
+ - v_hires           - renderer resolution 
+ - v_scale_hi        - scale renderer output to higher resolution
+ - v_scale_aspect    - scale renderer output to 4:3 aspect ratio
+ - v_page_flip       - video mode with page flipping
+ - v_show_fps        - show FPS counter
+ - r_fauxtrans       - enable "checkered" translucency
+ - r_watertrans      - enable translucent deep water
+ - i_ticwait         - wait for new tick before video/audio updates
+ - smooth_turning    - enable mouse turning smoothing
+ - mon_bloodcolor    - monster bloor re-coloring
+ - pal_curr          - number currently used palette 
+ - pal_next          - switch to the next loaded palette
+ - pal_list          - list all loaded palettes in the console
+ - pal_prev          - switch to the previous loaded palette
+ - screenshot        - take a screenshot
+ - selfie            - produce the selfie stick
+ - comp_mushroom     - enable MBF "mushroom explosion" code pointer refs
+ - comp_everyline    - enable exhaustive checks for crossed line specials 
+ - comp_clighting    - enable SMMU colored lightling
+ - r_norender1       - suppress sky rendering 
+ - r_norender2       - only render a single screen column
+ - r_norender3       - switches sprites rendering on or off 
+ - r_norender4       - no action
+ - r_norender5       - suppress top textures rendering
+ - r_norender6       - suppress mid textures rendering
+ - r_norender7       - suppress bottom textures rendering
+ - r_norender8       - suppress masked textures rendering
+ - r_norender9       - suppress floor and ceiling rendering
+ - r_norender0       - toggle rendering on/off 
+ - debugcolumn       - dump column rendering debug info
+  
+ - detect_finallevel - end the game after final level of PWAD, not after MAP30
  
+ - -nodemo           - don't load demos
+ - -wimaps           - force custom intermissions even when PWAD-s are loaded
+ - -norender         - enable rendering aids
+ - -fixes            - location to searh for WAD-s to auto-load 
+ - -tape             - single helper WAD to autoload
