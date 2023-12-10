@@ -44,6 +44,14 @@
 #include "w_wad.h"
 #include "m_argv.h"
 
+#define EXTRA_STATES_INDEX(extra) ( (extra == EXTRA_JUMP || extra == EXTRA_SELFIE) ? 1 : 0 )
+#define INIT_EXTRA_STATES(extra) { int idx = EXTRA_STATES_INDEX(extra); \
+  if(idx && states2[idx] == states) \
+    { \
+      memcpy(states2[idx] = malloc(sizeof(states)), &states, sizeof(states)); \
+      memcpy(weaponinfo2[idx] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo)); \
+    } \
+}
 
 #define plyr (&players[consoleplayer])     /* the console player */
 
@@ -265,11 +273,7 @@ int Ex_DetectAndLoadSelfie()
   sprintf(filestr, "%sselfie.wad", D_DoomExeDir());
   if(stat(filestr, &sbuf)) return 0;
 
-  if(states2[0] == states2[1])
-    {
-      memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
-      memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
-    }
+  INIT_EXTRA_STATES(EXTRA_SELFIE);
   if(W_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
   // another hack - we just happen to know that selfie overrides BFG sprites
   for(i = 0 ; i < NUMSTATES ; i += 1)
@@ -294,11 +298,7 @@ int Ex_DetectAndLoadJumpwad()
   sprintf(filestr, "%sjumpwad.wad", D_DoomExeDir());
   if(stat(filestr, &sbuf)) return 0;
   
-  if(states2[0] == states2[1])    
-    {
-      memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
-      memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
-    }
+  INIT_EXTRA_STATES(EXTRA_JUMP);
   if(W_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {
@@ -362,8 +362,12 @@ int Ex_DetectAndLoadWiMaps()
 
 void Ex_DetectAndLoadExtras(void)
 {
-  //HACK: loading selfie.wad _after_ jumpwad.wad for a purpose
-  if(Ex_DetectAndLoadFilters() + Ex_DetectAndLoadJumpwad() + Ex_DetectAndLoadSelfie() + Ex_DetectAndLoadWiMaps())
+  int loaded = 0, total = 0;
+  MARK_EXTRA_LOADED(EXTRA_FILTERS, total += loaded = Ex_DetectAndLoadFilters());
+  MARK_EXTRA_LOADED(EXTRA_JUMP, total += loaded = Ex_DetectAndLoadJumpwad());
+  MARK_EXTRA_LOADED(EXTRA_SELFIE, total += loaded = Ex_DetectAndLoadSelfie());
+  MARK_EXTRA_LOADED(EXTRA_WIMAPS, total += loaded = Ex_DetectAndLoadWiMaps());
+  if(total)
     D_ReInitWadfiles();
 }
 

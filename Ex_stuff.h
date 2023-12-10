@@ -66,6 +66,7 @@ void Ex_ResetExtraStatus();
 
 #define IS_EXTRA_LOADED(extra) (extra_status[extra])
 #define MARK_EXTRA_LOADED(extra, trueornot) { extra_status[extra] = trueornot; }
+
 #define EXTRA_STATES_TABLE(extra) ((extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? states2[1] : states2[0])
 #define EXTRA_WEAPONS_TABLE(extra) ((extra == EXTRA_SELFIE || extra == EXTRA_JUMP) ? weaponinfo2[1] : weaponinfo2[0])
 #define EXTRA_ACTOR_STATES(actor) ((actor->intflags & MIF_STATE2) ? states2[1] : states2[0])
