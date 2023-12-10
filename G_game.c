@@ -450,7 +450,7 @@ void G_BuildTiccmd(ticcmd_t* cmd)
 	 dclicks = 0;
       }
       else
-	 dclicktime = 0;
+         dclicktime = 0;              
    }
    else if((dclicktime += ticdup) > 20)
    {
@@ -493,14 +493,20 @@ void G_BuildTiccmd(ticcmd_t* cmd)
    // this is most important in smoothing movement
    if(smooth_turning)
    {
-      static int oldmousex=0, mousex2;
-      static int oldmousey=0, mousey2;
+      static int mousex1=0, mousex2=0, mousex3=0, mousex4=0;
+      static int mousey1=0, mousey2=0, mousey3=0, mousey4=0;
 
-      mousex2 = tmousex; mousey2 = tmousey;
-      tmousex = (tmousex + oldmousex)/2;        // average
-      oldmousex = mousex2;
-      tmousey = (tmousey + oldmousey)/2;        // average
-      oldmousey = mousey2;
+      mousex1 = tmousex; 
+      tmousex = (mousex1 + mousex2 + mousex3 + mousex4) >>2;        // average
+      mousex4 = mousex3;
+      mousex3 = mousex2;
+      mousex2 = mousex1;
+
+      mousey1 = tmousey;
+      tmousey = (mousey1 + mousey2 + mousey3 + mousey4) >>2;        // average
+      mousey4 = mousey3;
+      mousey3 = mousey2;
+      mousey2 = mousey1;
    }
 
    if(mlook && invert_mouse)
@@ -529,8 +535,16 @@ void G_BuildTiccmd(ticcmd_t* cmd)
 
    if(strafe)
       side += tmousex*2;
-   else
-      cmd->angleturn -= tmousex*0x8;
+   else {
+      int turnfactor = tmousex < 0 ? -tmousex : tmousex;
+      int turnamount = 0;
+      if(!(turnfactor & ~0xff)) turnamount = tmousex << 3;
+      else if(!(turnfactor & ~0x3ff)) turnamount = tmousex << 2;
+      else if(!(turnfactor & ~0xfff)) turnamount = tmousex << 1;
+      else turnamount = (tmousex < 0 ? - (turnfactor & 0x1fff) : (turnfactor & 0x1fff));      
+      cmd->angleturn -= turnamount;
+   }
+
 
    if(forward > MAXPLMOVE)
       forward = MAXPLMOVE;
