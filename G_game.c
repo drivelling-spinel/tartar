@@ -495,18 +495,23 @@ void G_BuildTiccmd(ticcmd_t* cmd)
    {
       static int mousex1=0, mousex2=0, mousex3=0, mousex4=0;
       static int mousey1=0, mousey2=0, mousey3=0, mousey4=0;
+      static int smousex=0, smousey=0;
 
-      mousex1 = tmousex; 
-      tmousex = (mousex1 + mousex2 + mousex3 + mousex4) >>2;        // average
-      mousex4 = mousex3;
-      mousex3 = mousex2;
-      mousex2 = mousex1;
+      smousex -= mousex1;
+      mousex1 = mousex2; 
+      mousex2 = mousex3;
+      mousex3 = mousex4;
+      mousex4 = tmousex >> 2;
+      smousex += mousex4;
+      tmousex = smousex;
 
-      mousey1 = tmousey;
-      tmousey = (mousey1 + mousey2 + mousey3 + mousey4) >>2;        // average
-      mousey4 = mousey3;
-      mousey3 = mousey2;
-      mousey2 = mousey1;
+      smousey -= mousey1;
+      mousey1 = mousey2;
+      mousey2 = mousey3;
+      mousey3 = mousey4;
+      mousey4 = tmousey >> 2;
+      smousey += mousey4;
+      tmousey = smousey;
    }
 
    if(mlook && invert_mouse)
@@ -536,13 +541,15 @@ void G_BuildTiccmd(ticcmd_t* cmd)
    if(strafe)
       side += tmousex*2;
    else {
-      int turnfactor = tmousex < 0 ? -tmousex : tmousex;
-      int turnamount = 0;
-      if(!(turnfactor & ~0xff)) turnamount = tmousex << 3;
-      else if(!(turnfactor & ~0x3ff)) turnamount = tmousex << 2;
-      else if(!(turnfactor & ~0xfff)) turnamount = tmousex << 1;
-      else turnamount = (tmousex < 0 ? - (turnfactor & 0x1fff) : (turnfactor & 0x1fff));      
-      cmd->angleturn -= turnamount;
+      int turndir = tmousex < 0;
+      int turnfactor = turndir ? -tmousex : tmousex;
+      int turnamount = turnfactor;
+      if(!(turnfactor & ~0xff)) turnamount = turnfactor << 3;
+      else if(!(turnfactor & ~0x3ff)) turnamount = turnfactor << 2;
+      else if(!(turnfactor & ~0xfff)) turnamount = turnfactor << 1;
+      else turnamount = turnfactor & 0x1fff;      
+      if(turndir) cmd->angleturn += turnamount;
+      else cmd->angleturn -= turnamount;     
    }
 
 
