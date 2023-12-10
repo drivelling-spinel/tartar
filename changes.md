@@ -90,11 +90,16 @@ made available as COD10SRC.ZIP.
   described in this section, and there is also a separate section of this 
   file with the list option combinations suitable for some specific cases.
 
-- Video, screenshots, renderer and graphics routines have been generalized
+- C Video, screenshots, renderer and graphics routines have been generalized
   All the routines that supported high resolution modes (i.e. 640x400 resolution
   in addition to 320x200) have been updated to support any resolution that
   is a power of 2 multiple of 320x200. In practical terms this means 1280x800
-  is now supported, but e.g. 2560x1600 could in theory work as well. 
+  is now supported, but in theory C functions could work with e.g. 2560x1600
+  as well. 
+
+  This is **not true** for Assembler functions, which have only been provided
+  for the newly introduced 1280x800 renderer resolution. So adding new hi-res
+  modes is sadly not just a matter of extending available configuration options. 
 
 - Renderer resolution option has been added
   Player can choose to render to 320x200, 640x400 and 1280x800
@@ -105,6 +110,9 @@ made available as COD10SRC.ZIP.
               with black bars on top and bottom
   - 1280x800  rendered image will be output into 1280x1024 resolution
               with black bars on top and bottom
+
+  The following CVAR values are supported for selecting resolution v_hires: 0, 1, 2.
+  The same can be setup with hires configuration file option.
 
 - Option for scaling to higher resolution has been added
   If activated the following scaling will be performed:
@@ -128,6 +136,9 @@ made available as COD10SRC.ZIP.
   larger size screen buffer, and thus more memory than with scaling off
   at the same renderer resolution.
 
+  CVAR to enable/disable scaling is v_scale_hi or with scale_to_hires
+  option in the configuration file.
+
 - Option for scaling to a 4:3 resolition has been added
   
   If activated without scaling to higher resolution being on:
@@ -139,6 +150,16 @@ made available as COD10SRC.ZIP.
               into 1280x1024 with black bars on top and bottom
               more narrow than when compared to 1280x800 image 
               
+  No interpolation or filtering is performed while scaling.
+  In fact scaling is performed by simply outputting some of the screen
+  buffer lines twice. I.e. without scaling to higher resolution
+  on some of the lines pixels will be drawn as 1x2 blocks of the same
+  color. With scaling to higher resolution, on the same lines pixels
+  will be drawn as 2x3 blocks of the same colors, rather then 2x2 
+  blocks as on other lines.
+
+  CVAR controlling this is v_scale_aspect, and this can be also set
+  with scale_aspect option of the configuration file.
 
 - Screenshot functions respect video scaling options
   Saving a screenshot will result in the same image as being output to the screen,
@@ -168,6 +189,11 @@ made available as COD10SRC.ZIP.
   v_show_fps CVAR and show_fps configuration file option to switch FPS 
   output on or off.  
 
+  If FPS counter is on, Tartar will also display current video settings
+  (including actual mode that was configured) after they have been changed, 
+  or for a few seconds after new level is started or saved game is loaded.
+  These will also be shown in game only.
+
 - Timed demo benchmarks have been removed from Video options menu 
   On one hand author has never been able to get them working, on the other
   these were referring to the benchmark scores tied to a certain set of 
@@ -176,11 +202,11 @@ made available as COD10SRC.ZIP.
   command line arguments should still be possible. 
 
 - Command line options from MBF 2.0.4 have been added
-  -nolfb   avoid using LFB modes with VESA routines 
-  -nopm    avoid using PM VESA functions
-  -safe    try the most compatible settings for video card
-  -asmp6   choose P6-specific assembler optimized memory copy code 
-           regardless of the detected CPU family
+  - -nolfb   avoid using LFB modes with VESA routines 
+  - -nopm    avoid using PM VESA functions
+  - -safe    try the most compatible settings for video card
+  - -asmp6   choose P6-specific assembler optimized memory copy code 
+             regardless of the detected CPU family
 
 - Option to stretch skies is now persisted in configuration file
   Configuration file option stretchsky has been added to store it.
@@ -191,9 +217,12 @@ made available as COD10SRC.ZIP.
   depending on the number of line being drawn. This results in 50%
   translucency effect when used with intended equipment, e.g. a CRT
   VGA display at high enough resolution (1280x1024 would do).
-  [checkers.png] is a photo demonstrating the resulting
-  effect. Column and span rendering functions have been provided 
-  as well functions for rendering sprites with translated colors and
+
+  ![checkers.png]
+  _Photo demonstrating the resulting effect_
+  
+  Column and span rendering functions have been provided as well 
+  as functions for rendering sprites with translated colors and
   for particles. 
   
   One limitation is that translucency is not "additive", which means 
@@ -201,8 +230,11 @@ made available as COD10SRC.ZIP.
   and will block them. Also, in addition to applying this to all 
   objects in game for which general transparency applies, code applies 
   this to fuzz-ed objects, like Specter monster or player with invisibility 
-  powerup. See [comptran.png] for comparison of no transparency, 
-  tranmap-based general transparency and "checkered" transparency.  
+  powerup. 
+  
+  ![comptran.png] 
+  _comparison of no transparency, tranmap-based general transparency 
+  and "checkered" transparency_  
   
   To use this mode first enable general translucency in the option
   menus, and then either set r_fauxtrans CVAR or change faux_translucency
@@ -217,6 +249,66 @@ made available as COD10SRC.ZIP.
   water_translucency option in the configuration file, both of which are 
   off by default. This will also only work if general translucency is  
   enabled in options.  
+
+## Recommended video options for common use cases
+
+### 1. Classic 320x200
+
+Player has authentic retro or otherwise performance sensitive hardware,
+or interest in classic vanilla/BOOM/MBF experience.
+
+- Renderer resolution - 320x200
+- Scale to higher resolution - No
+- Aspect ratio to scale to - Original
+
+320x200 resolution will be configured by Tartar.
+
+### 2. Classic MBF hires
+
+Player has access to slightly more powerful hardware including and a 
+CRT display and videocard that supports 640x400
+
+- Renderer resoltion - 640x400
+- Scale to higher resolution - No
+- Aspect ratio to scale to - Original
+
+640x400 resolution will be configured by Tartar.
+
+### 3. Classic MBF hires on a less compatilble computer
+
+Player has access to slightly more powerful hardware including and a 
+CRT display but their videocard only supports 640x480 and not 640x400
+
+- Renderer resoltion - 640x400
+- Scale to higher resolution - No
+- Aspect ratio to scale to - 4:3
+
+640x480 resolution will be configured by Tartar.
+
+### 4. Gaming system with an "classic" LCD monitor attached
+
+Player has a "classic" 1280x1024 display with 5:4 aspect ratio and
+hadrware that is fast enough and has enough memory to handle this 
+resolution.
+
+- Renderer resoltion - 1280x800
+- Scale to higher resolution - No
+- Aspect ratio to scale to - 4:3
+
+1280x1024 resolution will be configured by Tartar.
+
+### 5. Square pixel appreciation on a more modern system
+
+Player has a "classic" 1280x1024 display with 5:4 aspect ratio,
+hadrware that is fast enought and has enough memory to handle this 
+resolution, and an appreciation for sprites looking the same they would
+look in a graphical editor had they loaded them.
+
+- Renderer resoltion - 1280x800
+- Scale to higher resolution - No
+- Aspect ratio to scale to - Original
+
+1280x1024 resolution will be configured by Tartar.
 
 ## Experimental mouse changes
 
