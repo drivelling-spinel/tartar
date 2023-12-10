@@ -296,7 +296,7 @@ void I_RescanSounds(void)
   int i;  // killough 10/98: eliminate snd_c since we use default_snd_card now
 
   // Initialize external data (all sounds) at start, keep static.
-  //fputs("I_RescanSounds: Loading sound data",stdout); // killough 8/8/98 // GB 2014 added suffix
+  doom_printf("I_RescanSounds: Loading sound data"); // killough 8/8/98 // GB 2014 added suffix
 
   for (i=1; i<NUMSFX; i++) 
     if (!S_sfx[i].link)   // Load data from WAD file.

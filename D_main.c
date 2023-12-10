@@ -1317,7 +1317,6 @@ void D_SetGraphicsMode()
 
   // set graphics mode
   I_InitGraphics();
-  
   DEBUGMSG("done\n");
 
   // set up the console to display startup messages
@@ -1654,7 +1653,7 @@ void D_DoomMain(void)
 
   // init subsystems
   startupmsg("V_Init", "allocate screens.");    // killough 11/98: moved down to here
-  V_Init();
+  //V_Init(); - leaving the line above for "flavor"
 
   D_ProcessWadPreincludes(); // killough 10/98: add preincluded wads at the end
 

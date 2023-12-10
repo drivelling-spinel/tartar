@@ -793,7 +793,7 @@ static void I_InitGraphicsMode(void)
 	 }
 	 //vesa_mode_320x200=0; // debugging
   }
- 
+
   // HIGH RESOLUTION - 640x400 or 640x480
   if (RESULTING_SCALE && !in_hires)  
   {  // GB 2014: Used to just try mode 100h and then 101h, but intel graphics gives trouble if 100h was tried first.
@@ -899,11 +899,12 @@ static void I_InitGraphicsMode(void)
 		   vesa_set_displaystart(0,0,0);                                          // reset screen shake, even if fail.
 		}
      }
+
 	 // Setup LFB access if available:
 	 if (safeparm || nolfbparm || vesa_version<2) linear=false; else linear=mode_LFB; // LFB wanted? and supported?
  	 if (linear) {if (vesa_get_screen_base_addr(0)==1) linear=false;} // Get LFB base address, should be available
-     if (blackband &&  linear) vesa_clear_pages_LFB   (2, BG_COLOR);       // may be garbage left in video memory, 
-     if (blackband && !linear) vesa_clear_pages_banked(2, BG_COLOR);      // which will otherwise be visible in the bars.
+     if (blackband &&  linear) vesa_clear_pages_LFB   (page_flip ? 2 : 1, BG_COLOR);       // may be garbage left in video memory, 
+     if (blackband && !linear) vesa_clear_pages_banked(page_flip ? 2 : 1, BG_COLOR);      // which will otherwise be visible in the bars.
   }
 
   // CONTINUE TO PREPARE GENERAL STUFF
