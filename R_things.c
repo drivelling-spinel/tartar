@@ -348,7 +348,7 @@ void R_DrawMaskedColumn(column_t *column)
 
   while (column->topdelta != 0xff)
     {
-      if(column->topdelta < tall)
+      if(column->topdelta <= tall)
         tall += column->topdelta;
       else
         tall = column->topdelta;
@@ -383,57 +383,66 @@ void R_DrawMaskedColumn(column_t *column)
 
 void R_DrawMaskedColumn2(column_t *column)
 {
-  column_t *warp = column;
-  int topscreen, bottomscreen, tall = 0, total = 0;
+  column_t *wrap = column;
+  int topscreen, bottomscreen, tall = 0;
   fixed_t basetexturemid = dc_texturemid;
   fixed_t th = (mceilingclip[dc_x] + 1) << FRACBITS;
- 
-  if(warp->topdelta == 0xff)
+
+  if(column->topdelta == 0xff)
     return;
 
+    
+  while(sprtopscreen + spryscale * dc_texheight < th)
+    {
+      sprtopscreen += spryscale * dc_texheight;
+    }
+    
   while(sprtopscreen > th)
     {
       sprtopscreen -= spryscale * dc_texheight;
-      total -= dc_texheight;
-    } 
+    }
 
   dc_texheight = 0; // killough 11/98
 
   do
     {
-      if(column->topdelta < tall)
+      int len = column->length;
+      
+      if(column->topdelta <= tall)
         tall += column->topdelta;
       else
         tall = column->topdelta;
       // calculate unclipped screen coordinates for post
-      topscreen = sprtopscreen + spryscale*tall;
-      bottomscreen = topscreen + spryscale*column->length;
-
-      // Here's where "sparkles" come in -- killough:
-      dc_yl = (topscreen + FRACUNIT - 1)>>FRACBITS;
-      dc_yh = (bottomscreen-1)>>FRACBITS;
-
-      if (dc_yh >= mfloorclip[dc_x])
-        dc_yh = mfloorclip[dc_x]-1;
-
-      if (dc_yl <= mceilingclip[dc_x])
-        dc_yl = mceilingclip[dc_x]+1;
-
-      // killough 3/2/98, 3/27/98: Failsafe against overflow/crash:
-      if (dc_yl <= dc_yh && dc_yh < viewheight )
+      
+      if(len > 0)
         {
-          dc_source = (byte *) column + 3;
-          dc_texturemid = basetexturemid - ((total + tall)<<FRACBITS);
-          // Drawn by either R_DrawColumn
-          //  or (SHADOW) R_DrawFuzzColumn.
-          colfunc();
+          topscreen = sprtopscreen + spryscale*tall;
+          bottomscreen = topscreen + spryscale*len;
+
+          // Here's where "sparkles" come in -- killough:
+          dc_yl = (topscreen + FRACUNIT - 1)>>FRACBITS;
+          dc_yh = (bottomscreen-1)>>FRACBITS;
+
+          if (dc_yh >= mfloorclip[dc_x])
+            dc_yh = mfloorclip[dc_x]-1;
+
+          if (dc_yl <= mceilingclip[dc_x])
+            dc_yl = mceilingclip[dc_x]+1;
+          // killough 3/2/98, 3/27/98: Failsafe against overflow/crash:
+          if (dc_yl <= dc_yh && dc_yh < viewheight )
+            {
+              dc_source = (byte *) column + 3;
+              dc_texturemid = FixedMul(centeryfrac - topscreen, dc_iscale);
+              // Drawn by either R_DrawColumn
+              //  or (SHADOW) R_DrawFuzzColumn.
+              colfunc();
+            }
         }
-      column = (column_t *)((byte *) column + column->length + 4);
+      column = (column_t *)((byte *) column + len + 4);
       if(column->topdelta == 0xff) 
         {
-          column = warp;
+          column = wrap;
           sprtopscreen = bottomscreen;
-          total += tall;
           tall = 0;
         }
     } while(dc_yh < mfloorclip[dc_x] - 1);

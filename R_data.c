@@ -166,7 +166,7 @@ static void R_DrawColumnInCache(const column_t *patch, byte *cache,
     {
       int count, position;
 
-      if(patch->topdelta < tall)
+      if(patch->topdelta <= tall)
         tall += patch->topdelta;
       else
         tall = patch->topdelta;
@@ -233,7 +233,7 @@ static void R_GenerateComposite(int texnum)
           // killough 1/25/98, 4/9/98: Fix medusa bug.
           R_DrawColumnInCache((column_t*)((byte*) realpatch + LONG(cofs[x])),
                               block + colofs[x], patch->originy,
-			                        texture->height, marks + x*texture->height);
+                              texture->height, marks + x*texture->height);
     }
 
   // killough 4/9/98: Next, convert multipatched columns into true columns,
@@ -316,7 +316,7 @@ static void R_GenerateComposite(int texnum)
           {
             unsigned len = 0, tran = 0;        // killough 12/98
 
-            while (j < stop && tran < 254 && tran < tall - 1 && !mark[j]) // skip transparent cells
+            while (j < stop && tran + llen < 254 && tran + llen < tall && !mark[j]) // skip transparent cells
               j++, tran++;
 
             if (j >= stop)           // if at end of column
@@ -336,7 +336,7 @@ static void R_GenerateComposite(int texnum)
             // killough 12/98:
             // Use 32-bit len counter, to support tall 1s multipatched textures
 
-            for (len = 0; j < stop && (len + tran <= 254)  && (len + tran < tall - 1) && mark[j]; j++)
+            for (len = 0; j < stop && len < 254  && (len + llen + tran < 254) && mark[j]; j++)
               len++;                    // count opaque cells
 
             col->topdelta = tran + llen;           // starting offset of post
@@ -527,9 +527,11 @@ byte *R_GetColumn(int tex, int col)
   return texturecomposite[tex] + ofs;
 }
 
+#define TALL_FRAC (255 << FRACBITS)
+
 int R_HasMultipatchColumns(int tex)
 {
-  return !!texturecomposite[tex] && textureheight[tex] > 255 && !comp[comp_talltex];
+  return (!!texturecomposite[tex]) && (textureheight[tex] > TALL_FRAC) && (!comp[comp_talltex]);
 }
 
 //
