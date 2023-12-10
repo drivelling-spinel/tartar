@@ -239,8 +239,6 @@ void R_RenderMaskedSegRange(drawseg_t *ds, int x1, int x2)
 #define HEIGHTBITS 12
 #define HEIGHTUNIT (1<<HEIGHTBITS)
 
-char * msgbuf[256];
-
 static void R_RenderSegLoop (void)
 {
   fixed_t  texturecolumn = 0;   // shut up compiler warning

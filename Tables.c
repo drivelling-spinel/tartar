@@ -44,13 +44,37 @@ rcsid[] = "$Id: tables.c,v 1.3 1998/05/03 22:58:48 killough Exp $";
 
 // killough 5/3/98: reformatted
 
+
+static byte SLOPESHIFT[] =
+{
+  3, //0000
+  2, //0001
+  1, //0010
+  1, //0011
+  0, //0100
+  0, //0101
+  0, //0110
+  0, //0111
+  0, //1000
+  0, //1001
+  0, //1010
+  0, //1011
+  1, //1100
+  1, //1101
+  2, //1110
+  3  //1111
+};
+
+
 int SlopeDiv(unsigned num, unsigned den)
 {
   unsigned ans;
+  byte sh = SLOPESHIFT[num >> 28];
 
   if (den < 512)
     return SLOPERANGE;
-  ans = (num<<3)/(den>>8);
+  
+  ans = (num<<sh)/(den>>8) << (3-sh);
   return ans <= SLOPERANGE ? ans : SLOPERANGE;
 }
 
