@@ -286,7 +286,7 @@ static void R_GenerateComposite(int texnum)
             memcpy((byte *) col + 3, source + col->topdelta, len);
             col = (column_t *)((byte *) col + len + 4); // next post
           }
-         
+        
         // peridot: tall patch can go on forever in chunks of 255 
         for (;j < texture->height;)  // now the tall part
           {
@@ -393,8 +393,11 @@ static void R_GenerateLookup(int texnum, int *const errors)
   // If texture is >= 256 tall, assume it's 1s, and hence it has
   // only one post per column. This avoids crashes while allowing
   // for arbitrarily tall multipatched 1s textures.
+  //
+  // peridot: allow for compositing of any texture that is >255 tall
 
-  if (texture->patchcount > 1 && texture->height < 256)
+  if ((comp[comp_talltex] && texture->height > 255)
+    || (texture->patchcount > 1 && texture->height < 256))
     {
       // killough 12/98: Warn about a common column construction bug
       unsigned limit = texture->height*3+3; // absolute column size limit
@@ -412,7 +415,7 @@ static void R_GenerateLookup(int texnum, int *const errors)
 	    x1 = 0;
 
 	  for (x = x1 ; x<x2 ; x++)
-	    if (count[x].patches > 1)        // Only multipatched columns
+	    if (count[x].patches > 1 || comp[comp_talltex])        // Only multipatched columns
 	      {
 		const column_t *col =
 		  (column_t*)((byte*) realpatch+LONG(cofs[x]));
@@ -456,7 +459,7 @@ static void R_GenerateLookup(int texnum, int *const errors)
             csize += 5;
           }
 
-        if (count[x].patches > 1)       // killough 4/9/98
+        if (count[x].patches > 1 || (height > 255 && comp[comp_talltex]))       // killough 4/9/98
           {
             // killough 1/25/98, 4/9/98:
             //
