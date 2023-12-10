@@ -298,7 +298,7 @@ CRT display and videocard that supports 640x400
 
 640x400 resolution will be configured by Tartar.
 
-### 3. Classic MBF hires on a less compatilble computer
+### 3. MBF hires on a less compatilble computer
 
 Player has access to slightly more powerful hardware including and a 
 CRT display but their videocard only supports 640x480 and not 640x400
@@ -326,7 +326,7 @@ resolution.
 ![usecase4.png](usecase4.png)
 
 
-### 5. Square pixel appreciation on a more modern system
+### 5. Square pixel appreciation on a "classic" LCD monitor
 
 Player has a "classic" 1280x1024 display with 5:4 aspect ratio,
 hadrware that is fast enought and has enough memory to handle this 
@@ -366,11 +366,117 @@ look in a graphical editor had they loaded them.
 
 ## System
 
-### Tartar always loads _eternity.wad_ as resource wad
+### _ETERNITY.WAD_ is always loaded as resource wad
 
+  SMMU and Eternity look for a resource WAD file to automatically load and that
+  contains sprites, patches and sounds necessary for the source port using the
+  name of the executable of the port. So, provided ETERNITY.EXE is run, the 
+  name of the WAD file to load would be ETERNITY.WAD, but if player renames
+  ETERNITY.EXE to FOOBAR.EXE, the name of the WAD file would be FOOBAR.WAD.
+  Tartar always looks for WAD file named ETERNITY.WAD. 
   
+  This allows players to, for example, rename TARTAR.EXE to DOOM.EXE and use a
+  front end like DOOM-IT to load maps and mods with it.  
+
+### Configuration and other files are looked for in the directory of the .EXE file  
+
+  Tartar looks for files necessary for it to run in the directory where .EXE sits,
+  not in the directory that was current when the .EXE was run. I.e. imagine this 
+  directory structure:
+  
+  C:\GAMES\DOOM2\  
+  ...  
+  C:\GAMES\DOOM2\DOOM2.WAD  
+  ...  
+  C:\GAMES\DOOM2\TARTAR\  
+  C:\GAMES\DOOM2\TARTAR.CFG  
+  C:\GAMES\DOOM2\TARTAR.EXE  
+
+  If player runs the game from C:\GAMES\DOOM2 using command TARTAR\TARTAR.EXE
+  Tartar will load TARTAR.CFG and other needed files from C:\GAMES\TARTAR.
+  The following files will be picked up from that directory.
+
+  - TARTAR.CFG
+  - ETERNITY.WAD
+  - SETUP.CFG
+  - KEYS.CSC 
+  - MBF_D2GM.IBK
+
+  This does not in any way change the way WADS (iwads, or pwads) and DEH/BEX
+  patches are looked for or loaded.
+
+### Startup uses system code from MBF 2.0.4 
+  
+  That startup code has been merged with the one from MBF 2.0.4 probably
+  means better more stable behaviour when run under Windows NT family OS.
+  Author has not tested this however.
+
+### Changing game speed with i_gamespeed CVAR requires a restart
+
+  Scaling of timer tics can still be controlled with i_gamespeed CVAR
+  and configuration option realtic_clock_rate. However after MBF 2.0.4
+  system code has moved in, it is no longer updated in realtime,
+  and requires a restart of the game to be picked up.
+   
+### CVAR to avoid excessive video and sound updates has been introduced
+
+  Eternity performs video and audio update every game loop, regardless 
+  of whether new events to process are available, or next game tic 
+  has started as per system timer. Tartar's author is not aware of the
+  rationale for this, but seeing absurdly high frame rates in lower 
+  resolution, has introduced new CVAR i_ticwait and configuration option
+  update_after_tic, that will limit the updates only to situations,
+  when new events are available or new tick has been registered 
+  by the system timer (the latter is to keep menus and game UI running 
+  even if there's no game or demo happenning).
+
+  Author's preference is to run with the CVAR set to on, and little 
+  testing that has been made has not shown any effect on the gameplay,
+  aside from the desired capping of FPS with 35 + ~35/2 (giving around
+  50 fps while playing), however to maintain compatibilty with Eternity
+  both CVAR and configuration option are off by default.
 
 ## WADS compatibility
+
+### Chex Quest can be loaded without dependency on any Doom assets
+
+  CHEX.WAD is considered among the names of the IWADs that Tartar 
+  supports. Moreover it will be loaded even if a PWAD version is provided.
+  In addition to loading CHEX.WAD without requiring any Doom IWAD,
+  the following compatibility changes have been made in Tartar
+  (as per the recommendation in readme file of Simon Howard's  
+  [DEH patch](https://www.doomworld.com/idgames/utils/exe_edit/patches/chexdeh) )
+
+  - Game will stop after level 5
+  - Monsters will not produce drops 
+  - No episode selection menu is presented at the start of the game 
+  - Cheat codes will always take playe to Episode 1 level, 
+    regardless of the episode number typed
+  
+  It is recommended that CHEX.DEH by Simon Howard is loaded with CHEX.WAD,
+  for better experience, as Tartar does not have any string or monster 
+  modifications for Chex internally.
+
+  Implementation-wise Chex Quest is treated as a mission pack to registered
+  version of the game.
+
+### Classic Caverns of Darkness TC for DOS can be loaded 
+
+  As Tartar is based on the original COD engine source code there's 
+  little surprise it can load the TC itself. Unlike COD.EXE however
+  Tartar needs to be explicitly told to load COD.WAD and CODLEV.WAD, 
+  e.g. like this:  
+
+  TARTAR.EXE -file COD.WAD CODLEV.WAD
+
+  If both wads named COD.WAD and CODLEV.WAD are found on the list of 
+  wads to load, Tartar will **not** load ETERNITY.WAD and instead 
+  load COD.WAD as resource wad in its place. It will also activate
+  support for Caverns-related features, including special handling
+  of line types 274 and 275 which are different from SMMU and Eternity.
+
+  Implementation-wise Caverns of Darkness is treated as a mission pack
+  to commercial version of the game.
 
 ## Gameplay changes
 
@@ -403,7 +509,7 @@ This section lists all the new console variables introduced in Tartar.
  - v_show_fps     - show FPS counter
  - r_fauxtrans    - enable "checkered" translucency
  - r_watertrans   - enable translucent deep water
- 
+ - i_ticwait      - wait for new tick before video/audio updates
  - smooth_turning - enable mouse turning smoothing
  - mon_bloodcolor - monster bloor re-coloring
  
