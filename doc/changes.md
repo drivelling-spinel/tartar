@@ -478,6 +478,35 @@ look in a graphical editor had they loaded them.
   Implementation-wise Caverns of Darkness is treated as a mission pack
   to commercial version of the game.
 
+### Assets from the cancelled Eternity TC can be loaded
+
+  Tartar source code retains features that were originally planned for the 
+  [cancelled TC](https://www.doomworld.com/forum/topic/37111) from 
+  Eternity 2.39 developer beta 5 it is based on. These include:
+
+  - enabling Eternity mode if special lump is found in a loaded WAD
+  - functioning Grenade Launcher weapon and ammo pickups for it
+  - sphere pickup giving complete invisibility bonus to the player 
+  - destructable tree obstacle objects
+  - medieval themed props and decorations
+  - dwarf spellcaster helper character
+  - dwarf alter ego and golem summonned characters code
+  - clerics, Minotaur, flying Mastermind and Cyberdemon guard monster code
+  - static human guard, dwarf and Cyberdemon guard actors for dialog scenes
+  - projectiles and effects for spells and magic attacks
+  - fully operational dialog engine
+  - "declarative" terrain and environment effects 
+    (e.g. spashes from water or fog in swampy areas)
+
+  Additionally the following features have been restored in Tartar:
+
+  - medieval themed set of sound effects for the TC is now recognized 
+  - Eternity ambient sound library (commented out by Murdoch)
+    has been restored and made coexist with COD ambinet sounds
+  - line types 274 and 275 have been restored to beahve as expected 
+    SMMU or Eternity, and only exhibit COD behavior if COD mission 
+    pack is detected by Tartar
+
 ## Gameplay changes
 
 ### Option for blood re-coloring including "intelligent" mode has bee added
