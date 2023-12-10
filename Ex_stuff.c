@@ -43,7 +43,6 @@
 #include "z_zone.h"
 #include "w_wad.h"
 #include "m_argv.h"
-#include "ex_wad.h"
 
 
 #define plyr (&players[consoleplayer])     /* the console player */
@@ -89,7 +88,7 @@ int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
       assert(strlen(Ex_tape()) < sizeof(tapestr));
       strcat(tapestr, Ex_tape());
       AddDefaultExtension(tapestr, ".wad");
-      if(!Ex_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
+      if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
     }
   
   while(*filenames && autoload)
@@ -100,7 +99,7 @@ int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
       sprintf(tapestr, "%stape/%s", D_DoomExeDir(), filestr);
       AddDefaultExtension(tapestr, ".wad");
       if (!stat(tapestr, &sbuf)) 
-        if(!Ex_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
+        if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
       filenames++;
     }
     
@@ -179,7 +178,7 @@ int Ex_DetectAndLoadFilters()
 
   for(i = 0 ; i < numfilters ; i += 1)
     {
-      if(!Ex_AddExtraFile(fnames[i], EXTRA_FILTERS))
+      if(!W_AddExtraFile(fnames[i], EXTRA_FILTERS))
         {
           if(!loaded) ExtractFileBase(fnames[i], filestr, sizeof(filestr) -1);
           loaded += 1;
@@ -275,7 +274,7 @@ int Ex_DetectAndLoadSelfie()
       memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
       memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
     }
-  if(Ex_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
+  if(W_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
   // another hack - we just happen to know that selfie overrides BFG sprites
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {
@@ -304,7 +303,7 @@ int Ex_DetectAndLoadJumpwad()
       memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
       memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
     }
-  if(Ex_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
+  if(W_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {
       if(states2[1][i].sprite == SPR_PISF) states2[1][i].sprite = SPR_JMPF;
@@ -328,7 +327,7 @@ int Ex_LoadWiMapsWad(const char *fname)
 
   *filestr = 0;
   sprintf(filestr, "%s%s", D_DoomExeDir(), fname);
-  if(!stat(filestr, &sbuf) && !Ex_AddExtraFile(filestr, EXTRA_WIMAPS)) 
+  if(!stat(filestr, &sbuf) && !W_AddExtraFile(filestr, EXTRA_WIMAPS)) 
     {
       C_Printf("Intermission maps loaded from %s\n", fname);
       return 1;
@@ -660,11 +659,3 @@ void Ex_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
   D_NewWadLumps(handle, extra);
 }
 
-int Ex_AddExtraFile(char *filename, extra_file_t extra)
-{
-  W_AddPredefines();
-  if(W_AddFile(filename, extra)) return true;
-  W_InitResources();              // reinit lump lookups etc
-  Ex_SetDefaultDynamicLumpNames();
-  return false;
-}

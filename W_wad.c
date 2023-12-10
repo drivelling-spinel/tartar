@@ -143,7 +143,7 @@ void NormalizeSlashes(char *str)
 //
 
         // sf: made int
-int W_AddFile(const char *name, const extra_file_t extra) // killough 1/31/98: static, const
+static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/31/98: static, const
 {
   wadinfo_t   header;
   lumpinfo_t* lump_p;
@@ -518,6 +518,15 @@ void W_InitMultipleFiles(char *const *filenames)
 int W_AddNewFile(char *filename)
 {
   if(W_AddFile(filename, EXTRA_NONE)) return true;
+  W_InitResources();              // reinit lump lookups etc
+  Ex_SetDefaultDynamicLumpNames();
+  return false;
+}
+
+int W_AddExtraFile(char *filename, extra_file_t extra)
+{
+  W_AddPredefines();
+  if(W_AddFile(filename, extra)) return true;
   W_InitResources();              // reinit lump lookups etc
   Ex_SetDefaultDynamicLumpNames();
   return false;

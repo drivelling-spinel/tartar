@@ -34,7 +34,4 @@ void Ex_DynamicLumpCoalesceProc(lumpinfo_t * lump, int oldnum, int newnum);
 void Ex_InitDynamicLumpNames();
 int Ex_SetDefaultDynamicLumpNames();
 
-int W_AddFile(const char *name, const extra_file_t extra);
-void W_InitResources();
-
 #endif

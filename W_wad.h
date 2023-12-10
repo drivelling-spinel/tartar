@@ -87,6 +87,7 @@ void W_InitMultipleFiles(char *const*filenames);
 
 // sf: add a new wad file after the game has already begun
 int W_AddNewFile(char *filename);
+int W_AddExtraFile(char *filename, extra_file_t extra);
 
 // killough 4/17/98: if W_CheckNumForName() called with only
 // one argument, pass ns_global as the default namespace
