@@ -8,6 +8,7 @@ machines for retro gaming.
 
 - Has better audio compatibility through updated Allegro library 
   from [MBF 2.0.4 Maintenance Release](doc/COPYRGHT/MBFUP204.TXT)
+  and plays 16 bit sound effects 
 - Supports additional screen resolutions of 640x480 and 1280x1024
 - Can load
     - classic Caverns of Darkness TC for DOS
@@ -19,7 +20,7 @@ machines for retro gaming.
 - Treats certain popular WADs as first class mods improving
   player's experience with them:
   - InstaDoom by @linguica
-  - Intemission Maps by @oliacym
+  - {DEV} Intemission Maps by @oliacym
   - No Rest for the Living via a "helper WAD"  
 - New display (game view) size for higher resolutions and 
   new translucency mode
@@ -28,9 +29,9 @@ machines for retro gaming.
   not all maps from Eviternity, Ancient Aliens and Sunlust can
   be played for example
 
-* Note that {DEV} glyphie above - features that are only available
-  in the experimental dev version are marked like that throughout 
-  the readme-s
+\* Note that {DEV} glyphie above - features that are only available
+   in the experimental dev version are marked like that throughout 
+   the readme-s
 
 ## Documentation
 
