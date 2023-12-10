@@ -103,7 +103,9 @@ int use_startmap = -1;     // default to -1 for asking in menu
 boolean devparm;           // started game with -devparm
 boolean nolfbparm;      // working -nolfb  GB 2014
 boolean nopmparm;       // working -nopm   GB 2014
+#ifdef CALT
 boolean noasmxparm;     // working -noasmx GB 2014
+#endif
 boolean asmp6parm;      // working -asmp6  GB 2014
 boolean safeparm;       // working -safe   GB 2014
 
@@ -151,6 +153,8 @@ char firstlevel[9] = "";
 //jff 4/19/98 list of standard IWAD names
 const char *const standard_iwads[]=
 {
+  "/chex.wad",
+  "/chex2.wad",
   "/doom2f.wad",
   "/doom2.wad",
   "/plutonia.wad",
@@ -581,6 +585,8 @@ void D_ListWads()
     C_Printf("%s\n",wadfiles[i]);
 }
 
+char basedir[257];
+
 // Return the path where the executable lies -- Lee Killough
 char *D_DoomExeDir(void)
 {
@@ -588,8 +594,17 @@ char *D_DoomExeDir(void)
   if (!base)        // cache multiple requests
     {
       size_t len = strlen(*myargv);
-      char *p = (base = malloc(len+1)) + len;
+      char *p
+#if 1
+      ;
+      basedir[0] = 0;
+      if ( len>256 ) len = 256;
+      p = (base = basedir) + len;
+      strncpy(basedir, *myargv, len);
+#else
+       = (base = malloc(len+1)) + len;
       strcpy(base,*myargv);
+#endif
       while (p > base && *p!='/' && *p!='\\')
 	*p--=0;
     }
@@ -647,7 +662,7 @@ static void CheckIWAD(const char *iwadname,
 
   // read IWAD header
   if (fread(&header, 1, sizeof header, fp) != sizeof header ||
-      header.identification[0] != 'I' || header.identification[1] != 'W' ||
+      /*header.identification[0] != 'I' ||*/ header.identification[1] != 'W' ||
       header.identification[2] != 'A' || header.identification[3] != 'D')
     I_Error("IWAD tag not present: %s\n",iwadname);
 
@@ -1261,7 +1276,9 @@ void D_DoomMain(void)
   if (!__djgpp_nearptr_enable()) {printf ("Failed trying to allocate DOS near pointers, try -safe parameter.\n"); return;}
   nolfbparm                   = M_CheckParm ("-nolfb");  // GB 2014
   nopmparm                    = M_CheckParm ("-nopm");   // GB 2014
+#ifdef CALT
   noasmxparm                  = M_CheckParm ("-noasmx"); // GB 2014
+#endif
   asmp6parm                   = M_CheckParm ("-asmp6");  // GB 2014  
 
   IdentifyVersion();

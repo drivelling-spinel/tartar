@@ -60,7 +60,9 @@ extern  boolean devparm;  // DEBUG: launched with -devparm
 
 extern  boolean nolfbparm;    // checkparm of -nolfb    GB 2014
 extern  boolean nopmparm;     // checkparm of -nopm     GB 2014
+#ifdef CALT
 extern  boolean noasmxparm;   // checkparm of -noasmx   GB 2014
+#endif
 extern  boolean asmp6parm;    // checkparm of -asmp6    GB 2014
 extern  boolean safeparm;     // checkparm of -safe     GB 2014
 

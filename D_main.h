@@ -42,7 +42,6 @@ void D_ReInitWadfiles();
 void D_NewWadLumps(int handle);
 boolean D_AddNewFile(char *s);
 
-
 char *D_DoomExeDir(void);       // killough 2/16/98: path to executable's dir
 char *D_DoomExeName(void);      // killough 10/98: executable's name
 void NormalizeSlashes(char *);  // killough 11/98

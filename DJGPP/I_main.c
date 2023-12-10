@@ -61,6 +61,13 @@ static void handler(int s)
 
 void I_Quit(void);
 
+void set_config_rel(const char * config)
+{
+  char filestr[256];
+  sprintf(filestr, "%s%s", D_DoomExeDir(), config);
+  set_config_file(filestr);
+}
+
 int main(int argc, char **argv)
 {
   myargc = argc;
@@ -81,7 +88,7 @@ int main(int argc, char **argv)
      loud SFX noise because the sound card is
      left in an unstable state.
   */
-  set_config_file("SETUP.CFG");
+  set_config_rel("SETUP.CFG");
   allegro_init();
   Z_Init();                  // 1/18/98 killough: start up memory stuff first
   atexit(I_Quit);

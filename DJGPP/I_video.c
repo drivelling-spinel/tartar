@@ -234,6 +234,7 @@ int use_vsync;     // killough 2/8/98: controls whether vsync is called
 int page_flip;     // killough 8/15/98: enables page flipping
 int hires;
 int show_fps;
+int scale_to_hires;
 
 int in_graphics_mode;
 int in_page_flip, in_hires, linear;
@@ -360,7 +361,7 @@ void I_FinishUpdate(void)
 
    // GB 2014, code to check if statusbar needs to be drawn (e.g. has anything changed, e.g. is dirty?): 
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
-   size = in_hires ? SCREENWIDTH*ymax*(4<<hires) : SCREENWIDTH*ymax;
+   size = in_hires ? (SCREENWIDTH<<hires)*(ymax<<hires) : SCREENWIDTH*ymax;
  
    if (in_page_flip)
       if (!in_hires && (current_mode<256)) // Transfer from system memory to planar 'mode X' video memory:
@@ -538,10 +539,10 @@ static void I_InitGraphicsMode(void)
   }
  
   // HIGH RESOLUTION - 640x400 or 640x480
-  if (hires && !in_hires)  
+  if ((hires + scale_to_hires) && !in_hires)  
   {  // GB 2014: Used to just try mode 100h and then 101h, but intel graphics gives trouble if 100h was tried first.
 	 if (vesa_version<1) {hiresfail=1;}
-         else if (hires == 2 && vesa_mode_1280x1024>0) 
+         else if ((hires + scale_to_hires) >= 2 && vesa_mode_1280x1024>0) 
      {
         if (vesa_set_mode(vesa_mode_1280x1024)!=-1)      
 		{                       
@@ -552,7 +553,7 @@ static void I_InitGraphicsMode(void)
 	 	}
 		else hiresfail=1;
      }
-	 else if (vesa_mode_640x400>0) 
+         else if (vesa_mode_640x400>0) 
      {
         if (vesa_set_mode(vesa_mode_640x400)!=-1)      // Init 640x400
 		{                       
@@ -577,8 +578,9 @@ static void I_InitGraphicsMode(void)
 
      if (hiresfail)
      {
-		hires = 0;                    // Revert to lowres
-        MN_ErrorMsg(BADVID); // shows "video mode not supported" at the bottom
+        scale_to_hires = 0;
+        hires = 0;                    // Revert to lowres
+        MN_ErrorMsg(BADVID);          // shows "video mode not supported" at the bottom
         I_InitGraphicsMode();         // Start all over
         return;
      }
@@ -649,7 +651,7 @@ static void I_InitGraphicsMode(void)
   }
 
   // CONTINUE TO PREPARE GENERAL STUFF
-  if (!in_graphics_mode || hires!=in_hires) V_Init(); // required buffer size has changed
+  if (!in_graphics_mode || (hires && !in_hires)) V_Init(); // required buffer size has changed
   scroll_offset = 0;
   in_graphics_mode = 1;
   in_textmode = false;
@@ -728,7 +730,7 @@ void I_InitGraphics(void)
 
 
 char *hiresmodes[] =
-   {"no","yes", "with LCD mode"};
+   {"320x200","640x400", "1280x800"};
 
 
 VARIABLE_BOOLEAN(use_vsync, NULL,  yesno);
@@ -736,6 +738,8 @@ VARIABLE_BOOLEAN(use_vsync, NULL,  yesno);
 VARIABLE_BOOLEAN(show_fps, NULL,  yesno);
 
 VARIABLE_BOOLEAN(page_flip, NULL,  yesno);
+
+VARIABLE_BOOLEAN(scale_to_hires, NULL, yesno);
 
 VARIABLE_INT(hires, NULL, 0, 2, hiresmodes);
 
@@ -753,6 +757,12 @@ CONSOLE_VARIABLE(v_hires, hires, 0)
 {
   V_ResetMode();
 }
+
+CONSOLE_VARIABLE(v_scale_hi, scale_to_hires, 0)
+{
+  V_ResetMode();
+}
+
 
 CONSOLE_VARIABLE(v_show_fps, show_fps, 0) {}
 
@@ -776,6 +786,7 @@ void I_Video_AddCommands()
   C_AddCommand(v_page_flip);
   C_AddCommand(v_hires);
   C_AddCommand(v_show_fps);
+  C_AddCommand(v_scale_hi);
 }
 
 

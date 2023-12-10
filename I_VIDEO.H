@@ -60,6 +60,7 @@ extern int use_vsync;  // killough 2/8/98: controls whether vsync is called
 extern int page_flip; 
 extern int hires;  
 extern int lcdres;  
+extern int scale_to_hires;
 extern int disk_icon;  // killough 10/98
 extern int in_graphics_mode; // GB 2014: share
 extern boolean nolfbparm; // checkparm of -noLFB GB 2014

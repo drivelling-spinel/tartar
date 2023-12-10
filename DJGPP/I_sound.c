@@ -396,8 +396,11 @@ void I_InitSound(void)
   {
     if (gamemission==doom2 || gamemission==pack_tnt || gamemission==pack_plut) 
     {	
-	   if (load_ibk("MBF_D2GM.IBK",0)==0) fputs(" - MBF_D2GM.IBK loaded", stdout);
-	   else                               fputs(" - failed to load MBF_D2GM.IBK", stdout); 
+      char filestr[256];
+      sprintf(filestr, "%sMBF_D2GM.IBK", D_DoomExeDir());
+
+           if (load_ibk(filestr,0)==0) fprintf(stdout, " - %s loaded", filestr);
+           else                        fprintf(stdout, " - failed to load %s", filestr); 
        //load_ibk("drum.ibk",1);
     }	
   }

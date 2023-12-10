@@ -299,6 +299,7 @@ static char *loading_message;
 void V_DrawLoading()
 {
   int x, y;
+  int j;
   char *dest;
   int linelen;
 
@@ -318,7 +319,7 @@ void V_DrawLoading()
   // black line (unfilled)
   memset(dest+(linelen<<hires), 0, (90-linelen)<<hires);
 
-  if(hires)
+  for(j = 0 ; j < (1 << hires) - 1 ; j ++)
     {
       dest += SCREENWIDTH<<hires;
       memset(dest, 4, linelen<<hires);
@@ -449,11 +450,13 @@ void V_ClassicFPSDrawer()
     {           // sf: rewritten so you can distinguish between dots
       
       for(i=0 ; i<tics; i++)
-	s[(SCREENHEIGHT*2-1)*SCREENWIDTH*2 + i*4] =
-	  s[(SCREENHEIGHT*2-1)*SCREENWIDTH*2 + i*4 + 1] = 0xff;
+        s[((SCREENHEIGHT<<hires)-1)*(SCREENWIDTH<<hires) + i*(2<<hires)] =
+          s[((SCREENHEIGHT<<hires)-1)*(SCREENWIDTH<<hires) + i*(2<<hires) + 1] = 0xff;
       for(; i<20; i++)
-	s[(SCREENHEIGHT*2-1)*SCREENWIDTH*2 + i*4] =
-	  s[(SCREENHEIGHT*2-1)*SCREENWIDTH*2 + i*4 + 1] = 0x0;
+        s[((SCREENHEIGHT<<hires)-1)*(SCREENWIDTH<<hires) + i*(2<<hires)] =
+          s[((SCREENHEIGHT<<hires)-1)*(SCREENWIDTH<<hires) + i*(2<<hires) + 1] = 0x0;
+
+      //TODO: in case when hires > 1 may want wider dots
     }
   else
     {
@@ -463,7 +466,6 @@ void V_ClassicFPSDrawer()
 	s[(SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 }
-
 
 //
 // V_Init
@@ -476,7 +478,7 @@ void V_ClassicFPSDrawer()
 
 void V_Init(void)
 {
-  int size = (hires ? SCREENWIDTH*SCREENHEIGHT*16 : SCREENWIDTH*SCREENHEIGHT);
+  int size = (SCREENWIDTH<<hires)*(SCREENHEIGHT<<hires);
   static byte *s;
 
   if (s) free(s);
@@ -485,7 +487,9 @@ void V_Init(void)
   screens[3] = (screens[2] = (screens[1] = s = calloc(size,3)) + size) + size;
 
   screens[0] = calloc(size,1);
+
   memset(screens[0], 0, size);
+
 }
 
 /////////////////////////////
@@ -503,7 +507,8 @@ static void V_TileFlat(byte *back_src, byte *back_dest)
   V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
   
   if (hires)       // killough 11/98: hires support
-#if 0              // this tiles it in hires:
+#if 0              // this tiles it in hires
+                   // has not been adjusted to hires > 1
     for (y = 0 ; y < SCREENHEIGHT*2 ; src = ((++y & 63)<<6) + back_src)
       for (x = 0 ; x < SCREENWIDTH*2/64 ; x++)
 	{
@@ -514,15 +519,21 @@ static void V_TileFlat(byte *back_src, byte *back_dest)
   
   // while this pixel-doubles it
   for (y = 0 ; y < SCREENHEIGHT ; src = ((++y & 63)<<6) + back_src,
-	 back_dest += SCREENWIDTH*2)
+         back_dest += ((SCREENWIDTH<<hires)<<hires) - (SCREENWIDTH<<hires))
     for (x = 0 ; x < SCREENWIDTH/64 ; x++)
       {
 	int i = 63;
+        int q, w;
 	do
-	  back_dest[i*2] = back_dest[i*2+SCREENWIDTH*2] =
-	    back_dest[i*2+1] = back_dest[i*2+SCREENWIDTH*2+1] = src[i];
+          for(q = 0 ; q < (1 << hires) ; q ++ )
+            {
+              for(w = 0; w < (1 << hires) ; w ++ )
+                {
+                  back_dest[(i<<hires) + q + w * (SCREENWIDTH<<hires)] = src[i];
+                }
+            }
 	while (--i>=0);
-	back_dest += 128;
+        back_dest += (64 << hires);
       }
   else
     for (y = 0 ; y < SCREENHEIGHT ; src = ((++y & 63)<<6) + back_src)

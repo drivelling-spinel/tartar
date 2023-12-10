@@ -179,9 +179,15 @@ default_t defaults[] = {
     "1 to show frames per second and video mode on screen"
   },
   {
+    "scale_to_hires",
+    &scale_to_hires, NULL,
+    0, {0,1}, dt_number, ss_gen, wad_no,
+    "1 to scale renderer output to higer resolution"
+  },
+  {
     "hires",
     &hires, NULL,
-    0, {0,1,2}, dt_number, ss_gen, wad_no,
+    0, {0,2}, dt_number, ss_gen, wad_no,
     "1 to enable high resolution mode, 2 to try LCD mode"
   },
   {

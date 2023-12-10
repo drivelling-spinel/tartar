@@ -84,7 +84,7 @@ static char input_buffer[128] = "";
 
 // colours
 #define unselect_colour    CR_RED
-#define select_colour      CR_GRAY
+#define select_colour      CR_TAN
 #define var_colour         CR_GREEN
 
 enum
