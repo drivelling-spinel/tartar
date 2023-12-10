@@ -1003,6 +1003,7 @@ static void G_DoCompleted(void)
             gameaction = ga_victory;
             return;
          }
+         break;
       case 8:
 	 gameaction = ga_victory;
 	 return;
