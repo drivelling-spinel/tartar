@@ -1664,7 +1664,7 @@ void D_DoomMain(void)
 
 //  D_AddFile(NULL);           // killough 11/98
 
-  commercialWiMaps = (commercialWiMaps && !modifiedgame) || !M_CheckParm("-wimaps");
+  commercialWiMaps = (commercialWiMaps && !modifiedgame) || M_CheckParm("-wimaps");
 
   startupmsg("W_Init", "Init WADfiles.");
   W_InitMultipleFiles(wadfiles);

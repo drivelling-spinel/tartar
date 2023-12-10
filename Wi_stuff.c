@@ -226,46 +226,90 @@ static point_t lnodes[NUMEPISODES][NUMMAPS2] =
   
   // Doom 2 (commercial) "episodes"
   {
-    { 156, 168 }, // location of level 0 (CJ)
-    { 48, 154 },  // location of level 1 (CJ)
-    { 174, 95 },  // location of level 2 (CJ)
-    { 265, 75 },  // location of level 3 (CJ)
-    { 130, 48 },  // location of level 4 (CJ)
-    { 279, 23 },  // location of level 5 (CJ)
+    { 80, 170 },
+    { 170, 130 }, 
+    { 200, 100 }, 
+    { 260, 150 }, 
+    { 240, 70 }, 
+    { 196, 51 }, 
   },
-
+/*
+Spots
+{
+MAP01 80 170
+MAP02 170 130
+MAP03 200 100
+MAP04 260 150
+MAP05 240 70
+MAP06 196 51
+}
+*/
   {
-    { 156, 168 }, // location of level 0 (CJ)
-    { 48, 154 },  // location of level 1 (CJ)
-    { 174, 95 },  // location of level 2 (CJ)
-    { 265, 75 },  // location of level 3 (CJ)
-    { 279, 23 },  // location of level 5 (CJ)
+    { 70, 150 },
+    { 160, 140 }, 
+    { 260, 150 }, 
+    { 260, 100 }, 
+    { 200, 60 }, 
   },
-  
+/*
+Spots
+{
+MAP07 70 150
+MAP08 160 140
+MAP09 260 150
+MAP10 260 100
+MAP11 200 60
+}
+*/  
   {
-    { 156, 168 }, // location of level 0 (CJ)
-    { 48, 154 },  // location of level 1 (CJ)
-    { 174, 95 },  // location of level 2 (CJ)
-    { 265, 75 },  // location of level 3 (CJ)
-    { 130, 48 },  // location of level 4 (CJ)
-    { 279, 23 },  // location of level 5 (CJ)
-    { 279, 23 },  // location of level 5 (CJ)
-    { 279, 23 },  // location of level 5 (CJ)
-    { 279, 23 },  // location of level 5 (CJ)
+    { 98, 158 },
+    { 170, 150 }, 
+    { 240, 130 }, 
+    { 250, 100 }, 
+    { 260, 70 }, 
+    { 210, 85 }, 
+    { 160, 60 }, 
+    { 120, 80 }, 
+    { 80, 80 }, 
   },
-  
+/*
+MAP12 98 158
+MAP13 170 150
+MAP14 240 130
+MAP15 250 100
+MAP16 260 70
+MAP17 210 85
+MAP18 160 60
+MAP19 120 80
+MAP20 80 80
+*/  
   {
-    { 156, 168 }, // location of level 0 (CJ)
-    { 48, 154 },  // location of level 1 (CJ)
-    { 174, 95 },  // location of level 2 (CJ)
-    { 265, 75 },  // location of level 3 (CJ)
-    { 130, 48 },  // location of level 4 (CJ)
-    { 279, 23 },  // location of level 5 (CJ)
-    { 156, 168 }, // location of level 0 (CJ)
-    { 156, 168 }, // location of level 0 (CJ)
-    { 156, 168 }, // location of level 0 (CJ)
-    { 156, 168 }, // location of level 0 (CJ)
+    { 277, 175 },
+    { 243, 134 }, 
+    { 192, 166 }, 
+    { 111, 163 }, 
+    { 37, 153 }, 
+    { 70, 123 }, 
+    { 158, 129 },
+    { 121, 85 },
+    { 191, 87 },
+    { 159, 67 },
   }
+/*
+Spots
+{
+MAP21 277 175
+MAP22 243 134
+MAP23 192 166
+MAP24 111 163
+MAP25 37 153
+MAP26 70 123
+MAP27 158 129
+MAP28 121 85
+MAP29 191 87
+MAP30 159 67
+}
+*/  
 };
 
 
@@ -646,7 +690,8 @@ static void WI_drawEL(void)
 //
 static void
 WI_drawOnLnode  // draw stuff at a location by episode/map#
-( int   n,
+( wbstartstruct_t* wbs,
+  int   n,
   patch_t*  c[] )
 {
   int   i;
@@ -958,10 +1003,10 @@ static void WI_unloadData(void)
   for (i=0 ; i<10 ; i++)
     Z_ChangeTag(num[i], PU_CACHE);
     
-  Z_ChangeTag(yah[0], PU_CACHE);
-  Z_ChangeTag(yah[1], PU_CACHE);
+  if(yah[0]) Z_ChangeTag(yah[0], PU_CACHE);
+  if(yah[1]) Z_ChangeTag(yah[1], PU_CACHE);
 
-  Z_ChangeTag(splat, PU_CACHE);
+  if(splat) Z_ChangeTag(splat, PU_CACHE);
 
   if (gamemode == commercial)
     {
@@ -1104,33 +1149,36 @@ static void WI_drawShowNextLoc(void)
 {
   int   i;
   int   last;
+  wbstartstruct_t * wbs2 = WI_CommercialWbs(wbs, 0);
 
   WI_slamBackground();
 
   // draw animated background
   WI_drawAnimatedBack(); 
 
-  if ( gamemode != commercial)
+  if (wbs2->epsd >= 0)
     {
-      if (wbs->epsd > 2)
+      if (wbs2->epsd > 2 && wbs2->epsd < COMMERCIAL_IDX)
         {
           WI_drawEL();  // "Entering..." if not E1 or E2 or E3
           return;
         }
   
-      last = (wbs->last == 8) ? wbs->next - 1 : wbs->last;
+      last = wbs2->last;
+      if(wbs2->epsd < COMMERCIAL_IDX && wbs2->last == 8) last = wbs2->next - 1;
+      if(wbs2->epsd >= COMMERCIAL_IDX) last = wbs2->next - 1;
 
       // draw a splat on taken cities.
       for (i=0 ; i<=last ; i++)
-        WI_drawOnLnode(i, &splat);
+        WI_drawOnLnode(wbs2, i, &splat);
 
       // splat the secret level?
-      if (wbs->didsecret)
-        WI_drawOnLnode(8, &splat);
+      if (wbs2->didsecret && gamemode != commercial)
+        WI_drawOnLnode(wbs2, 8, &splat);
 
       // draw flashing ptr
       if (snl_pointeron)
-        WI_drawOnLnode(wbs->next, yah); 
+        WI_drawOnLnode(wbs2, wbs2->next, yah); 
     }
 
   // draws which level you are entering..
@@ -1233,7 +1281,8 @@ static void WI_updateDeathmatchStats(void)
   int   j;
     
   boolean stillticking;
-  
+  wbstartstruct_t * wbs2 = WI_CommercialWbs(wbs, 0);
+
   WI_updateAnimatedBack();
   
   if (acceleratestage && dm_state != 4)  // still ticking
@@ -1311,7 +1360,7 @@ static void WI_updateDeathmatchStats(void)
           {   
             S_StartSound(0, sfx_slop);
 
-            if ( gamemode == commercial)
+            if ( wbs2->epsd < 0 )
               WI_initNoState();
             else
               WI_initShowNextLoc();
@@ -1482,6 +1531,7 @@ static void WI_updateNetgameStats(void)
   int   fsum;
     
   boolean stillticking;
+  wbstartstruct_t * wbs2 = WI_CommercialWbs(wbs, 0);
 
   WI_updateAnimatedBack();
 
@@ -1621,7 +1671,7 @@ static void WI_updateNetgameStats(void)
               if (acceleratestage)
                 {
                   S_StartSound(0, sfx_sgcock);
-                  if ( gamemode == commercial )
+                  if ( wbs2->epsd < 0 )
                     WI_initNoState();
                   else
                     WI_initShowNextLoc();
@@ -1729,6 +1779,8 @@ static void WI_initStats(void)
 //
 static void WI_updateStats(void)
 {
+  wbstartstruct_t * wbs2 = WI_CommercialWbs(wbs, 0);
+
   WI_updateAnimatedBack();
 
   if (acceleratestage && sp_state != 10)
@@ -1826,7 +1878,7 @@ static void WI_updateStats(void)
                 {
                   S_StartSound(0, sfx_sgcock);
 
-                  if (gamemode == commercial)
+                  if (wbs2->epsd < 0)
                     WI_initNoState();
                   else
                     WI_initShowNextLoc();
@@ -2031,13 +2083,13 @@ static void WI_loadData(void)
   Z_Free(lnames);
 
   // you are here
-  yah[0] = W_CacheLumpName("WIURH0", PU_STATIC);
+  yah[0] = W_CheckNumForName("WIURH0") >= 0 ? W_CacheLumpName("WIURH0", PU_STATIC) : NULL;
 
   // you are here (alt.)
-  yah[1] = W_CacheLumpName("WIURH1", PU_STATIC);
+  yah[1] = W_CheckNumForName("WIURH1") >= 0 ? W_CacheLumpName("WIURH1", PU_STATIC) : NULL;
 
   // splat
-  splat = W_CacheLumpName("WISPLAT", PU_STATIC); 
+  splat = W_CheckNumForName("WISPLAT") >= 0 ? W_CacheLumpName("WISPLAT", PU_STATIC) : NULL; 
 
   if (gamemode == commercial)
     {
