@@ -74,6 +74,8 @@ typedef enum {
   pack_plut,    // Plutonia pack
   chex,         // Chex Quest
   cod,          // Caverns of Darkness
+  hacx_reg,     // HACX registered
+  hacx_sw,      // HACX shareware
   none
 } GameMission_t;
 

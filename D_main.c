@@ -153,6 +153,8 @@ char firstlevel[9] = "";
 //jff 4/19/98 list of standard IWAD names
 const char *const standard_iwads[]=
 {
+  "/hacxsw.wad",
+  "/hacx.wad",
   "/chex.wad",
   "/doom2f.wad",
   "/doom2.wad",
@@ -160,6 +162,10 @@ const char *const standard_iwads[]=
   "/tnt.wad",
   "/doom.wad",
   "/doom1.wad",
+  "/freedo~2.wad",
+  "/freedo~1.wad",
+  "/tpd190~1.wad",
+  "/freedm.wad"
 };
 static const int nstandard_iwads = sizeof standard_iwads/sizeof*standard_iwads;
 
@@ -288,7 +294,7 @@ void D_Display (void)
 
   // clean up border stuff
   if (gamestate != oldgamestate && gamestate != GS_LEVEL)
-    I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
+    I_ResetPalette();
 
   oldgamestate = wipegamestate = gamestate;
 
@@ -675,7 +681,7 @@ static void CheckIWAD(const char *iwadname,
 		      boolean *hassec)
 {
   FILE *fp = fopen(iwadname, "rb");
-  int ud, rg, sw, cm, sc, tnt, plut;
+  int ud, rg, sw, cm, sc, tnt, plut, hacx;
   filelump_t lump;
   wadinfo_t header;
   const char *n = lump.name;
@@ -703,7 +709,8 @@ static void CheckIWAD(const char *iwadname,
     *n=='M' && n[1]=='A' && n[2]=='P' && !n[5] ?
       ++cm, sc += n[3]=='3' && (n[4]=='1' || n[4]=='2') :
     *n=='C' && n[1]=='A' && n[2]=='V' && !n[7] ? ++tnt :
-    *n=='M' && n[1]=='C' && !n[3] && ++plut;
+    *n=='M' && n[1]=='C' && !n[3] ? ++plut :
+    *n=='H' && n[1]=='A' && n[2]=='C' && n[3]=='X' && n[4]=='-' && ++hacx;
 
   fclose(fp);
 
@@ -713,6 +720,7 @@ static void CheckIWAD(const char *iwadname,
     cm >= 30 ? (*gmission = tnt >= 4 ? pack_tnt :
 		plut >= 8 ? pack_plut : doom2,
 		*hassec = sc >= 2, commercial) :
+    hacx ? (*gmission = cm <= 5 ? hacx_sw : hacx_reg , *hassec = sc > 0 , commercial) :
     ud >= 9 ? retail :
     rg >= 18 ? registered :
     sw >= 9 ? shareware :
@@ -987,6 +995,14 @@ void IdentifyVersion (void)
 	    case pack_plut:
 	      game_name = "Final DOOM: The Plutonia Experiment version";
 	      break;
+
+            case hacx_reg:
+              game_name = "HACX Registered version";
+              break;
+
+            case hacx_sw:
+              game_name = "HACX Shareware version";
+              break;
 
 	    case doom2:
 	    default:
@@ -1712,12 +1728,6 @@ void D_DoomMain(void)
   startupmsg("D_AutoExecScripts", "Executing console scripts.");
   D_AutoExecScripts();
 
-  if(devparm)   // we wait if in devparm so the user can see the messages
-    {
-      printf("devparm: press a key..\n");
-      getchar();
-    }
-  
   //////////////////////////////////////////////////////////////////////
   //
   // Must be in Graphics mode by now!

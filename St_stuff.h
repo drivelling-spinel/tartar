@@ -84,6 +84,9 @@ extern int sts_always_red;// status numbers do not change colors
 extern int sts_pct_always_gray;// status percents do not change colors
 extern int sts_traditional_keys;  // display keys the traditional way
 
+extern int st_palette;    // exporting current palette to handle dynamic updates
+
+
 // Number of status faces.
 #define ST_NUMPAINFACES         5
 #define ST_NUMSTRAIGHTFACES     3
@@ -99,6 +102,7 @@ extern int sts_traditional_keys;  // display keys the traditional way
           (ST_FACESTRIDE*ST_NUMPAINFACES+ST_NUMEXTRAFACES)
 
 extern patch_t *default_faces[ST_NUMFACES];
+
 
 #endif
 

@@ -337,8 +337,24 @@ void P_ClearLevelVars()
      info_music = levelmapname;
   }
   else
+  {
      info_nextlevel = "";
+     if(gamemode == commercial)
+     {
+         switch(gamemission) {
+         case hacx_reg:
+             if(gamemap == 20) info_endofgame = "true";
+             break;
 
+         case hacx_sw:
+             if(gamemap == 5) info_endofgame = "true";
+             break;
+
+         default:
+             if(gamemap == 30) info_endofgame = "true";
+         }
+     }
+  }
   // haleyjd: always empty unless set by user
   info_nextsecret = "";
   

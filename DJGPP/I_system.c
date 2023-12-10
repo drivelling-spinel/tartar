@@ -263,7 +263,7 @@ void I_Error(const char *error, ...) // killough 3/20/98: add const
       va_end(argptr);
     }
 
-  if (!has_exited)    // If it hasn't exited yet, exit now -- killough
+  if (!has_exited && !devparm)    // If it hasn't exited yet, exit now -- killough
     {
       has_exited=1;   // Prevent infinitely recursive exits -- killough
       exit(-1);

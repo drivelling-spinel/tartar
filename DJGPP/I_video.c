@@ -857,7 +857,7 @@ static void I_InitGraphicsMode(void)
   in_hires = RESULTING_SCALE;
   setsizeneeded = true;
   //if (!safeparm) I_InitDiskFlash(); // Initialize disk icon
-  I_SetPalette(W_CacheLumpName("PLAYPAL",PU_CACHE));
+  I_ResetPalette();
   modeswitched=1; 
   if (current_mode==0x12) sprintf(mode_string,"%sMODE:X SIZE:%dx%d LFB:%s CPU:%d VBE:%d",  safestring,               screen_w, screen_h, linear ? "true" : "false", cpu_family, vesa_version);  
   else                    sprintf(mode_string,"%sMODE:%xh SIZE:%dx%d LFB:%s CPU:%d VBE:%d",safestring, current_mode, screen_w, screen_h, linear ? "true" : "false", cpu_family, vesa_version); 

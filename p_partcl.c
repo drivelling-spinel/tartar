@@ -82,7 +82,7 @@ void P_InitParticleEffects(void)
    byte *palette;
    struct particleColorList *pc = particleColors;
 
-   palette = W_CacheLumpName("PLAYPAL", PU_STATIC);
+   palette = W_CacheDynamicLumpName(DYNA_PLAYPAL, PU_STATIC);
 
    // match particle colors to best fit and write back to
    // static variables

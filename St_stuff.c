@@ -182,9 +182,6 @@ rcsid[] = "$Id: st_stuff.c,v 1.46 1998/05/06 16:05:40 jim Exp $";
 // ST_Start() has just been called
 static boolean st_firsttime;
 
-// lump number for PLAYPAL
-static int lu_palette;
-
 // used for timing
 static unsigned int st_clock;
 
@@ -603,7 +600,7 @@ void ST_Ticker(void)
   st_oldhealth = plyr->health;
 }
 
-static int st_palette = 0;
+extern int st_palette = 0;
 
 void ST_doPaletteStuff(void)
 {
@@ -645,11 +642,7 @@ void ST_doPaletteStuff(void)
   if (palette != st_palette)
     {
       st_palette = palette;
-      // SoM 3/12/2002: another line MSVC++ didn't like
-      //pal = W_CacheLumpNum(lu_palette, PU_CACHE)+palette*768;
-      pal = W_CacheLumpNum(lu_palette, PU_CACHE);
-      pal += palette*768;
-      I_SetPalette (pal);
+      I_ResetPalette();
     }
 }
 
@@ -835,7 +828,6 @@ void ST_CacheFaces(patch_t **faces, char *facename)
 
 void ST_loadData(void)
 {
-  lu_palette = W_GetNumForName ("PLAYPAL");
   ST_loadGraphics();
 }
 
@@ -1078,7 +1070,8 @@ void ST_Stop(void)
 {
   if (st_stopped)
     return;
-  I_SetPalette (W_CacheLumpNum (lu_palette, PU_CACHE));
+  st_palette = -1;
+  I_SetPalette (W_CacheDynamicLumpName(DYNA_PLAYPAL, PU_CACHE));
   st_stopped = true;
 }
 

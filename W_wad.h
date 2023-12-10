@@ -88,6 +88,9 @@ void W_InitMultipleFiles(char *const*filenames);
 // sf: add a new wad file after the game has already begun
 int W_AddNewFile(char *filename);
 
+// load a specialy treated wad file that if game detects it 
+int W_AddExtraFile(char *filename);
+
 // killough 4/17/98: if W_CheckNumForName() called with only
 // one argument, pass ns_global as the default namespace
 
@@ -113,6 +116,13 @@ void I_BeginRead(void), I_EndRead(void); // killough 10/98
 extern void WritePredefinedLumpWad(const char *filename); // jff 5/6/98
 
 extern int iwadhandle;
+
+typedef enum {
+  DYNA_PLAYPAL
+} dyna_lumpname_t;
+
+void * W_CacheDynamicLumpName(dyna_lumpname_t name, int tag);
+
 #endif
 
 //----------------------------------------------------------------------------

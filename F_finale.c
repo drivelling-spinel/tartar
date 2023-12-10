@@ -281,7 +281,7 @@ void F_Ticker(void)
 	    // you must press a button to continue in Doom 2
 	    // haleyjd: allow cast calls after arbitrary maps
 	 next_level:
-	    if(gamemap == 30 || strcmp(info_endofgame, "false"))
+            if(strcmp(info_endofgame, "false"))
 	       F_StartCast(); // cast of Doom 2 characters
 	    else
 	       gameaction = ga_worlddone;  // next level, e.g. MAP07
@@ -420,6 +420,9 @@ void F_StartCast (void)
   castorder[17].name = NULL,        castorder[17].type = 0;
 
   wipegamestate = -1;         // force a screen wipe
+  gameaction = ga_nothing;
+  gamestate = GS_FINALE;
+  automapactive = false;
   castnum = 0;
   caststate = &states[mobjinfo[castorder[castnum].type].seestate];
   casttics = caststate->tics;

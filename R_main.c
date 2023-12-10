@@ -44,6 +44,8 @@ static const char rcsid[] = "$Id: r_main.c,v 1.13 1998/05/07 00:47:52 killough E
 #include "s_sound.h"
 #include "v_video.h"
 #include "w_wad.h"
+#include "c_io.h"
+#include "hu_stuff.h"
 
 // Fineangles in the SCREENWIDTH wide window.
 int fov=2048;   //sf: made an int from a #define
@@ -659,7 +661,7 @@ void R_HOMdrawer()
 void R_ResetTrans()
 {
   if (general_translucency)
-    R_InitTranMap(0);
+    R_ReInitTranMap(0);
 }
 
 //
@@ -686,10 +688,88 @@ VARIABLE_INT(screenSize, NULL,                  0, 8, NULL);
 VARIABLE_INT(zoom, NULL,                        0, 8192, NULL);
 VARIABLE_INT(usegamma, NULL,                    0, 4, NULL);
 
+VARIABLE_INT(playpal_wad, NULL, 0, MAXINT, NULL);
+
+CONSOLE_COMMAND(pal_next, 0)
+{
+    int next = playpal_wad + 1;
+    char msg[20];
+    *msg = 0;
+    if (playpal_wads_count <= 1) return;
+
+    if (next < 0 || next >= playpal_wads_count)
+      {
+        next = 0;    
+      }
+
+    playpal_wad = next;
+    R_ResetTrans();
+    I_ResetPalette();
+    sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
+    HU_PlayerMsg(msg);
+}
+
+CONSOLE_COMMAND(pal_prev, 0)
+{
+    int next = playpal_wad - 1;
+    char msg[20];
+    *msg = 0;
+    if (playpal_wads_count <= 1) return;
+
+    if (next < 0 || next >= playpal_wads_count)
+      {
+        next = playpal_wads_count - 1;    
+      }
+
+    playpal_wad = next;
+    R_ResetTrans();
+    I_ResetPalette();
+    sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
+    HU_PlayerMsg(msg);
+}
+
+CONSOLE_VARIABLE(pal_curr, playpal_wad, 0)
+{
+    int next = playpal_wad;
+    char msg[20];
+    *msg = 0;
+
+    if (playpal_wads_count <= 1)
+      {
+        playpal_wad = 0;
+        return;
+      }
+
+    if(next < 0 || next >= playpal_wads_count) {
+        next = default_playpal_wad;
+    }
+    if(next < 0) next = 0;
+
+    playpal_wad = next;
+    R_ResetTrans();
+    I_ResetPalette();
+    sprintf(msg, "%s Palette", dyna_playpal_wads[playpal_wad]);
+    HU_PlayerMsg(msg);
+}
+
+
+CONSOLE_COMMAND(pal_list, 0)
+{
+    int i;
+
+    C_Printf("PLAYPALs loaded:\n");
+    for(i = 0 ; i < playpal_wads_count ; i += 1)
+      {
+        C_Printf("%s %d:%s\n", i == playpal_wad ? "*" :
+          i == default_playpal_wad ? "@" : "  ", i, dyna_playpal_wads[i]);
+      }
+}
+
+
 CONSOLE_VARIABLE(gamma, usegamma, 0)
 {
         // change to new gamma val
-    I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
+    I_ResetPalette ();
 }
 CONSOLE_VARIABLE(lefthanded, lefthanded, 0) {}
 CONSOLE_VARIABLE(r_blockmap, r_blockmap, 0) {}
@@ -764,6 +844,11 @@ void R_AddCommands()
    C_AddCommand(gamma);
 
    C_AddCommand(p_dumphubs);
+
+   C_AddCommand(pal_curr);
+   C_AddCommand(pal_next);
+   C_AddCommand(pal_prev);
+   C_AddCommand(pal_list);
 }
 
 //----------------------------------------------------------------------------

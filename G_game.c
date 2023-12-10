@@ -1133,6 +1133,12 @@ static void G_DoCompleted(void)
 
 static void G_DoWorldDone(void)
 {
+   if(strcmp(info_endofgame, "false")) {
+      F_StartCast();
+      return;
+   }
+
+
    idmusnum = -1; //jff 3/17/98 allow new level's music to be loaded
    gamestate = GS_LEVEL;
    gamemap = wminfo.next+1;

@@ -2271,7 +2271,7 @@ void M_ScreenShot (void)
 	  // killough 4/18/98: make palette stay around
 	  // (PU_CACHE could cause crash)
 
-	  byte *pal = W_CacheLumpName ("PLAYPAL", PU_STATIC);
+          byte *pal = W_CacheDynamicLumpName (DYNA_PLAYPAL, PU_STATIC);
           byte *linear = screens[2];
           int scale = RESULTING_SCALE;
 

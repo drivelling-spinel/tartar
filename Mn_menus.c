@@ -397,7 +397,6 @@ menu_t menu_loadwad =
     {it_gap},
     {it_info,      FC_GOLD "load wad"},
     {it_variable,  "wad name",          "mn_wadname"},
-    {it_runcmd,    "select wad",        "mn_selectwad"},
     {it_gap},
     {it_runcmd,    "load wad",          "addfile %mn_wadname; starttitle"},
     {it_end},

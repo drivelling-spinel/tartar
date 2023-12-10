@@ -495,6 +495,7 @@ void HU_CoordHandler(struct textwidget_s *widget); // haleyjd
 void HU_VideomodeHandler(struct textwidget_s *widget); 
 void HU_VideomodeHandler2(struct textwidget_s *widget); 
 void HU_FpsCounterHandler(struct textwidget_s *widget); 
+void HU_PaletteHandler(struct textwidget_s *widget);
 
 //////////////////////////////////////////////////
 //

@@ -33,6 +33,7 @@ rcsid[] = "$Id: w_wad.c,v 1.20 1998/05/06 11:32:00 jim Exp $";
 #include <sys/stat.h>
 
 #include "c_io.h"
+#include "c_runcmd.h"
 #include "p_skin.h"
 #include "w_wad.h"
 
@@ -128,6 +129,105 @@ void NormalizeSlashes(char *str)
 // LUMP BASED ROUTINES.
 //
 
+
+// W_CacheDynamicLumpName
+// fetches a lump from an arbitrary loaded wad,
+// rather then using the latest one
+// uses a simple lookup table for actual lumpnum
+
+int playpal_wad;         
+int playpal_wads_count;  
+int default_playpal_wad; 
+int * dyna_playpal_nums;
+char ** dyna_playpal_wads;
+
+void W_InitDynamicLumpNames()
+{
+  default_playpal_wad = playpal_wad = -1;
+  playpal_wads_count = 0;
+  dyna_playpal_nums = 0;
+}
+
+
+int W_SetDefaultDynamicLumpNames(int optional)
+{
+  int was = playpal_wad;
+  if(!optional) playpal_wad = default_playpal_wad;
+  if(playpal_wad < 0 && playpal_wads_count > 0) playpal_wad = 0;
+  was = was != playpal_wad;
+
+  if(was)
+    {
+       char cmd[20];
+       *cmd = 0;
+       sprintf(cmd, "pal_curr=%d", playpal_wad);      
+       C_RunTextCmd(cmd);
+    }
+
+  return was;
+}
+
+
+void * W_CacheDynamicLumpName(dyna_lumpname_t name, int tag)
+{
+  // for now let's check that this is only called for PLAYPAL
+  assert(name == DYNA_PLAYPAL);
+
+  // if no wads detected with PLAYPAL just crash
+  if(playpal_wads_count <= 0 || playpal_wad < 0)
+    {
+      W_GetNumForName("PLAYPAL");
+    }
+
+  return W_CacheLumpNum(dyna_playpal_nums[playpal_wad], tag);
+}
+
+
+// TODO: unlike D_NewWadLumps this is a funciton that works
+// on a per-lump basis and checks for particular lump names
+// Currently processes only PLAYPAL lumps
+
+void W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, const int optional)
+{
+  char *tmpname = strcpy(malloc(strlen(wadname) + 1), wadname);
+  if(stricmp(lump->name, "PLAYPAL")) return;
+   
+  dyna_playpal_nums = realloc(dyna_playpal_nums, sizeof(int) * (playpal_wads_count + 1));
+  dyna_playpal_wads = realloc(dyna_playpal_wads, sizeof(char *) * (playpal_wads_count + 1));
+  if(optional)
+    {
+      dyna_playpal_wads[playpal_wads_count] = tmpname;
+      dyna_playpal_nums[playpal_wads_count++] = lumpnum;
+    }
+  else
+    {
+      int i;
+      for(i = playpal_wads_count ; i > default_playpal_wad + 1 ; i -= 1)
+        {
+          dyna_playpal_nums[i] = dyna_playpal_nums[i - 1];
+          dyna_playpal_wads[i] = dyna_playpal_wads[i - 1];
+        }
+      dyna_playpal_nums[++default_playpal_wad] = lumpnum;
+      dyna_playpal_wads[default_playpal_wad] = tmpname;
+      playpal_wads_count += 1;
+    }
+}
+
+void W_DynamicLumpCoalesceProc(lumpinfo_t * lump, int oldnum, int newnum)
+{
+  int i = 0;
+  if(stricmp(lump->name, "PLAYPAL")) return;
+
+  for(i = 0 ; i < playpal_wads_count ; i += 1)
+    {
+      if(dyna_playpal_nums[i] == oldnum)
+        {
+          dyna_playpal_nums[i] = newnum;
+          return;
+        }
+    }
+}
+
 //
 // W_AddFile
 // All files are optional, but at least one file must be
@@ -143,7 +243,7 @@ void NormalizeSlashes(char *str)
 void D_NewWadLumps(int handle);
 
         // sf: made int
-static int W_AddFile(const char *name) // killough 1/31/98: static, const
+static int W_AddFile(const char *name, const int optional) // killough 1/31/98: static, const
 {
   wadinfo_t   header;
   lumpinfo_t* lump_p;
@@ -155,6 +255,7 @@ static int W_AddFile(const char *name) // killough 1/31/98: static, const
   filelump_t  singleinfo;
   char        *filename = strcpy(malloc(strlen(name)+5), name);
   lumpinfo_t* newlumps;
+  char        basename[9];
 
   NormalizeSlashes(AddDefaultExtension(filename, ".wad"));  // killough 11/98
 
@@ -211,6 +312,9 @@ static int W_AddFile(const char *name) // killough 1/31/98: static, const
       numlumps += header.numlumps;
     }
 
+  memset(basename, 0, sizeof(basename));
+  ExtractFileBase(filename, basename);
+
   free(filename);           // killough 11/98
   
   // Fill in lumpinfo
@@ -222,6 +326,7 @@ static int W_AddFile(const char *name) // killough 1/31/98: static, const
   lump_p = newlumps;
   //&lumpinfo[startlump];
   
+  // TODO: as this port is ok with loading pwads as iwads the below may backfire
   if (!strncmp(header.identification,"IWAD",4))
     {                 // the iwad
       iwadhandle = handle;
@@ -237,6 +342,7 @@ static int W_AddFile(const char *name) // killough 1/31/98: static, const
       lump_p->data = lump_p->cache = NULL;         // killough 1/31/98
       lump_p->namespace = ns_global;              // killough 4/17/98
       strncpy (lump_p->name, fileinfo->name, 8);
+      W_DynamicLumpFilterProc(lump_p, i, basename, optional);
     }
   
   free(fileinfo2free);      // killough
@@ -309,6 +415,9 @@ static void W_CoalesceMarkedResource(const char *start_marker,
 	    }
 	  else
 	    {
+              //TODO: retaining dynamic lump switching is currently
+              // limited to lumps outside of markers 
+              W_DynamicLumpCoalesceProc(lump, i, num_unmarked);
 	      lumpinfo[num_unmarked] = lump;       // else move down THIS list
 	      num_unmarked++;
 	    }
@@ -477,6 +586,8 @@ void W_AddPredefines()
 
 void W_InitMultipleFiles(char *const *filenames)
 {
+  W_InitDynamicLumpNames();
+
   // killough 1/31/98: add predefined lumps first
 
         //sf : move predefine adding to a seperate function
@@ -484,18 +595,29 @@ void W_InitMultipleFiles(char *const *filenames)
 
   // open all the files, load headers, and count lumps
   while (*filenames)
-    W_AddFile(*filenames++);
+    W_AddFile(*filenames++, 0);
 
   if (!numlumps)
     I_Error ("W_InitFiles: no files found");
 
   W_InitResources();
+
+  W_SetDefaultDynamicLumpNames(0);
+}
+
+int W_AddExtraFile(char *filename)
+{
+  if(W_AddFile(filename, 1)) return true;
+  W_InitResources();              // reinit lump lookups etc
+  W_SetDefaultDynamicLumpNames(1);
+  return false;
 }
 
 int W_AddNewFile(char *filename)
 {
-  if(W_AddFile(filename)) return true;
+  if(W_AddFile(filename, 0)) return true;
   W_InitResources();              // reinit lump lookups etc
+  W_SetDefaultDynamicLumpNames(0);
   return false;
 }
 
@@ -586,6 +708,7 @@ long W_LumpCheckSum(int lumpnum)
   
   return checksum;
 }
+
 
 //----------------------------------------------------------------------------
 //
