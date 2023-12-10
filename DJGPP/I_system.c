@@ -78,6 +78,7 @@ int  I_GetTime_RealTime (void)
 
 // killough 4/13/98: Make clock rate adjustable by scale factor
 int realtic_clock_rate = 100;
+int update_after_tic;
 static long long I_GetTime_Scale = 1<<24;
 int I_GetTime_Scaled(void)
 {
@@ -314,12 +315,15 @@ void I_EndDoom(void)
 
 VARIABLE_BOOLEAN(leds_always_off, NULL,     yesno);
 VARIABLE_INT(realtic_clock_rate, NULL,  0, 500, NULL);
+VARIABLE_BOOLEAN(update_after_tic, NULL,     yesno);
 
 CONSOLE_VARIABLE(i_gamespeed, realtic_clock_rate, 0)
 {
   // do nothing for now - need a restart
   // ResetNet();         // reset the timers and stuff
 }
+
+CONSOLE_VARIABLE(i_ticwait, update_after_tic, 0) {}
 
 CONSOLE_VARIABLE(i_ledsoff, leds_always_off, 0)
 {
@@ -336,6 +340,7 @@ void I_AddCommands()
 {
   C_AddCommand(i_ledsoff);
   C_AddCommand(i_gamespeed);
+  C_AddCommand(i_ticwait);
   
   I_Video_AddCommands();
   I_Sound_AddCommands();

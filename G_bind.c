@@ -606,15 +606,14 @@ void G_LoadDefaults()
   byte *cfg_data;
   char temp[1024];
 
-  sprintf(temp, "%s/%s", D_DoomExeDir(), "keys.csc");
-  
-  cfg_file = strdup(temp);
-  
-  if(M_ReadFile(cfg_file, &cfg_data) <= 0)
+  sprintf(temp, "%s", "keys.csc");
+  if(M_ReadFile(temp, &cfg_data) <= 0)
   {
-      C_Printf("keys.csc not found, using defaults\n");
-      cfg_data = W_CacheLumpName("KEYDEFS", PU_STATIC);
+     sprintf(temp, "%s%s", D_DoomExeDir(), "keys.csc");
+     if(M_ReadFile(temp, &cfg_data) <= 0)
+        cfg_data = W_CacheLumpName("KEYDEFS", PU_STATIC);
   }
+  cfg_file = strdup(temp);
   
   C_RunScript(cfg_data);
 }

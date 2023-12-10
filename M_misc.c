@@ -76,6 +76,7 @@ extern int leds_always_off;            // killough 3/6/98
 extern int tran_filter_pct;            // killough 2/21/98
 extern int showMessages;
 extern int screenSize;
+extern int update_after_tic;
 
 extern char *chat_macros[], *wad_files[], *deh_files[];  // killough 10/98
 extern char *csc_files[];   // haleyjd: auto-loaded console scripts
@@ -208,6 +209,12 @@ default_t defaults[] = {
     &realtic_clock_rate, NULL,
     100, {10,1000}, dt_number, ss_gen, wad_no,
     "Percentage of normal speed (35 fps) realtic clock runs at"
+  },
+  {
+    "update_after_tic",
+    &update_after_tic, NULL,
+    0, {0,1}, dt_number, ss_gen, wad_no,
+    "Set to 1 to require at least 1 tic before updating audio/video"
   },
 #ifdef DJGPP
   { // killough 10/98
@@ -2230,6 +2237,7 @@ boolean WriteBMPfile(char *filename, byte *data, int width,
     }
   return I_EndRead(), true;       // killough 10/98
 }
+
 
 //
 // M_ScreenShot

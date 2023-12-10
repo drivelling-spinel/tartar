@@ -96,7 +96,7 @@ boolean         reboundpacket;
 doomdata_t      reboundstore;
 
 extern int  key_escape;                // phares
-
+extern int  update_after_tic;
 
 //
 //
@@ -784,7 +784,7 @@ boolean opensocket;
 
 extern boolean advancedemo;
 
-void RunGameTics (void)
+int RunGameTics (void)
 {
   int         i;
   int         lowtic;
@@ -793,6 +793,7 @@ void RunGameTics (void)
   int         availabletics;
   int         counts;
   int         numplaying;
+  int         ranticks;
   
   // get real tics            
   entertic = I_GetTime ()/ticdup;
@@ -875,7 +876,7 @@ void RunGameTics (void)
       G_Ticker ();
       gametic++;
       maketic++;
-      return;
+      return 1;
     }
 
   // sf: reorganised to stop doom locking up
@@ -892,7 +893,7 @@ void RunGameTics (void)
 	  D_ProcessEvents();
         }
       
-      return;
+      return 0;
     }
 
   opensocket_count = 0;
@@ -930,34 +931,41 @@ void RunGameTics (void)
 	    }
 	}
       NetUpdate ();   // check for new console commands
+      ranticks++;
     }
+
+    return ranticks;
 }
 
 void TryRunTics (void)
 {
   static int exittime = 0;
-  // gettime_realtime is used because the game speed can be changed
-  int realtics = I_GetTime_RealTime() - exittime;
-  int i;
+  int gotany = 0;
+  do
+  {
+    // gettime_realtime is used because the game speed can be changed
+    int realtics = gotany = I_GetTime_RealTime() - exittime;
+    int i;
 
-  exittime = I_GetTime_RealTime();  // save for next time
+    exittime = I_GetTime_RealTime();  // save for next time
 
-  // sf: run the menu and console regardless of 
-  // game time. to prevent lockups
+    // sf: run the menu and console regardless of 
+    // game time. to prevent lockups
 
-  I_StartTic ();        // run these here now to get keyboard
-  D_ProcessEvents ();   // input for console/menu
+    I_StartTic ();        // run these here now to get keyboard
+    D_ProcessEvents ();   // input for console/menu
 
-  for(i = 0; i<realtics; i++)   // run tics
-    {
-      // all independent tickers here
-      MN_Ticker ();
-      C_Ticker ();
-      V_FPSTicker();
-    }
+    for(i = 0; i<realtics; i++)   // run tics
+      {
+        // all independent tickers here
+        MN_Ticker ();
+        C_Ticker ();
+        V_FPSTicker();
+      }
 
         // run the game tickers
-  RunGameTics();
+    gotany += RunGameTics();
+  } while(update_after_tic && !gotany);
 }
 
 /////////////////////////////////////////////////////

@@ -568,10 +568,34 @@ void D_AddFile(char *file)
         // sf: allocate for +2 for safety
   if (numwadfiles+2 >= numwadfiles_alloc)
     wadfiles = realloc(wadfiles, (numwadfiles_alloc = numwadfiles_alloc ?
-				  numwadfiles_alloc * 2 : 8)*sizeof*wadfiles);
+                                  numwadfiles_alloc * 2 : 8)*sizeof(char*));
   wadfiles[numwadfiles] = strdup(file); //sf: always NULL at end
   wadfiles[numwadfiles+1] = NULL;
   numwadfiles++;
+}
+
+
+void D_InsertFile(char *file)
+{
+  char ** newfiles;
+  int newalloc;
+  newfiles = malloc((newalloc = numwadfiles_alloc ?
+                        numwadfiles + 2 >= numwadfiles_alloc ?
+                           numwadfiles_alloc * 2 : numwadfiles_alloc
+                        : 8)*sizeof(char*));
+  if(numwadfiles_alloc)
+  {  
+     memcpy(newfiles + 1, wadfiles,
+        numwadfiles_alloc * sizeof(char*));
+     newfiles[0] = wadfiles[0];
+     newfiles[1] = strdup(file);
+     free(wadfiles);
+  }
+  else newfiles[0] = strdup(file); //sf: always NULL at end
+  numwadfiles++;
+  newfiles[numwadfiles] = NULL;
+  wadfiles = newfiles;
+  numwadfiles_alloc = newalloc;
 }
 
         //sf: console command to list loaded files
@@ -901,8 +925,6 @@ void IdentifyVersion (void)
   int         i;    //jff 3/24/98 index of args on commandline
   struct stat sbuf; //jff 3/24/98 used to test save path for existence
   char *iwad;
-  byte codfound, codlevfound;
-  int  l;
 
   // get config file from same directory as executable
   // killough 10/98
@@ -979,16 +1001,6 @@ void IdentifyVersion (void)
 		game_name = haswolflevels ? "DOOM II version" :
 		     "DOOM II version, german edition, no wolf levels";
 
-              for (codfound = codlevfound = i = 0; i<numwadfiles; i++)
-                {
-                  l = strlen(wadfiles[i]);
-                  codfound = codfound ||
-                    (l>=7 && !strnicmp(wadfiles[i]+l-7,"cod.wad",7));
-                  codlevfound = codlevfound ||
-                    (l>=10 && !strnicmp(wadfiles[i]+l-10,"codlev.wad",10));
-                 }
-
-              if (codfound && codlevfound) gamemission = cod;
 	      break;
 	    }
 	  // joel 10/16/88 end Final DOOM fix
@@ -1278,6 +1290,9 @@ void D_DoomMain(void)
   int p, slot;
   char file[PATH_MAX+1];      // killough 3/22/98
 
+  byte codfound, codlevfound;
+  int i;
+
   setbuf(stdout, NULL);
 
   FindResponseFile();         // Append response file arguments to command-line
@@ -1411,26 +1426,6 @@ void D_DoomMain(void)
       sidemove[1] = sidemove[1]*turbo_scale/100;
     }
   
-  {
-    char filestr[256];
-    boolean isdir;
-    // get smmu.wad from the same directory as smmu.exe
-    // 25/10/99: use same name as exe
-
-    // haleyjd: merged smmu.wad and eternity.wad
-
-    sprintf(filestr, "%s%s.wad", D_DoomExeDir(), D_DoomExeName());
-    if(WadFileStatus(filestr, &isdir))
-    {
-        int i;
-        for(i=0; i<numwadfiles; i++)
-          {
-           if(!strcmp(wadfiles[i], filestr)) break;
-          }
-        if(i == numwadfiles) D_AddFile(filestr); 
-    }
-  }
-
   modifiedgame = false;         // reset, ignoring smmu.wad etc.
   
   // add any files specified on the command line with -file wadfile
@@ -1452,6 +1447,41 @@ void D_DoomMain(void)
 	  if (file)
 	    D_AddFile(myargv[p]);
     }
+
+  for (codfound = codlevfound = i = 0; i<numwadfiles; i++)
+     {
+        int l = strlen(wadfiles[i]);
+        codfound = codfound ||
+           (l>=7 && !strnicmp(wadfiles[i]+l-7,"cod.wad",7)
+              && (l==7 || wadfiles[i][l-8] == '/' || wadfiles[i][l-8] == '\\'));
+        codlevfound = codlevfound ||
+           (l>=10 && !strnicmp(wadfiles[i]+l-10,"codlev.wad",10)
+              && (l==10 || wadfiles[i][l-11] == '/' || wadfiles[i][l-11] == '\\'));
+     }
+
+  if (codfound && codlevfound)
+     {
+        gamemission = cod;
+        C_Printf("Caverns of Darkness compatibility activated\n");
+     }
+
+  else if (codfound)
+     {
+        C_Printf("Not loading bundled eternity.wad\n");
+        C_Printf("as cod.wad was provided with -file\n");
+     }
+  else
+     {
+        char filestr[256];
+        boolean isdir;
+        // get smmu.wad from the same directory as smmu.exe
+        // 25/10/99: use same name as exe
+
+        // haleyjd: merged smmu.wad and eternity.wad
+
+        sprintf(filestr, "%seternity.wad", D_DoomExeDir(), D_DoomExeName());
+        D_InsertFile(filestr); 
+     }
 
   if (!(p = M_CheckParm("-playdemo")) || p >= myargc-1)    // killough
     if ((p = M_CheckParm ("-fastdemo")) && p < myargc-1)   // killough
