@@ -89,10 +89,7 @@ static const char rcsid[] = "$Id: z_zone.c,v 1.13 1998/05/12 06:11:55 killough E
 // End Tunables
 
 typedef struct memblock {
-
-#ifdef ZONEIDCHECK
   unsigned id;
-#endif
 
   struct memblock *next,*prev;
   size_t size;

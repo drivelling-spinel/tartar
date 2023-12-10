@@ -44,8 +44,8 @@ CFLAGS_DEBUG=-g -O2 -DRANGECHECK -DINSTRUMENTED -DZONEIDCHECK
 LDFLAGS_DEBUG=
         
 # optimized (release) options
-CFLAGS_RELEASE=-O3 -ffast-math -fomit-frame-pointer -m486 -mreg-alloc=adcbSDB -DZONEIDCHECK
-# -DRANGECHECK 
+CFLAGS_RELEASE=-O3 -ffast-math -fomit-frame-pointer -m486 -mreg-alloc=adcbSDB
+# -DRANGECHECK -DZONEIDCHECK
 LDFLAGS_RELEASE=
 # -s
        
