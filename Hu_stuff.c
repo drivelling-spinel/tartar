@@ -47,6 +47,7 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "hu_fspic.h" // haleyjd
+#include "i_video.h"
 
 #define HU_TITLE  (*mapnames[(gameepisode-1)*9+gamemap-1])
 #define HU_TITLE2 (*mapnames2[gamemap-1])
@@ -491,6 +492,9 @@ void HU_CentreMessageHandler(struct textwidget_s *widget);
 void HU_LevelNameHandler(struct textwidget_s *widget);
 void HU_ChatHandler(struct textwidget_s *widget);
 void HU_CoordHandler(struct textwidget_s *widget); // haleyjd
+void HU_VideomodeHandler(struct textwidget_s *widget); 
+void HU_VideomodeHandler2(struct textwidget_s *widget); 
+void HU_FpsCounterHandler(struct textwidget_s *widget); 
 
 //////////////////////////////////////////////////
 //
@@ -759,7 +763,95 @@ void HU_CoordHandler(struct textwidget_s *widget)
       widget->message = coordzstr;
    }
 }
-   
+
+/////////////////////////////////////
+//
+// Videomode details display
+//
+
+textwidget_t hu_videomode1 =
+{
+  0, 0,                                          // x, y
+  1,                                             // overlay font
+  NULL,                                          // null msg
+  HU_VideomodeHandler                            // handler
+};
+
+textwidget_t hu_videomode2 =
+{
+  0, 8,                                          // x, y
+  1,                                             // overlay font
+  NULL,                                          // null msg
+  HU_VideomodeHandler2                           // handler
+};
+
+void HU_VideomodeHandler(struct textwidget_s *widget)
+{
+  static char msg_string1[129], msg_string2[129];
+  int len;
+  if(!show_fps || (!modeswitched && leveltime > 250))
+    {
+      hu_videomode1.message = NULL;
+      hu_videomode2.message = NULL;
+      return;
+    }
+
+  len = strlen(mode_string) / 2;
+  while (mode_string[len] != ' ' && mode_string[len]) len++;
+  if (mode_string[len]) len++;
+  strncpy(msg_string2, mode_string, len);
+  sprintf(msg_string1, "%c%s", *FC_GOLD, msg_string2);
+  hu_videomode1.message = msg_string1;
+  sprintf(msg_string2, "%c%s", *FC_GOLD, mode_string + len);
+  hu_videomode2.message = msg_string2;
+}
+
+void HU_VideomodeHandler2(struct textwidget_s *widget) {}
+
+/////////////////////////////////////
+//
+// Frames per second display
+//
+
+textwidget_t hu_fpscounter =
+{
+  0, 0,                                          // x, y
+  1,                                             // overlay font
+  NULL,                                          // null msg
+  HU_FpsCounterHandler                           // handler
+};
+
+void HU_FpsCounterHandler(struct textwidget_s *widget)
+{
+  static char fps_string[12];
+  char cr;
+  int i;
+
+  if(!show_fps || fps < 0)
+    {
+      hu_fpscounter.message = NULL;
+      return;
+    }
+
+  if (fps>999999) fps=999999; // overflow
+  if (fps<10)          {i=0; }
+  else if (fps<100)    {i=1; } 
+  else if (fps<1000)   {i=2; } 
+  else if (fps<10000)  {i=3; } 
+  else if (fps<100000) {i=4; } 
+  else                 {i=5; } 
+
+  if (fps>60)                    cr=*FC_BLUE;
+      else if (fps>34)           cr=*FC_GREEN;
+          else if (fps>20)       cr=*FC_GOLD; 
+              else               cr=*FC_RED;
+
+  sprintf(fps_string,"%c%6d", cr, fps);
+  hu_fpscounter.message = fps_string;
+  hu_fpscounter.x = 295 - i;
+}
+
+
 // Widgets Init
 
 void HU_WidgetsInit()
@@ -771,6 +863,9 @@ void HU_WidgetsInit()
   HU_AddWidget(&hu_coordx); // haleyjd
   HU_AddWidget(&hu_coordy);
   HU_AddWidget(&hu_coordz);
+  HU_AddWidget(&hu_fpscounter);
+  HU_AddWidget(&hu_videomode1);
+  HU_AddWidget(&hu_videomode2);
 }
 
 ////////////////////////////////////////////////////////////////////////

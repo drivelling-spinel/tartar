@@ -677,6 +677,7 @@ void R_DrawTLSpan (void)
 void R_InitBuffer(int width, int height)
 { 
   int i; 
+  int sc = hires - 1;
 
   linesize = (SCREENWIDTH << hires);    // killough 11/98
 
@@ -684,7 +685,10 @@ void R_InitBuffer(int width, int height)
   //  e.g. smaller view windows
   //  with border and/or status bar.
 
-  viewwindowx = (SCREENWIDTH-width) >> !hires;  // killough 11/98
+  viewwindowx = SCREENWIDTH-width;
+  if( sc > 0 ) viewwindowx <<= sc;
+  else if( sc < 0 ) viewwindowx >>= 1;
+   
 
   // Column offset. For windows.
 
@@ -693,9 +697,9 @@ void R_InitBuffer(int width, int height)
     
   // Same with base row offset.
 
-  viewwindowy = width==SCREENWIDTH ? 0 : (SCREENHEIGHT-SBARHEIGHT-height)>>1; 
-
-  viewwindowy <<= hires;   // killough 11/98
+  viewwindowy = width==SCREENWIDTH ? 0 : SCREENHEIGHT-SBARHEIGHT-height;
+  if( sc > 0 ) viewwindowy <<= sc;
+  else if( sc < 0 ) viewwindowy >>= 1;
 
   // Precalculate all row offsets.
 
@@ -772,11 +776,21 @@ void R_VideoErase(unsigned ofs, int count)
 { 
   if (hires)     // killough 11/98: hires support
     {
-      ofs = ofs*4 - (ofs % SCREENWIDTH)*2;   // recompose offset
-      memcpy(screens[0]+ofs, screens[1]+ofs, count*=2);   // LFB copy.
-      ofs += SCREENWIDTH*2;
+      int x = ofs % SCREENWIDTH;
+      int y = ofs - x;
+      int lines = 1 << hires, cols = count << hires;
+      ofs = (y << hires << hires) + (x << hires);
+
+      while (--lines>=0)
+        {
+          memcpy(screens[0]+ofs, screens[1]+ofs, cols);   // LFB copy.
+          ofs += (SCREENWIDTH << hires);
+        }
     }
-  memcpy(screens[0]+ofs, screens[1]+ofs, count);   // LFB copy.
+  else
+    {
+      memcpy(screens[0]+ofs, screens[1]+ofs, count);   // LFB copy.
+    }
 } 
 
 //

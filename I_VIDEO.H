@@ -64,6 +64,9 @@ extern int scale_to_hires;
 extern int disk_icon;  // killough 10/98
 extern int in_graphics_mode; // GB 2014: share
 extern boolean nolfbparm; // checkparm of -noLFB GB 2014
+extern int modeswitched;
+extern int fps;
+extern char mode_string[];
 
 #endif
 

@@ -84,7 +84,7 @@ static char input_buffer[128] = "";
 
 // colours
 #define unselect_colour    CR_RED
-#define select_colour      CR_TAN
+#define select_colour      CR_GRAY
 #define var_colour         CR_GREEN
 
 enum
@@ -206,15 +206,15 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
     }
   else
     {
-      
-      // write description
-      MN_WriteTextColoured
-	(
-         item->description,
-         colour,
-         x - (leftaligned ? 0 : MN_StringWidth(item->description)),
-	 y
-	 );
+      if( (menutime / BLINK_TIME) % 2 == 1 || colour != select_colour) 
+        // write description
+        MN_WriteTextColoured
+          (
+            item->description,
+            colour,
+            x - (leftaligned ? 0 : MN_StringWidth(item->description)),
+            y
+          );
     }
 
   // draw other data: variable data etc.

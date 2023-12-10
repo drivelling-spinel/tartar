@@ -235,13 +235,13 @@ int page_flip;     // killough 8/15/98: enables page flipping
 int hires;
 int show_fps;
 int scale_to_hires;
+int fps;
 
 int in_graphics_mode;
 int in_page_flip, in_hires, linear;
 int scroll_offset;
 int blackband; // GB 2014: for 640x480 fallback mode
 // GB 2014, FPS counter variables:
-char fps_string[12];
 char mode_string[128];
 int  modeswitched=0;
 // Disk icon:
@@ -278,55 +278,37 @@ void devparm_proc(int y)
 //GB 2014: New procedure to show video mode and frame rate.  
 void show_info_proc()
 {
-	static int fps_counter, fps_starttime, fps_timeout, fps_nextcalculation, fps;
+        static int fps_counter, fps_starttime, fps_timeout, fps_nextcalculation;
 
  	if (modeswitched>0) // display video driver after switch
     {
-       MN_WriteTextColoured(mode_string, CR_TAN, 1, 0);
 	   if (modeswitched==1)
 	   {
-	     fps_timeout=I_GetTime()+200; // I_GetTime_RealTime(); same result
-         fps_counter=0; // fps counter
+             fps_timeout=I_GetTime()+250; // I_GetTime_RealTime(); same result
+             fps_counter=0; // fps counter
 	     fps=-1;
-		 fps_nextcalculation=-1;
-		 modeswitched++;
+             fps_nextcalculation=-1;
+             modeswitched++;
 	   }
        if (I_GetTime()>fps_timeout) modeswitched=0; 
     } 
  	if (show_fps)
- 	{
-	   static char c,i,cr;
-	   int time=I_GetTime(); // I_GetTime_RealTime(); same result
-	   if (fps_counter==0) fps_starttime = I_GetTime(); 
-       fps_counter++;
-       // store a value and/or draw when data is ok:
-       if (fps_counter>(TICRATE+10)) 
-	   {  
-		  if (fps_nextcalculation<time) // in case of a very fast system, this will limit the sampling
-		  {
-		    fps=(double)((fps_counter-1)*TICRATE)/(time-fps_starttime); // minus 1!, exactly 35 FPS when measeraring for a longer time.
-			fps_nextcalculation=time+12; 
-		    if (fps>999999) fps=999999; // overflow
-            sprintf(fps_string,"%6d",fps);//"FPS:%5d",fps); 
-
-    	         if (fps<10)     {i=0; c=0; }
-    	    else if (fps<100)    {i=1; c=0; } 
-    	    else if (fps<1000)   {i=2; c=5; } 
-    	    else if (fps<10000)  {i=3; c=10;} 
-    	    else if (fps<100000) {i=4; c=15;} 
-    	    else                 {i=5; c=20;} 
-
-				 if (fps>60)   cr=CR_BLUE;
-    		else if (fps>34)   cr=CR_GREEN;
-		    else if (fps>20)   cr=CR_GOLD; // CR_ORANGE+CR_YELLOW are like white
-			else               cr=CR_RED;
-
-			fps_counter=0; // flush old data
-		  }
-	   }
-//       V_DrawRect(0, 309-c, 0, 319, 6, 0x00); 
-       if (fps>-1) MN_WriteTextColoured(fps_string, cr, 295-i, 0);
-	}
+          {
+            static char c,i,cr;
+            int time=I_GetTime(); // I_GetTime_RealTime(); same result
+            if (fps_counter==0) fps_starttime = I_GetTime(); 
+            fps_counter++;
+            // store a value and/or draw when data is ok:
+            if (fps_counter>(TICRATE+10)) 
+              {  
+                if (fps_nextcalculation<time) // in case of a very fast system, this will limit the sampling
+                  {
+                    fps=(double)((fps_counter-1)*TICRATE)/(time-fps_starttime); // minus 1!, exactly 35 FPS when measeraring for a longer time.
+                    fps_nextcalculation=time+12; 
+                    fps_counter=0; // flush old data
+                  }
+              }
+          }
 }
 
 //-----------------------------------------------------------------------------
@@ -409,7 +391,7 @@ void I_FinishUpdate(void)
 // I_ReadScreen
 void I_ReadScreen(byte *scr)
 {
-  int size = hires ? SCREENWIDTH*SCREENHEIGHT*4 : SCREENWIDTH*SCREENHEIGHT;
+  int size = (SCREENWIDTH<<hires)*(SCREENHEIGHT<<hires);
   // 1/18/98 killough: optimized based on CPU type:
        if (cpu_family >= 6) ppro_blit(scr,size); // PPro or PII
   else if (cpu_family >= 5) pent_blit(scr,size); // Pentium

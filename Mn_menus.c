@@ -109,7 +109,6 @@ menu_t menu_main =
     {it_runcmd, "options",              "mn_options",            "M_OPTION"},
     {it_runcmd, "load game",            "mn_loadgame",           "M_LOADG"},
     {it_runcmd, "save game",            "mn_savegame",           "M_SAVEG"},
-    {it_runcmd, "features",             "mn_features",           "M_FEAT"},
     {it_runcmd, "quit",                 "mn_quit",               "M_QUITG"},
     {it_end},
   },
@@ -325,19 +324,16 @@ menu_t menu_features =
   {
     {it_title,  FC_GOLD "features",     NULL,                   "M_FEAT"},
     {it_gap},
+    {it_runcmd, "multiplayer",          "mn_multi" },
+    {it_runcmd, "load wad",             "mn_loadwad" },
+    {it_runcmd, "demos",                "mn_demos" },
     {it_gap},
-    {it_runcmd, "multiplayer",          "mn_multi",              "M_MULTI"},
-    {it_gap},
-    {it_runcmd, "load wad",             "mn_loadwad",            "M_WAD"},
-    {it_gap},
-    {it_runcmd, "demos",                "mn_demos",              "M_DEMOS"},
-    {it_gap},
-    {it_runcmd, "about",                "credits",               "M_ABOUT"},
+    {it_runcmd, "about",                "credits" },
     {it_end},
   },
   100, 15,                              // x,y
   3,                                    // start item
-  mf_leftaligned | mf_skullmenu         // skull menu
+  mf_background | mf_leftaligned        // skull menu
 };
 
 CONSOLE_COMMAND(mn_features, 0)
@@ -1129,6 +1125,7 @@ menu_t menu_options =
     {it_runcmd, "sound options",                "mn_sound"},
     {it_gap},
     {it_info,   FC_GOLD "game options"},
+    {it_runcmd, "features",                     "mn_features"},
     {it_runcmd, "compatibility",                "mn_compat"},
     {it_runcmd, "eternity options",		"mn_etccompat"}, // haleyjd
     {it_runcmd, "enemies",                      "mn_enemies"},

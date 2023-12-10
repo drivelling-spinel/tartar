@@ -668,14 +668,24 @@ static void F_DrawPatchCol(int x, patch_t *patch, int col)
   if (hires)
     while (column->topdelta != 0xff)
       {
-	byte *desttop = screens[0] + x*2;
+        byte *desttop = screens[0] + (x << hires);
 	const byte *source = (byte *) column + 3;
-	byte *dest = desttop + column->topdelta*SCREENWIDTH*4;
+        int wh = SCREENWIDTH<<hires<<hires;
+        byte *dest = desttop + column->topdelta * (wh);
 	int count = column->length;
-	for (;count--; dest += SCREENWIDTH*4)
-	  dest[0] = dest[SCREENWIDTH*2] = dest[1] = dest[SCREENWIDTH*2+1] = 
-	    *source++;
-	column = (column_t *)(source+1);
+        for (;count--; dest += wh)
+          {
+            int w, q;
+            for(q = 0 ; q < (1 << hires) ; q ++ )
+             {
+                for(w = 0; w < (1 << hires) ; w ++ )
+                  {
+                    dest[q + w * (SCREENWIDTH << hires)] = *source;
+                  }
+             }
+            source++;
+          }
+        column = (column_t *)(source+1);
       }
   else
     while (column->topdelta != 0xff)

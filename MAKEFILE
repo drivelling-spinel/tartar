@@ -35,7 +35,7 @@ EXE=$(O)/doom.exe
 CFLAGS_COMMON=-Wall
 
 # new features; comment out what you don't want at the moment
-CFLAGS_NEWFEATURES=-DDOGS
+CFLAGS_NEWFEATURES=-DDOGS -DTRANWATER
         
 # debug options
 CFLAGS_DEBUG=-g -O2 -DRANGECHECK -DINSTRUMENTED
@@ -71,7 +71,23 @@ PLATOBJS =                  \
         $(O)/drawcol.o      \
         $(O)/drawcol2.o
 
-build : $(EXE)
+build : $(EXE) $(O)/chex.exe $(O)/doom2.exe $(O)/cod.exe
+
+
+$(O)/chex.exe : $(EXE)
+	del $(O)\chex.exe     
+	copy $(O)\doom.exe $(O)\chex.exe     
+
+
+$(O)/doom2.exe : $(EXE)
+	del $(O)\doom2.exe
+	copy $(O)\doom.exe $(O)\doom2.exe
+
+
+$(O)/cod.exe : $(EXE)
+	del $(O)\cod.exe
+	copy $(O)\doom.exe $(O)\cod.exe
+
 
 $(EXE): $(OBJS) $(O)/version.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(O)/version.o -o $@ $(LIBS)
@@ -433,7 +449,7 @@ $(O)/hu_stuff.o: hu_stuff.c doomdef.h z_zone.h m_swap.h version.h \
  p_mobj.h p_skin.h sounds.h st_stuff.h d_event.h r_defs.h c_net.h \
  c_runcmd.h d_deh.h g_game.h hu_frags.h hu_stuff.h v_video.h r_data.h \
  r_state.h p_chase.h v_misc.h hu_over.h p_info.h c_io.h p_map.h \
- p_setup.h p_spec.h r_draw.h s_sound.h w_wad.h hu_fspic.h
+ p_setup.h p_spec.h r_draw.h s_sound.h w_wad.h hu_fspic.h i_video.h
  
 $(O)/info.o: info.c doomdef.h z_zone.h m_swap.h version.h sounds.h \
  m_fixed.h i_system.h d_ticcmd.h doomtype.h p_mobj.h tables.h \
