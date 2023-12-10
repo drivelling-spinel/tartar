@@ -112,7 +112,7 @@ static void P_RecursiveSound(sector_t *sec, int soundblocks,
       if (openrange <= 0)
         continue;       // closed door
 
-      other=sides[check->sidenum[sides[check->sidenum[0]].sector==sec]].sector;
+      other=sides[(unsigned short)(check->sidenum[sides[(unsigned short)(check->sidenum[0])].sector==sec])].sector;
 
       if (!(check->flags & ML_SOUNDBLOCK))
         P_RecursiveSound(other, soundblocks, soundtarget);

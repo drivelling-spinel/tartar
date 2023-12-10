@@ -88,7 +88,7 @@ static fixed_t P_InterceptVector2(const divline_t *v2, const divline_t *v1)
 
 static boolean P_CrossSubsector(int num, register los_t *los)
 {
-  seg_t *seg = segs + subsectors[num].firstline;
+  seg_t *seg = segs + (unsigned short)(subsectors[num].firstline);
   int count;
 
 #ifdef RANGECHECK

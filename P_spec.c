@@ -213,7 +213,7 @@ void P_InitPicAnims (void)
 
 side_t *getSide(int currentSector, int line, int side)
 {
-  return &sides[sectors[currentSector].lines[line]->sidenum[side]];
+  return &sides[(unsigned short)(sectors[currentSector].lines[line]->sidenum[side])];
 }
 
 //
@@ -228,7 +228,7 @@ side_t *getSide(int currentSector, int line, int side)
 
 sector_t *getSector(int currentSector, int line, int side)
 {
-  return sides[sectors[currentSector].lines[line]->sidenum[side]].sector;
+  return sides[(unsigned short)(sectors[currentSector].lines[line]->sidenum[side])].sector;
 }
 
 //
@@ -248,7 +248,7 @@ int twoSided(int sector, int line)
   //has two sidedefs, rather than whether the 2S flag is set
 
   return comp[comp_model] ? sectors[sector].lines[line]->flags & ML_TWOSIDED :
-    sectors[sector].lines[line]->sidenum[1] != -1;
+    (unsigned short)(sectors[sector].lines[line]->sidenum[1]) != 0xffff;
 }
 
 //
@@ -2368,17 +2368,17 @@ void P_UpdateSpecials (void)
             switch(buttonlist[i].where)
               {
               case top:
-                sides[buttonlist[i].line->sidenum[0]].toptexture =
+                sides[(unsigned short)(buttonlist[i].line->sidenum[0])].toptexture =
                   buttonlist[i].btexture;
                 break;
 
               case middle:
-                sides[buttonlist[i].line->sidenum[0]].midtexture =
+                sides[(unsigned short)(buttonlist[i].line->sidenum[0])].midtexture =
                   buttonlist[i].btexture;
                 break;
 
               case bottom:
-                sides[buttonlist[i].line->sidenum[0]].bottomtexture =
+                sides[(unsigned short)(buttonlist[i].line->sidenum[0])].bottomtexture =
                   buttonlist[i].btexture;
                 break;
               }
@@ -2516,7 +2516,7 @@ void P_SpawnSpecials (void)
         // killough 3/7/98:
         // support for drawn heights coming from different sector
       case 242:
-        sec = sides[*lines[i].sidenum].sector-sectors;
+        sec = sides[(unsigned short)(*lines[i].sidenum)].sector-sectors;
         for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
           sectors[s].heightsec = sec;
         break;
@@ -2524,7 +2524,7 @@ void P_SpawnSpecials (void)
         // killough 3/16/98: Add support for setting
         // floor lighting independently (e.g. lava)
       case 213:
-        sec = sides[*lines[i].sidenum].sector-sectors;
+        sec = sides[(unsigned short)(*lines[i].sidenum)].sector-sectors;
         for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
           sectors[s].floorlightsec = sec;
         break;
@@ -2532,7 +2532,7 @@ void P_SpawnSpecials (void)
         // killough 4/11/98: Add support for setting
         // ceiling lighting independently
       case 261:
-        sec = sides[*lines[i].sidenum].sector-sectors;
+        sec = sides[(unsigned short)(*lines[i].sidenum)].sector-sectors;
         for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
           sectors[s].ceilinglightsec = sec;
         break;
@@ -2711,7 +2711,7 @@ static void Add_WallScroller(Long64 dx, Long64 dy, const line_t *l,
 
   x = (int)((dy * -l->dy - dx * l->dx) / d);  // killough 10/98:
   y = (int)((dy * l->dx - dx * l->dy) / d);   // Use 64-bit arithmetic
-  Add_Scroller(sc_side, x, y, control, *l->sidenum, accel);
+  Add_Scroller(sc_side, x, y, control, (unsigned short)(*l->sidenum), accel);
 }
 
 // Amount (dx,dy) vector linedef is shifted right to get scroll amount
@@ -2745,14 +2745,14 @@ static void P_SpawnScrollers(void)
       if (special >= 245 && special <= 249)         // displacement scrollers
         {
           special += 250-245;
-          control = sides[*l->sidenum].sector - sectors;
+          control = sides[(unsigned short)(*l->sidenum)].sector - sectors;
         }
       else
         if (special >= 214 && special <= 218)       // accelerative scrollers
           {
             accel = 1;
             special += 250-214;
-            control = sides[*l->sidenum].sector - sectors;
+            control = sides[(unsigned short)(*l->sidenum)].sector - sectors;
           }
 
       switch (special)
@@ -2788,16 +2788,16 @@ static void P_SpawnScrollers(void)
 
         case 255:    // killough 3/2/98: scroll according to sidedef offsets
           s = lines[i].sidenum[0];
-          Add_Scroller(sc_side, -sides[s].textureoffset,
-                       sides[s].rowoffset, -1, s, accel);
+          Add_Scroller(sc_side, -sides[(unsigned short)s].textureoffset,
+                       sides[(unsigned short)s].rowoffset, -1, (unsigned short)s, accel);
           break;
 
         case 48:                  // scroll first side
-          Add_Scroller(sc_side,  FRACUNIT, 0, -1, lines[i].sidenum[0], accel);
+          Add_Scroller(sc_side,  FRACUNIT, 0, -1, (unsigned short)(lines[i].sidenum[0]), accel);
           break;
 
         case 85:                  // jff 1/30/98 2-way scroll
-          Add_Scroller(sc_side, -FRACUNIT, 0, -1, lines[i].sidenum[0], accel);
+          Add_Scroller(sc_side, -FRACUNIT, 0, -1, (unsigned short)(lines[i].sidenum[0]), accel);
           break;
         }
     }

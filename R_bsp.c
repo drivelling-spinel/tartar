@@ -637,7 +637,7 @@ static void R_Subsector(int num)
   sub = &subsectors[num];
   frontsector = sub->sector;
   count = sub->numlines;
-  line = &segs[sub->firstline];
+  line = &segs[(unsigned short)sub->firstline];
 
   R_SectorColormap(frontsector);
 

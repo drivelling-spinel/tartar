@@ -296,7 +296,7 @@ int EV_SilentLineTeleport(line_t *line, int side, mobj_t *thing,
         // Adjust z position to be same height above ground as before.
         // Ground level at the exit is measured as the higher of the
         // two floor heights at the exit linedef.
-        thing->z = z + sides[l->sidenum[stepdown]].sector->floorheight;
+        thing->z = z + sides[(unsigned short)(l->sidenum[stepdown])].sector->floorheight;
 
         // Rotate thing's orientation according to difference in linedef angles
         thing->angle += angle;

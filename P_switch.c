@@ -153,9 +153,9 @@ void P_ChangeSwitchTexture
   if (!useAgain)
     line->special = 0;
 
-  texTop = sides[line->sidenum[0]].toptexture;
-  texMid = sides[line->sidenum[0]].midtexture;
-  texBot = sides[line->sidenum[0]].bottomtexture;
+  texTop = sides[(unsigned short)(line->sidenum[0])].toptexture;
+  texMid = sides[(unsigned short)(line->sidenum[0])].midtexture;
+  texBot = sides[(unsigned short)(line->sidenum[0])].bottomtexture;
 
   sound = info_sound_swtchn; // haleyjd
 
@@ -168,7 +168,7 @@ void P_ChangeSwitchTexture
     if (switchlist[i] == texTop)     // if an upper texture
     {
       S_StartSoundName(buttonlist->soundorg,sound);     // switch activation sound
-      sides[line->sidenum[0]].toptexture = switchlist[i^1];       //chg texture
+      sides[(unsigned short)(line->sidenum[0])].toptexture = switchlist[i^1];       //chg texture
 
       if (useAgain)
         P_StartButton(line,top,switchlist[i],BUTTONTIME);         //start timer
@@ -180,7 +180,7 @@ void P_ChangeSwitchTexture
       if (switchlist[i] == texMid)   // if a normal texture
       {
         S_StartSoundName(buttonlist->soundorg,sound);   // switch activation sound
-        sides[line->sidenum[0]].midtexture = switchlist[i^1];     //chg texture
+        sides[(unsigned short)(line->sidenum[0])].midtexture = switchlist[i^1];     //chg texture
 
         if (useAgain)
           P_StartButton(line, middle,switchlist[i],BUTTONTIME);   //start timer
@@ -192,7 +192,7 @@ void P_ChangeSwitchTexture
         if (switchlist[i] == texBot) // if a lower texture
         {
           S_StartSoundName(buttonlist->soundorg,sound); // switch activation sound
-          sides[line->sidenum[0]].bottomtexture = switchlist[i^1];//chg texture
+          sides[(unsigned short)(line->sidenum[0])].bottomtexture = switchlist[i^1];//chg texture
 
           if (useAgain)
             P_StartButton(line, bottom,switchlist[i],BUTTONTIME); //start timer

@@ -197,21 +197,21 @@ void P_LoadSegs (int lump)
       int side, linedef;
       line_t *ldef;
 
-      li->v1 = &vertexes[SHORT(ml->v1)];
-      li->v2 = &vertexes[SHORT(ml->v2)];
+      li->v1 = &vertexes[(unsigned short)SHORT(ml->v1)];
+      li->v2 = &vertexes[(unsigned short)SHORT(ml->v2)];
 
       li->angle = (SHORT(ml->angle))<<16;
       li->offset = (SHORT(ml->offset))<<16;
-      linedef = SHORT(ml->linedef);
+      linedef = (unsigned short)SHORT(ml->linedef);
       ldef = &lines[linedef];
       li->linedef = ldef;
       side = SHORT(ml->side);
-      li->sidedef = &sides[ldef->sidenum[side]];
-      li->frontsector = sides[ldef->sidenum[side]].sector;
+      li->sidedef = &sides[(unsigned short)(ldef->sidenum[side])];
+      li->frontsector = sides[(unsigned short)(ldef->sidenum[side])].sector;
 
       // killough 5/3/98: ignore 2s flag if second sidedef missing:
-      if (ldef->flags & ML_TWOSIDED && ldef->sidenum[side^1]!=-1)
-	li->backsector = sides[ldef->sidenum[side^1]].sector;
+      if (ldef->flags & ML_TWOSIDED && (unsigned short)(ldef->sidenum[side^1])!=0xffff)
+        li->backsector = sides[(unsigned short)(ldef->sidenum[side^1])].sector;
       else
 	li->backsector = 0;
     }
@@ -238,7 +238,7 @@ void P_LoadSubsectors (int lump)
   for (i=0; i<numsubsectors; i++)
     {
       subsectors[i].numlines  = SHORT(((mapsubsector_t *) data)[i].numsegs );
-      subsectors[i].firstline = SHORT(((mapsubsector_t *) data)[i].firstseg);
+      subsectors[i].firstline = (unsigned short)SHORT(((mapsubsector_t *) data)[i].firstseg);
     }
 
   Z_Free (data);
@@ -329,9 +329,9 @@ void P_LoadNodes (int lump)
       for (j=0 ; j<2 ; j++)
 	{
 	  int k;
-	  no->children[j] = SHORT(mn->children[j]);
+          no->children[j] = (unsigned short)SHORT(mn->children[j]);
 	  for (k=0 ; k<4 ; k++)
-	    no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
+            no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
 	}
     }
 
@@ -448,8 +448,8 @@ void P_LoadLineDefs (int lump)
       ld->flags = SHORT(mld->flags);
       ld->special = SHORT(mld->special);
       ld->tag = SHORT(mld->tag);
-      v1 = ld->v1 = &vertexes[SHORT(mld->v1)];
-      v2 = ld->v2 = &vertexes[SHORT(mld->v2)];
+      v1 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)];
+      v2 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)];
       ld->dx = v2->x - v1->x;
       ld->dy = v2->y - v1->y;
 
@@ -484,8 +484,8 @@ void P_LoadLineDefs (int lump)
       ld->sidenum[1] = SHORT(mld->sidenum[1]);
 
       // killough 4/4/98: support special sidedef interpretation below
-      if (ld->sidenum[0] != -1 && ld->special)
-	sides[*ld->sidenum].special = ld->special;
+      if ((unsigned short)(ld->sidenum[0]) != 0xffff && ld->special)
+        sides[(unsigned short)(*ld->sidenum)].special = ld->special;
     }
   Z_Free (data);
 }
@@ -501,20 +501,20 @@ void P_LoadLineDefs2(int lump)
     {
       // killough 11/98: fix common wad errors (missing sidedefs):
 
-      if (ld->sidenum[0] == -1)
+      if ((unsigned short)(ld->sidenum[0]) == 0xffff)
 	ld->sidenum[0] = 0;  // Substitute dummy sidedef for missing right side
 
-      if (ld->sidenum[1] == -1)
+      if ((unsigned short)(ld->sidenum[1]) == 0xffff)
 	ld->flags &= ~ML_TWOSIDED;  // Clear 2s flag for missing left side
 
-      ld->frontsector = ld->sidenum[0]!=-1 ? sides[ld->sidenum[0]].sector : 0;
-      ld->backsector  = ld->sidenum[1]!=-1 ? sides[ld->sidenum[1]].sector : 0;
+      ld->frontsector = ((unsigned short)(ld->sidenum[0])!=0xffff) ? sides[(unsigned short)(ld->sidenum[0])].sector : 0;
+      ld->backsector  = ((unsigned short)(ld->sidenum[1])!=0xffff) ? sides[(unsigned short)(ld->sidenum[1])].sector : 0;
       switch (ld->special)
 	{                       // killough 4/11/98: handle special types
 	  int lump, j;
 
 	case 260:               // killough 4/11/98: translucent 2s textures
-	    lump = sides[*ld->sidenum].special; // translucency from sidedef
+            lump = sides[(unsigned short)(*ld->sidenum)].special; // translucency from sidedef
 	    if (!ld->tag)                       // if tag==0,
 	      ld->tranlump = lump;              // affect this linedef only
 	    else
@@ -560,7 +560,7 @@ void P_LoadSideDefs2(int lump)
       // killough 4/11/98: refined to allow colormaps to work as wall
       // textures if invalid as colormaps but valid as textures.
 
-      sd->sector = sec = &sectors[SHORT(msd->sector)];
+      sd->sector = sec = &sectors[(unsigned short)SHORT(msd->sector)];
       switch (sd->special)
 	{
 	case 242:                       // variable colormap via 242 linedef
@@ -786,14 +786,14 @@ void P_LoadBlockMap (int lump)
       // them. This potentially doubles the size of blockmaps allowed,
       // because Doom originally considered the offsets as always signed.
 
-      blockmaplump[0] = SHORT(wadblockmaplump[0]);
-      blockmaplump[1] = SHORT(wadblockmaplump[1]);
+      blockmaplump[0] = (unsigned short)SHORT(wadblockmaplump[0]);
+      blockmaplump[1] = (unsigned short)SHORT(wadblockmaplump[1]);
       blockmaplump[2] = (long)(SHORT(wadblockmaplump[2])) & 0xffff;
       blockmaplump[3] = (long)(SHORT(wadblockmaplump[3])) & 0xffff;
 
       for (i=4 ; i<count ; i++)
 	{
-	  short t = SHORT(wadblockmaplump[i]);          // killough 3/1/98
+          short t = SHORT(wadblockmaplump[i]);          // killough 3/1/98
 	  blockmaplump[i] = t == -1 ? -1l : (long) t & 0xffff;
 	}
 

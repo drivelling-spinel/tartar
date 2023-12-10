@@ -1738,20 +1738,20 @@ void SF_SetLineTexture(void)
    while((line = P_FindLine(tag, &searcher)) != NULL)
    {
       // bad sidedef, Hexen just SEGV'd here!
-      if(line->sidenum[side] == -1)
+      if((unsigned short)(line->sidenum[side]) == 0xffff)
         continue;
 
       if(position == TEXTURE_MIDDLE)
       {
-         sides[line->sidenum[side]].midtexture = texturenum;
+         sides[(unsigned short)(line->sidenum[side])].midtexture = texturenum;
       }
       else if(position == TEXTURE_BOTTOM)
       {
-         sides[line->sidenum[side]].bottomtexture = texturenum;
+         sides[(unsigned short)(line->sidenum[side])].bottomtexture = texturenum;
       }
       else
       { // TEXTURE_TOP
-         sides[line->sidenum[side]].toptexture = texturenum;
+         sides[(unsigned short)(line->sidenum[side])].toptexture = texturenum;
       }
    }
 }

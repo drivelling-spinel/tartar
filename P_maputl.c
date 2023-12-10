@@ -164,7 +164,7 @@ sector_t *openbacksector;  // made global
 
 void P_LineOpening(line_t *linedef)
 {
-  if (linedef->sidenum[1] == -1)      // single sided line
+  if ((unsigned short)(linedef->sidenum[1]) == 0xffff)      // single sided line
     {
       openrange = 0;
       return;

@@ -556,14 +556,14 @@ int EV_VerticalDoor(line_t *line, mobj_t *thing)
     }
 
   // if the wrong side of door is pushed, give oof sound
-  if (line->sidenum[1]==-1)                       // killough
+  if ((unsigned short)(line->sidenum[1])==0xffff)                       // killough
     {
       S_StartSound(player->mo,sfx_oof);           // killough 3/20/98
       return 0;
     }
 
   // get the sector on the second side of activating linedef
-  sec = sides[line->sidenum[1]].sector;
+  sec = sides[(unsigned short)(line->sidenum[1])].sector;
   secnum = sec-sectors;
 
   // haleyjd: adapted cph's prboom fix for demo compatibility and

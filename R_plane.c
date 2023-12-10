@@ -470,7 +470,7 @@ static void do_draw_plane(visplane_t *pl)
 	    const line_t *l = &lines[pl->picnum & ~PL_SKYFLAT];
 
 	    // Sky transferred from first sidedef
-	    const side_t *s = *l->sidenum + sides;
+            const side_t *s = (unsigned short)(*l->sidenum) + sides;
 
 	    // Texture comes from upper texture of reference sidedef
 	    texture = texturetranslation[s->toptexture];

@@ -196,10 +196,10 @@ void P_ArchiveWorld (void)
 
   for (i=0; i<numlines; i++)
     {
-      if (lines[i].sidenum[0] != -1)
+      if ((unsigned short)(lines[i].sidenum[0]) != 0xffff)
         size +=
 	  sizeof(short)*3 + sizeof si->textureoffset + sizeof si->rowoffset;
-      if (lines[i].sidenum[1] != -1)
+      if ((unsigned short)(lines[i].sidenum[1]) != 0xffff)
 	size +=
 	  sizeof(short)*3 + sizeof si->textureoffset + sizeof si->rowoffset;
     }
@@ -242,9 +242,9 @@ void P_ArchiveWorld (void)
       *put++ = li->tag;
 
       for (j=0; j<2; j++)
-        if (li->sidenum[j] != -1)
+        if ((unsigned short)(li->sidenum[j]) != 0xffff)
           {
-	    si = &sides[li->sidenum[j]];
+            si = &sides[(unsigned short)(li->sidenum[j])];
 
 	    // killough 10/98: save full sidedef offsets,
 	    // preserving fractional scroll offsets
@@ -314,9 +314,9 @@ void P_UnArchiveWorld (void)
       li->special = *get++;
       li->tag = *get++;
       for (j=0 ; j<2 ; j++)
-        if (li->sidenum[j] != -1)
+        if ((unsigned short)(li->sidenum[j]) != 0xffff)
           {
-            side_t *si = &sides[li->sidenum[j]];
+            side_t *si = &sides[(unsigned short)(li->sidenum[j])];
 
 	    // killough 10/98: load full sidedef offsets, including fractions
 
