@@ -48,6 +48,7 @@ char* endmsg[/*NUM_QUITMESSAGES+1*/]=
   "go ahead and leave. see if i care.",
 
   // QuitDOOM II messages
+  QUITMSG,
   "you want to quit?\nthen, thou hast lost an eighth!",
   "don't go now, there's a \ndimensional shambler waiting\nat the dos prompt!",
   "get outta here and go back\nto your boring programs.",

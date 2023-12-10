@@ -177,13 +177,14 @@ CONSOLE_COMMAND(mn_quit, 0)
 
   if(cmdtype != c_menu && menuactive) return;
 
-  quitmsgnum = M_Random() % 14;
+  quitmsgnum = (gametic >> 2) & 7;
 
   // sf: use s_QUITMSG if it has been replaced in a dehacked file
   // haleyjd 1/17/00: fixed this to work with NULL pointer derefernce
   //  fix in d_deh.c
   sprintf(quitmsg, "%s\n\n%s",
-          strcmp(s_QUITMSG, "") ? s_QUITMSG : endmsg[quitmsgnum],
+          strcmp(s_QUITMSG, "") ? s_QUITMSG :
+            endmsg[quitmsgnum + (gamemode == commercial ? 8 : 0)],
 	  s_DOSY);
   
   MN_Question(quitmsg, "quit");

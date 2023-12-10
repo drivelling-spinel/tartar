@@ -1,0 +1,72 @@
+engine                        | TARTAR.EXE itself
+DeHackEd patch                | with -deh or -bex 
+shim (I)                      | with -shim or autodetected from SHIMS\
+auto-loaded DeHackEd patch 1  | dehfile_1 in TARTAR.CFG
+auto-loaded DeHackEd patch 2  | dehfile_2 in TARTAR.CFG
+IWAD                          | with -iwad or autodetected from local dir or DOOMWADDIR env var
+fixes PWAD                    | from FIXES\ or dir specified with -fixes
+fixes PWAD                    | ..
+fixes DeHackEd patch          | ..
+...                           |
+fixes PWAD                    | from FIXES\<iwad name>\ or <iwad name>\ under dir specified with -fixes
+fixes DeHackEd patch          | ..
+...                           |
+ETERNITY.WAD                  | unless COD.WAD is to be loaded
+PWAD                          | with -file
+DeHackEd patch                | ..
+lump                          | ..
+PWAD                          | ..
+Related PWAD (**)             | autodetected in directory of the PWAD specified with -file
+Related PWAD (**)             | ..
+Related DeHackEd patch (**)   | ..
+...                           |
+PWAD                          | with -file
+DeHackEd patch                | ..
+lump                          | ..
+...                           |
+auto-loaded PWAD 1            | wadfile_1 in TARTAR.CFG
+auto-loaded PWAD 2            | wadfile_2 in TARTAR.CFG
+skin PWAD                     | from SKINS\ if -skins is specified
+skin PWAD                     | ..
+...                           |
+KEYS.CSC                      | 
+auto-exec script 1            | cscript_1 in TARTAR.CFG unless -nocscload is specified
+auto-exec script 2            | cscript_2 in TARTAR.CFG unless -nocscload is specified
+filter PWAD (***)             | from FILTERS\
+filter PWAD                   | ..
+JUMPWAD.WAD (****)            |
+SELFIE.WAD  (****)            |
+SELFIE.DEH  (****)            |
+...                           |
+intermission PWAD (*****)     | autodetected based on IWAD 
+INTMAPNR.WAD                  | No Rest For The Living intermission backgrounds
+
+
+
+(*)     - although shim is loaded earlier than any other WAD (even IWAD), 
+          it's lumps cannot be overridded by any other WAD loaded afterwards
+(**)    - list of filenames fo PWAD-s that are checked for accompanying WAD and DEH files follows
+          - BTSX_E?*.WAD
+          - KDIKDI_*.WAD
+          - 1ST_ENC.WAD 
+          - AFTERMTH.WAD
+          - SOD.WAD
+          - CONFRONT.WAD
+          - TRAIL.WAD
+          - SECRET.WAD
+          - FUHRER.WAD
+          - FAUST.WAD
+          - ESCAPE.WAD
+          - ARCTIC.WAD 
+          for Arctic Wolf ARCTGFX1.WAD, ARCTGFX2.WAD, GFX1.WAD or GFX2.WAD can also be given
+(***)   - "extras" start here
+          these are loaded only after all preceding assets have been loaded and processed
+          extras are always optional and loading can be avoided altogether with -noload
+          also extras do not reflect in the list of loaded WAD-s, e.g. with LISTWADS CCMD
+(****)  - only some lumps are loaded from these PWAD-s and DEH patches are very specially handled 
+(*****) - intermission PWAD-s are only loaded when no other PWAD-s are specified 
+          but with -wimaps loading of intermission PWAD-s can be forced 
+          PWAD-s' filenames are:
+          - INTMAPD2.WAD for DOOM2.WAD
+          - INTMAPEV.WAD for TNT.WAD
+          - INTMAPPL.WAD for PLUTONIA.WAD

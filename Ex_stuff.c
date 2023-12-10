@@ -81,8 +81,13 @@ static char *Ex_tape(void)
   static char *tps;      // cache results over multiple calls
   if (!tps)
     {
-      int p = M_CheckParm("-tape");
+      int p = M_CheckParm("-shim");
       tps = p && ++p < myargc ? myargv[p] : "";
+      if(!*tps)
+        {
+          p = M_CheckParm("-tape");
+          tps = p && ++p < myargc ? myargv[p] : "";
+        }
     }
   return tps;
 }
@@ -126,6 +131,10 @@ int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
       struct stat sbuf;
       ExtractFileBase(*filenames, filestr, sizeof(filestr) - 1);
       assert(strlen(D_DoomExeDir()) + strlen(filestr) + 10 <= sizeof(tapestr));
+      sprintf(tapestr, "%sshims/%s", D_DoomExeDir(), filestr);
+      AddDefaultExtension(tapestr, ".wad");
+      if (!stat(tapestr, &sbuf)) 
+        if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
       sprintf(tapestr, "%stape/%s", D_DoomExeDir(), filestr);
       AddDefaultExtension(tapestr, ".wad");
       if (!stat(tapestr, &sbuf)) 
@@ -140,7 +149,7 @@ int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
 void Ex_ListTapeWad()
 {
   if(*tapestr)
-    C_Printf(FC_GOLD "%s " FC_RED "is taped onto the WADs\n", tapestr);
+    C_Printf(FC_GRAY "Shim loaded: " FC_RED "Lumps from shim %s will override those from all other loaded WADs\n", tapestr);
 }
 
 int Ex_FindAllFilesByExtension(char * dir, char * ext, char *** fnames)
