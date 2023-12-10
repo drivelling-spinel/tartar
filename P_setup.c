@@ -678,6 +678,7 @@ byte * P_LoadSubsectorsExtended(byte * data)
 byte * P_LoadSegsExtended(byte * data)
 {
   int i;
+  fixed_t dx, dy;
   numsegs = LONG(*(long *)data);
   data += sizeof(long);
   segs = Z_Malloc(numsegs*sizeof(seg_t),PU_LEVEL,0);
@@ -696,20 +697,30 @@ byte * P_LoadSegsExtended(byte * data)
       data += sizeof(long);
       li->v2 = &vertexes[LONG(*(long *)data)];
       data += sizeof(long);
-      // compute them?
-      li->angle = -1;
       
       linedef = (unsigned short)SHORT(*(short *)data);
       data += sizeof(short);
       ldef = &lines[linedef];
       li->linedef = ldef;
-
-      li->offset =  
-        R_PointToDist2(li->linedef->v1->x < li->linedef->v2->x ? li->linedef->v1->x : li->linedef->v2->x, 
-          li->linedef->v1->x < li->linedef->v2->x ? li->linedef->v1->y : li->linedef->v2->y, 
-          li->linedef->v1->x < li->linedef->v2->x ? li->v1->x : li->v2->x, 
-          li->linedef->v1->x < li->linedef->v2->x ? li->v1->y : li->v2->y);
-
+      
+      dx = li->v2->x - li->v1->x;
+      dy = li->v2->y - li->v1->y;
+      
+      // these are fairly arbitrary at the moment...
+      if((li->linedef->dx > 0 && dx > 0) || (li->linedef->dx < 0 && dx < 0))
+        li->offset = R_PointToDist2(li->linedef->v1->x, li->linedef->v1->y, li->v1->x, li->v1->y);
+      else if(li->linedef->dx < 0)
+        li->offset = R_PointToDist2(li->linedef->v2->x, li->linedef->v2->y, li->v1->x, li->v1->y);
+      else if(dx < 0)
+        li->offset = R_PointToDist2(li->linedef->v1->x, li->linedef->v1->y, li->v2->x, li->v2->y);
+      else if((li->linedef->dy > 0 && dy > 0) || (li->linedef->dy < 0 && dy < 0))
+        li->offset = R_PointToDist2(li->linedef->v1->x, li->linedef->v1->y, li->v1->x, li->v1->y);
+      else if(li->linedef->dy < 0)
+        li->offset = R_PointToDist2(li->linedef->v2->x, li->linedef->v2->y, li->v1->x, li->v1->y);
+      else 
+        li->offset = R_PointToDist2(li->linedef->v1->x, li->linedef->v1->y, li->v2->x, li->v2->y);
+      
+      li->angle = R_PointToAngle2(li->v1->x, li->v1->y, li->v2->x, li->v2->y);
       
       side = *(byte *)data;
       data += sizeof(byte);
