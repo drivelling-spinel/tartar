@@ -15,6 +15,8 @@
 - With FILTERS directory filled with InstaDoom WAD-s Tartar exhausts DOS
   file handles very quickly, suggested CONFIG.SYS setting being FILES=70
 - Loading a game saved on E1-type exit special sector crahses Tartar
-- Before showing outtro or character cast intermission background is first shown for a second or so
-
+- Before showing outtro or character cast intermission background is 
+  first shown for a second or so
+- When loading a game where player skin was changed from marine, 
+  player mobj sprite is retained, but player skin is set to marine 
 
