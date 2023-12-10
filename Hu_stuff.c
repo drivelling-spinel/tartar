@@ -320,7 +320,7 @@ void HU_CrossHairDraw()
 {
   int drawx, drawy;
   
-  if(!crosshair) return;
+  if(!crosshair || gamestate != GS_LEVEL) return;
   if(viewcamera || automapactive) return;
   
   // where to draw??
@@ -361,7 +361,7 @@ void HU_CrossHairTick()
   // fast as possible: don't bother with this crap if
   // the crosshair isn't going to be displayed anyway
   
-  if(!crosshairnum) return;
+  if(!crosshairnum || gamestate != GS_LEVEL) return;
 
   // default to no target
   crosshairpal = notargetcolour;
