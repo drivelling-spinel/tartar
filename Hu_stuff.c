@@ -49,10 +49,19 @@
 #include "hu_fspic.h" // haleyjd
 #include "i_video.h"
 
-#define HU_TITLE  (*mapnames[(gameepisode-1)*9+gamemap-1])
-#define HU_TITLE2 (*mapnames2[gamemap-1])
-#define HU_TITLEP (*mapnamesp[gamemap-1])
-#define HU_TITLET (*mapnamest[gamemap-1])
+
+//
+// Builtin map names.
+// The actual names can be found in DStrings.h.
+//
+// Ty 03/27/98 - externalized map name arrays - now in d_deh.c
+// and converted to arrays of pointers to char *
+// See modified HUTITLEx macros
+//
+extern char * HU_TITLE();
+extern char * HU_TITLE2();
+extern char * HU_TITLEP();
+extern char * HU_TITLET();
 
 void HU_WarningsInit();
 void HU_WarningsDrawer();
@@ -84,19 +93,6 @@ int mess_colour = CR_RED;      // the colour of normal messages
 
 // main message list
 unsigned char *levelname;
-
-//
-// Builtin map names.
-// The actual names can be found in DStrings.h.
-//
-// Ty 03/27/98 - externalized map name arrays - now in d_deh.c
-// and converted to arrays of pointers to char *
-// See modified HUTITLEx macros
-//
-extern char **mapnames[];
-extern char **mapnames2[];
-extern char **mapnamesp[];
-extern char **mapnamest[];
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -184,10 +180,10 @@ void HU_NewLevel()
   else if(!newlevel || deh_loaded)
     {
       if(isMAPxy(gamemapname))
-	levelname = gamemission == pack_tnt ? HU_TITLET :
-	gamemission == pack_plut ? HU_TITLEP : HU_TITLE2;
+	levelname = (gamemission == pack_tnt ? HU_TITLET :
+	gamemission == pack_plut ? HU_TITLEP : HU_TITLE2)();
       else if(isExMy(gamemapname))
-	levelname = HU_TITLE;
+	levelname = (HU_TITLE)();
       else
 	levelname = gamemapname;
     }

@@ -3238,6 +3238,29 @@ boolean deh_GetData(char *s, char *k, long *l, char **strval, FILE *fpout)
   return(okrc);
 }
 
+extern char gamemapname[9];
+
+char * HU_TITLE()
+{
+  return  (((gameepisode-1) * 9 + gamemap - 1) < sizeof(mapnames)/sizeof(*mapnames) ? *mapnames[(gameepisode-1)*9+gamemap-1] : gamemapname);
+}
+
+char * HU_TITLE2()
+{
+  return (gamemap - 1 < sizeof(mapnames2) / sizeof(*mapnames2) ? *mapnames2[gamemap-1] : gamemapname);
+}
+
+char * HU_TITLEP()
+{
+   return (gamemap - 1 < sizeof(mapnamesp) / sizeof(*mapnamesp) ? *mapnamesp[gamemap-1] : gamemapname);
+}
+
+char * HU_TITLET()
+{
+  return (gamemap - 1 < sizeof(mapnamest) / sizeof(*mapnamest) ? *mapnamest[gamemap-1] : gamemapname);
+}
+
+
 //---------------------------------------------------------------------
 //
 // $Log: d_deh.c,v $

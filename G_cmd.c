@@ -310,7 +310,7 @@ CONSOLE_NETCMD(map, cf_server, netcmd_map)
 	}
     }
   
-  G_InitNew(gameskill, c_argv[0]);
+  G_InitNew(gameskill, strupr(c_argv[0]));
 }
 
         // player name
