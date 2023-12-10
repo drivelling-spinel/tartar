@@ -292,10 +292,10 @@ static void R_RenderSegLoop (void)
             bottomstep>>HEIGHTBITS, (bottomstep&0xfff) << 4);
           DEBUGMSG(msgbuf);
           sprintf(msgbuf, "floorclip[rw_x]=%d, floorplane->top[rw_x]=%d, floorplane->bottom[rw_x]=%d\n",
-            floorclip[rw_x], floorplane->top[rw_x], floorplane->bottom[rw_x]);
+            floorclip[rw_x], floorplane?floorplane->top[rw_x]:-1, floorplane?floorplane->bottom[rw_x]:-1);
           DEBUGMSG(msgbuf);
           sprintf(msgbuf, "ceilingclip[rw_x]=%d, ceilingplane->top[rw_x]=%d, ceilingplane->bottom[rw_x]=%d\n",
-            ceilingclip[rw_x],ceilingplane->top[rw_x], ceilingplane->bottom[rw_x]);
+            ceilingclip[rw_x],ceilingplane?ceilingplane->top[rw_x]:-1, ceilingplane?ceilingplane->bottom[rw_x]:-1);
           DEBUGMSG(msgbuf);
         }
 #endif
@@ -525,10 +525,10 @@ static void R_RenderSegLoop (void)
             bottomstep>>HEIGHTBITS, (bottomstep&0xfff) << 4);
           DEBUGMSG(msgbuf);
           sprintf(msgbuf, "floorclip[rw_x]=%d, floorplane->top[rw_x]=%d, floorplane->bottom[rw_x]=%d\n",
-            floorclip[rw_x], floorplane->top[rw_x], floorplane->bottom[rw_x]);
+            floorclip[rw_x], floorplane?floorplane->top[rw_x]:-1, floorplane?floorplane->bottom[rw_x]:-1);
           DEBUGMSG(msgbuf);
           sprintf(msgbuf, "ceilingclip[rw_x]=%d, ceilingplane->top[rw_x]=%d, ceilingplane->bottom[rw_x]=%d\n",
-            ceilingclip[rw_x],ceilingplane->top[rw_x], ceilingplane->bottom[rw_x]);
+            ceilingclip[rw_x],ceilingplane?ceilingplane->top[rw_x]:-1, ceilingplane?ceilingplane->bottom[rw_x]:-1);
           DEBUGMSG(msgbuf);
         }
 #endif
