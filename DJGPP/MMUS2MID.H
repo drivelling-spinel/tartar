@@ -28,7 +28,7 @@ typedef unsigned char UBYTE;  // a one-byte int
 typedef unsigned short UWORD; // a two-byte int 
 typedef unsigned int ULONG;   // a four-byte int (assumes int 4 bytes) 
 
-extern int mmus2mid(UBYTE *mus,MIDI *mid, UWORD division, int nocomp);
+extern int mmus2mid(UBYTE *mus,MIDI *mid, UWORD division, int nocomp, int sec);
 extern int MIDIToMidi(MIDI *mididata,UBYTE **mid,int *midlen);
 extern int MidiToMIDI(UBYTE *mid,MIDI *mididata);
 

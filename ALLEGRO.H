@@ -1776,6 +1776,7 @@ void set_volume(int digi_volume, int midi_volume);
 
 int load_ibk(char *filename, int drums);
 int load_op2(char *filename);
+int load_op2_extra(char *filename, char * secondaries);
 
 SAMPLE *load_sample(char *filename);
 SAMPLE *load_wav(char *filename);
