@@ -33,7 +33,6 @@ void vesa_putpixel(int x, int y, int color);
 extern int current_mode_info;
 extern int current_mode;
 extern int screen_w;
-extern int screen_h;
 extern int mode_BPS;
 extern int mode_LFB;
 extern int mode_banksize;

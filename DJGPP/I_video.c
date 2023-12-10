@@ -236,6 +236,7 @@ int page_flip;     // killough 8/15/98: enables page flipping
 int hires;
 int show_fps;
 int scale_to_hires;
+int scale_aspect;
 int fps;
 
 int in_graphics_mode;
@@ -322,7 +323,7 @@ void I_FinishUpdate(void)
   // int c=I_GetTime_RealTime();
   // int d=I_GetTime_RealTime();
 
-   int ymax=SCREENHEIGHT, size;
+   int ymax=CORRECT_ASPECT(SCREENHEIGHT), size;
    int res_scale = RESULTING_SCALE;
    byte * swap = screens[0];
    if (noblit || !in_graphics_mode) return;
@@ -348,9 +349,9 @@ void I_FinishUpdate(void)
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
    size = in_hires ? (SCREENWIDTH<<res_scale)*(ymax<<res_scale) : SCREENWIDTH*ymax;
 
-   if (in_hires && SCALING_TO_HIRES)
+   if (in_hires && (SCALING_TO_HIRES || CORRECTING_ASPECT))
      {
-       I_BlitScreenScaled(2);
+       I_ReadScreen(screens[2]);
        screens[0] = screens[2];
        screens[2] = swap;
      }
@@ -389,7 +390,7 @@ void I_FinishUpdate(void)
    {  // 1/16/98 killough: optimization based on CPU type:
       if (current_mode>255) 
     	 dascreen = (byte *) screen_base_addr + scroll_offset*mode_BPS + blackband*mode_BPS; // VESA LFB access
-           if (cpu_family >= 6) ppro_blit(dascreen,size);       // PPro, PII
+           if (cpu_family >= 6 || asmp6parm) ppro_blit(dascreen,size);       // PPro, PII
       else if (cpu_family >= 5) pent_blit(dascreen,size);       // Pentium (GB 2014: not used for Cx5x86, but it is a little slower anyways)
       else                      memcpy(dascreen,screens[0],size); // Others
    }
@@ -405,10 +406,143 @@ void I_FinishUpdate(void)
 
 
 //-----------------------------------------------------------------------------
-// I_BlitScreenScaled
-void I_BlitScreenScaled(int scr)
+// blitScreenAspectScaled
+void blitScreenAspectScaled(const byte * scr)
 {
-   register byte *dest = screens[scr];
+   register byte *dest = scr;
+   register const byte *source = *screens;
+   int w = SCREENWIDTH << hires;
+   int h = SCREENHEIGHT << hires;
+   int q;
+   byte z = 2;
+   while (h > 0)
+     {
+       for ( q = 0; q < z ; q ++ )
+         {
+           register int count = w;
+           register byte *dest2 = dest + (w << 1);
+           if ((count-=4)>=0)
+             do
+               {
+                 register byte s0,s1;
+                 s0 = source[0];
+                 s1 = source[1];
+                 dest2[0] = dest[0] = s0;
+                 dest2[2] = dest[2] = s1;
+                 dest2[1] = dest[1] = s0;
+                 dest2[3] = dest[3] = s1;
+                 dest += 4;
+                 dest2 += 4;
+                 s0 = source[2];
+                 s1 = source[3];
+                 source += 4;
+                 dest2[0] = dest[0] = s0;
+                 dest2[2] = dest[2] = s1;
+                 dest2[1] = dest[1] = s0;
+                 dest2[3] = dest[3] = s1;
+                 dest += 4;
+                 dest2 += 4;
+               }
+             while ((count-=4)>=0);
+           if (count+=4)
+             do
+               {
+                 dest[0] = dest2[0] = dest[1] =
+                   dest2[1] = *source++;
+                 dest += 2;
+                 dest2 += 2;
+               }
+             while (--count);
+           dest += (w << 1);
+           h--;
+         }
+       z ^= 1;
+       memcpy(dest, dest - (w << 1), (w << 1));
+       dest += (w << 1);
+     }
+}
+
+//-----------------------------------------------------------------------------
+// blitScreenAspectCorrected
+void blitScreenAspectCorrected(const byte * scr)
+{
+    int i;
+    int w = (SCREENWIDTH << RESULTING_SCALE);
+    int sz = (CORRECT_ASPECT(SCREENHEIGHT) << RESULTING_SCALE) / 10;
+    const byte * restore = screens[0];
+    for ( i = 0 ; i < sz ; i ++ )
+      {
+        int z = 6;
+        int q;
+        if (cpu_family >= 6 || asmp6parm)       // PPro or PII
+          {
+            z ^= 2;
+            q = z * w;
+            ppro_blit(scr,q);
+            screens[0] += q - w;
+            scr += q; 
+            ppro_blit(scr,w);
+            screens[0] += w;
+            scr += w;
+
+            z ^= 2;
+            q = z * w;
+            ppro_blit(scr,q);
+            screens[0] += q - w;
+            scr += q; 
+            ppro_blit(scr,w);
+            screens[0] += w;
+            scr += w;
+          }
+        else if (cpu_family >= 5)  // Pentium
+          {
+            z ^= 2;
+            q = z * w;
+            pent_blit(scr,q);
+            screens[0] += q - w;
+            scr += q; 
+            pent_blit(scr,w);
+            screens[0] += w;
+            scr += w;
+
+            z ^= 2;
+            q = z * w;
+            pent_blit(scr,q);
+            screens[0] += q - w;
+            scr += q; 
+            pent_blit(scr,w);
+            screens[0] += w;
+            scr += w;
+          }
+        else                       // Others
+          {
+            z ^= 2;
+            q = z * w;
+            memcpy(scr,*screens,q);
+            screens[0] += q - w;
+            scr += q; 
+            memcpy(scr,*screens,w);
+            screens[0] += w;
+            scr += w;
+
+            z ^= 2;
+            q = z * w;
+            memcpy(scr,*screens,q);
+            screens[0] += q - w;
+            scr += q; 
+            memcpy(scr,*screens,w);
+            screens[0] += w;
+            scr += w;
+          }
+      }
+    screens[0] = restore;
+}
+
+//-----------------------------------------------------------------------------
+// blitScreenScaled
+void blitScreenScaled(const byte * scr)
+{
+   register byte *dest = scr;
    register const byte *source = *screens;
    int w = SCREENWIDTH << hires;
    int h = SCREENHEIGHT << hires;
@@ -457,11 +591,26 @@ void I_BlitScreenScaled(int scr)
 // I_ReadScreen
 void I_ReadScreen(byte *scr)
 {
-  int size = (SCREENWIDTH<<hires)*(SCREENHEIGHT<<hires);
-  // 1/18/98 killough: optimized based on CPU type:
-       if (cpu_family >= 6) ppro_blit(scr,size); // PPro or PII
-  else if (cpu_family >= 5) pent_blit(scr,size); // Pentium
-  else    memcpy(scr,*screens,size);             // Others
+  if (CORRECTING_ASPECT && SCALING_TO_HIRES)
+    {
+      blitScreenAspectScaled(scr);
+    }
+  else if (SCALING_TO_HIRES)
+    {
+      blitScreenScaled(scr);
+    }
+  else if (CORRECTING_ASPECT)
+    {
+      blitScreenAspectCorrected(scr);
+    }
+  else
+    {
+      int size = (SCREENWIDTH<<hires)*(SCREENHEIGHT<<hires);
+      // 1/18/98 killough: optimized based on CPU type:
+         if (cpu_family >= 6 || asmp6parm) ppro_blit(scr,size); // PPro or PII
+      else if (cpu_family >= 5) pent_blit(scr,size); // Pentium
+      else    memcpy(scr,*screens,size);             // Others
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -473,7 +622,8 @@ static void I_InitDiskFlash(void)
 /*
   byte temp[32*32];
 
-  if (diskflash)
+  if (diskflash)            
+
     {
       destroy_bitmap(diskflash);
       destroy_bitmap(old_data);
@@ -597,7 +747,7 @@ static void I_InitGraphicsMode(void)
   		  if (current_mode!=current_mode_info) vesa_get_mode_info(current_mode); 
                   screen_w=1280; // Necessary for when mode 13h/X has overwritten them.
                   screen_h=1024;
-                  blackband=112;
+                  blackband=CORRECTING_ASPECT ? 32 : 112;
 	 	}
 		else hiresfail=1;
      }
@@ -618,7 +768,7 @@ static void I_InitGraphicsMode(void)
   		  if (current_mode!=current_mode_info) vesa_get_mode_info(current_mode); 
 		  screen_w=640; // Necessary for when mode 13h/X has overwritten them.
  		  screen_h=480;
- 		  blackband=40;                     // color 8 is almost black, zero is black
+                  blackband=CORRECTING_ASPECT ? 0 : 40;                     // color 8 is almost black, zero is black
 		}
 		else hiresfail=1;
 	 }
@@ -780,6 +930,8 @@ void I_InitGraphics(void)
 char *hiresmodes[] =
    {"320x200","640x400", "1280x800"};
 
+char *aspects[] =
+   {"original","4:3"};
 
 VARIABLE_BOOLEAN(use_vsync, NULL,  yesno);
 
@@ -789,7 +941,10 @@ VARIABLE_BOOLEAN(page_flip, NULL,  yesno);
 
 VARIABLE_BOOLEAN(scale_to_hires, NULL, yesno);
 
+VARIABLE_BOOLEAN(scale_aspect, NULL, aspects);
+
 VARIABLE_INT(hires, NULL, 0, 2, hiresmodes);
+
 
 CONSOLE_VARIABLE(v_retrace, use_vsync, 0)
 {
@@ -807,6 +962,11 @@ CONSOLE_VARIABLE(v_hires, hires, 0)
 }
 
 CONSOLE_VARIABLE(v_scale_hi, scale_to_hires, 0)
+{
+  V_ResetMode();
+}
+
+CONSOLE_VARIABLE(v_scale_aspect, scale_aspect, 0)
 {
   V_ResetMode();
 }
@@ -835,6 +995,7 @@ void I_Video_AddCommands()
   C_AddCommand(v_hires);
   C_AddCommand(v_show_fps);
   C_AddCommand(v_scale_hi);
+  C_AddCommand(v_scale_aspect);
 }
 
 

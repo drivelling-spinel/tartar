@@ -154,7 +154,6 @@ char firstlevel[9] = "";
 const char *const standard_iwads[]=
 {
   "/chex.wad",
-  "/chex2.wad",
   "/doom2f.wad",
   "/doom2.wad",
   "/plutonia.wad",
@@ -934,6 +933,13 @@ void IdentifyVersion (void)
       switch(gamemode)
 	{
 	case retail:
+          i = strlen(iwad);
+          if (i>=8 && !strnicmp(iwad+i-8,"chex.wad",8))
+            {
+              game_name = "Chex Quest";
+              gamemission = chex;
+              break;
+            } 
 	  game_name = "Ultimate DOOM version";  // killough 8/8/98
 	  break;
 

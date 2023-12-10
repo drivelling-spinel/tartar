@@ -185,6 +185,12 @@ default_t defaults[] = {
     "1 to scale renderer output to higer resolution"
   },
   {
+    "scale_aspect",
+    &scale_aspect, NULL,
+    0, {0,1}, dt_number, ss_gen, wad_no,
+    "1 to correct aspect ratio to 4:3 by scaling renderer output"
+  },
+  {
     "hires",
     &hires, NULL,
     0, {0,2}, dt_number, ss_gen, wad_no,
@@ -2026,9 +2032,9 @@ boolean WritePCXfile(char *filename, byte *data, int width,
   pcx->xmin = 0;
   pcx->ymin = 0;
   pcx->xmax = SHORT((short)width-1);
-  pcx->ymax = SHORT((short)(height + band * 2)-1);
+  pcx->ymax = SHORT((short)(screen_h)-1);
   pcx->hres = SHORT((short)width);
-  pcx->vres = SHORT((short)(height + band * 2));
+  pcx->vres = SHORT((short)(screen_h));
   memset(pcx->palette,0,sizeof(pcx->palette));
   pcx->color_planes = 1;        // chunky image
   pcx->bytes_per_line = SHORT((short)width);
@@ -2137,18 +2143,18 @@ boolean WriteBMPfile(char *filename, byte *data, int width,
   wid = 4*((width+3)/4);
   //jff 4/22/98 add endian macros
   bmfh.bfType = SHORT(19778);
-  bmfh.bfSize = LONG(fhsiz+ihsiz+256L*4+width*(height + band*2));
+  bmfh.bfSize = LONG(fhsiz+ihsiz+256L*4+width*screen_h);
   bmfh.bfReserved1 = SHORT(0);
   bmfh.bfReserved2 = SHORT(0);
   bmfh.bfOffBits = LONG(fhsiz+ihsiz+256L*4);
 
   bmih.biSize = LONG(ihsiz);
   bmih.biWidth = LONG(width);
-  bmih.biHeight = LONG(height + band * 2);
+  bmih.biHeight = LONG(screen_h);
   bmih.biPlanes = SHORT(1);
   bmih.biBitCount = SHORT(8);
   bmih.biCompression = LONG(BI_RGB);
-  bmih.biSizeImage = LONG(wid*(height + band * 2));
+  bmih.biSizeImage = LONG(wid*screen_h);
   bmih.biXPelsPerMeter = LONG(0);
   bmih.biYPelsPerMeter = LONG(0);
   bmih.biClrUsed = LONG(256);
@@ -2236,8 +2242,7 @@ void M_ScreenShot (void)
           byte *linear = screens[2];
           int scale = RESULTING_SCALE;
 
-          if(SCALING_TO_HIRES) I_BlitScreenScaled(2);
-          else I_ReadScreen(linear);
+          I_ReadScreen(linear);
 
 	  // save the pcx file
 	  //jff 3/30/98 write pcx or bmp depending on mode
@@ -2245,7 +2250,7 @@ void M_ScreenShot (void)
 	  // killough 10/98: detect failure and remove file if error
 	  // killough 11/98: add hires support
 	  if (!(success = (screenshot_pcx ? WritePCXfile : WriteBMPfile)
-                (lbmname,linear, SCREENWIDTH<<scale, SCREENHEIGHT<<scale, blackband, pal)))
+                (lbmname,linear, SCREENWIDTH<<scale, CORRECT_ASPECT(SCREENHEIGHT)<<scale, blackband, pal)))
 	    {
 	      int t = errno;
 	      remove(lbmname);

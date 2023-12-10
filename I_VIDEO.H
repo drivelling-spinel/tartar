@@ -34,6 +34,8 @@
 
 #define RESULTING_SCALE ((hires + scale_to_hires) > 2 ? 2 : (hires + scale_to_hires))
 #define SCALING_TO_HIRES (scale_to_hires && (hires + scale_to_hires <= 2))
+#define CORRECTING_ASPECT (scale_aspect && screen_h != 200 && screen_h != 400)
+#define CORRECT_ASPECT(x) ( CORRECTING_ASPECT ? (x * 6 / 5) : (x) )
 
 // Called by D_DoomMain,
 // determines the hardware configuration
@@ -53,8 +55,6 @@ void I_WaitVBL(int count);
 
 void I_ReadScreen (byte* scr);
 
-void I_BlitScreenScaled(int scr);
-
 int I_DoomCode2ScanCode(int);   // killough
 int I_ScanCode2DoomCode(int);   // killough
 
@@ -68,6 +68,8 @@ extern int lcdres;
 extern int scale_to_hires;
 extern int disk_icon;  // killough 10/98
 extern int in_graphics_mode; // GB 2014: share
+extern int scale_aspect;
+extern int screen_h;
 extern boolean nolfbparm; // checkparm of -noLFB GB 2014
 extern int modeswitched;
 extern int fps;

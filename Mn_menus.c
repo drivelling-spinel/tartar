@@ -137,7 +137,7 @@ CONSOLE_COMMAND(mn_newgame, 0)
       return;
     }
 
-  if(gamemode == commercial)
+  if(gamemode == commercial || gamemission == chex)
     {
       // dont use new game menu if not needed
       if(!modifiedgame && gamemode == commercial
@@ -1171,6 +1171,7 @@ menu_t menu_video =
     {it_info,         FC_GOLD "mode"},
     {it_toggle,       "renderer resolution",          "v_hires"},
     {it_toggle,       "scale to higher resolution",   "v_scale_hi"},
+    {it_toggle,       "aspect ratio to scale to",     "v_scale_aspect"},
     {it_toggle,       "use page-flipping",            "v_page_flip"},
     {it_toggle,       "wait for retrace",             "v_retrace"},
     {it_toggle,       "show fps",                     "v_show_fps"},
@@ -1212,8 +1213,8 @@ void MN_VideoModeDrawer()
 
   patch = W_CacheLumpNum(lump + firstspritelump, PU_CACHE);
   
-  V_DrawBox(269, 124, 20, 20);
-  V_DrawPatchTL(281, 136, 0, patch, NULL);
+  V_DrawBox(269, 132, 20, 20);
+  V_DrawPatchTL(281, 144, 0, patch, NULL);
 }
 
 CONSOLE_COMMAND(mn_video, 0)
