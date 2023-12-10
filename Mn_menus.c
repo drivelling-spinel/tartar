@@ -56,6 +56,9 @@ extern menu_t menu_newgame;
 extern menu_t menu_main;
 extern menu_t menu_episode;
 extern menu_t menu_startmap;
+#ifdef EPISINFO
+extern menu_t menu_episode_dynamic;
+#endif
 
 // Blocky mode, has default, 0 = high, 1 = normal
 //int     detailLevel;    obsolete -- killough
@@ -76,6 +79,7 @@ byte savegamestates[SAVESLOTS];
 
 #ifdef EPISINFO
 static menu_t * Mn_BuildEpisodeMenu(void);
+char * menu_layout = "";
 #endif
 
 void MN_InitMenus()
@@ -115,6 +119,9 @@ menu_t menu_main =
     {it_runcmd, "options",              "mn_options",            "M_OPTION"},
     {it_runcmd, "load game",            "mn_loadgame",           "M_LOADG"},
     {it_runcmd, "save game",            "mn_savegame",           "M_SAVEG"},
+#ifdef EPISINFO
+    {it_runcmd, "read this",            "help",                  "M_RDTHIS"},
+#endif
     {it_runcmd, "quit",                 "mn_quit",               "M_QUITG"},
     {it_end},
   },
@@ -127,7 +134,7 @@ menu_t menu_main =
 void MN_MainMenuDrawer()
 {
   // hack for m_doom compatibility
-   V_DrawPatch(94, 2, 0, W_CacheLumpName("M_DOOM", PU_CACHE));
+  V_DrawPatch(94, 2, 0, W_CacheLumpName("M_DOOM", PU_CACHE));
 }
 
 // mn_newgame called from main menu:
@@ -144,6 +151,23 @@ CONSOLE_COMMAND(mn_newgame, 0)
       return;
     }
 
+#ifdef EPISINFO
+  if (!stricmp(menu_layout, "doom"))
+    {
+      menu_newgame.flags |= mf_fixedlayout;
+      menu_newgame.x = 48;
+      menu_newgame.y = 63;
+      menu_newgame.menuitems[0].type = it_info;
+      menu_newgame.menuitems[2].type = it_title;
+
+      menu_episode_dynamic.flags |= mf_fixedlayout;
+      menu_episode_dynamic.menuitems[2].type = it_gap;
+      if(menu_episode_dynamic.selected < 3)
+        menu_episode_dynamic.selected += 2;
+      menu_episode_dynamic.x = 48;
+      menu_episode_dynamic.y = 63;
+    }
+#endif
 
   if(gamemode == commercial || gamemission == chex)
     {
@@ -253,6 +277,8 @@ static menu_t * Mn_BuildEpisodeMenu(void)
   int extra = info_epis_count;
   int position = 1;
   int idx = SLADE_IDX;
+
+  menu->menuitems[SLADE_IDX].type = it_end;
 
   if(builtin + extra + idx + 1 > MAXMENUITEMS)
     {

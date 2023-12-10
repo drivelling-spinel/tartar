@@ -103,6 +103,10 @@ patch_t *slider_gfx[num_slider_gfx];
 static menu_t *drawing_menu;
 static patch_t *skulls[2];
 
+#ifdef EPISINFO
+extern char * menu_layout;
+#endif
+
 static void MN_GetItemVariable(menuitem_t *item)
 {
         // get variable if neccesary
@@ -165,6 +169,10 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
   
   boolean descr_collapsed = false;
 
+#ifdef EPISINFO
+  if((drawing_menu->flags & mf_fixedlayout) && item->type == it_gap)
+    return 0;
+#endif
   if(item->type == it_gap) return M_LINE;    // skip drawing if a gap
 
   item->x = x; item->y = y;       // save x,y to item
@@ -191,15 +199,42 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
 	  
 	  // adjust x if a centered title
 	  if(item->type == it_title)
-	    x = (SCREENWIDTH-patch->width)/2;
-	  
+            {
+#ifdef EPISINFO
+              if(drawing_menu->flags & mf_fixedlayout)
+                {
+                   x = 54;
+                   y = 38;
+                }
+              else
+#endif
+              x = (SCREENWIDTH-patch->width)/2;
+            }
+
+#ifdef EPISINFO
+          if(item->type == it_info && (drawing_menu->flags & mf_fixedlayout))
+            {
+               x = 96;
+               y = 14;
+            }
+#endif
+
 	  V_DrawPatchTranslated(x, y, 0, patch, colrngs[colour], 0);
 	  
 	  if(item->type == it_title)
 	    {
+#ifdef EPISINFO
+              if(drawing_menu->flags & mf_fixedlayout)
+                return 0;
+#endif
 	      last_title_height = height + 1;
 	    }
-	  
+#ifdef EPISINFO
+          if(drawing_menu->flags & mf_fixedlayout)
+            {
+               return item->type == it_info ? 0 : 16;
+            }
+#endif
 	  return height + 1;   // 1 pixel gap
 	}
     }
@@ -212,7 +247,6 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
   if(item->type == it_title)
     {
       // if it_title, we draw the description centered
-
       MN_WriteTextColoured
 	(
          item->description,
@@ -402,7 +436,6 @@ void MN_DrawMenu(menu_t *menu)
 
   drawing_menu = menu;    // needed by DrawMenuItem
   y = menu->y;
-  
   // draw background
 
   if(menu->flags & mf_background)
@@ -438,6 +471,19 @@ void MN_DrawMenu(menu_t *menu)
       // if selected item, draw skull next to it
 
       if(menu->flags & mf_skullmenu && menu->selected == itemnum)
+#ifdef EPISINFO
+        if(menu->flags & mf_fixedlayout)
+          {
+            V_DrawPatch
+              (
+                menu->x - 32,
+                y - 5,
+                0,
+                skulls[(menutime / BLINK_TIME) % 2]
+              );
+          }
+        else
+#endif
         V_DrawPatch
 	  (
 	   menu->x - 30,                                // 30 left
@@ -987,6 +1033,20 @@ void MN_ErrorMsg(char *s, ...)
 
 void MN_StartControlPanel()
 {
+#ifdef EPISINFO
+  if (!stricmp(menu_layout, "doom"))
+    {
+      menu_main.x = 97;
+      menu_main.y = gamemode == commercial ? 72 : 64;
+      menu_main.flags |= mf_fixedlayout;
+    }
+
+  if (gamemode == commercial && menu_main.menuitems[5].type != it_end)
+    {
+      menu_main.menuitems[4] = menu_main.menuitems[5];
+      menu_main.menuitems[5].type = it_end;
+    }
+#endif
   MN_StartMenu(&menu_main);
   
   S_StartSound(NULL,sfx_swtchn);

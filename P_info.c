@@ -104,10 +104,15 @@ char ** info_epis_pic = 0;
 char ** info_epis_start = 0;
 int info_epis_count = 0;
 
+extern char * menu_layout;
+
 static char * curr_epis_name = 0;
 static int curr_epis_num = 0;
 static char * curr_epis_pic = 0;
 static char * curr_epis_start = 0;
+static char * curr_menu_layout = 0;
+
+static void P_TryStoreEpisodeInfo(void);
 #endif
 
 
@@ -195,7 +200,10 @@ void P_ParseInfoCmd(char *line)
       line++;
 #ifdef EPISINFO
       if(!strncmp(line, "episode info", 12))
+      {
+         P_TryStoreEpisodeInfo();
          readtype = RT_EPISINFO;
+      }
 #endif
       if(!strncmp(line, "level info", 10))
 	 readtype = RT_LEVELINFO;
@@ -308,6 +316,7 @@ levelvar_t levelvars[]=
   {IVT_INT,       "episnum",      &curr_epis_num},
   {IVT_STRING,    "epispic",      &curr_epis_pic},
   {IVT_STRING,    "episname",     &curr_epis_name},
+  {IVT_STRING,    "menulayout",   &curr_menu_layout},
 #endif
   {IVT_END,       0,              0}
 
@@ -595,6 +604,40 @@ static int P_EnsureEpisBuffer()
    return epis_num_allocated;
 }
 
+static void P_TryStoreEpisodeInfo(void)
+{
+  if(curr_epis_num > 0 && *curr_epis_name && *curr_epis_pic && *curr_epis_start)
+  {
+    int j = 0;
+    P_EnsureEpisBuffer();
+
+
+    for(j = 0 ; j < info_epis_count ; j += 1)
+    {
+      if(info_epis_num[j] == curr_epis_num)
+        break;
+    }
+
+    info_epis_num[j] = curr_epis_num;
+    info_epis_pic[j] = curr_epis_pic;
+    info_epis_start[j] = curr_epis_start;
+    info_epis_name[j] = curr_epis_name;
+
+    if(j >= info_epis_count)
+      info_epis_count += 1;
+  }
+
+  curr_epis_name = "";
+  curr_epis_num = 0;
+  curr_epis_pic = "";
+  curr_epis_start = "";
+
+  if(*curr_menu_layout && !*menu_layout)
+    menu_layout = strdup(curr_menu_layout);
+
+}
+
+
 void P_LoadEpisodeInfo(int lumpnum)
 {
   char *lump;
@@ -609,6 +652,7 @@ void P_LoadEpisodeInfo(int lumpnum)
   curr_epis_num = 0;
   curr_epis_pic = "";
   curr_epis_start = "";
+  curr_menu_layout = "";
   
   rover = startofline = lump;
 
@@ -626,16 +670,7 @@ void P_LoadEpisodeInfo(int lumpnum)
   Z_Free(lump);
 
 
-  if(curr_epis_num > 0 && *curr_epis_name && *curr_epis_pic && *curr_epis_start)
-    {
-      P_EnsureEpisBuffer();
-      info_epis_num[info_epis_count] = curr_epis_num;
-      info_epis_pic[info_epis_count] = curr_epis_pic;
-      info_epis_start[info_epis_count] = curr_epis_start;
-      info_epis_name[info_epis_count] = curr_epis_name;
-      info_epis_count += 1;
-    }
-
+  P_TryStoreEpisodeInfo();
 }
 
 #endif

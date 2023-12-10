@@ -144,6 +144,9 @@ struct menu_s
     mf_background=2,    // show background
     mf_leftaligned=4,   // left-aligned menu
     mf_collapsedescr=8  // hide description when editing vars
+#ifdef EPISINFO
+    , mf_fixedlayout=16 // LP: use classic Doom fixed layout 
+#endif
   } flags;               
   void (*drawer)();       // seperate drawer function 
 };

@@ -25,6 +25,10 @@
 void MN_InitMenus();
 void MN_ShowFrameRate();
 
+#ifdef EPISINFO
+extern char * menu_layout;
+#endif
+
 #endif          /** MN_MENUS_H **/
 
 // EOF

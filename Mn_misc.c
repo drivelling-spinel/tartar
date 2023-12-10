@@ -262,7 +262,8 @@ static void MN_FindCreditScreens()
 
   // other help screens
 
-  AddHelpScreen("HELP2");       // shareware screen
+  if(gamemode == shareware)
+    AddHelpScreen("HELP2");       // shareware screen
   AddHelpScreen("CREDIT");      // credits screen
 }
 
@@ -300,8 +301,8 @@ static void MN_FindHelpScreens()
   AddHelpScreen("HELP1");
 
   // promote the registered version at every availability
-
-  AddHelpScreen("HELP2"); 
+  if(gamemode == shareware)
+    AddHelpScreen("HELP2"); 
 }
 
 void MN_DrawCredits(void)
