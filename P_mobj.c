@@ -92,6 +92,7 @@ boolean P_SetMobjState(mobj_t* mobj,statenum_t state)
   statenum_t i = state;                       // initial state
   boolean ret = true;                         // return value
   statenum_t tempstate[NUMSTATES];            // for use with recursion
+  state_t *local_states = mobj->intflags & MIF_STATE2 ? states2[1] : states2[0];  
 
   if (recursion++)                            // if recursion detected,
     memset(seenstate=tempstate,0,sizeof tempstate); // clear state table
@@ -106,7 +107,7 @@ boolean P_SetMobjState(mobj_t* mobj,statenum_t state)
             break;                 // killough 4/9/98
         }
 
-      st = states + state;
+      st = local_states + state;
       mobj->state = st;
       mobj->tics = st->tics;
 
@@ -897,6 +898,7 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
 {
   mobj_t *mobj = Z_Malloc(sizeof *mobj, PU_LEVEL, NULL);
   mobjinfo_t *info = &mobjinfo[type];
+  state_t *local_states = info->doomednum == -1000 ? states2[1] : states2[0];  
   state_t    *st;
 
   memset(mobj, 0, sizeof *mobj);
@@ -910,6 +912,8 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
   mobj->flags  = info->flags;
   mobj->flags2 = info->flags2; // haleyjd
   mobj->skin = NULL;
+  if(info->doomednum == -1000)
+    mobj->intflags |= MIF_STATE2; 
 
   // killough 8/23/98: no friends, bouncers, or touchy things in old demos
   if (demo_version < 203)
@@ -930,7 +934,7 @@ mobj_t *P_SpawnMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
   // do not set the state with P_SetMobjState,
   // because action routines can not be called yet
 
-  st = &states[info->spawnstate];
+  st = &local_states[info->spawnstate];
 
   mobj->state  = st;
   mobj->tics   = st->tics;

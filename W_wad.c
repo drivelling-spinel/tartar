@@ -229,10 +229,10 @@ int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_
 
   if(extra == EXTRA_JUMP)
     {
-      static char * names[] = { "DEHACKED" };
+      static char * names[] = { "PISF", "PISG", "PLSS", "SS_START", "S_END", "S_START", "DEHACKED", "DSFIRXPL" };
       int i = 0;
 
-      for(i = 0 ; i < 1 ; i += 1)
+      for(i = 0 ; i < 8 ; i += 1)
         {
           if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
         }
@@ -267,6 +267,23 @@ int W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, cons
       c[2] = 'S'; c[3] = 'L'; c[4] = 'F';
       return 1;  
     }
+    
+  if(extra == EXTRA_JUMP)
+    {
+      if(!strnicmp(lump->name, "PISG", 4) || !strnicmp(lump->name, "PISF", 4) || !strnicmp(lump->name, "PLSS", 4))
+        {
+          char *c = lump->name;
+          c[0] = 'J'; c[1] = 'M'; c[2] = 'P';
+          return 1;
+        }
+      if(!strnicmp(lump->name, "DSFIRXPL", 8))
+        {
+          char *c = lump->name;
+          c[2] = 'J'; c[3] = 'M'; c[4] = 'P';
+          return 1;
+        }
+    }
+  
 
   if(extra == EXTRA_TAPE)
     {

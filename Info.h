@@ -268,6 +268,9 @@ typedef enum
   SPR_CRSS, // joel: pickup sprite
   
   SPR_SELF,   // selfie stick
+  SPR_JMPG,   // pogo stick
+  SPR_JMPF,
+  SPR_JMPS,
     
   NUMSPRITES  // counter of how many there are
 } spritenum_t;
@@ -2298,6 +2301,7 @@ typedef enum {
   Trigger_Mancubus,
 
   MT_SELFFLASH,
+  MT_JUMPPAD,
 
   NUMMOBJTYPES  // Counter of how many there are
 

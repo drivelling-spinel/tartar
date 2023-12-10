@@ -205,7 +205,8 @@ typedef enum {
   wp_cross, // joel: Holy Cross
   NUMWEAPONS,
   wp_nochange,              // No pending weapon change.
-  wp_selfie                 // pending change to selfie stick
+  wp_selfie,                // pending change to selfie stick
+  wp_pogo                   // pending change to pogo stick
 } weapontype_t;
 
 // Ammunition types defined.

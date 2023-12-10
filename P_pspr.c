@@ -452,12 +452,20 @@ void A_Lower(player_t *player, pspdef_t *psp)
       return;
     }
 
-  if(player->pendingweapon == wp_selfie)
+  if(player->pendingweapon == wp_selfie || player->pendingweapon == wp_pogo)
     {
       if(selfieMode) 
         {
           player->cheats |= CF_SELFIE;
-          player->pendingweapon = wp_bfg;
+          switch(player->pendingweapon)
+            {
+              case wp_pogo:
+                player->pendingweapon = wp_pistol;
+                break;
+              case wp_selfie:
+              default:
+                player->pendingweapon = wp_bfg;
+            }          
         }
       else
         {
@@ -781,6 +789,17 @@ void A_TakeSelfie(player_t *player, pspdef_t *psp)
   A_FireSomething(player, P_Random(pr_plasma) & 1);
   P_SpawnPlayerMissile(player->mo, MT_SELFFLASH);
   C_RunTextCmd("animshot 3");
+}
+
+
+//
+// A_PlaceJumppad
+//
+
+void A_PlaceJumppad(player_t *player, pspdef_t *psp)
+{
+  A_FireSomething(player, P_Random(pr_plasma) & 1);
+  P_SpawnPlayerMissile(player->mo, MT_JUMPPAD);
 }
 
 
@@ -1140,6 +1159,29 @@ void A_SelfieSound(player_t *player, pspdef_t *psp)
 {
   S_StartSound(player->mo, sfx_selfie);
 }
+
+
+//
+// A_TossUp
+//
+
+void A_TossUp(mobj_t *actor)
+{
+  mobj_t *fire;
+  int    an;
+
+  if (!actor->target)
+    return;
+
+  A_FaceTarget(actor);
+
+  if (!P_CheckSight(actor, actor->target))
+    return;
+
+  S_StartSound(actor, sfx_barexp);
+  actor->target->momz = 1000*FRACUNIT/actor->target->info->mass;
+}
+
 
 //
 // P_SetupPsprites

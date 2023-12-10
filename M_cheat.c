@@ -699,6 +699,15 @@ CONSOLE_COMMAND(selfie, 0)
   }
 }
 
+CONSOLE_COMMAND(pogo, 0)
+{
+  if(!plyr || !selfieMode || gamestate != GS_LEVEL) return;
+  
+  if(!(plyr->cheats & CF_SELFIE)) {
+    plyr->pendingweapon = wp_pogo;
+  }
+}
+
 CONSOLE_COMMAND(noclip, cf_notnet|cf_level)
 {
   int value=0;
@@ -798,6 +807,7 @@ void Cheat_AddCommands()
    C_AddCommand(noclip);
    C_AddCommand(nuke);
    C_AddCommand(selfie);   
+   C_AddCommand(pogo);   
 }
 
 //----------------------------------------------------------------------------

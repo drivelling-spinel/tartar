@@ -78,7 +78,7 @@ static const char rcsid[] = "$Id: d_main.c,v 1.47 1998/05/16 09:16:51 killough E
 void ProcessDehFile(char *filename, char *outfilename, int lump);
 
 void ProcessExtraDehFile(extra_file_t extra, char *filename, char *outfilename, int lump);
-boolean selfieMode;
+boolean selfieMode = false;
 boolean commercialWiMaps;
 
 // killough 10/98: support -dehout filename
@@ -2277,14 +2277,15 @@ void A_TakeSelfie();
 void A_SelfieSound();
 void A_FirePlasma();
 void A_BFGsound();
+void A_PlaceJumppad();
+void A_VileAttack();
+void A_TossUp();
 
 int D_DetectAndLoadSelfie()
 {
   struct stat sbuf;
   int i = 0;
 
-  selfieMode = false;
-  
   *filestr = 0;
   sprintf(filestr, "%sselfie.wad", D_DoomExeDir());
   if(stat(filestr, &sbuf)) return 0;
@@ -2324,6 +2325,18 @@ int D_DetectAndLoadJumpwad()
       memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
     }
   if(W_AddExtraFile(filestr, EXTRA_JUMP)) return 0;
+  for(i = 0 ; i < NUMSTATES ; i += 1)
+    {
+      if(states2[1][i].sprite == SPR_PISF) states2[1][i].sprite = SPR_JMPF;
+      if(states2[1][i].sprite == SPR_PISG) states2[1][i].sprite = SPR_JMPG;
+      if(states2[1][i].sprite == SPR_PLSS) states2[1][i].sprite = SPR_JMPS;
+      if(states2[1][i].action == A_FirePlasma) states2[1][i].action = A_PlaceJumppad;
+      if(states2[1][i].action == A_VileAttack) states2[1][i].action = A_TossUp;
+    }
+  weaponinfo2[1][wp_pistol].ammo = am_noammo;
+  mobjinfo[MT_JUMPPAD].deathsound = sfx_jump;
+  mobjinfo[MT_JUMPPAD].seesound = sfx_None;
+  selfieMode = true;
 
   return 1;
 }

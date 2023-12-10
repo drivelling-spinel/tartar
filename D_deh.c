@@ -1844,6 +1844,7 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
   if(extra != EXTRA_NONE)
     {
       if(extra == EXTRA_SELFIE && indexnum == MT_PLASMA) indexnum = MT_SELFFLASH;
+      else if (extra == EXTRA_JUMP && indexnum == MT_PLASMA) indexnum = MT_JUMPPAD;
       else return;
     }
 
