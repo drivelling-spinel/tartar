@@ -345,6 +345,17 @@ typedef enum {
   #define strnicmp strncasecmp
 #endif
 
+// kind of extra WAD-s the port can autoload
+
+typedef enum {
+  EXTRA_NONE,
+  EXTRA_FILTERS,
+  EXTRA_SELFIE,
+  EXTRA_WIMAPS,
+  EXTRA_TAPE,
+  EXTRA_JUMP
+} extra_file_t; 
+
 #endif          // __DOOMDEF__
 
 //----------------------------------------------------------------------------

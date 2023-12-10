@@ -1328,13 +1328,13 @@ static void D_AutoExecScripts(void)
 
 // sf: reorganised to use d_newwadlumps
 
-static void D_ProcessDehInWad(int i)
+static void D_ProcessDehInWad(int i, extra_file_t extra)
 {
   if (i >= 0)
     {
       if (!strncasecmp(lumpinfo[i]->name, "dehacked", 8) &&
           lumpinfo[i]->namespace == ns_global)
-	ProcessDehFile(NULL, D_dehout(), i);
+	ProcessExtraDehFile(extra, NULL, D_dehout(), i);
     }
 }
         //sf:
@@ -2008,7 +2008,7 @@ void D_ReInitWadfiles()
   I_RescanSounds();
 }
 
-void D_NewWadLumps(int handle)
+void D_NewWadLumps(int handle, extra_file_t extra)
 {
   int i;
   char wad_firstlevel[9] = "";
@@ -2084,7 +2084,7 @@ void D_NewWadLumps(int handle)
       // mbf dehacked lump
       if(!strncmp(lumpinfo[i]->name, "DEHACKED", 8))
 	{
-	  D_ProcessDehInWad(i);
+	  D_ProcessDehInWad(i, extra);
 	}
     } 
   
@@ -2282,13 +2282,13 @@ int D_DetectAndLoadSelfie()
 {
   struct stat sbuf;
   char filestr[256];
-  char * files[] = { "selfie.wad", "selfie.deh" };
+  char * files[] = { "selfie.wad" };
   int i = 0, found = 0;
 
   selfieMode = false;
   
   *filestr = 0;
-  for(i = 0; i < 2 ; i++)
+  for(i = 0; i < 1 ; i++)
     {
       sprintf(filestr, "%s%s", D_DoomExeDir(), files[i]);
       if(!stat(filestr, &sbuf)) found += 1;
@@ -2296,13 +2296,11 @@ int D_DetectAndLoadSelfie()
     
   if(found != i) return 0;
 
-  sprintf(filestr, "%s%s", D_DoomExeDir(), files[0]);
-  if(W_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
 
   memcpy(states2[1] = malloc(sizeof(states)), &states, sizeof(states));
   memcpy(weaponinfo2[1] = malloc(sizeof(weaponinfo)), &weaponinfo, sizeof(weaponinfo));
-  sprintf(filestr, "%s%s", D_DoomExeDir(), files[1]);
-  ProcessExtraDehFile(EXTRA_SELFIE, filestr, D_dehout(), 0);
+  sprintf(filestr, "%s%s", D_DoomExeDir(), files[0]);
+  if(W_AddExtraFile(filestr, EXTRA_SELFIE)) return 0;
   // another hack - we just happen to know that selfie overrides BFG sprites
   for(i = 0 ; i < NUMSTATES ; i += 1)
     {

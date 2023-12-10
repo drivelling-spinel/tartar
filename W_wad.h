@@ -88,14 +88,6 @@ void W_InitMultipleFiles(char *const*filenames);
 // sf: add a new wad file after the game has already begun
 int W_AddNewFile(char *filename);
 
-typedef enum {
-  EXTRA_NONE,
-  EXTRA_FILTERS,
-  EXTRA_SELFIE,
-  EXTRA_WIMAPS,
-  EXTRA_TAPE
-} extra_file_t; 
-
 // load a specialy treated wad file that if game detects it 
 int W_AddExtraFile(char *filename, extra_file_t extra);
 

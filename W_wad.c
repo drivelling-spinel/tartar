@@ -205,10 +205,10 @@ int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_
     
   if(extra == EXTRA_SELFIE)
     {
-      static char * names[] = { "SELF", "DSBFG", "SS_START", "S_END", "S_START" };
+      static char * names[] = { "SELF", "DSBFG", "SS_START", "S_END", "S_START", "DEHACKED" };
       int i = 0;
 
-      for(i = 0 ; i < 5 ; i += 1)
+      for(i = 0 ; i < 6 ; i += 1)
         {
           if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
         }
@@ -315,7 +315,7 @@ void W_DynamicLumpCoalesceProc(lumpinfo_t * lump, int oldnum, int newnum)
     }
 }
 
-void D_NewWadLumps(int handle);
+void D_NewWadLumps(int handle, extra_file_t extra);
 
 
 void W_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
@@ -343,7 +343,7 @@ void W_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
         }
     }
 
-  D_NewWadLumps(handle);
+  D_NewWadLumps(handle, extra);
 }
 
 //
