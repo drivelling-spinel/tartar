@@ -20,7 +20,7 @@ machines for retro gaming.
 
 1. [CHANGES](doc/changes.md) - comprehensive list of changes in Tartar 
                                compared to ee-2.39db5-joel2 it is based on
-2. [AUTHORS](doc/authors.md) - acknoledgements for authors of the ports Tartar 
+2. [AUTHORS](doc/authors.md) - acknowledgements for authors of the ports Tartar 
                                is based on and their work
 3. [README](doc/TARTAR.TXT)  - templated readme one would expect to accompany 
                                any Doom related release
