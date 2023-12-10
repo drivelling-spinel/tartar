@@ -132,7 +132,15 @@ static int			max_rwscale = 64 * FRACUNIT;
 static int			heightbits = 12;
 static int			heightunit = (1 << 12);
 static int			invhgtbits = 4;
- 
+
+void R_ResetHeightMath(void)
+{
+        max_rwscale = 64 * FRACUNIT;
+        heightbits = 12;
+        heightunit = (1 << 12);
+        invhgtbits = 4;
+}
+
 static const struct
 {
 	int clamp;
@@ -179,7 +187,6 @@ void R_FixWiggle (sector_t *sector)
 		invhgtbits = FRACBITS - heightbits;
 	}
 }
-
 
 //
 // R_RenderMaskedSegRange
@@ -560,7 +567,7 @@ static void R_RenderSegLoop (void)
 
           if (bottomtexture)          // bottom wall
             {
-              int mid = (pixlow+heightbits-1)>>heightbits;
+              int mid = (pixlow+heightunit-1)>>heightbits;
               pixlow += pixlowstep;
 
               // no space above wall?
@@ -708,7 +715,6 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 }
 
 
-
 //
 // R_StoreWallRange
 // A wall segment will be drawn
@@ -762,7 +768,8 @@ void R_StoreWallRange(const int start, const int stop)
   ds_p->colormap = scalelight;
   rw_stopx = stop+1;
 
-  R_FixWiggle(frontsector);
+  if(wigglefix)
+    R_FixWiggle(frontsector);
 
   // killough 1/6/98, 2/1/98: remove limit on openings
   // killough 8/1/98: Replaced code with a static limit 

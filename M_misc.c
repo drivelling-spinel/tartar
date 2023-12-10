@@ -1674,6 +1674,14 @@ default_t defaults[] = {
     "Don't switch away from fist when berserk"
   },
 
+  {
+    "wigglefix",
+    &wigglefix, NULL,
+    0, {0, 1}, dt_number, ss_none, wad_yes,
+    "Workaround for renderer wiggly wall artifact"
+  },
+
+
   {NULL}         // last entry
 };
 

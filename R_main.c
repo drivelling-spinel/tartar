@@ -90,6 +90,10 @@ int norender0;
 int debugcolumn;
 #endif
 
+
+boolean wigglefix;
+
+
 //
 // precalculated math tables
 //
@@ -220,6 +224,7 @@ angle_t R_PointToAngle2(fixed_t viewx, fixed_t viewy, fixed_t x, fixed_t y)
                               ANG270-1-tantoangle[SlopeDiv2(x,y)] : // octant 5
     0;
 }
+
 
 //
 // R_InitTextureMapping
@@ -657,6 +662,8 @@ void R_RenderPlayerView (player_t* player, camera_t *camerapoint)
   R_ClearDrawSegs ();
   R_ClearPlanes ();
   R_ClearSprites ();
+
+  R_ResetHeightMath();
     
   if (autodetect_hom)
         R_HOMdrawer();
@@ -1015,6 +1022,9 @@ CONSOLE_VARIABLE(r_norender0, norender0, 0) {
 }
 #endif
 
+VARIABLE_BOOLEAN(wigglefix, NULL, onoff);
+CONSOLE_VARIABLE(r_wigglefix, wigglefix, 0) {}
+
 void R_AddCommands()
 {
    C_AddCommand(lefthanded);
@@ -1056,6 +1066,8 @@ void R_AddCommands()
    C_AddCommand(r_norender0);
    C_AddCommand(debugcolumn);
 #endif
+
+   C_AddCommand(r_wigglefix);
 }
 
 //----------------------------------------------------------------------------

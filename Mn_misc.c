@@ -337,7 +337,7 @@ void MN_DrawTartar(void)
 
   // sf: SMMU credits
 
-  V_WriteText(FC_GRAY "Tartar: Stage  4 (2021-2023)\n"
+  V_WriteText(FC_GRAY "Tartar: Stage  5 testing (2021-2023)\n"
               FC_BLUE "\"Modern\" " FC_GREEN "DOS " FC_RED "Doom " FC_GREEN "port \n"
               "for " FC_BLUE "\"modern\" " FC_GREEN "retro machines\n"
               "\n"
@@ -346,16 +346,15 @@ void MN_DrawTartar(void)
               FC_GRAY "(C) 2002, " FC_RED "Joel Murdoch\n"
               "\n"
               FC_GRAY "Programming:" FC_RED " Ludicrous_peridot\n"
-              FC_GRAY "Includes code and assets by Eternity Engine\n"
-              FC_GRAY "PrBoom and ZDoom contributors\n"
+              FC_GRAY "Borrows heavily from MBF 2.04 by " FC_RED "Gerwin\n"
+              FC_GRAY "Includes code and assets by Eternity Engine,\n"
+              FC_GRAY "ZDoom, PrBoom contributors,\n"
+              FC_GRAY "Kurt Baumgardner and Andrey Budko\n"
               FC_GRAY "See " FC_RED "ABOUT" FC_GRAY " for Eternity Engine credits\n"
-              FC_GRAY "Also includes code from MBF 2.04 by " FC_RED "Gerwin\n"
 	      "\n"
 	      "\n"
               FC_GRAY"  https://www.moddb.com/\n"
-              FC_GRAY"           company/ludicrous-peridot\n"
-              FC_GRAY"  https://gitlab.com/\n"
-              FC_GRAY"           ludicrous_peridot/cod10mbf\n",
+              FC_GRAY"           company/ludicrous-peridot\n",
               10, 25);
 }
 
