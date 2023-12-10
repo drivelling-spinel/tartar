@@ -387,9 +387,16 @@ void R_DrawMaskedColumn2(column_t *column)
   column_t *warp = column;
   int topscreen, bottomscreen, tall = 0, total = 0;
   fixed_t basetexturemid = dc_texturemid;
+  fixed_t th = (mceilingclip[dc_x] + 1) << FRACBITS;
  
   if(warp->topdelta == 0xff)
     return;
+
+  while(sprtopscreen > th)
+    {
+      sprtopscreen -= spryscale * dc_texheight;
+      total -= dc_texheight;
+    } 
 
   dc_texheight = 0; // killough 11/98
 
