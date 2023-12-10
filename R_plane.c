@@ -385,16 +385,15 @@ void do_draw_newsky(visplane_t *pl)
       offset2 = Sky2ColumnOffset>>16;
       skyTexture2 = texturetranslation[sky2texture];
 
-      dc_texturemid = skytexturemid;    // Default y-offset
-
       if(comp[comp_skymap] || !(dc_colormap = fixedcolormap))
         dc_colormap = fullcolormap;
 
       // first draw sky 2 with R_DrawColumn (unmasked)
 
       dc_texheight = (textureheight[skyTexture2])>>FRACBITS;
-      dc_iscale = (dc_texheight <= 128) ? (pspriteiscale>>stretchsky) :
+      dc_iscale = (dc_texheight <= SKY_HEIGHT) ? (pspriteiscale>>stretchsky) :
                   pspriteiscale;
+      dc_texturemid = textureheight[skyTexture2] - SKY_HEIGHT_FRAC + skytexturemid;    // Default y-offset
 
       for(x = pl->minx; (dc_x = x) <= pl->maxx; x++)
         if ((dc_yl = pl->top[x]) <= (dc_yh = pl->bottom[x]))
@@ -434,14 +433,14 @@ void do_draw_newsky(visplane_t *pl)
       offset = Sky1ColumnOffset>>16;
       skyTexture = texturetranslation[skytexture];
 
-      dc_texturemid = skytexturemid;    // Default y-offset
 
       if(comp[comp_skymap] || !(dc_colormap = fixedcolormap))
         dc_colormap = fullcolormap;
 
       dc_texheight = (textureheight[skyTexture])>>FRACBITS;
-      dc_iscale = (dc_texheight <= 128) ? pspriteiscale>>stretchsky :
+      dc_iscale = (dc_texheight <= SKY_HEIGHT) ? pspriteiscale>>stretchsky :
                   pspriteiscale;
+      dc_texturemid = textureheight[skyTexture] - SKY_HEIGHT_FRAC + skytexturemid;   // Default y-offset
 
       for(x = pl->minx; (dc_x = x) <= pl->maxx; x++)
         if ((dc_yl = pl->top[x]) <= (dc_yh = pl->bottom[x]))
@@ -507,7 +506,7 @@ static void do_draw_plane(visplane_t *pl)
 
 	    // Vertical offset allows careful sky positioning.
 
-	    dc_texturemid = s->rowoffset - 28*FRACUNIT;
+	    dc_texturemid = s->rowoffset - SKY_HEIGHT_FRAC + SKY_MID_FRAC; 
 
 	    // We sometimes flip the picture horizontally.
 	    //
@@ -519,8 +518,8 @@ static void do_draw_plane(visplane_t *pl)
 	  }
 	else 	 // Normal Doom sky, only one allowed per level
 	  {
-            dc_texturemid = skytexturemid;    // Default y-offset
             texture = skytexture;             // Default texture
+            dc_texturemid = textureheight[texture] - SKY_HEIGHT_FRAC + skytexturemid;    // Default y-offset
             flip = 0;                         // Doom flips it
 	  }
 
@@ -534,7 +533,7 @@ static void do_draw_plane(visplane_t *pl)
 
         dc_texheight = (textureheight[texture])>>FRACBITS; // killough
 
-        dc_iscale = (dc_texheight <= 128) ? pspriteiscale>>stretchsky :
+        dc_iscale = (dc_texheight <= SKY_HEIGHT) ? pspriteiscale>>stretchsky :
 	            pspriteiscale;
 
 	// killough 10/98: Use sky scrolling offset, and possibly flip picture
@@ -546,7 +545,10 @@ static void do_draw_plane(visplane_t *pl)
 #ifdef NORENDER
             if(!norender1)
 #endif
-              colfunc();
+              if(!comp[comp_talltex] && dc_texheight > 255)
+                R_DrawTallSkyColumn();
+              else
+                colfunc();
           }
       }
     else      // regular flat

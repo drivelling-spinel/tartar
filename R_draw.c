@@ -1240,7 +1240,7 @@ void R_DrawTallSkyColumn(void)
   postLen = thisPost->length;
   nextPost = (column_t *)(((byte *)thisPost) + postLen + 4);
   // panic if second post does not start immediately after first finishes
-  if(nextPost->topdelta != postLen)
+  if(nextPost->topdelta > 0)
     return;
 
   {

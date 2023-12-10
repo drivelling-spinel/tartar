@@ -37,6 +37,10 @@
 // The sky map is 256*128*4 maps.
 #define ANGLETOSKYSHIFT         22
 
+#define SKY_HEIGHT (128)
+#define SKY_HEIGHT_FRAC (SKY_HEIGHT << FRACBITS)
+#define SKY_MID_FRAC (100 << FRACBITS)
+
 extern int skytexture;
 extern int sky2texture; // haleyjd
 extern int skytexturemid;

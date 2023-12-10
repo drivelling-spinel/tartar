@@ -54,7 +54,7 @@ fixed_t Sky1ColumnOffset, Sky2ColumnOffset;
 //
 void R_InitSkyMap (void)
 {
-  skytexturemid = 100*FRACUNIT;
+  skytexturemid = SKY_MID_FRAC;
 }
 
 // called when the level starts to load the appropriate sky
