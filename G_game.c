@@ -1038,7 +1038,7 @@ static void G_DoCompleted(void)
 	 case 32:
 	    wminfo.next = 15; break;
          case 30:
-            wminfo.next = 33; break;
+            wminfo.next = 32; break;
 	 default:
 	    wminfo.next = gamemap;
 	 }

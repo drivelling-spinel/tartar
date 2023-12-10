@@ -812,7 +812,7 @@ static void WI_drawLF(void)
   int y = WI_TITLEY;
   patch_t *patch=NULL;
   
-  if(wbs->last>=0)
+  if(wbs->last>=0 && wbs->last < NUMCMAPS)
     {
       patch=lnames[wbs->last];
     }
@@ -829,11 +829,10 @@ static void WI_drawLF(void)
       V_DrawPatch((SCREENWIDTH - SHORT(patch->width))/2,
 		  y, FB, patch);
       y += (5*SHORT(patch->height))/4;
-      
-      // draw "Finished!"
-      V_DrawPatch((SCREENWIDTH - SHORT(finished->width))/2,
-		  y, FB, finished);
-    }
+    }      
+    // draw "Finished!"
+    V_DrawPatch((SCREENWIDTH - SHORT(finished->width))/2,
+    y, FB, finished);
 }
 
 
@@ -846,23 +845,22 @@ static void WI_drawLF(void)
 static void WI_drawEL(void)
 {
 // joel - don't show next level's graphic if it's end of game
-   if (strcmp(info_endofgame, "true"))
-   {
-  int y = WI_TITLEY;
-  
-  if(wbs->next>=0)
+  if (strcmp(info_endofgame, "true"))
     {
+      int y = WI_TITLEY;
+      
       // draw "Entering"
       V_DrawPatch((SCREENWIDTH - SHORT(entering->width))/2,
                   y, FB, entering);
-      
-      // draw level
-      y += (5*SHORT(lnames[wbs->next]->height))/4;
-      
-      V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->next]->width))/2,
-                  y, FB, lnames[wbs->next]);
+      if(wbs->next>=0 && wbs->next < NUMCMAPS)
+        {
+          // draw level
+          y += (5*SHORT(lnames[wbs->next]->height))/4;
+          
+          V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->next]->width))/2,
+                      y, FB, lnames[wbs->next]);
+        }
     }
-  }
 }
 
 
@@ -1271,6 +1269,19 @@ static void WI_initNoState(void)
 
 
 // ====================================================================
+// WI_initNoState
+// Purpose: Clear state but don't reset the background image
+// Args:    none
+// Returns: void
+//
+static void WI_initSkipState(void)
+{
+  state = NoState;
+  acceleratestage = 0;
+  cnt = 1;
+}
+
+// ====================================================================
 // WI_updateNoState
 // Purpose: Cycle until end of level activity is done
 // Args:    none
@@ -1367,8 +1378,7 @@ static void WI_drawShowNextLoc(void)
     }
 
   // draws which level you are entering..
-  if ( (gamemode != commercial)
-       || wbs->next != 30)  // check for MAP30 end game
+  if ( (gamemode != commercial) || strcmp(info_endofgame, "true")) // check for MAP30 end game
     WI_drawEL();  
 }
 
@@ -1545,7 +1555,9 @@ static void WI_updateDeathmatchStats(void)
           {   
             S_StartSound(0, sfx_slop);
 
-            if ( wbs2->epsd < 0 )
+            if (!strcmp(info_endofgame, "true"))
+              WI_initSkipState();
+            else if ( wbs2->epsd < 0)
               WI_initNoState();
             else
               WI_initShowNextLoc();
@@ -1856,7 +1868,9 @@ static void WI_updateNetgameStats(void)
               if (acceleratestage)
                 {
                   S_StartSound(0, sfx_sgcock);
-                  if ( wbs2->epsd < 0 )
+                  if (!strcmp(info_endofgame, "true"))
+                    WI_initSkipState();
+                  else if ( wbs2->epsd < 0)
                     WI_initNoState();
                   else
                     WI_initShowNextLoc();
@@ -2063,7 +2077,9 @@ static void WI_updateStats(void)
                 {
                   S_StartSound(0, sfx_sgcock);
 
-                  if (wbs2->epsd < 0)
+                  if (!strcmp(info_endofgame, "true"))
+                    WI_initSkipState();
+                  else if (wbs2->epsd < 0)
                     WI_initNoState();
                   else
                     WI_initShowNextLoc();
