@@ -289,6 +289,7 @@ void D_Display (void)
       break;
     case GS_DEMOSCREEN:
       D_PageDrawer();
+      HU_Drawer();
       break;
     case GS_CONSOLE:
       break;
@@ -1724,9 +1725,6 @@ void D_DoomMain(void)
   startupmsg("T_Init", "Init FraggleScript.");
   T_Init();
 
-  startupmsg("S_Init","Setting up sound.");
-  S_Init(snd_SfxVolume, snd_MusicVolume);
-
   startupmsg("D_CheckNetGame","Check netgame status.");
   D_CheckNetGame();
 
@@ -1792,7 +1790,11 @@ void D_DoomMain(void)
   if(M_CheckParm("-blockmap")) r_blockmap = true;
 
   // load all dymic extras before starting the game
+  startupmsg("Extras","Detecting extra WADs to autoload.");
   D_DetectAndLoadExtras();
+
+  startupmsg("S_Init","Setting up sound.");
+  S_Init(snd_SfxVolume, snd_MusicVolume);
 
   // start the appropriate game based on parms
 
@@ -1831,6 +1833,8 @@ void D_DoomMain(void)
 	}
 
   DEBUGMSG("start gamestate: title screen or whatever\n");
+
+  HU_Start();
 
   startlevel = Z_Strdup(G_GetNameForMap(startepisode, startmap), PU_STATIC, 0);
 

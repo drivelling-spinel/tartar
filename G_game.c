@@ -1968,7 +1968,11 @@ void G_Ticker(void)
    else if(paused & 2 );
    else if(gamestate == GS_INTERMISSION) WI_Ticker();
    else if(gamestate == GS_FINALE) F_Ticker();
-   else if(gamestate == GS_DEMOSCREEN) D_PageTicker();
+   else if(gamestate == GS_DEMOSCREEN)
+   {
+      D_PageTicker();
+      HU_Ticker();
+   }
 }
 
 //
