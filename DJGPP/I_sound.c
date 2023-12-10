@@ -477,10 +477,15 @@ boolean I_IsMusicCardOPL(void)
 
 // mididata is used to buffer the current music.
 
-static MIDI mididata;
+static MIDI *_mididata;
 
 void I_ShutdownMusic(void)
 {
+  if (_mididata)
+  {
+    destroy_midi(_mididata);
+    _mididata = 0;
+  }
   stop_midi();          //jff 1/16/98 shut down midi
 }
 
@@ -494,7 +499,7 @@ void I_InitMusic(void)
 void I_PlaySong(int handle, int looping)
 {
   if (handle>=0)
-    play_midi(&mididata,looping);       // start registered midi playing
+    play_midi(_mididata,looping);       // start registered midi playing
 }
 
 void I_SetMusicVolume(int volume)
@@ -527,6 +532,11 @@ void I_StopSong(int handle)
 
 void I_UnRegisterSong(int handle)
 {
+  if(handle >= 0)
+  {
+    destroy_midi(_mididata);
+    _mididata = 0;
+  }
 }
 
 // jff 1/16/98 created to convert data to MIDI ala Allegro
@@ -535,8 +545,9 @@ int I_RegisterSong(void *data)
 {
   int handle, err;
 
-  //jff 1/21/98 just stop any midi currently playing
-  stop_midi();
+  if(_mididata >= 0)
+    destroy_midi(_mididata);
+  _mididata = 0;
 
   if(!strncmp("RIFF", data, 4))
     {
@@ -560,19 +571,24 @@ int I_RegisterSong(void *data)
 
   // convert the MUS lump data to a MIDI structure
   //jff 1/17/98 make divisions 89, compression allowed
+
+
+  _mididata = (MIDI *)calloc(1, sizeof(MIDI));   
   if    //jff 02/08/98 add native midi support
     (
-     (err=MidiToMIDI(data, &mididata)) &&       // try midi first
-     (err=mmus2mid(data, &mididata, 89, 1))     // now try mus
+     (err=MidiToMIDI(data, _mididata)) &&       // try midi first
+     (err=mmus2mid(data, _mididata, 89, 1))     // now try mus
      )
     {
       handle=-1;
       doom_printf("Error loading midi: %d",err);
+      destroy_midi(_mididata);
+      _mididata = 0;
     }
   else
     {
       handle=0;
-      lock_midi(&mididata);     // data must be locked for Allegro
+      lock_midi(_mididata);     // data must be locked for Allegro
     }
   //jff 02/08/98 add native midi support:
   return handle;                        // 0 if successful, -1 otherwise
