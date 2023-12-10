@@ -238,13 +238,16 @@ void I_Quit (void)
 
   if (demorecording)
     G_CheckDemoStatus();
-  M_SaveDefaults ();
 
   if (*errmsg)
     puts(errmsg);   // killough 8/8/98
   else
     I_EndDoom();
+
+  M_SaveDefaults();
+  G_SaveDefaults(); // haleyjd
 }
+
 
 //
 // I_Error

@@ -544,10 +544,9 @@ void G_BuildTiccmd(ticcmd_t* cmd)
       int turndir = tmousex < 0;
       int turnfactor = turndir ? -tmousex : tmousex;
       int turnamount = turnfactor;
-      if(!(turnfactor & ~0x1ff)) turnamount = turnfactor << 3;
-      else if(!(turnfactor & ~0x5ff)) turnamount = turnfactor << 2;
-      else if(!(turnfactor & ~0x1fff)) turnamount = turnfactor << 1;
-      else turnamount = turnfactor & 0x3fff;      
+      if(!(turnfactor & ~0x5ff)) turnamount = turnfactor << 2;
+      else if(!(turnfactor & ~0xfff)) turnamount = turnfactor << 1;
+      else turnamount = turnfactor & 0x1fff;      
       if(turndir) cmd->angleturn += turnamount;
       else cmd->angleturn -= turnamount;     
    } 
