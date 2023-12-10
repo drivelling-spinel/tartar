@@ -77,8 +77,6 @@ static SAMPLE *raw2SAMPLE(unsigned char *rawdata, int len)
   return spl;
 }
 
-char msgbuf[256];
-
 static SAMPLE *wav2SAMPLE(unsigned char *rawdata, int len)
 {
   SAMPLE *spl = malloc(sizeof(SAMPLE));

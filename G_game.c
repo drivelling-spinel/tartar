@@ -1186,15 +1186,32 @@ static void G_DoPlayDemo(void)
   int demover;
   char basename[9];
   byte *option_p = NULL;      // killough 11/98
-  //int lumpnum;
-  //int length;
-  
-  if (gameaction != ga_loadgame)      // killough 12/98: support -loadgame
-    basetic = gametic;  // killough 9/29/98
-      
+  int lumpnum;
+  int length;
+     
   basename[8] = 0;
   ExtractFileBase(defdemoname,basename,sizeof(basename) - 1);           // killough
   
+  lumpnum = W_CheckNumForName(basename);
+  if(lumpnum < 0)
+    {
+      usermsg("Demo lump not found: %.8s", basename);
+      gameaction = ga_nothing;
+      return;
+    }
+  else
+    {
+      length = W_LumpLength(lumpnum);
+      if(length < 1)
+        {
+          gameaction = ga_nothing;
+          return;
+        }
+    }
+  
+  if (gameaction != ga_loadgame)      // killough 12/98: support -loadgame
+    basetic = gametic;  // killough 9/29/98
+
   demobuffer = demo_p = W_CacheLumpName (basename, PU_STATIC);  // killough
   
   // killough 2/22/98, 2/28/98: autodetect old demos and act accordingly.
