@@ -77,6 +77,7 @@ extern int info_bossaction_linespecial;
 extern boolean default_weaponowned[NUMWEAPONS];
 
 extern int info_wolf3d;
+extern int info_wolfcolor;
 
 #endif
 

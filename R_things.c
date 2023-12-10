@@ -42,6 +42,7 @@ rcsid[] = "$Id: r_things.c,v 1.22 1998/05/03 22:46:41 killough Exp $";
 #include "r_draw.h"
 #include "r_things.h"
 #include "m_argv.h"
+#include "p_info.h"
 
 #define MINZ        (FRACUNIT*4)
 #define BASEYCENTER 100
@@ -660,7 +661,11 @@ void R_ProjectSprite (mobj_t* thing)
 
   vis->mobjflags = thing->flags;
   vis->colour = thing->colour;
-  if (thing->intflags & MIF_BLOODBLUE) vis->colour = 6;
+  if (thing->intflags & MIF_BLOODBLUE)
+    {
+      if(info_wolfcolor & woco_any) vis->colour = 10;
+      else vis->colour = 6;
+    }
   else if (thing->intflags & MIF_BLOODGREEN) vis->colour = 15;
   else if (thing->intflags & MIF_BLOODYELLOW) vis->colour = 7;
 

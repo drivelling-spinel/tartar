@@ -431,6 +431,15 @@ extern int wolfendoom;
 extern int wolf3dmode;
 extern int wolflooks;
 
+enum {
+  woco_none = 0,
+  woco_imp = 1,
+  woco_demon = 2,
+  woco_boss = 4,
+  woco_knight = 8,
+  woco_any = 15
+};
+
 //=======================================================
 
 extern boolean abort_render;

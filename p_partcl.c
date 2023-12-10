@@ -391,11 +391,17 @@ void P_DrawSplash2(int count, fixed_t x, fixed_t y, fixed_t z, angle_t angle, in
       color1 = blue;
       color2 = rblue1;
       break;
+   case 0x11:           // Purple blood
+      color1 = purple;
+      color2 = purple1;
+      break;
    case 0x20:           // Green blood
+   case 0x21:
       color1 = green;
       color2 = green1;
       break;
    case 0x30:           // Yellow blood
+   case 0x31:
       color1 = yellow;
       color2 = yellow1;
       break;

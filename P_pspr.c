@@ -851,7 +851,7 @@ void P_GunShot(mobj_t *mo, boolean accurate)
   int damage = 5*(P_Random(pr_gunshot)%3+1);
   angle_t angle = mo->angle;
 
-  if (!accurate)
+  if (!accurate && !wolf3dmode)
     {  // killough 5/5/98: remove dependence on order of evaluation:
       int t = P_Random(pr_misfire);
       angle += (t - P_Random(pr_misfire))<<18;

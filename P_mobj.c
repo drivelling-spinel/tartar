@@ -47,6 +47,7 @@ rcsid[] = "$Id: p_mobj.c,v 1.26 1998/05/16 00:24:12 phares Exp $";
 #include "p_partcl.h"
 #include "d_deh.h"
 #include "ex_stuff.h"
+#include "p_info.h"
 
 #ifdef MONSTER_FALLING_DMG
 void P_MonsterFallingDamage(mobj_t *);
@@ -1499,19 +1500,49 @@ void P_SpawnBlood2(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage, mob
            }
            else if(source->player && source->player->cheats & CF_GODMODE)
               bcolor = 3;
+           else if(info_wolfcolor & woco_any)
+              switch(source->type)
+              {
+                 case MT_BRUISER:
+                 case MT_CBRUISER:
+                 case Trigger_BaronOfHell:
+                    bcolor = info_wolfcolor & woco_boss ? 1 : 0;
+                    break;
+                 case Trigger_HellKnight:
+                 case MT_KNIGHT:    
+                 case MT_CKNIGHT:
+                    bcolor = info_wolfcolor & woco_knight ? 1 : 0;
+                    break;
+                 case MT_TROOP:
+                 case Trigger_Imp:
+                    bcolor = info_wolfcolor & woco_imp ? 1 : 0;
+                    break;
+                 case MT_SERGEANT:
+                 case MT_SHADOWS:
+                 case Trigger_Spectre:
+                 case Trigger_Demon:
+                    bcolor = info_wolfcolor & woco_demon ? 1 : 0;
+                    break;
+                 default:
+                    bcolor = 0;
+              }
            else
               switch(source->type)
               {
                  case MT_HEAD:
+                 case Trigger_Cacodemon:
                     bcolor = 1;
                     break;
                  case MT_BRUISER:
                  case MT_KNIGHT:
                  case MT_CKNIGHT:
                  case MT_CBRUISER:
+                 case Trigger_BaronOfHell:
+                 case Trigger_HellKnight:
                     bcolor = 2;
                     break;
                  case MT_TROOP:
+                 case Trigger_Imp:
                     // good chances we have author's self titled wad loaded
                     if(!strcmp(s_CC_IMP, "ROACH")) bcolor = 2;
                     break;
@@ -1524,7 +1555,8 @@ void P_SpawnBlood2(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage, mob
       }
    }
    
-   th = _SpawnBloodInternal(x, y, z, dir, damage, prtclblood ? (bcolor << 4) : 0);
+   th = _SpawnBloodInternal(x, y, z, dir, damage, prtclblood ?
+     (bcolor && (info_wolfcolor & woco_any) ? ((bcolor << 4) | 1) : (bcolor << 4)) : 0);
    if(bcolor) th->intflags |= ((1 << 15) << bcolor);
 }
 

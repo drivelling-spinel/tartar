@@ -629,9 +629,9 @@ translat_t translations[] =
     {152, 8},      // felt?
     {0,   1},      // bleeacckk!!
     {250, 5},      // purple
-  //  {168, 8}, // bright pink, kinda
+//    {168, 8}, // bright pink, kinda
     {216, 8},      // vomit yellow
-    {16,  16},     // pink
+    {16,  16},     // pink                       
     {56,  8},      // cream
     {88,  8},      // white
     {112, 16}      // good old green again
