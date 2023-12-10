@@ -245,39 +245,37 @@ static void R_GenerateComposite(int texnum)
       {
         column_t *col = (column_t *)(block + colofs[i] - 3);  // cached column
         const byte *mark = marks + i * texture->height;
-        int j = 0, tall = 0;
+        int j = 0, tall = 0, stop = texture->height;
 
         // save column in temporary so we can shuffle it around
         memcpy(source, (byte *) col + 3, texture->height);
-  
+        
         // peridot: plain Doom patch post offset is up to 255 
-        for (;j < 256;)  // reconstruct the column by scanning transparency marks
+        for (;j < 254;)  // reconstruct the column by scanning transparency marks
           {
 	          unsigned len = 0;        // killough 12/98
 
-            while (j < texture->height && j < 254 && !mark[j]) // skip transparent cells
+            while (j < stop && j < 254 && !mark[j]) // skip transparent cells
               j++;
 
-            if (j >= texture->height)           // if at end of column
+            if (j >= stop)           // if at end of column
               {
                 col->topdelta = -1;             // end-of-column marker
                 break;
               }
               
+            col->topdelta = j;                  // starting offset of post
+
             if (j == 254)
               {
-                col->topdelta = j;
                 col->length = 0;
-                col = (column_t *)((byte *) col + len + 4); // next post
+                col = (column_t *)((byte *) col + 4); // next post
                 break;                
               }
 
-            col->topdelta = j;                  // starting offset of post
-
 	          // killough 12/98:
 	          // Use 32-bit len counter, to support tall 1s multipatched textures
-
-	          for (len = 0; j < texture->height && len <= 255 && mark[j]; j++)
+	          for (len = 0; j < stop && len <= 254 && mark[j]; j++)
               len++;                    // count opaque cells
 
 	          col->length = len; // killough 12/98: intentionally truncate length
@@ -286,16 +284,16 @@ static void R_GenerateComposite(int texnum)
             memcpy((byte *) col + 3, source + col->topdelta, len);
             col = (column_t *)((byte *) col + len + 4); // next post
           }
-        
+
         // peridot: tall patch can go on forever in chunks of 255 
-        for (;j < texture->height;)  // now the tall part
+        for (;;)  // now the tall part
           {
 	          unsigned len = 0, tran = 0;        // killough 12/98
 
-            while (j < texture->height && tran < 254 && !mark[j]) // skip transparent cells
+            while (j < stop && tran < 254 && !mark[j]) // skip transparent cells
               j++, tran++;
 
-            if (j >= texture->height)           // if at end of column
+            if (j >= stop)           // if at end of column
               {
                 col->topdelta = -1;             // end-of-column marker
                 break;
@@ -305,7 +303,7 @@ static void R_GenerateComposite(int texnum)
               {
                 col->topdelta = tran;
                 col->length = 0;
-                col = (column_t *)((byte *) col + len + 4); // next post
+                col = (column_t *)((byte *) col + 4); // next post
                 tall = j;
                 continue;
               }
@@ -317,7 +315,7 @@ static void R_GenerateComposite(int texnum)
 	          // killough 12/98:
 	          // Use 32-bit len counter, to support tall 1s multipatched textures
 
-	          for (len = 0; j < texture->height && len <= 255 && mark[j]; j++)
+	          for (len = 0; j < stop && len <= 254 && mark[j]; j++)
               len++;                    // count opaque cells
 
 	          col->length = len; // killough 12/98: intentionally truncate length
@@ -332,7 +330,7 @@ static void R_GenerateComposite(int texnum)
 
   // Now that the texture has been built in column cache,
   // it is purgable from zone memory.
-
+  
   Z_ChangeTag(block, PU_CACHE);
 }
 
@@ -371,15 +369,15 @@ static void R_GenerateLookup(int texnum, int *const errors)
       const int *cofs = realpatch->columnofs - x1;
       
       if (x2 > texture->width)
-	x2 = texture->width;
+        x2 = texture->width;
       if (x1 < 0)
-	x1 = 0;
+        x1 = 0;
       for (x = x1 ; x<x2 ; x++)
-	{
-	  count[x].patches++;
-	  collump[x] = pat;
-	  colofs[x] = LONG(cofs[x])+3;
-	}
+        {
+          count[x].patches++;
+          collump[x] = pat;
+          colofs[x] = LONG(cofs[x])+3;
+        }
     }
 
   // killough 4/9/98: keep a count of the number of posts in column,
@@ -403,41 +401,39 @@ static void R_GenerateLookup(int texnum, int *const errors)
       unsigned limit = texture->height*3+3; // absolute column size limit
 
       for (i = texture->patchcount, patch = texture->patches; --i >= 0;)
-	{
-	  int pat = patch->patch;
-	  const patch_t *realpatch = W_CacheLumpNum(pat, PU_CACHE);
-	  int x, x1 = patch++->originx, x2 = x1 + SHORT(realpatch->width);
-	  const int *cofs = realpatch->columnofs - x1;
-	  
-	  if (x2 > texture->width)
-	    x2 = texture->width;
-	  if (x1 < 0)
-	    x1 = 0;
+        {
+          int pat = patch->patch;
+          const patch_t *realpatch = W_CacheLumpNum(pat, PU_CACHE);
+          int x, x1 = patch++->originx, x2 = x1 + SHORT(realpatch->width);
+          const int *cofs = realpatch->columnofs - x1;
+          
+          if (x2 > texture->width)
+            x2 = texture->width;
+          if (x1 < 0)
+            x1 = 0;
 
-	  for (x = x1 ; x<x2 ; x++)
-	    if (count[x].patches > 1 || comp[comp_talltex])        // Only multipatched columns
-	      {
-		const column_t *col =
-		  (column_t*)((byte*) realpatch+LONG(cofs[x]));
-		const byte *base = (const byte *) col;
+          for (x = x1 ; x<x2 ; x++)
+            if (count[x].patches > 1 || comp[comp_talltex])        // Only multipatched columns
+              {
+                const column_t *col = (column_t*)((byte*) realpatch+LONG(cofs[x]));
+                const byte *base = (const byte *) col;
 
-		// count posts
-		for (;col->topdelta != 0xff; count[x].posts++)
-		  if ((unsigned)((byte *) col - base) <= limit)
-		    col = (column_t *)((byte *) col + col->length + 4);
-		  else
-		    { // killough 12/98: warn about column construction bug
-                      // sf: changed to usermsg
-                      error_printf("\nWarning: Texture %8.8s[%d] "
-                                   "(height %d) has bad column(s)"
-                                   " starting at x = %d.",
-                                   texture->name, texnum, texture->height, x);
-		      break;
-		    }
-	      }
-	}
+                // count posts
+                for (;col->topdelta != 0xff; count[x].posts++)
+                  {
+                    col = (column_t *)((byte *) col + col->length + 4);
+                    if ((unsigned)((byte *) col - base) > limit)
+                      { // killough 12/98: warn about column construction bug
+                        // sf: changed to usermsg
+                        error_printf("\nWarning: Texture %8.8s[%d] "
+                                     "(height %d) has bad column(s)"
+                                     " starting at x = %d.",
+                                     texture->name, texnum, texture->height, x);
+                      }
+                  }
+              }
+          }
     }
-
   // Now count the number of columns
   //  that are covered by more than one patch.
   // Fill in the lump / offset, so columns
@@ -472,8 +468,8 @@ static void R_GenerateLookup(int texnum, int *const errors)
 
             collump[x] = -1;              // mark lump as multipatched
             colofs[x] = csize + 3;        // three header bytes in a column
-	    // killough 12/98: add room for one extra post
-	    // peridot: add couple more post for tall patches, just in case
+       	    // killough 12/98: add room for one extra post
+	          // peridot: add couple more post for tall patches, just in case
             csize += 4*count[x].posts+5+5+5;// 1 stop byte plus 4 bytes per post
             csize += height;                // height bytes of texture data
           }
