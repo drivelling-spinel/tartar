@@ -717,6 +717,8 @@ static void G_DoLoadLevel(void)
       if(wipegamestate == GS_LEVEL)
 	 wipegamestate = -1;             // force a wipe
    }
+
+   abort_render = true;
 }
 
 //

@@ -265,8 +265,9 @@ void D_Display (void)
 {
   if (nodrawers)                    // for comparative timing / profiling
     return;
-  R_ReInitIfNeeded();
 
+  R_ReInitIfNeeded();
+  abort_render = false;
   if (setsizeneeded)                // change the view size if needed
     {
       R_ExecuteSetViewSize();

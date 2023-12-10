@@ -430,6 +430,8 @@ extern char ** dyna_playpal_wads;    // names of the wad containing a PLAYPAL lu
 extern boolean selfieMode;
 extern boolean commercialWiMaps;
 
+extern boolean abort_render;
+
 #endif
 
 //----------------------------------------------------------------------------

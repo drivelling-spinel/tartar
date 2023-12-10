@@ -655,6 +655,7 @@ angle_t R_WadToAngle(int wadangle)
 
 static int render_ticker = 0;
 int flatskip = 0;
+boolean abort_render = false;
 
 //
 // R_RenderView
@@ -674,17 +675,32 @@ void R_RenderPlayerView (player_t* player, camera_t *camerapoint)
 
   // check for new console commands.
   NetUpdate ();
+  if(abort_render)
+    {
+      abort_render = false;
+      return;
+    }
 
   // The head node is the last node output.
   R_RenderBSPNode (numnodes-1);
     
   // Check for new console commands.
   NetUpdate ();
+  if(abort_render)
+    {
+      abort_render = false;
+      return;
+    }
      
   if(!flatskip || render_ticker % flatskip) R_DrawPlanes ();
     
   // Check for new console commands.
   NetUpdate ();
+  if(abort_render)
+    {
+      abort_render = false;
+      return;
+    }
     
   R_DrawMasked ();
 
