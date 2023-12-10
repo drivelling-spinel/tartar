@@ -321,8 +321,11 @@ void I_FinishUpdate(void)
   // int c=I_GetTime_RealTime();
   // int d=I_GetTime_RealTime();
 
-   int ymax=200, size;
+   int ymax=SCREENHEIGHT, size;
+   int res_scale = hires + scale_to_hires;
+   byte * swap = screens[0];
    if (noblit || !in_graphics_mode) return;
+   if (res_scale > 2) res_scale = 2;
 
  //if (v12_compat)    M_DrawText2(1,10,CR_BLUE,true,"V12_COMPAT");   // debug
  //if (compatibility) M_DrawText2(1,16,CR_BLUE,true,"compatibility");// debug 
@@ -343,8 +346,15 @@ void I_FinishUpdate(void)
 
    // GB 2014, code to check if statusbar needs to be drawn (e.g. has anything changed, e.g. is dirty?): 
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
-   size = in_hires ? (SCREENWIDTH<<hires)*(ymax<<hires) : SCREENWIDTH*ymax;
- 
+   size = in_hires ? (SCREENWIDTH<<res_scale)*(ymax<<res_scale) : SCREENWIDTH*ymax;
+
+   if (in_hires && scale_to_hires && (scale_to_hires + hires <= 2))
+     {
+       I_BlitScreenScaled(5);
+       screens[0] = screens[5];
+       screens[5] = swap;
+     }
+
    if (in_page_flip)
       if (!in_hires && (current_mode<256)) // Transfer from system memory to planar 'mode X' video memory:
       {
@@ -385,6 +395,62 @@ void I_FinishUpdate(void)
    }
 
    if (in_page_flip) vesa_set_displaystart(0, scroll_offset, use_vsync); // hires hardware page-flipping (VBE 2.0 Only, Do not waste frames on 1.2)
+
+   if (swap != screens[0])
+     {
+       screens[5] = screens[0];
+       screens[0] = swap;
+     }
+}
+
+
+//-----------------------------------------------------------------------------
+// I_BlitScreenScaled
+void I_BlitScreenScaled(int scr)
+{
+   register byte *dest = screens[scr];
+   register const byte *source = *screens;
+   int w = SCREENWIDTH << hires;
+   int h = SCREENHEIGHT << hires;
+   while (h > 0)
+     {
+       register int count = w;
+       register byte *dest2 = dest + (w << 1);
+       if ((count-=4)>=0)
+         do
+           {
+             register byte s0,s1;
+             s0 = source[0];
+             s1 = source[1];
+             dest2[0] = dest[0] = s0;
+             dest2[2] = dest[2] = s1;
+             dest2[1] = dest[1] = s0;
+             dest2[3] = dest[3] = s1;
+             dest += 4;
+             dest2 += 4;
+             s0 = source[2];
+             s1 = source[3];
+             source += 4;
+             dest2[0] = dest[0] = s0;
+             dest2[2] = dest[2] = s1;
+             dest2[1] = dest[1] = s0;
+             dest2[3] = dest[3] = s1;
+             dest += 4;
+             dest2 += 4;
+           }
+         while ((count-=4)>=0);
+       if (count+=4)
+         do
+           {
+             dest[0] = dest2[0] = dest[1] =
+               dest2[1] = *source++;
+             dest += 2;
+             dest2 += 2;
+           }
+         while (--count);
+       dest += (w << 1);
+       h--;
+     }
 }
 
 //-----------------------------------------------------------------------------

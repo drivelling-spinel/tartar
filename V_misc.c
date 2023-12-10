@@ -444,7 +444,7 @@ void V_ClassicFPSDrawer()
   int tics = i - lasttic;
   lasttic = i;
   if (tics > 20)
-    tics = 20;
+    tics = 20;        
 
   if (hires)    // killough 11/98: hires support
     {           // sf: rewritten so you can distinguish between dots
@@ -489,6 +489,14 @@ void V_Init(void)
   screens[0] = calloc(size,1);
 
   memset(screens[0], 0, size);
+
+  if (screens[5]) free(screens[5]);
+  if (scale_to_hires && (scale_to_hires + hires <= 2))
+    {
+      screens[5] = malloc(size * 4);
+      memset(screens[5], 0, size * 4);
+    }
+  else screens[5] = NULL;
 
 }
 

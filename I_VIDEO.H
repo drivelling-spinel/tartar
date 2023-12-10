@@ -50,6 +50,8 @@ void I_WaitVBL(int count);
 
 void I_ReadScreen (byte* scr);
 
+void I_BlitScreenScaled(int scr);
+
 int I_DoomCode2ScanCode(int);   // killough
 int I_ScanCode2DoomCode(int);   // killough
 

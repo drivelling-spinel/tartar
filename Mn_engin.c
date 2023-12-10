@@ -206,7 +206,7 @@ static int MN_DrawMenuItem(menuitem_t *item, int x, int y, int colour)
     }
   else
     {
-      if( (menutime / BLINK_TIME) % 2 == 1 || colour != select_colour) 
+      if( (menutime / BLINK_TIME / 2) % 2 == 1 || colour != select_colour) 
         // write description
         MN_WriteTextColoured
           (
