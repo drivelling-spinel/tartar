@@ -1486,7 +1486,11 @@ void P_SpawnBlood2(fixed_t x, fixed_t y, fixed_t z, angle_t dir, int damage, mob
            bcolor = bloodcolor;
            break;
         case 4:
-           if(gamemission == chex) bcolor = 2;
+           if(gamemission == chex)
+           {
+              if(source->player) bcolor = 3;
+              else bcolor = 2;
+           }
            else if(source->player && source->player->cheats & CF_GODMODE)
               bcolor = 3;
            else
