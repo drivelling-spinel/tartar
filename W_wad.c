@@ -198,7 +198,7 @@ int W_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file_
       int i = 0;
 
       for(i = 0 ; i < 3 ; i += 1)
-        if(!stricmp(names[i], lump->name)) return 1;
+        if(!strnicmp(names[i], lump->name, 8)) return 1;
 
       return 0;
     }
@@ -249,7 +249,7 @@ int W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, cons
         }
     }
 
-  if(extra == EXTRA_SELFIE && !stricmp(lump->name, "DSBFG"))
+  if(extra == EXTRA_SELFIE && !strnicmp(lump->name, "DSBFG", 8))
     {
       char *c = lump->name;
       c[2] = 'S'; c[3] = 'L'; c[4] = 'F';
@@ -262,7 +262,7 @@ int W_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, cons
       return 1;
     }
 
-  if(stricmp(lump->name, "PLAYPAL")) return 1;
+  if(strnicmp(lump->name, "PLAYPAL", 8)) return 1;
 
   tmpname = strcpy(malloc(strlen(wadname) + 1), wadname);
   dyna_lump_nums[DYNA_PLAYPAL] = dyna_playpal_nums =
@@ -325,9 +325,9 @@ void W_DynamicLumpsInWad(int handle, int start, int count, extra_file_t extra)
 
   for(i = 0 ; i < count ; i += 1)
     {
-      if(!stricmp(lumpinfo[i + start]->name, "PLAYPAL")) playpal = i + start;
-      else if(!stricmp(lumpinfo[i + start]->name, "COLORMAP")) colormap = i + start;
-      else if(!stricmp(lumpinfo[i + start]->name, "TRANMAP")) tranmap = i + start;
+      if(!strnicmp(lumpinfo[i + start]->name, "PLAYPAL", 8)) playpal = i + start;
+      else if(!strnicmp(lumpinfo[i + start]->name, "COLORMAP", 8)) colormap = i + start;
+      else if(!strnicmp(lumpinfo[i + start]->name, "TRANMAP", 8)) tranmap = i + start;
     }
 
   if(playpal >= 0)
