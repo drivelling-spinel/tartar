@@ -77,6 +77,27 @@ static SAMPLE *raw2SAMPLE(unsigned char *rawdata, int len)
   return spl;
 }
 
+static SAMPLE *mac2SAMPLE(unsigned char *rawdata, int len)
+{
+  SAMPLE *spl = malloc(sizeof(SAMPLE));
+  spl->bits = 8;
+
+  // comment out this line for allegro pre-v3.12
+//#if(ALLEGRO_VERSION>=3 && ALLEGRO_SUB_VERSION>=10)
+//  spl->stereo = 0;
+//#endif
+
+  spl->freq = rawdata[3] + (rawdata[2]<<8);
+  spl->len = len;
+  spl->priority = 255;
+  spl->loop_start = 0;
+  spl->loop_end = len;
+  spl->param = -1;
+  spl->data = rawdata + 8;
+  _go32_dpmi_lock_data(rawdata+8, len);   // killough 3/8/98: lock sound data
+  return spl;
+}
+
 static SAMPLE *wav2SAMPLE(unsigned char *rawdata, int len)
 {
   SAMPLE *spl = malloc(sizeof(SAMPLE));
@@ -132,6 +153,8 @@ static void *getsfx(char *sfxname)
   sfxlump = W_GetNumForName(name);
 
   size = W_LumpLength(sfxlump);
+  
+  if(size < 8) return NULL;
 
   sfx = W_CacheLumpNum(sfxlump, PU_STATIC);
 
@@ -153,6 +176,9 @@ static void *getsfx(char *sfxname)
   Z_Free(sfx);
 
   if(!strncmp("RIFF", paddedsfx, 4)) return wav2SAMPLE(paddedsfx,paddedsize); 
+  
+  // LP: version (?) in the second byte, good chances this is a big endian format file
+  if(paddedsfx[0] == 0 && paddedsfx[1] != 0) return mac2SAMPLE(paddedsfx, paddedsize);
 
   // Return allocated padded data.
   return raw2SAMPLE(paddedsfx,paddedsize);  // killough 1/22/98: pass all data

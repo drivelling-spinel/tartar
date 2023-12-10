@@ -1320,7 +1320,7 @@ void P_DamageMobj(mobj_t *target,mobj_t *inflictor, mobj_t *source, int damage)
   if (source && source != target && source->type != MT_VILE &&
       (!target->threshold || target->type == MT_VILE) &&
       ((source->flags ^ target->flags) & MF_FRIEND || 
-       monster_infighting || demo_version < 203))
+       (monster_infighting && !wolfendoom) || demo_version < 203))
     {
       // if not intent on another player, chase after this one
       //

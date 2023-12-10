@@ -197,7 +197,7 @@ static boolean P_CheckMissileRange(mobj_t *actor)
 	(actor->target->health > 0 &&
 	 (!(actor->target->flags & MF_FRIEND) ||
 	  (actor->target->player ? 
-	   monster_infighting || P_Random(pr_defect) >128 :
+           (monster_infighting && !wolfendoom) || P_Random(pr_defect) >128 :
 	   !(actor->target->flags & MF_JUSTHIT) && P_Random(pr_defect) >128)));
     }
 
@@ -1202,7 +1202,7 @@ void A_Chase(mobj_t *actor)
 	    if (!(actor->target && actor->target->health > 0 &&
 		  ((comp[comp_pursuit] && !netgame) || 
 		   (((actor->target->flags ^ actor->flags) & MF_FRIEND ||
-		     (!(actor->flags & MF_FRIEND) && monster_infighting)) &&
+                     (!(actor->flags & MF_FRIEND) && (monster_infighting && !wolfendoom))) &&
 		    P_CheckSight(actor, actor->target)))) &&
 		P_LookForTargets(actor, true))
 	      return;

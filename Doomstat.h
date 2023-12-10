@@ -423,6 +423,8 @@ extern int drawgrenadetrails;
 
 extern int forceFlipPan;
 
+extern int wolfendoom;
+
 //=======================================================
 
 extern boolean abort_render;
@@ -445,6 +447,7 @@ extern int debugcolumn;
 #define background_flat (gamemission == cod || EternityMode ? "FLOOR4_8" : "FLOOR4_6")
 
 #endif
+
 
 //----------------------------------------------------------------------------
 //

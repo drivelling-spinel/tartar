@@ -1618,6 +1618,12 @@ default_t defaults[] = {
     "Workaround for rendering single patch textures more than 255 pixels high"
   },
 
+  {
+    "wolfendoom",
+    &wolfendoom, NULL,
+    0, {0,1}, dt_number, ss_none, wad_yes,
+    "Brings Doom slightly closer to Wolf3D with WolfenDoom loaded"
+  },
 
   {NULL}         // last entry
 };

@@ -696,3 +696,26 @@ void Ex_ResetExtraStatus()
 {
   memset(extra_status, 0, sizeof(extra_status));
 }
+
+void Ex_RevertDSStates()
+{
+  state_t *local_states;
+  int i;
+  
+  for(i = 0 ; i < sizeof(states3) / sizeof(*states3) ; i += 1)
+    {
+      local_states = states3[i];
+      local_states[S_DSGUN2].sprite = SPR_TNT1;
+      local_states[S_DSGUN2].tics = 8;
+  }
+   
+}
+
+
+void Ex_WolfenDoomStuff()
+{
+  if(!wolfendoom) return;
+  
+  Ex_RevertDSStates();
+
+}

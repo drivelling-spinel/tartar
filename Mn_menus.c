@@ -1521,6 +1521,7 @@ menu_t menu_etccompat =
     {it_toggle,   "Exhaustive line specials check",         "comp_everyline"},   
     {it_toggle,   "SMMU coloured lighting",                 "comp_clighting"},   
     {it_toggle,   "Workaround for tall textures",           "comp_talltex"},   
+    {it_toggle,   "Make Wolfendoom closer to Wolf3D",       "wolfendoom"},   
     {it_end},
   },
   270, 1,               // x, y
