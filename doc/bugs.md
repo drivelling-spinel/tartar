@@ -3,8 +3,6 @@
 - Dynamically adding sound effects from pwads with new names (e.g.
   from SMMU-style skins) and addressing sound affects by string names
   does not work after move to MBF 2.0.4. sound routines
-- Multipost single patch textures that are less than 255 pixel high are 
-  rendered with hoizontal line artifacts when not used as mid-textures
 - Loading a game saved on E1-type exit special sector crahses Tartar
 - When loading a game where player skin was changed from marine, 
   player mobj sprite is retained, but player skin "is set to" marine 
