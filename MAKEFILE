@@ -68,7 +68,8 @@ PLATOBJS =                  \
 	$(O)/pproblit.o     \
 	$(O)/drawspan.o     \
 	$(O)/emu8kmid.o     \
-	$(O)/drawcol.o
+        $(O)/drawcol.o      \
+        $(O)/drawcol2.o
 
 build : $(EXE)
 

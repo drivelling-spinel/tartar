@@ -362,7 +362,7 @@ void D_PageDrawer(void)
 	  return;
         }
       
-      if(hires)               // check for original title screen
+      if(hires == 1)               // check for original title screen
         {
 	  long checksum = W_LumpCheckSum(l);
 	  if(checksum == DOOM1TITLEPIC)

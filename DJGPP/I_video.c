@@ -233,6 +233,7 @@ byte *dascreen;
 int use_vsync;     // killough 2/8/98: controls whether vsync is called
 int page_flip;     // killough 8/15/98: enables page flipping
 int hires;
+int lcdres;
 int show_fps;
 
 int in_graphics_mode;
@@ -360,8 +361,8 @@ void I_FinishUpdate(void)
 
    // GB 2014, code to check if statusbar needs to be drawn (e.g. has anything changed, e.g. is dirty?): 
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
-   size = in_hires ? SCREENWIDTH*ymax*4 : SCREENWIDTH*ymax; 
-
+   size = in_hires ? SCREENWIDTH*ymax*4 : SCREENWIDTH*ymax;
+ 
    if (in_page_flip)
       if (!in_hires && (current_mode<256)) // Transfer from system memory to planar 'mode X' video memory:
       {
@@ -530,7 +531,7 @@ static void I_InitGraphicsMode(void)
         // Look for VESA 320x200; at an unpredictable number, but only with VBE 2.0 services is it worthwhile
 		// Also see if 640x400 is there, and 640x480, better do this properly...
             if (vesa_version>=1) if (vesa_find_modes(safeparm || nolfbparm || vesa_version<2)==0) 
-			{vesa_mode_640x400=0x100; vesa_mode_640x480=0x101;} // zero found = bad BIOS?
+                        {vesa_mode_640x400=0x100; vesa_mode_640x480=0x101; vesa_mode_1280x1024=0x107;} // zero found = bad BIOS?
 		// Note: it will set (mode_number | 0x4000) for LFB, when supported. 
         if ((vesa_version>=2) && (!nopmparm)) get_vesa_pm_functions(0);
 	 }
@@ -541,6 +542,18 @@ static void I_InitGraphicsMode(void)
   if (hires && !in_hires)  
   {  // GB 2014: Used to just try mode 100h and then 101h, but intel graphics gives trouble if 100h was tried first.
 	 if (vesa_version<1) {hiresfail=1;}
+         else if (lcdres && vesa_mode_1280x1024>0) 
+     {
+        if (vesa_set_mode(vesa_mode_1280x1024)!=-1)      
+		{                       
+  		  if (current_mode!=current_mode_info) vesa_get_mode_info(current_mode); 
+                  screen_w=1280; // Necessary for when mode 13h/X has overwritten them.
+                  screen_h=1024;
+                  blackband=32;
+                  hires=2;
+	 	}
+		else hiresfail=1;
+     }
 	 else if (vesa_mode_640x400>0) 
      {
         if (vesa_set_mode(vesa_mode_640x400)!=-1)      // Init 640x400
@@ -724,6 +737,8 @@ VARIABLE_BOOLEAN(page_flip, NULL,  yesno);
 
 VARIABLE_BOOLEAN(hires, NULL,  yesno);
 
+VARIABLE_BOOLEAN(lcdres, NULL,  yesno);
+
 CONSOLE_VARIABLE(v_retrace, use_vsync, 0)
 {
   V_ResetMode();
@@ -735,6 +750,11 @@ CONSOLE_VARIABLE(v_page_flip, page_flip, 0)
 }
 
 CONSOLE_VARIABLE(v_hires, hires, 0)
+{
+  V_ResetMode();
+}
+
+CONSOLE_VARIABLE(v_lcdres, lcdres, 0)
 {
   V_ResetMode();
 }
@@ -760,6 +780,7 @@ void I_Video_AddCommands()
   C_AddCommand(v_retrace);
   C_AddCommand(v_page_flip);
   C_AddCommand(v_hires);
+  C_AddCommand(v_lcdres);
   C_AddCommand(v_show_fps);
 }
 

@@ -185,6 +185,12 @@ default_t defaults[] = {
     "1 to enable high resolution mode"
   },
   {
+    "lcdres",
+    &lcdres, NULL,
+    1, {0,1}, dt_number, ss_gen, wad_no,
+    "1 to enable legacy LCD resolutions when in hi-res"
+  },
+  {
     "page_flip",
     &page_flip, NULL,
     1, {0,1}, dt_number, ss_gen, wad_no,

@@ -101,8 +101,8 @@ typedef enum {
 // allows us to avoid the overhead of dynamic allocation
 // when multiple screen sizes are supported
 
-#define MAX_SCREENWIDTH  640
-#define MAX_SCREENHEIGHT 400
+#define MAX_SCREENWIDTH  1280
+#define MAX_SCREENHEIGHT 1024
 
 #define SCREENWIDTH      320
 #define SCREENHEIGHT     200

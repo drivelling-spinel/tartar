@@ -37,10 +37,12 @@ extern int screen_h;
 extern int mode_BPS;
 extern int mode_LFB;
 extern int mode_banksize;
+extern int blackband;
 extern int vesa_version;
 extern int vesa_mode_320x200;
 extern int vesa_mode_640x400;
 extern int vesa_mode_640x480;
+extern int vesa_mode_1280x1024;
 extern unsigned long screen_base_addr;
 extern unsigned long mode_LFB_PTR;
 

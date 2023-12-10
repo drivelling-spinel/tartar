@@ -476,7 +476,7 @@ void V_ClassicFPSDrawer()
 
 void V_Init(void)
 {
-  int size = (hires ? SCREENWIDTH*SCREENHEIGHT*4 : SCREENWIDTH*SCREENHEIGHT);
+  int size = (hires ? SCREENWIDTH*SCREENHEIGHT*16 : SCREENWIDTH*SCREENHEIGHT);
   static byte *s;
 
   if (s) free(s);

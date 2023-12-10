@@ -1086,7 +1086,7 @@ void ST_Init(void)
 {
   ST_loadData();
   // killough 11/98: allocate enough for hires
-  screens[4] = Z_Malloc(ST_WIDTH*ST_HEIGHT*4, PU_STATIC, 0);
+  screens[4] = Z_Malloc(ST_WIDTH*ST_HEIGHT*16, PU_STATIC, 0);
 }
 
 /***********************

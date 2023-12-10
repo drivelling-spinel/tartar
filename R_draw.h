@@ -51,6 +51,11 @@ void R_DrawColumn(void);
 void R_DrawTLColumn(void);      // drawing translucent textures // phares
 void R_DrawFuzzColumn(void);    // The Spectre/Invisibility effect.
 
+// 1280x1024 specific versions
+void R_DrawColumn2(void);
+void R_DrawTLColumn2(void);      // drawing translucent textures // phares
+
+
 // Draw with color translation tables, for player sprite rendering,
 //  Green/Red/Blue/Indigo shirts.
 
@@ -87,8 +92,6 @@ void R_FillBackScreen(void);
 
 // If the view size is not full screen, draws a border around it.
 void R_DrawViewBorder(void);
-
-void R_DrawTLColumn(void);    // drawing translucent textures     // phares
 
 extern byte *tranmap;         // translucency filter maps 256x256  // phares 
 extern byte *main_tranmap;    // killough 4/11/98
