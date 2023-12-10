@@ -42,7 +42,7 @@ made available as COD10SRC.ZIP.
 ### Additional key bindings 
   
   Additional key bindings submenu for palette and screenshot-related commands 
-  (and jumping {DEV}) have been added under Key Bindings/Extras.
+  (and jumping) have been added under Key Bindings/Extras.
   
 ### Select WAD menu entry under Features has been removed
   
@@ -53,10 +53,10 @@ made available as COD10SRC.ZIP.
   - MBF "mushroom explosion" compatibility
   - Checking every special line player crosses, including if player is blocked
     from moving by a wall or other object 
-  - {DEV} SMMU colored lighting
-  - {DEV} Experimental support for rendering of textures with tall patches
+  - SMMU colored lighting
+  - Experimental support for rendering of textures with tall patches
 
-### {DEV} Character rendering suited for fonts with height of up to 10 pixels
+### Character rendering suited for fonts with height of up to 10 pixels
   
   Option menus and Save/Load Game menus are more spacious and allow character 
   glyphs of up to 10 pixes in height to be output without getting cut by screen
@@ -334,6 +334,9 @@ made available as COD10SRC.ZIP.
 
 ### Experimental "water transluency" code can been compiled in
 
+  Please note that this feature is not compiled in the reselase versions of
+  Tartar by default.  
+
   When enabled this which causes experimental ("no feature") code 
   for rendering Boom-style  (i.e. line type 242) deep water surface as 
   translucent to be included. In fact this code results in nothing 
@@ -409,10 +412,10 @@ made available as COD10SRC.ZIP.
   only the visible part will be output. This in particular allows for
   rendering of wide-screen friendly assets from more modern WAD-s.
 
-  {DEV} No error message spamming occurs in for boundaries checking when
+  No error message spamming occurs in for boundaries checking when
   rendering patches (graphics).
   
-### {DEV} Experimental support for tall patches
+### Experimental support for tall patches
 
   Normally Doom graphics format, as handled by vanilla Doom and Boom by default,
   has an image height limitation of 255. Subseqently released source ports
@@ -434,8 +437,11 @@ made available as COD10SRC.ZIP.
     Options menu or via configuration file property with the same name. It
     is recommended that Tartar is restarted after this option is toggled.
 
-### {DEV} Rendering troubleshooting aids
+### Rendering troubleshooting aids
 
+  Please note that this feature is not compiled in the reselase versions of
+  Tartar by default.  
+  
   Tartar introduces a set of debugging aids to help narrow down certain
   glitch or crash to a particular feature of the scene being rendered.
   When compiled with NORENDER preprocessor define, Tartar gets a -norender
@@ -711,17 +717,17 @@ look in a graphical editor had they loaded them.
   See [EXTRAS](extras.md) for further notes on usage and information
   about included sample helper WAD-s.
   
-### Autoloading of WAD-s (also based on IWAD-s)
+### Autoloading of WAD-s, DEH-s and BEX-s (also based on IWAD-s)
 
-  Tartar will automatically add WAD-s found in FIXES directory to the list
-  of WAD-s to load, putting them straight after the IWAD on the list of 
-  files to load. This is a convenient way to include into WAD load lists
-  popular fix packs without specifying them manually with -file command line
-  argument.
+  Tartar will automatically add WAD-s, DEH-s and BEX-s found in FIXES 
+  directory to the list of files to load, putting them straight after the 
+  IWAD on the list of files to load. This is a convenient way to include 
+  into file load lists popular fix packs without specifying them manually 
+  with -file command line argument.
   
   If inside the FIXES directory a directory exists that matches the name of
-  the IWAD (e.g. FIXES\DOOM, FIXES\DOOM2 or FIXES\TNT) WAD-s found in that 
-  directory will also be added to the list of WAD-s to load.
+  the IWAD (e.g. FIXES\DOOM, FIXES\DOOM2 or FIXES\TNT) files found in that 
+  directory will also be added to the list of files to load.
   
   For example, let's consider this directory layout
 
@@ -769,8 +775,14 @@ look in a graphical editor had they loaded them.
   ETERNITY.WAD E.g. none of the _fixes_, _helper_ or _extra_ WADs 
   will be loaded and none of the WAD and DEH files specified in the 
   configuration file will be loaded either.
+
+  -file command line argument in Tartar supports loading DeHackEd patches
+  in DEH or BEX format in addition to WAD-s or individual lumps.
+  Dehacked patch will be loaded and applied as per the order it is specified
+  among other files to load with -file argument. 
+  Loading of DEH or BEX patches with -deh command line argument also works.
   
-### {DEV} Support for extended node-builder format  
+### Support for extended node-builder format  
 
   Tartar can load node, segs and vertex information in extended format as
   described in [ZDoom wiki](https://zdoom.org/wiki/Node). Only uncompressed
@@ -879,7 +891,7 @@ look in a graphical editor had they loaded them.
   - Original Doom Chaingunner attack sound has been restored; the "special"
     chaingun sound is only used for the attack in Eternity TC mode or 
     with Caverns of Darkness loaded
-  - {DEV} SMMU colored lightning is off by default with a menu option under
+  - SMMU colored lightning is off by default with a menu option under
     Eternity Options and new CVAR (comp_clighting) to enable it. When on it 
     was producing rendering artifacts with more complex MBF-compatible maps.
   - Eternity TC actors would now be spawned only while in Eternity TC mode
@@ -913,9 +925,15 @@ look in a graphical editor had they loaded them.
   - Upon encountering textures with missing patches or sprites with no 
     rotations when loading wads Tartar would no longer immediately 
     quit or crash.
-  - {DEV} Non-power-of-2 wide texutes are now fully loaded and displayed.
-  - {DEV} If missing patches are referenced from texture definition no error 
+  - Non-power-of-2 wide texutes are now fully loaded and displayed.
+  - If missing patches are referenced from texture definition no error 
     message is recorded and transparent columns are produced instead.
+  - If a missing texture is referenced in a map, Tartar will still load that 
+    map will and use default texture (texnum 1) in place of it or any other
+    unknown textures it encounters
+  - If a missing flat is referenced in a map, or flat '-' is referenced,
+    Tartar will still load that map and use first flat (flat index 0) in 
+    place of it
 
 ### Demo handling improvements
 
@@ -935,11 +953,11 @@ look in a graphical editor had they loaded them.
   When loading a map that Tartar would not be able to handle it drops to 
   console showing an error message rather than crashing. 
   
-  {DEV} Similarly, when saved game is loaded that needs WAD files 
+  Similarly, when saved game is loaded that needs WAD files 
   that are not loaded Tartar will not go into undetermined state but will 
   rather drop to console showing an error message.
 
-### {DEV} Being blocked by a wall does not prevent specials from triggering
+### Being blocked by a wall does not prevent specials from triggering
 
   MBF, SMMU and Eternity Engine behaviour was that in case when a wall or
   another object prevented player from moving, line specials they may have 
@@ -964,7 +982,7 @@ look in a graphical editor had they loaded them.
     as IWAD regardless whether it is a PWAD or IWAD version and when players
     specify an IWAD of their choice with -iwad command line argument Tartar
     will not enforce that it is in fact a PWAD.
-  - {DEV} In case when map info lump dictates Tartar to use a certain 
+  - In case when map info lump dictates Tartar to use a certain 
     intermission background image, but lump for that image is not present 
     the game will display the menus background on end of map tally screen 
     instead of crashing. 
@@ -1002,14 +1020,23 @@ look in a graphical editor had they loaded them.
   - DEH attributes parsing for Things uses non-case-sensitive comparison and 
     tolerates both presense of spaces and absence of spaces before equals sign
   - Encountering unknown codepointer name in DEH file no longer causes a crash
+  - In TEXT substitution blocks CR (Carriage Return) character (code 13) is 
+    ignored and is not taken into account when couting number of characters in 
+    the "from" section of substitution. The character is handled normally (i.e.
+    as any other character) in the "to" section of substitution.
+  - Encountering empty DEHACKED lump in a WAD file will no longer move 
+    the game into an undetermined state
 
 ### Additional Bugfixes
   - Automap shows correct level time, not an arbitrary value like before
   - Arms numbers panel in status bar use correct background 
-  - {DEV} Automap no longer displays spaghetti monster for maps with "bigger
+  - Automap no longer displays spaghetti monster for maps with "bigger
     than normal" extents due to scaling boundaries not computed correctly.
-  - {DEV} Very far objects no longer "bleed" into player's view due to atan 
+  - Very far objects no longer "bleed" into player's view due to atan 
     computation overflows.
+  - Automap shows correct level name, for maps entered entered via MAP CCMD
+  - Finishing original Doom E1M8 no longer leaves the game with reddish 
+    tinted screen
 
     
 ## Extras
@@ -1072,7 +1099,7 @@ look in a graphical editor had they loaded them.
                    No Rest for The Living (NERVE.WAD) and is dependent by
                    the helper WAD for NERVE included with Tartar distribution.
 
-### {DEV} Jumpwad, well... jumping
+### Jumpwad, well... jumping
 
   [Jumpwad](https://www.doomworld.com/forum/topic/129577) by ribbiks and
   @grain_of_sault will be loaded automatically by Tartar when found side

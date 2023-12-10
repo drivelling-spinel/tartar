@@ -20,18 +20,14 @@ machines for retro gaming.
 - Treats certain popular WADs as first class mods improving
   player's experience with them:
   - InstaDoom by @linguica
-  - {DEV} Intemission Maps by @oliacym
+  - Intemission Maps by @oliacym
   - No Rest for the Living via a "helper WAD"  
 - New display (game view) size for higher resolutions and 
   new translucency mode
-- {DEV} Can load more complex (i.e. "more contemporary") maps
+- Can load more complex (i.e. "more contemporary") maps
   than the Eternity Engine version it is based on. Some but 
   not all maps from Eviternity, Ancient Aliens and Sunlust can
   be played for example
-
-\* Note that {DEV} glyphie above - features that are only available
-   in the experimental dev version are marked like that throughout 
-   the readme-s
 
 ## Documentation
 
@@ -55,14 +51,13 @@ Tartar distribution is available following the link below:
 There, TESTING directory contains the the testing version of the port 
 including TARTAR.EXE and additional assets and files required to run it. 
 EXTRAS document above describes the contents of DEMOS and EXTRAS directories. 
-DEV directory contains current experimental development version of the port.
 
 If you are looking for the 2021 Christmas binary, which was previously
 under TARTAR directory - it's available under STAGES/STAGE1.
 
 ### Playing Doom with TARTAR
 
-1. Download STAGE2 directory contents from the above link (MEGA has means 
+1. Download STAGE3 directory contents from the above link (MEGA has means 
    to download directory as a ZIP archive)
 
 2. For a quick and simple start either 
@@ -87,7 +82,7 @@ under TARTAR directory - it's available under STAGES/STAGE1.
 1. Download Caverns of Darkness TC distribution and unzip the contents 
    into a separate directory
 
-2. Download STAGE2 directory contents from the above link (MEGA has means 
+2. Download STAGE3 directory contents from the above link (MEGA has means 
    to download directory as a ZIP archive) and copy everything there 
    to the same directory as COD **except do not** copy KEYS.CSC 
    and retain the one shipped with the TC.

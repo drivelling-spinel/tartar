@@ -69,7 +69,7 @@ To try Tartar with selfie extra:
 5. Play the game, take out the stick by pressing L whenever you want, remove it
    by switching to any weapon. Use Fire to take selfies.
 
-### {DEV} Custom Intermission Maps
+### Custom Intermission Maps
 
 Tartar supports custom Intermission Maps by doomworld.com user @olyacim. 
 If one of DOOM2, TNT or PLUTONIA IWADs is loaded without any PWAD-s and 
@@ -115,7 +115,7 @@ Among other goodies the following helper WAD-s are included in the distribution:
                                enables custom intermission backgrounds provided 
                                INTMAPNR.WAD is also loaded.
                            
-{DEV} To play No Rest for the Living with Tartar enjoying the benefits of the
+To play No Rest for the Living with Tartar enjoying the benefits of the
 helper WAD provided:
 
 1. Install Tartar and check that Doom 2 runs with it.
@@ -142,7 +142,7 @@ helper WAD provided:
 6. If the abvove steps have been all carried out, both helper NERVE.WAD 
    and actual PWAD will be loaded and custom title pic will be displayed.
 
-### {DEV} Jumping with JUMPWAD.WAD
+### Jumping with JUMPWAD.WAD
 
 If JUMPWAD.WAD is found side by side with TARTAR.EXE it will be loaded but
 out of all lumps only those that are required for the unique JUMPWAD 
@@ -153,7 +153,7 @@ instead. The command can be bound to a key in Extra Keys submenu of Key
 Bindings. By default no key is assigned to the command. To leave jumping
 mode switch to any weapon.
 
-To try palette cycling in action:
+Step by step instructions for activating the mod:
 
 1. Install Tartar.
 
