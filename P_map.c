@@ -718,7 +718,7 @@ boolean P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
   yl = (tmbbox[BOXBOTTOM] - bmaporgy)>>MAPBLOCKSHIFT;
   yh = (tmbbox[BOXTOP] - bmaporgy)>>MAPBLOCKSHIFT;
 
-  if(comp[comp_everyline])
+  if(!comp[comp_everyline])
     for (bx=xl ; bx<=xh ; bx++)
       for (by=yl ; by<=yh ; by++)
         fit = fit && P_BlockLinesIterator2(bx,by,PIT_CheckLine);
@@ -730,6 +730,7 @@ boolean P_CheckPosition(mobj_t *thing, fixed_t x, fixed_t y)
 
   return fit;      
 }
+
 
 //
 // P_TryMove
@@ -748,19 +749,19 @@ boolean P_TryMove(mobj_t *thing, fixed_t x, fixed_t y, boolean dropoff)
   
   if (!P_CheckPosition(thing, x, y))
     {
-      if (comp[comp_everyline] && !(thing->flags & (MF_TELEPORT | MF_NOCLIP)))
+      if (!comp[comp_everyline] && !(thing->flags & (MF_TELEPORT | MF_NOCLIP)))
         for(i = numspechit - 1; i >= 0 ; i -= 1)
           if (spechit[i]->special)  // see if the line was crossed
 	          { 
 	            int oldside;
-  	          if ((oldside = P_PointOnLineSide(thing->x, thing->y, spechit[i])) !=
+                    if ((oldside = P_PointOnLineSide(thing->x, thing->y, spechit[i])) !=
 	              P_PointOnLineSide(x, y, spechit[i]))
 	              {
 	                P_CrossSpecialLine(spechit[i], oldside, thing);
-	              }
-	         }
+                      }
+                 } 
       return false;   // solid wall or thing
-	  }    
+    }    
 
   if (!(thing->flags & MF_NOCLIP))
     {
@@ -843,13 +844,13 @@ boolean P_TryMove(mobj_t *thing, fixed_t x, fixed_t y, boolean dropoff)
   // killough 11/98: simplified
 
   if (!(thing->flags & (MF_TELEPORT | MF_NOCLIP)))
-    for(i = numspechit - 1 ; i >= 0 ; i -= 1)
-      if (spechit[i]->special)  // see if the line was crossed
+    while(numspechit--)
+      if (spechit[numspechit]->special)  // see if the line was crossed
 	{
 	  int oldside;
-	  if ((oldside = P_PointOnLineSide(oldx, oldy, spechit[i])) !=
-	      P_PointOnLineSide(thing->x, thing->y, spechit[i]))
-	    P_CrossSpecialLine(spechit[i], oldside, thing);
+          if ((oldside = P_PointOnLineSide(oldx, oldy, spechit[numspechit])) !=
+              P_PointOnLineSide(thing->x, thing->y, spechit[numspechit]))
+            P_CrossSpecialLine(spechit[numspechit], oldside, thing);
 	}
 
   return true;

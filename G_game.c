@@ -916,7 +916,7 @@ static void G_ReadDemoTiccmd(ticcmd_t *cmd)
       unsigned short a = 0;
       cmd->forwardmove = ((signed char)*demo_p++);
       cmd->sidemove = ((signed char)*demo_p++);
-      if(demo_version < 329 && demo_version > 204)
+      if(demo_version >= 214 && demo_version < 300)
         a = (unsigned char)*demo_p++;
       cmd->angleturn = (a) | (((unsigned char)*demo_p++) << 8);
       cmd->buttons = (unsigned char)*demo_p++;
@@ -1277,6 +1277,7 @@ static void G_DoPlayDemo(void)
 
   demo_version =      // killough 7/19/98: use the version id stored in demo
   demover = *demo_p++;
+  eeversion = 0;
 
   if (demover < 200)     // Autodetect old demos
     {
@@ -1358,7 +1359,7 @@ static void G_DoPlayDemo(void)
 	 temp += ((int)(*demo_p++))<<8;  // byte two
 	 temp += ((int)(*demo_p++))<<16; // byte three
 	 temp += ((int)(*demo_p++))<<24; // byte four
-	 demo_version = demover = temp;
+         eeversion = demo_version = demover = temp;
 	 
 	 // get subversion
 	 demo_subversion = *demo_p++;
@@ -1462,9 +1463,11 @@ static void G_DoPlayDemo(void)
       startgametic = gametic;
     }
 
-  if(demo_version > 204 && demo_version < 329)
-    doom_printf("Unsupported demo version %d", demo_version);
+  C_Printf("Playing demo version %d.%d%s\n", demo_version,
+    demo_subversion, eeversion ? ", EE" : "");
 
+  if(demo_version > 204 && demo_version < 329) 
+    doom_printf("Unsupported demo version %d", demo_version);
 }
 
 #define VERSIONSIZE   16
@@ -2988,20 +2991,29 @@ byte *G_ReadOptions(byte *demo_p)
       monkeys = *demo_p++;
 
       {   // killough 10/98: a compatibility vector now
-	int i;
-	for (i=0; i < COMP_TOTAL; i++)
-	  comp[i] = *demo_p++;
+        int i;
+        int comp_to_load = COMP_TOTAL;
+
+        if(demo_version < 329)
+          comp_to_load = comp_talltex;
+         
+        for (i=0; i < comp_to_load; i++)
+          comp[i] = *demo_p++;
       }
+
 
       // Options new to v2.04, etc.
       if (demo_version >= 204)
 	;
     }
-  else  // defaults for versions < 2.02
+  else if(demo_version < 203) // defaults for versions < 2.02  
     {
+
       int i;  // killough 10/98: a compatibility vector now
-      for (i=0; i < COMP_TOTAL; i++)
-	comp[i] = compatibility;
+      int comp_to_load = comp_talltex;
+
+      for (i=0; i < comp_to_load; i++)
+        comp[i] = compatibility;
 
       monster_infighting = 1;           // killough 7/19/98
 

@@ -50,6 +50,7 @@ int comp[COMP_TOTAL], default_comp[COMP_TOTAL];    // killough 10/98
 
 int demo_version;           // killough 7/19/98: Boom version of demo
 int demo_subversion;        // haleyjd 06/17/01: subversion for betas
+int eeversion;
 
 // v1.1-like pitched sounds
 int pitched_sounds;  // killough 10/98

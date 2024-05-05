@@ -756,7 +756,7 @@ default_t defaults[] = {
   {
     "comp_evenlight",
     &default_comp[comp_evenlight], &comp[comp_evenlight],
-    1, {0,1}, dt_number, ss_comp, wad_yes,
+    0, {0,1}, dt_number, ss_comp, wad_yes,
     "Colormaps are applied unevenly to some walls"
   },
 

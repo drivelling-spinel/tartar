@@ -90,6 +90,7 @@ extern int compatibility, default_compatibility;          // killough 1/31/98
 
 extern int demo_version;           // killough 7/19/98: Version of demo
 extern int demo_subversion;
+extern int eeversion;              // LP: demo version read from EE-fields
 
 // Only true when playing back an old demo -- used only in "corner cases"
 // which break playback but are otherwise unnoticable or are just desirable:

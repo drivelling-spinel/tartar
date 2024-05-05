@@ -506,8 +506,8 @@ static void P_ZMovement (mobj_t* mo)
 {
   // haleyjd: part of lost soul fix, moved up here for maximum
   //          scope
-  int correct_lost_soul_bounce =
-    !demo_compatibility && (gamemission != doom2);
+  int correct_lost_soul_bounce = 
+    (demo_version > 109) || (demo_version == 109 && gamemission != doom2);
    
   // killough 7/11/98:
   // BFG fireballs bounced on floors and ceilings in Pre-Beta Doom
