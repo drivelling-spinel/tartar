@@ -20,3 +20,5 @@
   In case of the first level, starting new game is not sufficuent either. 
   To go back to the original track warping to another level and warping back 
   or restarting the game executable is nceessary
+- Time spent in level is cut off in automap for WAD-s with wider fonts (e.g. 
+  Eviternity).
