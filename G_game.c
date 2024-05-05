@@ -192,10 +192,6 @@ fixed_t forwardmove[2] = {0x19, 0x32};
 fixed_t sidemove[2]    = {0x18, 0x28};
 fixed_t angleturn[3]   = {640, 1280, 320};  // + slow turn
 #else
-fixed_t * forwardmove;
-fixed_t * sidemove;
-fixed_t * angleturn;
-
 fixed_t forwardmove_19[2] = {0x19, 0x32};
 fixed_t sidemove_19[2]    = {0x18, 0x28};
 fixed_t angleturn_19[3]   = {640, 1280, 320};  
@@ -203,6 +199,10 @@ fixed_t angleturn_19[3]   = {640, 1280, 320};
 fixed_t forwardmove_11[2] = {0xc800, 0x19000};
 fixed_t sidemove_11[2]    = {0xc000, 0x14000};
 fixed_t angleturn_11[3]   = {640 * FRACUNIT, 1280 * FRACUNIT, 320 * FRACUNIT};
+
+fixed_t * forwardmove = forwardmove_19;
+fixed_t * sidemove = sidemove_19;                  
+fixed_t * angleturn = angleturn_19;
 #endif
 
 boolean gamekeydown[NUMKEYS];
@@ -1965,7 +1965,7 @@ void G_Ticker(void)
 	    memcpy(cmd, &netcmds[i][buf], sizeof *cmd);
 #ifdef DEMO11
             if(v11_compat)
-               store_fixed_ticcmd(cmd, fixed_cmd);            
+               store_fixed_ticcmd(cmd, fixed_cmd);
 #endif
 	    
 	    if(demoplayback)

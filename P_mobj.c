@@ -78,7 +78,7 @@ fixed_t FloatBobOffsets[64] =               // haleyjd 04/30/99: FloatBob
 };
 
 #ifdef DEMO11
-fixed_t maxmove;
+fixed_t maxmove = MAXMOVE_19;
 #endif
 
 //

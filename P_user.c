@@ -357,7 +357,7 @@ void P_PlayerThink (player_t* player)
       fixed_ticcmd_t * fixed_cmd = fixed_ticcmd(cmd);
 
       if(v11_compat)
-        {
+        {          
           fixed_cmd->angleturn = 0;
           fixed_cmd->forwardmove = 0xc800;
           fixed_cmd->sidemove = 0;
