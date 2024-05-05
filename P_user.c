@@ -184,11 +184,48 @@ void P_CalcHeight (player_t* player)
 void P_MovePlayer (player_t* player)
 {
   ticcmd_t *cmd = &player->cmd;
+#ifdef DEMO11
+  fixed_ticcmd_t * fixed_cmd;
+#endif
   mobj_t *mo = player->mo;
 
+#ifdef DEMO11
+  if(v11_compat)
+    {
+      fixed_cmd = fixed_ticcmd(cmd);
+      mo->angle += fixed_cmd->angleturn;
+    }
+  else
+    {
+#endif
   mo->angle += cmd->angleturn << 16;
+#ifdef DEMO11
+    }
+#endif
   onground = mo->z <= mo->floorz;
 
+#ifdef DEMO11
+  if (v11_compat)
+    {
+      if(onground && fixed_cmd->forwardmove)
+        {
+          P_Bob(player,mo->angle,fixed_cmd->forwardmove);
+          P_Thrust(player,mo->angle,fixed_cmd->forwardmove);
+        }
+      if(onground && fixed_cmd->sidemove)
+        {
+          P_Bob(player,mo->angle-ANG90,fixed_cmd->sidemove);
+          P_Thrust(player,mo->angle-ANG90,fixed_cmd->sidemove);
+        }
+
+      if((fixed_cmd->forwardmove || fixed_cmd->sidemove)
+        && mo->state == states+S_PLAY)
+        {
+          P_SetMobjState(mo,S_PLAY_RUN1);
+        }
+    }
+  else
+#endif
   // killough 10/98:
   //
   // We must apply thrust to the player and bobbing separately, to avoid
@@ -316,9 +353,24 @@ void P_PlayerThink (player_t* player)
   cmd = &player->cmd;
   if (player->mo->flags & MF_JUSTATTACKED)
     {
+#ifdef DEMO11
+      fixed_ticcmd_t * fixed_cmd = fixed_ticcmd(cmd);
+
+      if(v11_compat)
+        {
+          fixed_cmd->angleturn = 0;
+          fixed_cmd->forwardmove = 0xc800;
+          fixed_cmd->sidemove = 0;
+        }
+      else
+        {
+#endif
       cmd->angleturn = 0;
       cmd->forwardmove = 0xc800/512;
       cmd->sidemove = 0;
+#ifdef DEMO11
+        }
+#endif
       player->mo->flags &= ~MF_JUSTATTACKED;
     }
 

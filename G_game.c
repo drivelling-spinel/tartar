@@ -115,6 +115,9 @@ boolean         deathmatch;    // only if started as net death
 boolean         netgame;       // only true if packets are broadcast
 boolean         playeringame[MAXPLAYERS];
 player_t        players[MAXPLAYERS];
+#ifdef DEMO11
+fixed_ticcmd_t  fixed_cmds[MAXPLAYERS];
+#endif
 int             consoleplayer; // player taking events and displaying
 int             displayplayer; // view being displayed
 int             gametic;
@@ -183,9 +186,24 @@ int mousebforward;  // causes a use action, however
 #define SLOWTURNTICS  6
 #define QUICKREVERSE 32768 // 180 degree reverse                    // phares
 
+
+#ifndef DEMO11
 fixed_t forwardmove[2] = {0x19, 0x32};
 fixed_t sidemove[2]    = {0x18, 0x28};
 fixed_t angleturn[3]   = {640, 1280, 320};  // + slow turn
+#else
+fixed_t * forwardmove;
+fixed_t * sidemove;
+fixed_t * angleturn;
+
+fixed_t forwardmove_19[2] = {0x19, 0x32};
+fixed_t sidemove_19[2]    = {0x18, 0x28};
+fixed_t angleturn_19[3]   = {640, 1280, 320};  
+
+fixed_t forwardmove_11[2] = {0xc800, 0x19000};
+fixed_t sidemove_11[2]    = {0xc000, 0x14000};
+fixed_t angleturn_11[3]   = {640 * FRACUNIT, 1280 * FRACUNIT, 320 * FRACUNIT};
+#endif
 
 boolean gamekeydown[NUMKEYS];
 int     turnheld;       // for accelerative turning
@@ -882,7 +900,19 @@ static void G_ReadDemoTiccmd(ticcmd_t *cmd)
       G_CheckDemoStatus();      // end of demo data stream
    }
    else
-   {  
+   {
+#ifdef DEMO11
+      if(v11_compat)
+      {
+         fixed_ticcmd_t * fixed_cmd = fixed_ticcmd(cmd); 
+         fixed_cmd->forwardmove = ((fixed_t)((signed char)*demo_p++)) * 900;
+         fixed_cmd->sidemove = ((fixed_t)((signed char)*demo_p++)) * 900;
+         fixed_cmd->angleturn = ((fixed_t)((unsigned char)*demo_p++)) << (8 + FRACBITS);
+         cmd->buttons = (unsigned char)*demo_p++;
+      }
+      else
+      {
+#endif
       unsigned short a = 0;
       cmd->forwardmove = ((signed char)*demo_p++);
       cmd->sidemove = ((signed char)*demo_p++);
@@ -898,7 +928,9 @@ static void G_ReadDemoTiccmd(ticcmd_t *cmd)
       else
 	 cmd->updownangle = 0;
 
-      
+#ifdef DEMO11
+      }
+#endif
       // killough 3/26/98, 10/98: Ignore savegames in demos 
       if(demoplayback && 
 	 cmd->buttons & BT_SPECIAL && cmd->buttons & BTS_SAVEGAME)
@@ -916,7 +948,15 @@ static void G_ReadDemoTiccmd(ticcmd_t *cmd)
 static void G_WriteDemoTiccmd(ticcmd_t* cmd)
 {
    int position = demo_p - demobuffer;
-   
+
+#ifdef DEMO11
+   // LP: unlikely we even ever get here
+   if(v11_compat)
+   {
+      I_Error("Demo recording not supported in v1.1 compat mode");
+   }
+#endif
+
    demo_p[0] = cmd->forwardmove;
    demo_p[1] = cmd->sidemove;
    demo_p[2] = (cmd->angleturn + 128) >> 8;
@@ -1291,13 +1331,16 @@ static void G_DoPlayDemo(void)
           deathmatch = consoleplayer = 0;
 
           v12_compat = true;
+#ifdef DEMO11          
           if(v11detected)
             {
+              forwardmove = forwardmove_11;
+              sidemove = sidemove_11;
+              angleturn = angleturn_11;
+              maxmove = MAXMOVE_11;
               v11_compat = true;
-              ORIG_FRICTION = ORIG_FRICTION11;
-              ORIG_FRICTION_FACTOR = ORIG_FRICTION_FACTOR11;
-              MAXMOVE = MAXMOVE11;
             }
+#endif
 	}
     }
   else    // new versions of demos
@@ -1915,8 +1958,15 @@ void G_Ticker(void)
 	 if(playeringame[i])
 	 {
 	    ticcmd_t *cmd = &players[i].cmd;
+#ifdef DEMO11
+            fixed_ticcmd_t *fixed_cmd = &fixed_cmds[i];
+#endif
 	    
 	    memcpy(cmd, &netcmds[i][buf], sizeof *cmd);
+#ifdef DEMO11
+            if(v11_compat)
+               store_fixed_ticcmd(cmd, fixed_cmd);            
+#endif
 	    
 	    if(demoplayback)
 	       G_ReadDemoTiccmd(cmd);
@@ -1931,7 +1981,11 @@ void G_Ticker(void)
 	    // killough 2/14/98, 2/20/98 -- only warn in netgames and demos
 	    
 	    if((netgame || demoplayback) && 
-               cmd->forwardmove > TURBOTHRESHOLD && !v11_compat &&
+               cmd->forwardmove > TURBOTHRESHOLD &&
+#ifdef DEMO11
+// LP: this is retained as v11 does not have turbo cheats, does it?
+               !v11_compat &&
+#endif
 	       !(gametic&31) && ((gametic>>5)&3) == i)
 	    {
 	       doom_printf("%s is turbo!", players[i].name); // killough 9/29/98
@@ -2560,10 +2614,15 @@ void G_ReloadDefaults(void)
   // killough 3/31/98, 4/5/98: demo sync insurance
   demo_insurance = default_demo_insurance == 1;
 
-  ORIG_FRICTION = ORIG_FRICTION19;
-  ORIG_FRICTION_FACTOR = ORIG_FRICTION_FACTOR19;
-  MAXMOVE = MAXMOVE19;
-  v11_compat = v12_compat = false;
+#ifdef DEMO11
+  forwardmove = forwardmove_19;
+  sidemove = sidemove_19;
+  angleturn = angleturn_19;
+  maxmove = MAXMOVE_19;
+
+  v11_compat =
+#endif
+  v12_compat = false;
   
   G_ScrambleRand();
 }

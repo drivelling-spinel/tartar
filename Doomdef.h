@@ -327,13 +327,15 @@ typedef enum {
 // magnetized floors, etc. Less friction can create ice.
 
 #define MORE_FRICTION_MOMENTUM   15000       // mud factor based on momentum
-#define ORIG_FRICTION19          0xE800      // original value
-#define ORIG_FRICTION11          0xE800      
-#define ORIG_FRICTION_FACTOR19   2048        // original value
-#define ORIG_FRICTION_FACTOR11   900
+#define ORIG_FRICTION            0xE800      // original value
+#define ORIG_FRICTION_FACTOR     2048        // original value
 
-#define MAXMOVE19                (30*FRACUNIT)
-#define MAXMOVE11                (50*FRACUNIT)
+#ifdef DEMO11
+#define MAXMOVE_19               (30*FRACUNIT)
+#define MAXMOVE_11               (50*FRACUNIT) 
+#else
+#define MAXMOVE                  (30*FRACUNIT)
+#endif
 
 // sf: some useful macros
 //

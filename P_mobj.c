@@ -57,10 +57,6 @@ void P_FallingDamage(player_t *);
 
 int gravity=DEFAULTGRAVITY;
 
-int ORIG_FRICTION;
-int ORIG_FRICTION_FACTOR;
-fixed_t MAXMOVE;
-
 fixed_t FloatBobOffsets[64] =               // haleyjd 04/30/99: FloatBob
 {
        0, 51389, 102283, 152192,
@@ -80,6 +76,10 @@ fixed_t FloatBobOffsets[64] =               // haleyjd 04/30/99: FloatBob
        -370728, -332605, -291279, -247148,
        -200637, -152193, -102284, -51389
 };
+
+#ifdef DEMO11
+fixed_t maxmove;
+#endif
 
 //
 // P_SetMobjState
@@ -206,6 +206,9 @@ void P_XYMovement (mobj_t* mo)
 {
   player_t *player;
   fixed_t xmove, ymove;
+#ifdef DEMO11
+  fixed_ticcmd_t *fixed_cmd;
+#endif
 
   if (!(mo->momx | mo->momy)) // Any momentum?
     {
@@ -222,7 +225,22 @@ void P_XYMovement (mobj_t* mo)
     }
 
   player = mo->player;
+#ifdef DEMO11
+  if(v11_compat && player)
+    fixed_cmd = fixed_ticcmd(&player->cmd);
 
+  if (mo->momx > maxmove)
+    mo->momx = maxmove;
+  else 
+    if (mo->momx < -maxmove)
+      mo->momx = -maxmove;
+
+  if (mo->momy > maxmove)
+    mo->momy = maxmove;
+  else
+    if (mo->momy < -maxmove)
+      mo->momy = -maxmove;
+#else
   if (mo->momx > MAXMOVE)
     mo->momx = MAXMOVE;
   else 
@@ -234,6 +252,7 @@ void P_XYMovement (mobj_t* mo)
   else
     if (mo->momy < -MAXMOVE)
       mo->momy = -MAXMOVE;
+#endif
 
   xmove = mo->momx;
   ymove = mo->momy;
@@ -247,8 +266,13 @@ void P_XYMovement (mobj_t* mo)
       // This explains the tendency for Mancubus fireballs
       // to pass through walls.
 
+#ifdef DEMO11
+      if (xmove > maxmove/2 || ymove > maxmove/2 ||  // killough 8/9/98:
+          ((xmove < -maxmove/2 || ymove < -maxmove/2) && demo_version >= 203))
+#else
       if (xmove > MAXMOVE/2 || ymove > MAXMOVE/2 ||  // killough 8/9/98:
           ((xmove < -MAXMOVE/2 || ymove < -MAXMOVE/2) && demo_version >= 203))
+#endif          
         {
           ptryx = mo->x + xmove/2;
           ptryy = mo->y + ymove/2;
@@ -415,7 +439,14 @@ void P_XYMovement (mobj_t* mo)
 
   if (mo->momx > -STOPSPEED && mo->momx < STOPSPEED &&
       mo->momy > -STOPSPEED && mo->momy < STOPSPEED &&
-      (!player || !(player->cmd.forwardmove | player->cmd.sidemove) ||
+      (!player || !(
+#ifdef DEMO11
+      v11_compat ? fixed_cmd && (fixed_cmd->forwardmove || fixed_cmd->sidemove) :
+      (player->cmd.forwardmove | player->cmd.sidemove)
+#else
+                    player->cmd.forwardmove | player->cmd.sidemove
+#endif
+                                                                  ) ||
        (player->mo != mo && demo_version >= 203)))
     {
       // if in a walking frame, stop moving
@@ -475,8 +506,8 @@ static void P_ZMovement (mobj_t* mo)
 {
   // haleyjd: part of lost soul fix, moved up here for maximum
   //          scope
-  int correct_lost_soul_bounce = 
-     !demo_compatibility || (gamemission != doom2);
+  int correct_lost_soul_bounce =
+    !demo_compatibility && (gamemission != doom2);
    
   // killough 7/11/98:
   // BFG fireballs bounced on floors and ceilings in Pre-Beta Doom

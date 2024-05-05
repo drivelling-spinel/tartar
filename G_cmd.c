@@ -50,9 +50,13 @@ extern int automlook;
 extern int invert_mouse;
 extern int screenshot_pcx;
 extern boolean sendpause;
+#ifdef DEMO11
+extern int forwardmove_19[2];
+extern int sidemove_19[2];
+#else
 extern int forwardmove[2];
 extern int sidemove[2];
-
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -199,10 +203,18 @@ VARIABLE_INT(turbo_scale, NULL,         10, 400, NULL);
 CONSOLE_VARIABLE(turbo, turbo_scale, 0)
 {
   C_Printf ("turbo scale: %i%%\n",turbo_scale);
+#ifdef DEMO11
+  // LP: this uses the constants found in G_GAME.C
+  forwardmove_19[0] = (0x19*turbo_scale)/100;
+  forwardmove_19[1] = (0x32*turbo_scale)/100;
+  sidemove_19[0] = (0x18*turbo_scale)/100;
+  sidemove_19[1] = (0x28*turbo_scale)/100;
+#else
   forwardmove[0] = (0x19*turbo_scale)/100;
   forwardmove[1] = (0x32*turbo_scale)/100;
   sidemove[0] = (0x18*turbo_scale)/100;
   sidemove[1] = (0x28*turbo_scale)/100;
+#endif
 }
 
 CONSOLE_NETCMD(exitlevel, cf_server|cf_level, netcmd_exitlevel)

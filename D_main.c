@@ -115,7 +115,9 @@ boolean noasmxparm;     // working -noasmx GB 2014
 boolean asmp6parm;      // working -asmp6  GB 2014
 boolean safeparm;       // working -safe   GB 2014
 boolean v12_compat;     // GB 2014, for v1.2 WAD stock demos
+#ifdef DEMO11
 boolean v11_compat;
+#endif
 boolean v11detected;
 
 #ifdef NORENDER
@@ -1600,8 +1602,13 @@ void D_DoomMain(void)
   if ((p=M_CheckParm ("-turbo")))
     {
       extern int turbo_scale;
+#ifdef DEMO11
+      extern int forwardmove_19[2];
+      extern int sidemove_19[2];
+#else
       extern int forwardmove[2];
       extern int sidemove[2];
+#endif
 
       if (p<myargc-1)
         turbo_scale = atoi(myargv[p+1]);
@@ -1610,10 +1617,17 @@ void D_DoomMain(void)
       if (turbo_scale > 400)
         turbo_scale = 400;
       usermsg ("turbo scale: %i%%",turbo_scale);
+#ifdef DEMO11
+      forwardmove_19[0] = forwardmove_19[0]*turbo_scale/100;
+      forwardmove_19[1] = forwardmove_19[1]*turbo_scale/100;
+      sidemove_19[0] = sidemove_19[0]*turbo_scale/100;
+      sidemove_19[1] = sidemove_19[1]*turbo_scale/100;
+#else
       forwardmove[0] = forwardmove[0]*turbo_scale/100;
       forwardmove[1] = forwardmove[1]*turbo_scale/100;
       sidemove[0] = sidemove[0]*turbo_scale/100;
       sidemove[1] = sidemove[1]*turbo_scale/100;
+#endif
     }
   
   modifiedgame = false;         // reset, ignoring smmu.wad etc.

@@ -230,6 +230,24 @@ typedef struct
 } wbstartstruct_t;
 
 
+#ifdef DEMO11
+//LP: these are here as they accompany player anyway
+
+typedef struct
+{
+   fixed_t forwardmove;
+   fixed_t sidemove;
+   fixed_t angleturn;
+} fixed_ticcmd_t;
+
+#define fixed_ticcmd(cmd) (fixed_ticcmd_t *)(*(short *)(cmd) | \
+                            (((fixed_t)(cmd)->angleturn) << FRACBITS))
+#define store_fixed_ticcmd(cmd, fc)  \
+             *(short *)&cmd->forwardmove = (((unsigned long)fc) & (FRACUNIT - 1)),\
+             (cmd)->angleturn = (((unsigned long)fc) >> FRACBITS) & (FRACUNIT - 1)
+#endif
+
+
 #endif
 
 //----------------------------------------------------------------------------
