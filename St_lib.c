@@ -464,7 +464,7 @@ void STlib_updateStr
   char *outrng, //jff 2/16/98 add color translation to digit output
   boolean   refresh )
 {
-  if (*s->on /*&& (*s->refresh || refresh)*/) STlib_drawStr(s, outrng, refresh);
+  if (*s->on && (*s->refresh || refresh)) STlib_drawStr(s, outrng, refresh);
 }
 
 #endif

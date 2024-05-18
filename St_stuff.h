@@ -85,6 +85,7 @@ typedef enum
 boolean ST_Responder(event_t* ev);
 
 #ifdef STBAR11
+void ST_ReloadData(void);
 void ST_PlayerMsg(const char *s);
 #endif
 

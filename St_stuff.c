@@ -208,10 +208,6 @@ static boolean st_armson;
 // !deathmatch
 static boolean st_fragson;
 
-#if defined(STBAR11)
-static boolean st_weapon;
-#endif
-
 // main bar left
 static patch_t *sbar;
 
@@ -219,15 +215,8 @@ static patch_t *sbar;
 // main bar bits (left, right, alt)
 static patch_t *sbarml;
 static patch_t *sbarmr;
-static patch_t *sbaral;
-static patch_t *sbarar;
 static patch_t *sbarch;
 #endif
-
-#if defined(STBAR11)
-static patch_t *stweap[ST_NUMWEAPONS];
-#endif
-
 
 // 0-9, tall numbers
 static patch_t *tallnum[10];
@@ -271,18 +260,10 @@ int armor_green;   // armor amount above is blue, below is green
 #if defined(STBAR11)
 typedef enum
 {
-  stl_norm,
-  stl_alt,
-} e_stl;
-
-typedef enum
-{
   str_norm,
-  str_alt,
   str_chat
 } e_str;
 
-int st_mode_left;
 int st_mode_right;
 #endif
 
@@ -294,10 +275,6 @@ static st_percent_t w_health;
 
 // weapon ownership widgets
 static st_multicon_t w_arms[6];
-
-#if defined(STBAR11)
-static st_binicon_t w_weap[ST_NUMWEAPONS];
-#endif
 
 // face status widget
 static st_multicon_t w_faces;
@@ -340,13 +317,13 @@ extern byte     *translationtables;
 
 #ifdef STBAR11
 static int      show_chat_tics = 0;
-static char     player_msgs[3][100] = { "", "", "" };
-static st_string_t msg_widgets[3];
+static char     player_msgs[4][100] = { {""}, {""}, {""}, {""} };
+static st_string_t msg_widgets[4];
 static boolean  st_show_playermsg;
 static boolean  st_refresh_playermsg;
 
 #define ST_CHAT_X (ST_X2 + 3)
-#define ST_CHAT_Y (ST_Y + 3)
+#define ST_CHAT_Y (ST_Y + 1)
 #define ST_CHAT_H 7
 #endif
 
@@ -374,21 +351,9 @@ void ST_TryStop()
 #if defined(STBAR11)
 static void ST_DrawStbarInternal()
 {
-  patch_t *l = NULL, *r = NULL;
-
-  switch(st_mode_left) {
-    case stl_alt:
-      l = sbaral;
-      break;
-    case stl_norm:
-    default:
-      l = sbarml;
-  }
+  patch_t *l = sbarml, *r = NULL;
 
   switch(st_mode_right) {
-    case str_alt:
-      r = sbarar;
-      break;
     case str_chat:
       r = sbarch;
       break;
@@ -431,6 +396,8 @@ void ST_refreshBackground(void)
 #if defined(STBAR11)
     if (st_statusbaronr)
       {
+        if (!deathmatch && IS_EXTRA_LOADED(EXTRA_PRESS))
+          V_DrawPatch(ST_ARMSBGX, ST_ARMSBGY - ST_Y, BG, armsbg);
 #endif
       // killough 3/7/98: make face background change with displayplayer
       if (netgame)                      //sf: new colours
@@ -444,16 +411,13 @@ void ST_refreshBackground(void)
         (char*)translationtables + 256*19, -1);
 #endif
 
-      if (!deathmatch
+      if (!deathmatch 
 #if defined(STBAR11)
       && !IS_EXTRA_LOADED(EXTRA_PRESS)
 #endif
       )
         V_DrawPatch(ST_ARMSBGX, ST_ARMSBGY - ST_Y, BG, armsbg);
-#if defined(STBAR11)
-      }
-#endif
-
+      
       V_CopyRect(ST_X, 0, BG, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, FG);
 
           // faces
@@ -466,6 +430,14 @@ void ST_refreshBackground(void)
        &st_statusbaron
 #endif
        );
+
+#if defined(STBAR11)
+      }
+        else
+      {
+        V_CopyRect(ST_X2, 0, BG, ST_WIDTH - ST_X2, ST_HEIGHT, ST_X2, ST_Y, FG);
+      }
+#endif
 
     }
 }
@@ -749,7 +721,7 @@ void ST_updateWidgets(void)
   // used by w_arms[] widgets
   st_armson = 
 #if defined(STBAR11)
-  st_statusbaronr && !IS_EXTRA_LOADED(EXTRA_PRESS)
+  st_statusbaronr 
 #else
   st_statusbaron
 #endif
@@ -767,7 +739,6 @@ void ST_updateWidgets(void)
   st_fragscount = plyr->totalfrags;     // sf 15/10/99 use totalfrags
 
 #if defined(STBAR11)
-  st_weapon = st_mode_right == str_alt;
   if(show_chat_tics == 1 && st_mode_right == str_chat)
     {
       st_mode_right = str_norm;
@@ -786,9 +757,6 @@ void ST_Ticker(void)
 #endif
   ST_updateWidgets();
   st_oldhealth = plyr->health;
-#ifdef 0
-  V_DrawPatch(ST_X+124, ST_Y+21, FG, W_CacheLumpNum((W_CheckNumForName)("ARM1A0", ns_sprites), PU_STATIC));
-#endif
 }
 
 extern int st_palette = 0;
@@ -848,7 +816,7 @@ void ST_drawWidgets(boolean refresh)
   // used by w_arms[] widgets
   st_armson =
 #if defined(STBAR11)
-  st_statusbaronr && !IS_EXTRA_LOADED(EXTRA_PRESS)
+  st_statusbaronr 
 #else
   st_statusbaron
 #endif
@@ -930,16 +898,7 @@ void ST_drawWidgets(boolean refresh)
   for (i=0;i<6;i++)
     STlib_updateMultIcon(&w_arms[i], refresh);
 
-#if defined(STBAR11)
-  if(IS_EXTRA_LOADED(EXTRA_PRESS))
-    for (i=0;i<ST_NUMWEAPONS;i++)
-      if(stweap[i])
-        STlib_updateBinIcon16(&w_weap[i], refresh);
-  else
-    for (i=0;i<ST_NUMWEAPONS;i++)
-      if(stweap[i])
-        STlib_updateBinIcon(&w_weap[i], refresh);
-
+#ifdef STBAR11
   for(i = 0 ; i < sizeof(msg_widgets) / sizeof(msg_widgets[0]) ; i++)
     STlib_updateStr(&msg_widgets[i], cr_red, refresh);
 
@@ -977,19 +936,9 @@ void ST_diffDraw(void)
 #if defined(STBAR11)
 static void ST_updateLeftRight()
 {
-  switch(st_mode_left) {
-    case stl_alt:
-      st_statusbaronl = st_statusbaron && !sbaral;
-      break;
-    case stl_norm:
-    default:
-      st_statusbaronl = st_statusbaron;
-  }
+  st_statusbaronl = st_statusbaron;
 
   switch(st_mode_right) {
-    case str_alt:
-      st_statusbaronr = st_statusbaron && !sbarar;
-      break;
     case str_chat:
       st_statusbaronr = st_statusbaron && !sbarch;
       break;
@@ -1047,18 +996,6 @@ void ST_loadGraphics(void)
       keys[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
     }
 
-#if defined(STBAR11)
-  // weapon icons
-  for (i=0;i<ST_NUMWEAPONS;i++)  
-    {
-      sprintf(namebuf, "STWEAP%d", i);
-      if(W_CheckNumForName(namebuf) >= 0)
-        {
-          stweap[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
-        }
-    }
-#endif
-
   // arms background
   armsbg = (patch_t *) W_CacheLumpName("STARMS", PU_STATIC);
 
@@ -1086,16 +1023,6 @@ void ST_loadGraphics(void)
     }
 
 #if defined(STBAR11)
-  if(W_CheckNumForName("STABARL") >= 0)
-    {
-      sbaral = (patch_t *) W_CacheLumpName("STABARL", PU_STATIC);
-    }
-
-  if(W_CheckNumForName("STABARR") >= 0)
-    {
-      sbarar = (patch_t *) W_CacheLumpName("STABARR", PU_STATIC);
-    }
-
   if(W_CheckNumForName("STMBARL") >= 0)
     {
       sbarml = (patch_t *) W_CacheLumpName("STMBARL", PU_STATIC);
@@ -1177,13 +1104,7 @@ void ST_unloadGraphics(void)
   for (i=0;i<NUMCARDS+3;i++)  //jff 2/23/98 unload double key patches too
     Z_ChangeTag(keys[i], PU_CACHE);
 
-#if defined(STBAR11)
-  for (i=0;i<ST_NUMWEAPONS;i++)
-    if(stweap[i])
-      Z_ChangeTag(stweap[i], PU_CACHE);
-#endif
-
-  if(sbarml)
+  if(sbar)
     Z_ChangeTag(sbar, PU_CACHE);
 
 #if defined(STBAR11)
@@ -1191,10 +1112,6 @@ void ST_unloadGraphics(void)
     Z_ChangeTag(sbarml, PU_CACHE);
   if(sbarmr)
     Z_ChangeTag(sbarmr, PU_CACHE);
-  if(sbaral)
-    Z_ChangeTag(sbaral, PU_CACHE);
-  if(sbarar)
-    Z_ChangeTag(sbarar, PU_CACHE);
   if(sbarch)
     Z_ChangeTag(sbarch, PU_CACHE);
 #endif
@@ -1213,6 +1130,14 @@ void ST_unloadData(void)
 {
   ST_unloadGraphics();
 }
+
+#ifdef STBAR11
+void ST_ReloadData(void)
+{
+  ST_unloadData();
+  ST_loadData();
+}
+#endif
 
 void ST_initData(void)
 {
@@ -1235,6 +1160,13 @@ void ST_initData(void)
 
   for (i=0;i<3;i++)
     keyboxes[i] = -1;
+
+#ifdef STBAR11    
+  show_chat_tics = 0;
+  st_mode_right = str_norm;
+  for(i = 0 ; i < sizeof(player_msgs) / sizeof(player_msgs[0]) ; i++)
+    player_msgs[i][0] = 0;
+#endif
 
   STlib_init();
 }
@@ -1282,49 +1214,6 @@ void ST_createWidgets(void)
                          arms[i], (int *) &plyr->weaponowned[i+1],
                          &st_armson);
     }
-
-#if defined(STBAR11)
-  if(stweap[0])
-    STlib_initBinIcon(&w_weap[0],
-                       110,
-                       ST_Y + 5,
-                       stweap[0], (int *) &plyr->weaponowned[2],
-                       &st_weapon); 
-  if(stweap[1])
-    STlib_initBinIcon(&w_weap[1],
-                       153,
-                       ST_Y + 4,
-                       stweap[1], (int *) &plyr->weaponowned[3],
-                       &st_weapon); 
-
-  if(stweap[2])
-    STlib_initBinIcon(&w_weap[2],
-                       191,
-                       ST_Y + 4,
-                       stweap[2], (int *) &plyr->weaponowned[4],
-                       &st_weapon);
-
-  if(stweap[3])
-    STlib_initBinIcon(&w_weap[3],
-                       111,
-                       ST_Y + 15,
-                       stweap[3], (int *) &plyr->weaponowned[5],
-                       &st_weapon);
-
-  if(stweap[4])
-    STlib_initBinIcon(&w_weap[4],
-                       152,
-                       ST_Y + 12,
-                       stweap[4], (int *) &plyr->weaponowned[7],
-                       &st_weapon);
-
-  if(stweap[5])
-    STlib_initBinIcon(&w_weap[5],
-                       191,
-                       ST_Y + 11,
-                       stweap[5], (int *) &plyr->weaponowned[6],
-                       &st_weapon);   
-#endif
 
   // frags sum
   STlib_initNum(&w_frags,
@@ -1511,14 +1400,17 @@ void ST_createWidgets(void)
                 ST_MAXAMMO3WIDTH);
 
 #if defined(STBAR11)
-   for(i = 0 ; i < sizeof(msg_widgets) / sizeof(msg_widgets[0]) ; i++)
+   {
+     const int num = sizeof(msg_widgets) / sizeof(msg_widgets[0]);
+     for(i = 0 ; i < num ; i++)
      {
        STlib_initStr(&msg_widgets[i],
-         ST_CHAT_X, ST_CHAT_Y + ST_CHAT_H * (i + 1),
+         ST_CHAT_X, ST_CHAT_Y + ST_CHAT_H * i - (((num - i) / num) - 1) * 2,
          player_msgs[i],
          &st_show_playermsg,
          &st_refresh_playermsg);
      }
+   }
 #endif
 }
 
@@ -1539,19 +1431,17 @@ void ST_PlayerMsg(const char *s)
   if(st_stopped || !(*(int*)C_GetCmdForName("messages")->variable->variable))
     return;
 
-  for(i = 0 ; i < sizeof(player_msgs) / sizeof(player_msgs[0]) ; i++)
-    if(!player_msgs[i][0]) break;
-  if(i >= sizeof(player_msgs) / sizeof(player_msgs[0]))
-    {
-      for(i = 0 ; i < sizeof(player_msgs) / sizeof(player_msgs[0]) - 1 ; i++)
-        strcpy(player_msgs[i], player_msgs[i + 1]);
-    }
-  strncpy(player_msgs[i], s, sizeof(player_msgs[i]) - 1);
+  for(i = sizeof(player_msgs) / sizeof(player_msgs[0]) - 1 ; i > 0; i--)
+    strcpy(player_msgs[i], player_msgs[i - 1]);
+  strncpy(player_msgs[0], s, sizeof(player_msgs[0]) - 1);
 
+  if(st_mode_right == str_norm || show_chat_tics)
+  {
+    st_mode_right = str_chat;
+    show_chat_tics = (*(int*)C_GetCmdForName("mess_timer")->variable->variable * 35) / 1000;
+  }
   st_firsttime = true;
-  st_mode_right = str_chat;
   st_refresh_playermsg = true;
-  show_chat_tics = (*(int*)C_GetCmdForName("mess_timer")->variable->variable * 35) / 1000;
 }
 #endif
 
@@ -1560,9 +1450,6 @@ void ST_Start(void)
   st_stop_later_tm = 0;
   if (!st_stopped)
     ST_Stop();
-#ifdef STBAR11    
-  show_chat_tics = 0;
-#endif
   ST_initData();
   ST_createWidgets();
   st_stopped = false;
@@ -1574,13 +1461,6 @@ void ST_Stop(void)
     return;
   st_palette = -1;
   I_ResetPalette();
-#ifdef STBAR11
-  {
-    int i = 0;
-    for(i = 0 ; i < sizeof(player_msgs) / sizeof(player_msgs[0]) ; i++)
-      player_msgs[i][0] = 0;
-  }
-#endif
   st_stopped = true;
 }
 
@@ -1622,14 +1502,11 @@ CONSOLE_VARIABLE(st_rednum, sts_always_red, 0) {}
 CONSOLE_VARIABLE(st_singlekey, sts_traditional_keys, 0) {}
 
 #if defined(STBAR11)
-VARIABLE_INT(st_mode_left, NULL, 0, 1, NULL);
-VARIABLE_INT(st_mode_right, NULL, 0, 2, NULL);
-CONSOLE_VARIABLE(st_left, st_mode_left, 0) { st_firsttime = true; }
+VARIABLE_INT(st_mode_right, NULL, 0, 1, NULL);
 CONSOLE_VARIABLE(st_right, st_mode_right, 0)
   {
-    st_firsttime = true; 
-    if(IS_EXTRA_LOADED(EXTRA_PRESS) && st_mode_right == str_chat)
-      st_mode_right = str_norm;      
+    st_firsttime = true;
+    show_chat_tics = 0;
   }
 #endif
 
@@ -1651,7 +1528,6 @@ void ST_AddCommands()
   C_AddCommand(st_singlekey);
 
 #if defined(STBAR11)
-  C_AddCommand(st_left);
   C_AddCommand(st_right);
 #endif
 }

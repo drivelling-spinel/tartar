@@ -181,7 +181,7 @@ void V_WriteText(unsigned char *s, int x, int y)
       // haleyjd: was no y checking at all!
 
       h = SHORT(patch->height);
-      if(cy < 0 || cy+h > SCREENHEIGHT)
+      if(cy < 0 || cy+h > EFFECTIVE_HEIGHT)
 	 break;
 
       if(translucent)
@@ -241,7 +241,7 @@ void V_WriteText16(unsigned char *s, int x, int y)
       // haleyjd: was no y checking at all!
 
       h = SHORT(patch->height);
-      if(cy < 0 || cy+h > SCREENHEIGHT)
+      if(cy < 0 || cy+h > EFFECTIVE_HEIGHT)
 	 break;
 
       V_DrawPatch16(cx, cy, 0, patch);

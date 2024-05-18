@@ -2126,7 +2126,7 @@ void D_ReInitWadfiles()
   P_Init();
   I_RescanSounds();
 #ifdef STBAR11
-  ST_Init();
+  ST_ReloadData();
 #endif
 }
 

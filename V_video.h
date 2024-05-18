@@ -115,7 +115,7 @@ void V_DrawPatch16General(int x,int y,int scrn,patch16_t *patch, boolean flipped
 #define V_DrawPatch16(x,y,s,p)        V_DrawPatch16General(x,y,s,p,false)
 #define V_DrawPatch16Flipped(x,y,s,p) V_DrawPatch16General(x,y,s,p,true)
 
-#define V_DrawPatch16Direct V_DrawPatch16       /* killough 5/2/98 */
+#define V_DrawPatch16Direct V_DrawPatch16 
 
 
 void V_DrawPatchTranslated(int x, int y, int scrn, patch_t *patch, char *outr,
