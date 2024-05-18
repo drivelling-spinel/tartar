@@ -733,6 +733,16 @@ int Ex_DynamicLumpFilterProc(lumpinfo_t * lump, int lumpnum, char * wadname, con
       return 1;
     }
 
+  if(extra == EXTRA_PRESS)
+    {
+      if(!strnicmp(lump->name, "STCFN", 5))
+        {
+          char *c = lump->name;
+          c[2] = 'S';
+          return 1;
+        }
+    }
+
   if(strnicmp(lump->name, "PLAYPAL", 8)) return 1;
 
   tmpname = strcpy(malloc(strlen(wadname) + 1), wadname);

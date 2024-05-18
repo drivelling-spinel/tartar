@@ -34,6 +34,7 @@
 #include "v_video.h"
 #include "v_misc.h"
 #include "w_wad.h"
+#include "ex_stuff.h"
 
 extern int gamma_correct;
 
@@ -59,6 +60,9 @@ void V_ResetMode()
 //
 
 patch_t* v_font[V_FONTSIZE];
+#ifdef STBAR11
+patch16_t* v_font16[128];
+#endif
 patch_t *bgp[9];        // background for boxes
 
 void V_LoadFont()
@@ -77,6 +81,27 @@ void V_LoadFont()
       v_font[i] = W_CacheLumpName(tempstr, PU_STATIC);
     }
 }
+
+#ifdef STBAR11
+void V_LoadFont16()
+{
+  int i, j;
+  char tempstr[10];
+
+  memset(v_font16, 0, sizeof(v_font16));
+  if(!IS_EXTRA_LOADED(EXTRA_PRESS))
+    return;
+
+  for(i=0 ; i < sizeof(v_font16) / sizeof(v_font16[0]) ; i++)
+    {
+      int num;
+      sprintf(tempstr, "STSFN%.3d", i);
+      num = W_CheckNumForName(tempstr);
+      if(num >= 0)
+        v_font16[i] = W_CacheLumpNum(num, PU_STATIC);
+    }
+}
+#endif
 
  // sf: write a text line to x, y
 void V_WriteText(unsigned char *s, int x, int y)
@@ -167,6 +192,64 @@ void V_WriteText(unsigned char *s, int x, int y)
       cx+=w;
     }
 }
+
+#ifdef STBAR11
+void V_WriteText16(unsigned char *s, int x, int y)
+{
+  int   w, h;
+  unsigned char* ch;
+  char *colour = cr_red;
+  unsigned int c;
+  int   cx;
+  int   cy;
+  patch_t *patch;
+
+  ch = s;
+  cx = x;
+  cy = y;
+  
+  while(1)
+    {
+      c = *ch++;
+      if (!c || c == '\n')
+	break;
+
+      if (c == '\t')
+        {
+          cx = (cx/40)+1;
+          cx = cx*40;
+	  continue; // haleyjd: missing continue for \t
+        }
+
+      if (c < 0 || c >= sizeof(v_font16)/sizeof(v_font16[0]))
+        continue;
+
+      if (!v_font16[c])
+	{
+	  cx += 4;
+	  continue;
+	}
+
+      patch = v_font16[c];
+
+      // haleyjd: was no cx<0 check
+      
+      w = SHORT (patch->width);
+      if(cx < 0 || cx+w > SCREENWIDTH)
+	break;
+
+      // haleyjd: was no y checking at all!
+
+      h = SHORT(patch->height);
+      if(cy < 0 || cy+h > SCREENHEIGHT)
+	 break;
+
+      V_DrawPatch16(cx, cy, 0, patch);
+
+      cx+=w+1;
+    }
+}
+#endif
 
 // write text in a particular colour
 
@@ -576,6 +659,13 @@ void V_InitMisc()
   V_LoadFont();
   V_InitBox();
 }
+
+#ifdef STBAR11
+void V_InitMiscExtras()
+{
+  V_LoadFont16();
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 //

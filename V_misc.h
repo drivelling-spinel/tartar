@@ -23,6 +23,7 @@
 #define __V_MISC_H__
 
 void V_InitMisc();
+void V_InitMiscExtras();
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -59,6 +60,9 @@ extern int v_mode;
 #define FC_TRANS	"\x8a"
 
 void V_WriteText(unsigned char *s, int x, int y);
+#ifdef STBAR11
+void V_WriteText16(unsigned char *s, int x, int y);
+#endif
 void V_WriteTextColoured(unsigned char *s, int colour, int x, int y);
 void V_LoadFont();
 int V_StringWidth(unsigned char *s);

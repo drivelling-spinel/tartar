@@ -338,6 +338,18 @@ static int      keyboxes[3];
 extern char     *mapnames[];
 extern byte     *translationtables;
 
+#ifdef STBAR11
+static int      show_chat_tics = 0;
+static char     player_msgs[3][100] = { "", "", "" };
+static st_string_t msg_widgets[3];
+static boolean  st_show_playermsg;
+static boolean  st_refresh_playermsg;
+
+#define ST_CHAT_X (ST_X2 + 3)
+#define ST_CHAT_Y (ST_Y + 3)
+#define ST_CHAT_H 7
+#endif
+
 //
 // STATUS BAR CODE
 //
@@ -756,12 +768,22 @@ void ST_updateWidgets(void)
 
 #if defined(STBAR11)
   st_weapon = st_mode_right == str_alt;
+  if(show_chat_tics == 1 && st_mode_right == str_chat)
+    {
+      st_mode_right = str_norm;
+      st_firsttime = true;
+    }
+  st_show_playermsg = st_mode_right == str_chat;
 #endif
 }
 
 void ST_Ticker(void)
 {
   st_clock++;
+#ifdef STBAR11
+  if(show_chat_tics > 0)
+    show_chat_tics -= 1;
+#endif
   ST_updateWidgets();
   st_oldhealth = plyr->health;
 #ifdef 0
@@ -917,6 +939,11 @@ void ST_drawWidgets(boolean refresh)
     for (i=0;i<ST_NUMWEAPONS;i++)
       if(stweap[i])
         STlib_updateBinIcon(&w_weap[i], refresh);
+
+  for(i = 0 ; i < sizeof(msg_widgets) / sizeof(msg_widgets[0]) ; i++)
+    STlib_updateStr(&msg_widgets[i], cr_red, refresh);
+
+  st_refresh_playermsg = false;
 #endif
 
   STlib_updateMultIcon(&w_faces, refresh);
@@ -1482,6 +1509,17 @@ void ST_createWidgets(void)
                 &st_statusbaron,
 #endif
                 ST_MAXAMMO3WIDTH);
+
+#if defined(STBAR11)
+   for(i = 0 ; i < sizeof(msg_widgets) / sizeof(msg_widgets[0]) ; i++)
+     {
+       STlib_initStr(&msg_widgets[i],
+         ST_CHAT_X, ST_CHAT_Y + ST_CHAT_H * (i + 1),
+         player_msgs[i],
+         &st_show_playermsg,
+         &st_refresh_playermsg);
+     }
+#endif
 }
 
 static boolean st_stopped = true;
@@ -1493,11 +1531,38 @@ void ST_Reposition(void)
   ST_createWidgets();
 }
 
+#ifdef STBAR11
+void ST_PlayerMsg(const char *s)
+{
+  int i = 0;
+
+  if(st_stopped || !(*(int*)C_GetCmdForName("messages")->variable->variable))
+    return;
+
+  for(i = 0 ; i < sizeof(player_msgs) / sizeof(player_msgs[0]) ; i++)
+    if(!player_msgs[i][0]) break;
+  if(i >= sizeof(player_msgs) / sizeof(player_msgs[0]))
+    {
+      for(i = 0 ; i < sizeof(player_msgs) / sizeof(player_msgs[0]) - 1 ; i++)
+        strcpy(player_msgs[i], player_msgs[i + 1]);
+    }
+  strncpy(player_msgs[i], s, sizeof(player_msgs[i]) - 1);
+
+  st_firsttime = true;
+  st_mode_right = str_chat;
+  st_refresh_playermsg = true;
+  show_chat_tics = (*(int*)C_GetCmdForName("mess_timer")->variable->variable * 35) / 1000;
+}
+#endif
+
 void ST_Start(void)
 {
   st_stop_later_tm = 0;
   if (!st_stopped)
     ST_Stop();
+#ifdef STBAR11    
+  show_chat_tics = 0;
+#endif
   ST_initData();
   ST_createWidgets();
   st_stopped = false;
@@ -1509,6 +1574,13 @@ void ST_Stop(void)
     return;
   st_palette = -1;
   I_ResetPalette();
+#ifdef STBAR11
+  {
+    int i = 0;
+    for(i = 0 ; i < sizeof(player_msgs) / sizeof(player_msgs[0]) ; i++)
+      player_msgs[i][0] = 0;
+  }
+#endif
   st_stopped = true;
 }
 

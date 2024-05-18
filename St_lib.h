@@ -202,6 +202,43 @@ void STlib_updateBinIcon16
 ( st_binicon_t* bi,
   boolean refresh );
 
+#ifdef STBAR11
+typedef struct
+{
+  // upper right-hand corner
+  //  of the number (right-justified)
+  int   x;
+  int   y;
+
+  // pointer to current value
+  char*  val;
+
+  // pointer to boolean stating
+  //  whether to display the string
+  boolean*  on;
+
+  // pointer to boolean stating
+  // whether a set of strings has been invalidated
+  boolean*  refresh;
+
+  // user data
+  int data;
+} st_string_t;
+
+void STlib_initStr
+( st_string_t* s,
+  int x,
+  int y,
+  char* val,
+  boolean* on,
+  boolean* refresh );
+
+void STlib_updateStr
+( st_string_t* s,
+  char *outrng,           
+  boolean refresh );
+#endif
+
 #endif
 
 

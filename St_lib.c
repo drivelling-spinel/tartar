@@ -411,6 +411,63 @@ void STlib_updateBinIcon16
   }
 }
 
+#ifdef STBAR11
+//
+// STlib_initStr()
+//
+// Initializes an st_string_t widget
+//
+// Passed the widget, its position, a pointer to the value displayed,
+// a pointer to the on/off control, and a pointer to refresh control
+// Returns nothing
+//
+void STlib_initStr
+( st_string_t* s,
+  int x,
+  int y,
+  char* val,
+  boolean* on,
+  boolean* refresh)
+{
+  s->x  = x;
+  s->y  = y;
+  s->val  = val;
+  s->on = on;
+  s->refresh = refresh;
+}
+
+//
+// STlib_drawStr()
+// 
+// Passed a st_number_t widget, a color range for output, and a flag
+// indicating whether refresh is needed.
+// Returns nothing
+//
+void STlib_drawStr
+( st_string_t*  s,
+  char *outrng,        //jff 2/16/98 add color translation to digit output
+  boolean refresh )
+{
+  V_WriteText16(s->val, s->x, s->y);
+}
+
+//
+// STlib_updateStr()
+//
+// Draws a string based on the widget's enable
+//
+// Passed a string widget, the output color range, and a refresh flag
+// Returns nothing
+//
+void STlib_updateStr
+( st_string_t*    s,
+  char *outrng, //jff 2/16/98 add color translation to digit output
+  boolean   refresh )
+{
+  if (*s->on /*&& (*s->refresh || refresh)*/) STlib_drawStr(s, outrng, refresh);
+}
+
+#endif
 
 //----------------------------------------------------------------------------
 //

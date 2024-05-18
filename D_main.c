@@ -2117,12 +2117,17 @@ void D_DoomMain(void)
 
 void D_ReInitWadfiles()
 {
-  ST_Init();
+#ifdef STBAR11
+  V_InitMiscExtras();
+#endif
   R_Free();
   R_Init();
   P_Free();
   P_Init();
   I_RescanSounds();
+#ifdef STBAR11
+  ST_Init();
+#endif
 }
 
 void D_NewWadLumps(int handle, extra_file_t extra)
