@@ -391,8 +391,16 @@ static void ST_DrawStbarInternal()
     }
   else
     {
-      V_DrawPatch(ST_X, 0, BG, l);
-      V_DrawPatch(ST_X2, 0, BG, r);
+      if(IS_EXTRA_LOADED(EXTRA_PRESS))
+      {
+        V_DrawPatch16(ST_X, 0, BG, (patch16_t *)l);
+        V_DrawPatch16(ST_X2, 0, BG, (patch16_t *)r);
+      }
+      else
+      {
+        V_DrawPatch(ST_X, 0, BG, l);
+        V_DrawPatch(ST_X2, 0, BG, r);
+      }
     }
 
 }
@@ -418,8 +426,18 @@ void ST_refreshBackground(void)
                         plyr->colormap ?
                 (char*)translationtables + 256*(plyr->colormap-1) :
                         cr_red, -1);
+#if defined(STBAR11)
+      else if (IS_EXTRA_LOADED(EXTRA_PRESS))                      
+        V_DrawPatchTranslated(ST_FX, 0, BG, faceback,
+        (char*)translationtables + 256*19, -1);
+#endif
 
-      if (!deathmatch) V_DrawPatch(ST_ARMSBGX, ST_ARMSBGY - ST_Y, BG, armsbg);
+      if (!deathmatch
+#if defined(STBAR11)
+      && !IS_EXTRA_LOADED(EXTRA_PRESS)
+#endif
+      )
+        V_DrawPatch(ST_ARMSBGX, ST_ARMSBGY - ST_Y, BG, armsbg);
 #if defined(STBAR11)
       }
 #endif
@@ -719,7 +737,7 @@ void ST_updateWidgets(void)
   // used by w_arms[] widgets
   st_armson = 
 #if defined(STBAR11)
-  st_statusbaronr
+  st_statusbaronr && !IS_EXTRA_LOADED(EXTRA_PRESS)
 #else
   st_statusbaron
 #endif
@@ -746,6 +764,9 @@ void ST_Ticker(void)
   st_clock++;
   ST_updateWidgets();
   st_oldhealth = plyr->health;
+#ifdef 0
+  V_DrawPatch(ST_X+124, ST_Y+21, FG, W_CacheLumpNum((W_CheckNumForName)("ARM1A0", ns_sprites), PU_STATIC));
+#endif
 }
 
 extern int st_palette = 0;
@@ -805,7 +826,7 @@ void ST_drawWidgets(boolean refresh)
   // used by w_arms[] widgets
   st_armson =
 #if defined(STBAR11)
-  st_statusbaronr
+  st_statusbaronr && !IS_EXTRA_LOADED(EXTRA_PRESS)
 #else
   st_statusbaron
 #endif
@@ -888,9 +909,14 @@ void ST_drawWidgets(boolean refresh)
     STlib_updateMultIcon(&w_arms[i], refresh);
 
 #if defined(STBAR11)
-  for (i=0;i<ST_NUMWEAPONS;i++)
-    if(stweap[i])
-      STlib_updateBinIcon(&w_weap[i], refresh);
+  if(IS_EXTRA_LOADED(EXTRA_PRESS))
+    for (i=0;i<ST_NUMWEAPONS;i++)
+      if(stweap[i])
+        STlib_updateBinIcon16(&w_weap[i], refresh);
+  else
+    for (i=0;i<ST_NUMWEAPONS;i++)
+      if(stweap[i])
+        STlib_updateBinIcon(&w_weap[i], refresh);
 #endif
 
   STlib_updateMultIcon(&w_faces, refresh);
@@ -1527,7 +1553,12 @@ CONSOLE_VARIABLE(st_singlekey, sts_traditional_keys, 0) {}
 VARIABLE_INT(st_mode_left, NULL, 0, 1, NULL);
 VARIABLE_INT(st_mode_right, NULL, 0, 2, NULL);
 CONSOLE_VARIABLE(st_left, st_mode_left, 0) { st_firsttime = true; }
-CONSOLE_VARIABLE(st_right, st_mode_right, 0) { st_firsttime = true; }
+CONSOLE_VARIABLE(st_right, st_mode_right, 0)
+  {
+    st_firsttime = true; 
+    if(IS_EXTRA_LOADED(EXTRA_PRESS) && st_mode_right == str_chat)
+      st_mode_right = str_norm;      
+  }
 #endif
 
 void ST_AddCommands()

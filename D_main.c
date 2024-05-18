@@ -2117,6 +2117,7 @@ void D_DoomMain(void)
 
 void D_ReInitWadfiles()
 {
+  ST_Init();
   R_Free();
   R_Init();
   P_Free();

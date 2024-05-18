@@ -485,6 +485,167 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
     }
 }
 
+void V_DrawPatch16General(int x, int y, int scrn, patch16_t *patch,
+			boolean flipped)
+{
+  int  w = SHORT(patch->width), h = SHORT(patch->height), col = w-1, colstop = -1, colstep = -1, ex, eh, ew;
+  
+  if (!flipped)
+    col = 0, colstop = w, colstep = 1;
+
+  y -= SHORT(patch->topoffset);
+  x -= SHORT(patch->leftoffset);
+  
+  if (x < 0)
+    {
+      col = flipped ? col + x : col - x;
+      x = 0;
+    }
+  
+  ex = SCREENWIDTH - colstop + col - x; 
+  if (ex < 0) 
+    {
+      colstop = flipped ? colstop - ex : colstop + ex;
+    }
+    
+  // haleyjd 01/13/02: removed #ifdef RANGECHECK and demoted
+  // from an I_Error call to a player message 
+  if(x < 0 || x + colstop - col > SCREENWIDTH || 
+     y < 0 || y >= EFFECTIVE_HEIGHT ||
+     (unsigned)scrn>4)
+    {
+ //     C_Printf(
+ //       "Bad V_DrawPatchGeneral: x:%i y:%i xw:%i yw:%i scrn:%i\n",
+ //       x, y, x + w, y + h, scrn);
+      return;      // killough 1/19/98: commented out printfs
+    }
+
+  eh = (y + h > EFFECTIVE_HEIGHT) ? EFFECTIVE_HEIGHT - y : h;
+  ew = (col - colstop) * colstep;
+  if (!scrn)
+    V_MarkRect (x, y, ew, eh);
+
+  if (hires)       // killough 11/98: hires support (well, sorta :)
+    {
+      byte *desttop = screens[scrn]+(y<<hires)*(SCREENWIDTH<<hires)+(x<<hires);
+
+      for ( ; col != colstop ; col += colstep, desttop+=(1<<hires))
+	{
+	  const column_t *column = 
+            (const column_t *)((byte *)patch + SHORT(patch->columnofs[col]));
+
+	  // step through the posts in a column
+	  while (column->topdelta != 0xff)
+	    {
+	      // killough 2/21/98: Unrolled and performance-tuned
+              int wh = SCREENWIDTH<<hires<<hires;
+              register const byte *source = (byte *) column + 2;
+        register byte *dest = desttop + column->topdelta*(wh);
+        int cy = y + column->topdelta;
+	      register int count = (cy + column->length > EFFECTIVE_HEIGHT) ? EFFECTIVE_HEIGHT - cy : column->length;
+	      if(count < 0) count = 0;
+
+	      if ((count-=4)>=0)
+		do
+		  {
+		    register byte s0,s1;
+                    register int w,q;
+                    register byte *dest2 = dest + wh;
+		    s0 = source[0];
+		    s1 = source[1];
+                    for ( w = 0 ; w < (1 << hires) ; w ++ )
+                      {
+                        for ( q = 0 ; q < wh ; q += (SCREENWIDTH << hires) )
+                          {
+                            dest[w + q] = s0;
+                            dest2[w + q] = s1;
+                          }
+                      }
+                    dest += wh + wh;
+                    dest2 = dest + wh;
+		    s0 = source[2];
+		    s1 = source[3];
+		    source += 4;
+                    for ( w = 0 ; w < (1 << hires) ; w ++ )
+                      {
+                        for ( q = 0 ; q < wh ; q += (SCREENWIDTH << hires) )
+                          {
+                            dest[w + q] = s0;
+                            dest2[w + q] = s1;
+                          }
+                      }
+                    dest += wh + wh;
+		  }
+		while ((count-=4)>=0);
+	      if (count+=4)
+		do
+		  {
+                    register int w,q;
+                    register byte s0 = *source++;
+                    for ( w = 0 ; w < (1 << hires) ; w ++ )
+                      {
+                        for ( q = 0 ; q < wh ; q += (SCREENWIDTH << hires) )
+                          {
+                            dest[w + q] = s0;
+                          }
+                      }
+                    dest += wh;
+		  }
+		while (--count);
+              column = (column_t *)((byte *) column + 2 + column->length); //killough 2/21/98 even faster
+	    }
+	}
+    }
+  else
+    {
+      byte *desttop = screens[scrn]+y*SCREENWIDTH+x;
+
+      for ( ; col != colstop ; col += colstep, desttop++)
+	{
+	  const column_t *column = 
+            (const column_t *)((byte *)patch + SHORT(patch->columnofs[col]));
+    
+	  // step through the posts in a column
+	  while (column->topdelta != 0xff)
+	    {
+	      // killough 2/21/98: Unrolled and performance-tuned
+
+              register const byte *source = (byte *) column + 2;
+	      register byte *dest = desttop + column->topdelta*SCREENWIDTH;
+        int cy = y + column->topdelta;
+	      register int count = (cy + column->length > EFFECTIVE_HEIGHT) ? EFFECTIVE_HEIGHT - cy : column->length;
+	      if(count < 0) count = 0;
+
+	      if ((count-=4)>=0)
+		do
+		  {
+		    register byte s0,s1;
+		    s0 = source[0];
+		    s1 = source[1];
+                    dest[0] = s0;
+		    dest[SCREENWIDTH] = s1;
+                    dest += SCREENWIDTH*2;
+		    s0 = source[2];
+		    s1 = source[3];
+		    source += 4;
+                    dest[0] = s0;
+		    dest[SCREENWIDTH] = s1;
+                    dest += SCREENWIDTH*2;
+		  }
+		while ((count-=4)>=0);
+	      if (count+=4)
+		do
+		  {
+		    *dest = *source++;
+		    dest += SCREENWIDTH;
+		  }
+		while (--count);
+              column = (column_t *)((byte *) column + 2 + column->length); //killough 2/21/98 even faster
+	    }
+	}
+    }
+}
+
         //sf: drawpatch but not scaled like drawpatch is
 
 void V_DrawPatchUnscaled(int x, int y, int scrn, patch_t *patch)

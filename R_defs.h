@@ -28,6 +28,7 @@
 #define __R_DEFS__
 
 typedef struct patch_s patch_t;
+typedef struct patch16_s patch16_t;
 
 // sqrt, etc.-- killough
 #include <math.h>
@@ -336,6 +337,14 @@ struct patch_s
   short leftoffset;     // pixels to the left of origin 
   short topoffset;      // pixels below the origin 
   int columnofs[8];     // only [width] used
+};
+
+struct patch16_s
+{ 
+  short width, height;  // bounding box size 
+  short leftoffset;     // pixels to the left of origin 
+  short topoffset;      // pixels below the origin 
+  short columnofs[8];     // only [width] used
 };
 
 //

@@ -486,6 +486,22 @@ int Ex_DetectAndLoadNerve()
 }
 
 
+int Ex_DetectAndLoadPressRelease()
+{
+  struct stat sbuf;
+  int i = 0;
+  
+  *filestr = 0;
+  sprintf(filestr, "%sdoompres.wad", D_DoomExeDir());
+  if(stat(filestr, &sbuf)) return 0;
+  
+  if(W_AddExtraFile(filestr, EXTRA_PRESS)) return 0;
+  MARK_EXTRA_LOADED(EXTRA_PRESS, true);
+
+  return 1;
+}
+
+
 void Ex_DetectAndLoadExtras(void)
 {
   int loaded = 0, total = 0;
@@ -496,6 +512,7 @@ void Ex_DetectAndLoadExtras(void)
   if(IS_EXTRA_LOADED(EXTRA_WIMAPS))
     MARK_EXTRA_LOADED(EXTRA_WIMAPS, (total += loaded = Ex_DetectAndLoadWiMaps(), loaded));
   MARK_EXTRA_LOADED(EXTRA_NERVE, (total += loaded = Ex_DetectAndLoadNerve(), loaded));
+  MARK_EXTRA_LOADED(EXTRA_PRESS, (total += loaded = Ex_DetectAndLoadPressRelease(), loaded));
   if(total)
     D_ReInitWadfiles();
 }
@@ -652,6 +669,18 @@ int Ex_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file
       int i = 0;
 
       for(i = 0 ; i < 7 ; i += 1)
+        {
+          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
+        }
+      return 0;
+    }
+
+  if(extra == EXTRA_PRESS)
+    {
+      static char * names[] = { "AMMNUM", "STMBAR", "STABAR", "STCHAT", "STCFN", "STWEAP" };
+      int i = 0;
+
+      for(i = 0 ; i < 6 ; i += 1)
         {
           if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
         }

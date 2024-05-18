@@ -380,6 +380,38 @@ void STlib_updateBinIcon
   }
 }
 
+void STlib_updateBinIcon16
+( st_binicon_t*   bi,
+  boolean   refresh )
+{
+  int     x;
+  int     y;
+  int     w;
+  int     h;
+
+  if (*bi->on && (bi->oldval != *bi->val || refresh))
+  {
+    x = bi->x - SHORT(bi->p->leftoffset);
+    y = bi->y - SHORT(bi->p->topoffset);
+    w = SHORT(bi->p->width);
+    h = SHORT(bi->p->height);
+ 
+    if (y - ST_Y < 0)
+      {
+        //      I_Error("updateBinIcon16: y - ST_Y < 0");
+	return;
+      }
+	
+    if (*bi->val)
+      V_DrawPatch16(bi->x, bi->y, FG, (patch16_t *)(bi->p));
+    else
+      V_CopyRect(x, y-ST_Y, BG, w, h, x, y, FG);
+
+    bi->oldval = *bi->val;
+  }
+}
+
+
 //----------------------------------------------------------------------------
 //
 // $Log: st_lib.c,v $

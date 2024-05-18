@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 2000 James Haley
@@ -195,6 +195,10 @@ void STlib_initBinIcon
   boolean* on );
 
 void STlib_updateBinIcon
+( st_binicon_t* bi,
+  boolean refresh );
+
+void STlib_updateBinIcon16
 ( st_binicon_t* bi,
   boolean refresh );
 

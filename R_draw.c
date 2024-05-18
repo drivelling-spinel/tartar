@@ -640,6 +640,8 @@ translat_t translations[] =
     {112, 16},     // good old green again
     {160, 8},      // gold
     {250, 5},      // purple
+
+    {5, 1}         // darker
 };
 
 // sf : rewritten
@@ -648,9 +650,9 @@ void R_InitTranslationTables (void)
 {
   int i, c;
   
-  translationtables = Z_Malloc(256 * (TRANSLATIONCOLOURS + 4), PU_STATIC, 0);
+  translationtables = Z_Malloc(256 * (TRANSLATIONCOLOURS + 5), PU_STATIC, 0);
   
-  for(i=0; i<TRANSLATIONCOLOURS + 4; i++)
+  for(i=0; i<TRANSLATIONCOLOURS + 5; i++)
     {
       for(c=0; c<256; c++)
 	translationtables[i*256 + c] =
@@ -666,7 +668,7 @@ void R_RefreshTranslationTables (int color)
 {
   int i, c;
   
-  for(i=TRANSLATIONCOLOURS ; i < TRANSLATIONCOLOURS + 4 ; i++)
+  for(i=TRANSLATIONCOLOURS ; i < TRANSLATIONCOLOURS + 5 ; i++)
     {
       for(c=0xb0; c<=0xbf; c++)
 	translationtables[i*256 + c] =
