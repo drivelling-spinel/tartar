@@ -485,6 +485,142 @@ void V_DrawPatchGeneral(int x, int y, int scrn, patch_t *patch,
     }
 }
 
+//
+// V_DrawRaw
+//
+
+void V_DrawRaw(int x, int y, int scrn, int W, int H, byte * bytes)
+{
+  int ex, eh, ew;
+  int col = 0, colstep = 1, colstop;
+
+  if (x < 0)
+    {
+      col = col - x;
+      x = 0;
+    }
+
+  colstop = W;
+  ex = SCREENWIDTH - colstop + col - x; 
+  if (ex < 0) 
+    {
+      colstop = colstop + ex;
+    }
+    
+  eh = (y + H > EFFECTIVE_HEIGHT) ? EFFECTIVE_HEIGHT - y : H;
+  ew = (col - colstop) * colstep;
+  if (!scrn)
+    V_MarkRect (x, y, ew, eh);
+
+  if (hires)       // killough 11/98: hires support (well, sorta :)
+    {
+      byte *desttop = screens[scrn]+(y<<hires)*(SCREENWIDTH<<hires)+(x<<hires);
+
+      for ( ; col != colstop ; col += colstep, desttop+=(1<<hires))
+	{
+          int wh = SCREENWIDTH<<hires<<hires;
+          register const byte *source = bytes + col;
+          register byte *dest = desttop;
+          int cy = y;
+          register int count = (cy + H > EFFECTIVE_HEIGHT) ? EFFECTIVE_HEIGHT - cy : H;
+          if(count < 0) count = 0;
+
+          if ((count-=4)>=0)
+            do
+              {
+                register byte s0,s1;
+                register int w,q;
+                register byte *dest2 = dest + wh;
+                s0 = source[0];
+                s1 = source[W];
+                source += W + W;
+                for ( w = 0 ; w < (1 << hires) ; w ++ )
+                  {
+                    for ( q = 0 ; q < wh ; q += (SCREENWIDTH << hires) )
+                      {
+                        dest[w + q] = s0;
+                        dest2[w + q] = s1;
+                      }
+                  }
+                dest += wh + wh;
+                dest2 = dest + wh;
+                s0 = source[0];
+                s1 = source[W];
+                source += W + W;
+                for ( w = 0 ; w < (1 << hires) ; w ++ )
+                  {
+                    for ( q = 0 ; q < wh ; q += (SCREENWIDTH << hires) )
+                      {
+                        dest[w + q] = s0;
+                        dest2[w + q] = s1;
+                      }
+                  }
+                dest += wh + wh;
+              }
+            while ((count-=4)>=0);
+          if (count+=4)
+            do
+              {
+                register int w,q;
+                register byte s0 = *source;
+                for ( w = 0 ; w < (1 << hires) ; w ++ )
+                  {
+                    for ( q = 0 ; q < wh ; q += (SCREENWIDTH << hires) )
+                      {
+                        dest[w + q] = s0;
+                      }
+                   }
+                dest += wh;
+                source  += H;
+              }
+            while (--count);
+	}
+    }
+  else
+    {
+      byte *desttop = screens[scrn]+y*SCREENWIDTH+x;
+
+      for ( ; col != colstop ; col += colstep, desttop++)
+	{
+          register const byte *source = (byte *) bytes + col;
+          register byte *dest = desttop;
+          int cy = y;
+          register int count = (cy + H > EFFECTIVE_HEIGHT) ? EFFECTIVE_HEIGHT - cy : H;
+          if(count < 0) count = 0;
+
+          assert(count == 200);
+
+          if ((count-=4)>=0)
+            do
+              {
+                register byte s0,s1;
+                s0 = source[0];
+                s1 = source[W];
+                source += W + W;
+                dest[0] = s0;
+                dest[SCREENWIDTH] = s1;
+                dest += SCREENWIDTH*2;
+                s0 = source[0];
+                s1 = source[W];
+                source += W + W;
+                dest[0] = s0;
+                dest[SCREENWIDTH] = s1;
+                dest += SCREENWIDTH*2;
+              }
+            while ((count-=4)>=0);
+          if (count+=4)
+            do
+              {
+                *dest = *source;
+                source += W;
+                dest += SCREENWIDTH;
+              }
+           while (--count);
+        }
+    }
+}
+
+
 void V_DrawPatch16General(int x, int y, int scrn, patch16_t *patch,
 			boolean flipped)
 {

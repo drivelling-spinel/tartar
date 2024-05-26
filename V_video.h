@@ -117,6 +117,7 @@ void V_DrawPatch16General(int x,int y,int scrn,patch16_t *patch, boolean flipped
 
 #define V_DrawPatch16Direct V_DrawPatch16 
 
+void V_DrawRaw(int x,int y,int scr,int w,int h,byte * bytes);
 
 void V_DrawPatchTranslated(int x, int y, int scrn, patch_t *patch, char *outr,
                            int cm);

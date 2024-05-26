@@ -156,7 +156,9 @@ void P_LoadLevelInfo(int lumpnum)
   readtype = RT_OTHER;
   P_ClearLevelVars();
 
-  lump = W_CacheLumpNum(lumpnum, PU_STATIC);
+  lump = Z_Realloc(W_CacheLumpNum(lumpnum, PU_STATIC),
+    lumpinfo[lumpnum]->size + 1, PU_STATIC, 0);
+  lump[lumpinfo[lumpnum]->size] = 0;
   
   rover = startofline = lump;
   
@@ -171,6 +173,7 @@ void P_LoadLevelInfo(int lumpnum)
 	}
       rover++;
     }
+  P_ParseInfoCmd(startofline);
   Z_Free(lump);
   
   P_InitWeapons();

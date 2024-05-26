@@ -123,6 +123,8 @@ static void C_InitBackdrop()
    // allow for custom console background graphic
    if(W_CheckNumForName("CONBACK") >= 0)
       lumpname = "CONBACK";
+   if(W_CheckNumForName("CONSBACK") >= 0)
+      lumpname = "CONSBACK";
    if(W_CheckNumForName("CONSOLE") >= 0)
       lumpname = "CONSOLE";
    
@@ -130,12 +132,16 @@ static void C_InitBackdrop()
       Z_Free(backdrop);
    
    backdrop = Z_Malloc(C_SCREENHEIGHT*C_SCREENWIDTH, PU_STATIC, 0);
+   memset(backdrop, 0, C_SCREENHEIGHT*C_SCREENWIDTH);
    
    // gross hack to write to backdrop
    oldscreen = screens[1]; screens[1] = backdrop;
-   
+
    patch = W_CacheLumpName(lumpname, PU_CACHE);
-   V_DrawPatch(0, 0, 1, patch);
+   if(*(long *)patch == 320 && ((long *)patch)[1] == 200)
+     V_DrawRaw(0, 0, 1, 320, 200, ((byte *)patch) + sizeof(long) * 2);
+   else
+     V_DrawPatch(0, 0, 1, patch);
    
    // restore screens[1]
    screens[1] = oldscreen;
@@ -629,6 +635,7 @@ void C_Printf(unsigned char *s, ...)
    
    for(c = tempstr; *c; c++)
       C_AddChar(*c);
+   DEBUGMSG(tempstr);
 }
 
 // write a line of text to the console
