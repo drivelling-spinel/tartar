@@ -2099,7 +2099,7 @@ void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 
       if (!stricmp(key,deh_state[4]))  // Codep frame (not set in Frame deh block)
         {
-          if(value == MBF_MUSHROOM && !safeparm && comp[comp_mushroom]) 
+          if(value == MBF_MUSHROOM && comp[comp_mushroom]) 
             {
               if (fpout) fprintf(fpout," - using %ld instead of %ld for S_MUSHROOM effect\n", SMMU_MUSHROOM, MBF_MUSHROOM);
               value = SMMU_MUSHROOM;
