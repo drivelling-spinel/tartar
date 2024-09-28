@@ -265,6 +265,7 @@ typedef enum
 } e_str;
 
 int st_mode_right;
+int st_set_mode_right;
 #endif
 
  // in deathmatch only, summary of frags stats
@@ -435,7 +436,7 @@ void ST_refreshBackground(void)
       }
         else
       {
-        V_CopyRect(ST_X2, 0, BG, ST_WIDTH - ST_X2, ST_HEIGHT, ST_X2, ST_Y, FG);
+        V_CopyRect(ST_X, 0, BG, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, FG);
       }
 #endif
 
@@ -741,8 +742,7 @@ void ST_updateWidgets(void)
 #if defined(STBAR11)
   if(show_chat_tics == 1 && st_mode_right == str_chat)
     {
-      st_mode_right = str_norm;
-      st_firsttime = true;
+      st_set_mode_right = str_norm;
     }
   st_show_playermsg = st_mode_right == str_chat;
 #endif
@@ -754,6 +754,13 @@ void ST_Ticker(void)
 #ifdef STBAR11
   if(show_chat_tics > 0)
     show_chat_tics -= 1;
+
+  if(st_mode_right != st_set_mode_right)
+   {
+     st_mode_right = st_set_mode_right;
+     show_chat_tics = 0;
+     st_firsttime = true;
+   }
 #endif
   ST_updateWidgets();
   st_oldhealth = plyr->health;
@@ -1163,7 +1170,7 @@ void ST_initData(void)
 
 #ifdef STBAR11    
   show_chat_tics = 0;
-  st_mode_right = str_norm;
+  st_set_mode_right = st_mode_right = str_norm;
   for(i = 0 ; i < sizeof(player_msgs) / sizeof(player_msgs[0]) ; i++)
     player_msgs[i][0] = 0;
 #endif
@@ -1436,10 +1443,10 @@ void ST_PlayerMsg(const char *s)
   strncpy(player_msgs[0], s, sizeof(player_msgs[0]) - 1);
 
   if(st_mode_right == str_norm || show_chat_tics)
-  {
-    st_mode_right = str_chat;
-    show_chat_tics = (*(int*)C_GetCmdForName("mess_timer")->variable->variable * 35) / 1000;
-  }
+    {
+      st_set_mode_right = st_mode_right = str_chat;
+      show_chat_tics = (*(int*)C_GetCmdForName("mess_timer")->variable->variable * 35) / 1000;
+    }
   st_firsttime = true;
   st_refresh_playermsg = true;
 }
@@ -1502,12 +1509,8 @@ CONSOLE_VARIABLE(st_rednum, sts_always_red, 0) {}
 CONSOLE_VARIABLE(st_singlekey, sts_traditional_keys, 0) {}
 
 #if defined(STBAR11)
-VARIABLE_INT(st_mode_right, NULL, 0, 1, NULL);
-CONSOLE_VARIABLE(st_right, st_mode_right, 0)
-  {
-    st_firsttime = true;
-    show_chat_tics = 0;
-  }
+VARIABLE_INT(st_set_mode_right, NULL, 0, 1, NULL);
+CONSOLE_VARIABLE(st_right, st_set_mode_right, 0) {}
 #endif
 
 void ST_AddCommands()

@@ -436,9 +436,33 @@ void I_FinishUpdate(void)
 
       if (current_mode>255)
          dascreen = (byte *) screen_base_addr + scroll_offset*mode_BPS + effective_band*mode_BPS; // VESA LFB access
-      if (cpu_family >= 6 || asmp6parm) ppro_blit(dascreen,size);       // PPro, PII
-      else if (cpu_family >= 5)         pent_blit(dascreen,size);       // Pentium (GB 2014: not used for Cx5x86, but it is a little slower anyways)
-      else                              memcpy(dascreen,screens[0],size); // Others
+#ifdef INTELHACK
+      if (screen_w == mode_BPS || safeparm)
+        {
+#endif
+          if (cpu_family >= 6 || asmp6parm) ppro_blit(dascreen,size);       // PPro, PII
+          else if (cpu_family >= 5)         pent_blit(dascreen,size);       // Pentium (GB 2014: not used for Cx5x86, but it is a little slower anyways)
+          else                              memcpy(dascreen,screens[0],size); // Others
+#ifdef INTELHACK
+        }
+      else
+        {
+          byte * restore = screens[0];
+          int l = size / screen_w;
+                           
+          while(l-->0)
+            {
+              if (cpu_family >= 6)      ppro_blit(dascreen,screen_w);   // PPro, PII
+              else if (cpu_family >= 5) pent_blit(dascreen,screen_w);   // Pentium (GB 2014: not used for Cx5x86, but it is a little slower anyways)
+              else                      memcpy(dascreen,screens[0],screen_w); // Others
+              screens[0] += screen_w;
+              dascreen += mode_BPS;
+            }
+
+          screens[0] = restore;
+        }
+#endif
+
    }
 
    if (in_page_flip) vesa_set_displaystart(0, scroll_offset, use_vsync); // hires hardware page-flipping (VBE 2.0 Only, Do not waste frames on 1.2)
@@ -859,7 +883,7 @@ static void I_InitGraphicsMode(void)
 	 	}
 		else hiresfail=1;
      }
-         else if (vesa_mode_640x400>0) 
+         else if (RESULTING_SCALE < 2 && vesa_mode_640x400>0) 
      {
         if (vesa_set_mode(vesa_mode_640x400)!=-1)      // Init 640x400
 		{                       
@@ -869,7 +893,7 @@ static void I_InitGraphicsMode(void)
 	 	}
 		else hiresfail=1;
      }
-	 else if (vesa_mode_640x480>0) 
+         else if (RESULTING_SCALE < 2 && vesa_mode_640x480>0) 
      {
 		if (vesa_set_mode(vesa_mode_640x480)!=-1)      // Init 640x400
 		{
@@ -884,10 +908,10 @@ static void I_InitGraphicsMode(void)
 
      if (hiresfail)
      {
-        scale_to_hires = 0;
-        hires = 0;                    // Revert to lowres
-        MN_ErrorMsg(BADVID);          // shows "video mode not supported" at the bottom
-        I_InitGraphicsMode();         // Start all over
+        if(scale_to_hires >= hires) scale_to_hires--;  // Revert to lowres
+        else hires--;
+        MN_ErrorMsg(BADVID);                  // shows "video mode not supported" at the bottom
+        I_InitGraphicsMode();                 // Start all over
         return;
      }
   }
@@ -896,7 +920,11 @@ static void I_InitGraphicsMode(void)
   if (!hires) 
   {
 	 if (!in_hires && current_mode>255) {}            // Already in VESA 320x200, just page-flip toggle
-	 else if (vesa_mode_320x200>0)  
+	 else if (vesa_mode_320x200>0
+#ifdef INTELHACK
+         && page_flip
+#endif
+         )
 	 {
         if (vesa_set_mode(vesa_mode_320x200)!=-1)
 		{

@@ -347,24 +347,27 @@ void MN_DrawTartar(void)
 
   V_DrawDistortedBackground("FLAT14", screens[0]);
 
-  V_WriteText(FC_GRAY "Tartar: Stage  5 (2021-2024)\n"
-              FC_BLUE "\"Modern\" " FC_GREEN "DOS " FC_RED "Doom " FC_GREEN "port \n"
-              "for " FC_BLUE "\"modern\" " FC_GREEN "retro machines\n"
+  V_WriteText(FC_GRAY "Tartar\n"
+              FC_GREEN "Stage: 5+\n"
+              FC_GRAY "Modern DOS " FC_RED "Doom " FC_GRAY "source port \n"
+              "for modern retro machines\n"
               "\n"
               FC_GRAY "Based on " FC_RED "Caverns of Darkness " FC_GRAY "engine\n"
               FC_GRAY "aka " FC_RED "EE 3.29 dev beta 5 joel-2\n"
-              FC_GRAY "(C) 2002, " FC_RED "Joel Murdoch\n"
+              FC_GRAY "(C) 2002 Joel Murdoch\n"
               "\n"
-              FC_GRAY "Programming:" FC_RED " Ludicrous_peridot\n"
-              FC_GRAY "Borrows heavily from MBF 2.04 by " FC_RED "Gerwin\n"
+              FC_GRAY "Borrows heavily from " FC_RED "MBF 2.04 " FC_GRAY "by Gerwin\n"
               FC_GRAY "Includes code and assets by Eternity Engine,\n"
               FC_GRAY "ZDoom, PrBoom contributors,\n"
               FC_GRAY "Kurt Baumgardner and Andrey Budko\n"
-              FC_GRAY "See " FC_RED "ABOUT" FC_GRAY " for Eternity Engine credits\n"
+              "\n"
+              FC_GRAY "Programmed in 2021-2024 by\n"
+              FC_GREEN "  Ludicrous_peridot\n"
+              FC_GRAY  "  https://www.moddb.com/\n"
+              FC_GRAY  "           company/ludicrous-peridot\n"
 	      "\n"
 	      "\n"
-              FC_GRAY"  https://www.moddb.com/\n"
-              FC_GRAY"           company/ludicrous-peridot\n",
+              FC_GRAY "See " FC_RED "ABOUT" FC_GRAY " for Eternity Engine credits\n",
               10, 25);
 }
 
