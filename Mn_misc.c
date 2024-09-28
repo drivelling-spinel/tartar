@@ -135,7 +135,7 @@ boolean MN_PopupResponder(event_t *ev)
             }
 
           case popup_question:
-            if(tolower(ev->data1) == 'y')     // yes!
+            if(tolower(ev->data1) == 'y' || tolower(ev->data1) == key_menu_enter )     // yes!
               {
                 // run command and kill message
                 // haleyjd 02/24/02: restore saved menuactive state
@@ -149,7 +149,8 @@ boolean MN_PopupResponder(event_t *ev)
                 return true;
               }
             if(tolower(ev->data1) == 'n' || ev->data1 == KEYD_ESCAPE
-               || ev->data1 == KEYD_BACKSPACE)     // no!
+               || ev->data1 == KEYD_BACKSPACE
+               || ev->data1 == key_menu_escape || ev->data1 == key_menu_backspace)     // no!
               {
                 // kill message
                 // haleyjd 02/24/02: restore saved menuactive state

@@ -437,7 +437,7 @@ void I_FinishUpdate(void)
       if (current_mode>255)
          dascreen = (byte *) screen_base_addr + scroll_offset*mode_BPS + effective_band*mode_BPS; // VESA LFB access
 #ifdef INTELHACK
-      if (screen_w == mode_BPS || safeparm)
+      if (screen_w == mode_BPS || safeparm || current_mode<=255)
         {
 #endif
           if (cpu_family >= 6 || asmp6parm) ppro_blit(dascreen,size);       // PPro, PII

@@ -1768,6 +1768,7 @@ void M_SaveDefaults (void)
   for (blanks = 1, line = 0, dp = defaults; ; dp++, blanks = 0)
     {
       int brackets = 0, value;
+      int defaultvalue;
 
       for (;line < comment && comments[line].line <= dp-defaults; line++)
 	if (*comments[line].text != '[' || (brackets = 1, config_help))
@@ -1797,17 +1798,22 @@ void M_SaveDefaults (void)
       // Don't output config help if any [ lines appeared before this one.
       // Make default values, and numeric range output, automatic.
 
+      defaultvalue = dp->isstr ? 0 :
+        strncmp(dp->name, "key_", 4) ? dp->defaultvalue :
+             I_DoomCode2ScanCode(dp->defaultvalue);
+      
+
       if (config_help && !brackets)
 	if ((dp->isstr ? 
 	     fprintf(f,"[(\"%s\")]", (char *) dp->defaultvalue) :
 	     dp->limit.min == UL ?
 	     dp->limit.max == UL ?
-	     fprintf(f, "[?-?(%d)]", dp->defaultvalue) :
-	     fprintf(f, "[?-%d(%d)]", dp->limit.max, dp->defaultvalue) :
+             fprintf(f, "[?-?(%d)]", defaultvalue) :
+             fprintf(f, "[?-%d(%d)]", dp->limit.max, defaultvalue) :
 	     dp->limit.max == UL ?
-	     fprintf(f, "[%d-?(%d)]", dp->limit.min, dp->defaultvalue) :
+             fprintf(f, "[%d-?(%d)]", dp->limit.min, defaultvalue) :
 	     fprintf(f, "[%d-%d(%d)]", dp->limit.min, dp->limit.max,
-		     dp->defaultvalue)) == EOF ||
+                     defaultvalue)) == EOF ||
 	    fprintf(f," %s %s\n", dp->help, dp->wad_allowed ? "*" :"") == EOF)
 	  goto error;
 
