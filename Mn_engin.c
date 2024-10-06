@@ -726,7 +726,7 @@ boolean MN_Responder (event_t *ev)
       return true;
     }                             
   
-  if(ev->data1 == key_escape)
+  if(ev->data1 == key_escape || ev->data1 == key_menu_escape)
     {
       // toggle menu
       
