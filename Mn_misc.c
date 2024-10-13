@@ -358,6 +358,9 @@ void MN_DrawTartar(void)
               FC_GRAY "(C) 2002 Joel Murdoch\n"
               "\n"
               FC_GRAY "Borrows heavily from " FC_RED "MBF 2.04 " FC_GRAY "by Gerwin\n"
+#ifdef CRVSFIX
+              FC_GRAY "with memory, video code additions by CRVS\n"
+#endif
               FC_GRAY "Includes code and assets by Eternity Engine,\n"
               FC_GRAY "ZDoom, PrBoom contributors,\n"
               FC_GRAY "Kurt Baumgardner and Andrey Budko\n"
@@ -369,7 +372,13 @@ void MN_DrawTartar(void)
 	      "\n"
 	      "\n"
               FC_GRAY "See " FC_RED "ABOUT" FC_GRAY " for Eternity Engine credits\n",
-              10, 25);
+              10,
+#ifdef CRVSFIX
+              17
+#else
+              25
+#endif
+              );
 }
 
 
