@@ -107,6 +107,9 @@ void *pm_bank_switcher;
 void *pm_display_scroller; 
 //int _mmio_segment = 0;
 //static unsigned long mmio_linear = 0;     /* linear addr for mem mapped IO */
+#ifdef CRVSFIX
+char vesa_oem_string[50];
+#endif
 
 //int selector;
 int current_bank=-1;
@@ -346,7 +349,7 @@ void vesa_set_bank(int bank_number)
       : "r" (pm_bank_switcher),       // function pointer in any register 
         "b" (0),                      // set %ebx to zero 
         "d" (bank_number)             // bank number in %edx 
-      :   "%eax",                     // clobber list 
+      :   "%eax",                     // clobber list
           "%ecx",                   
           "%esi",                   
           "%edi"  // GB 2014, removal of registers from the clobber list that appear in the input list too.
@@ -362,6 +365,31 @@ void vesa_set_bank(int bank_number)
    }
 }
 
+#ifdef CRVSFIX
+//-----------------------------------------------------------------------------
+void vesa_patch_3dfx()
+{
+   // Voodoo3 LCD colors patch
+   const char oem_3dfx[] = "3dfx";
+
+   if ( (current_mode == (vesa_mode_640x400 & 0xFFF)) // mind possible LFB mode flag (0x4000)
+        && (!memcmp(vesa_oem_string, oem_3dfx, sizeof(oem_3dfx)-1)) )
+   {
+      // Unlock CRTC registers cr0 - cr7
+      outportb(CRTC_INDEX, 0x11);
+      outportb(CRTC_DATA, inportb(CRTC_DATA) & 0x7f);
+
+      // Correct Start Horizontal Retrace
+      outportb(CRTC_INDEX, 0x04);
+      outportb(CRTC_DATA, inportb(CRTC_DATA)-1);
+
+      // Correct End Horizonrtal Retrace
+      outportb(CRTC_INDEX, 0x05);
+      outportb(CRTC_DATA, inportb(CRTC_DATA)-1);
+   }
+}
+#endif
+
 //-----------------------------------------------------------------------------
 int vesa_set_mode(int mode)
 {
@@ -372,10 +400,37 @@ int vesa_set_mode(int mode)
    r.x.bx = mode;
    __dpmi_int(0x10, &r);
    if (r.h.ah) return -1;     // failure!
+#ifdef CRVSFIX
+   current_mode=mode & 0xFFF; // CRVS 2020: corrected - extra bits were cut
+   current_bank=-1;           // reset;
+
+   vesa_patch_3dfx();
+#else
    current_mode=mode & 0x1FF; // GB 2014: remove attributes
    current_bank=-1;           // reset;
+#endif
    return 0;
 }
+
+#ifdef CRVSFIX
+//-----------------------------------------------------------------------------
+void vesa_get_string(char *buffer, size_t buffer_size, unsigned long address)
+{
+   address = (((address >> 16) & 0xFFFF) << 4) + (address & 0xFFFF);
+
+   while( buffer_size ) {
+      *buffer = (char)_farnspeekb(address);
+      --buffer_size;
+
+      if ( *buffer == '\0')
+        break;
+
+      ++buffer;
+      ++address;
+   }
+   *buffer = '\0';
+}
+#endif
 
 //-----------------------------------------------------------------------------
 int vesa_get_info()
@@ -399,7 +454,10 @@ int vesa_get_info()
      vesa_version=0; // fail, no vesa
      return -1;
    }
-   vesa_version=vesa_info.VESAVersion>>8; 
+   vesa_version=vesa_info.VESAVersion>>8;
+#ifdef CRVSFIX
+   vesa_get_string(vesa_oem_string, sizeof(vesa_oem_string), vesa_info.OEMStringPtr);
+#endif
    return 0;
 }
 

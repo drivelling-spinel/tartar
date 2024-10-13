@@ -1,0 +1,47 @@
+----------------------------------------------------------------------------
+
+2020-06-08 (CRVS):
+MBF / HDPMI32 2.05 alpha 1
+
+Generic improvements:
+- CWSDPMI (DMPI host) replaced by HDPMI32
+  Fewer issues with device drivers and other apps
+- DJP (code packer) replaced by UPX
+  Better compression, no more random crashes at build time
+- MBF and Allegro upgraded to the latest toolchain (DGJPP 2.05 + GCC 9.30)
+  100% compiler warnings addressed (old and new, with more strict compiler)
+  number of bugs fixed
+
+Better hardware support:
+- Aureal Vortex2 sound cards in pure DOS (via "AU30DOS.COM" SBPRO emulation)
+  Was:  System freeze at sound init
+- Creative SB Live!/Audigy/Audigy2 sound cards in pure DOS (via "SBEINIT.COM"
+  for SB16 emulation)
+  Was:  No Digital Sound, only MIDI
+  Note: Environment variable "SET HDPMI=512" is required to use these cards,
+        root cause - constraint of Creative's drivers
+- ATI Rage series video cards
+  Was:  Ok with high resolution but broken picture in 320x200
+
+Notable bugfixes:
+- Was:  Incorrect handling of VESA modes exceeding 1FF (wrong video mode
+        could be selected)
+- Was:  Insufficient RAM reserve for drivers (no sound in some configurations)
+- Was:  SIGSEGV on Quit in WinNT family
+
++ Integrated Sigil and other patches
+
+----------------------------------------------------------------------------
+
+2020-06-08 (CRVS):
+MBF / HDPMI32 2.05 alpha 2
+
+- GCC 10.10 support
+
+----------------------------------------------------------------------------
+
+2020-11-16 (CRVS):
+MBF / HDPMI32 2.05 alpha 3
+
+- Improved 3dfx video cards support (Voodoo Banshee and newer)
+  Was: Incorrect "greenish" picture in hires mode (640x400) with LCD monitor

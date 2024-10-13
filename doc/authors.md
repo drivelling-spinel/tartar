@@ -50,3 +50,8 @@ It is built with DJGPP following the process explained by Gerwin for MBF 2.0.4.
 As Eternity Engine constitutes the majority of Tartar's code, a collection
 of [documents](eternity) from various publicly available sources that describe 
 the state of Eternity circa 3.29db5-joel2 is included with Tartar's source.  
+
+In 2020 user going by nickname CRVS on VOGONS forums has published source
+code for updated MBF 2.0.4 and Allegro library, some of the bugfixes from
+which were incorporated into Tartar in 2024. [CRVS.TXT](COPYRIGHT/CRVS.TXT)
+contains the original changelog by CRVS. 
