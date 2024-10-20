@@ -769,6 +769,13 @@ void R_InitFlats(void)
       firstflat = W_GetNumForName("FF_START") + 1;
     }
   lastflat = W_GetNumForName("F_END") - 1;
+
+  if(firstflat <= 0 || firstflat > lastflat)
+    I_Error("R_InitFlats: misaligned F_START/FF_START/F_END marker lumps");
+  while(firstflat <= lastflat && !W_LumpLength(firstflat)) firstflat++;
+  if(firstflat > lastflat)
+    I_Error("R_InitFlats: no usable flats found");
+
   numflats  = lastflat - firstflat + 1;
 
   // Create translation table for global animation.
@@ -799,6 +806,13 @@ void R_InitSpriteLumps(void)
       firstspritelump = W_GetNumForName("SS_START") + 1;
     }
   lastspritelump = W_GetNumForName("S_END") - 1;
+
+  if(firstspritelump <= 0 || firstspritelump > lastspritelump)
+    I_Error("R_InitSpriteLumps: misaligned S_START/SS_START/S_END marker lumps");
+  while(firstspritelump <= lastspritelump && !W_LumpLength(firstspritelump)) firstspritelump++;
+  if(firstspritelump > lastspritelump)
+    I_Error("R_InitSpriteLumps: no usable sprites found");
+
   numspritelumps = lastspritelump - firstspritelump + 1;
 
   // killough 4/9/98: make columnd offsets 32-bit;
@@ -836,6 +850,9 @@ void R_InitColormaps(void)
   int i;
   firstcolormaplump = W_GetNumForName("C_START");
   lastcolormaplump  = W_GetNumForName("C_END");
+  if(firstcolormaplump >= lastcolormaplump)
+    I_Error("R_InitColormaps: misaligned C_START/C_END marker lumps");
+
   numcolormaps = lastcolormaplump - firstcolormaplump;
   colormaps = Z_Malloc(sizeof(*colormaps) * numcolormaps, PU_STATIC, 0);
 

@@ -558,6 +558,12 @@ int I_RegisterSong(void *data)
     destroy_midi(_mididata);
   _mididata = 0;
 
+  if(!strncmp("OggS", data, 4))
+    {
+      doom_printf("Error loading midi: %d", BADMIDHDR);
+      return -1;
+    }
+
   if(!strncmp("RIFF", data, 4))
     {
       int sz = ((unsigned *)data)[1] - 12;

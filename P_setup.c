@@ -1226,7 +1226,7 @@ void P_LoadBlockMap (int lump)
 
 	// sf: -blockmap checkparm made into variable
 	// also checking for levels without blockmaps (0 length)
-  if (r_blockmap || W_LumpLength(lump)==0 ||
+  if (r_blockmap || lump < 0 || W_LumpLength(lump)==0 ||
 	(count = W_LumpLength(lump)/2) >= 0x10000)
     P_CreateBlockMap();
   else
@@ -1455,16 +1455,23 @@ char *levellumps[] =
   "BLOCKMAP"      // ML_BLOCKMAP  LUT, motion clipping, walls/grid element
 };
 
+boolean P_CheckLevelLump(int lumpnum, int maplump)
+{
+       int ln = lumpnum + maplump;
+       if(ln > numlumps ||     // past the last lump
+                strncmp(lumpinfo[ln]->name, levellumps[maplump], 8) )
+                   return false;
+        return true;
+}
+
 boolean P_CheckLevel(int lumpnum)
 {
-        int i, ln;
+        int i;
 
-        for(i=ML_THINGS; i<=ML_BLOCKMAP; i++)
+        for(i=ML_THINGS; i<=ML_SECTORS; i++)
         {
-                ln = lumpnum+i;
-                if(ln > numlumps ||     // past the last lump
-                   strncmp(lumpinfo[ln]->name, levellumps[i], 8) )
-                        return false;
+                if(!P_CheckLevelLump(lumpnum, i))
+                   return false;
         }
         return true;    // all right
 }
@@ -1612,7 +1619,8 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
 
   numnodes = numsegs = numsubsectors = 0;
   P_LoadExtended  (lumpnum+ML_NODES);  
-  P_LoadBlockMap  (lumpnum+ML_BLOCKMAP);             // killough 3/1/98
+  P_LoadBlockMap  (P_CheckLevelLump(lumpnum, ML_BLOCKMAP) ?
+                   lumpnum + ML_BLOCKMAP : -1);             // killough 3/1/98
   if (!numsegs)
   {
     P_LoadSegs(lumpnum+ML_SEGS);
@@ -1655,7 +1663,8 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
   V_LoadingIncrease();    // update
 #endif
 
-  rejectmatrix = W_CacheLumpNum(lumpnum+ML_REJECT,PU_LEVEL);
+  rejectmatrix = P_CheckLevelLump(lumpnum, ML_REJECT) ? 
+    W_CacheLumpNum(lumpnum+ML_REJECT,PU_LEVEL) : 0;
   P_GroupLines();
 
   if(remove_slime_trails) {
