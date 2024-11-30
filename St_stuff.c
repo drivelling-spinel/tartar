@@ -760,6 +760,7 @@ void ST_Ticker(void)
      st_mode_right = st_set_mode_right;
      show_chat_tics = 0;
      st_firsttime = true;
+     st_refresh_playermsg = true;
    }
 #endif
   ST_updateWidgets();
@@ -925,6 +926,9 @@ void ST_doRefresh(void)
 {
 
   st_firsttime = false;
+#if defined(STBAR11)
+  st_show_playermsg = st_mode_right == str_chat;
+#endif
 
   // draw status bar background to off-screen buff
   ST_refreshBackground();
