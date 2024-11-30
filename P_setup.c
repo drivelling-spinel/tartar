@@ -614,25 +614,6 @@ void P_LoadThings(int lump)
       mapthing_t *mt = (mapthing_t *) data + i;
       boolean dont_spawn = false;
 
-      // Do not spawn cool, new monsters if !commercial
-      if(gamemode != commercial)
-      {
-	 switch(mt->type)
-	 {
-	 case 68:  // Arachnotron
-	 case 64:  // Archvile
-	 case 88:  // Boss Brain
-	 case 89:  // Boss Shooter
-	 case 69:  // Hell Knight
-	 case 67:  // Mancubus
-	 case 71:  // Pain Elemental
-	 case 65:  // Former Human Commando
-	 case 66:  // Revenant
-	 case 84:  // Wolf SS
-            dont_spawn = true;
-	 }
-      }
-      
       // non SMMU stuff from Eternity or COD will
       // only be loaded when appropriate
       if(mt->type < 5001 || mt->type > 5004)
@@ -1694,8 +1675,7 @@ void P_SetupLevel(char *mapname, int playermask, skill_t skill)
   DEBUGMSG("done\n");
 
   // killough 3/26/98: Spawn icon landings:
-  if (gamemode==commercial)
-    P_SpawnBrainTargets();
+  P_SpawnBrainTargets();
 
   // haleyjd: init miscellaneous spots
   P_InitMiscMapSpots();

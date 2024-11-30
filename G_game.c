@@ -3140,12 +3140,6 @@ void G_TimeDemo(char *name, boolean showmenu)
    // parameter, not s. I've also made some other adjustments.
 
    if(nodemo) return;
- 
-   if(W_CheckNumForName(name) == -1)
-   {
-      C_Printf("%s: demo not found\n", name);
-      return;
-   }
    
    //G_StopDemo();          // stop any previous demos
    

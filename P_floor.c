@@ -796,11 +796,16 @@ int EV_BuildStairs
         if (tsec->floorpic != texture)
           continue;
 
-	height += stairsize;  // killough 10/98: intentionally left this way
+        if(demo_version < 200 || demo_version >= 300 ||
+           (demo_version >= 203 && demo_version <= 205))
+          height += stairsize; // jff 6/19/98 prevent double stepsize
 
         // if sector's floor already moving, look for another
         if (P_SectorActive(floor_special,tsec)) //jff 2/22/98
 	  continue;
+
+        if(demo_version == 202 || (demo_version > 205 && demo_version < 300))
+          height += stairsize; // jff 6/19/98 increase height AFTER continue
 
         sec = tsec;
         secnum = newsecnum;
@@ -824,8 +829,17 @@ int EV_BuildStairs
       }
     } while(ok);      // continue until no next step is found
 
-    if (!comp[comp_stairs])      // killough 10/98: compatibility option
-      secnum = osecnum;          //jff 3/4/98 restore loop index
+    if (
+      (demo_version >= 203 && !comp[comp_stairs]) ||
+      (demo_version > 109 && demo_version < 203) ||
+      ((
+         demo_version <= 109 ||
+         (demo_version > 203 && comp[comp_stairs])
+       ) &&
+         (gamemission == pack_tnt || gamemission == pack_plut)
+      ) 
+    )                            // killough 10/98: compatibility option
+    secnum = osecnum;            //jff 3/4/98 restore loop index
   }
   return rtn;
 }

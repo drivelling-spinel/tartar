@@ -57,7 +57,6 @@ static void cheat_mus();
 static void cheat_choppers();
 static void cheat_god();
 static void cheat_fa();
-static void cheat_k();
 static void cheat_kfa();
 static void cheat_noclip();
 static void cheat_pw();
@@ -115,9 +114,6 @@ struct cheat_s cheat[] = {
 
   {"iddqd",      "God mode",          not_net | not_demo,
    cheat_god      },
-
-  {"idk",        NULL,                not_net | not_demo | not_deh,
-   cheat_k },  // The most controversial cheat code in Doom history!!!
 
   {"idkfa",      "Ammo & Keys",       not_net | not_demo,
    cheat_kfa },
@@ -332,10 +328,10 @@ static void cheat_god()
   C_RunTextCmd("god");
 }
 
-        // sf: removed beta godmode
+  // sf: removed beta godmode
 
-static void cheat_fa()
-{
+static void give_fa()
+{        
   int i;
 
   if (!plyr->backpack)
@@ -368,30 +364,31 @@ static void cheat_fa()
       plyr->ammo[i] = plyr->maxammo[i];
     }
   }
+}
+
+static void cheat_fa()
+{
+  give_fa();
         //sf : doom_printf
   doom_printf(s_STSTR_FAADDED);
 }
 
-static void cheat_k()
+static void give_k()
 {
-  int i, k=0;
-
-  for (i=0; i<NUMCARDS; i++)
+  int i;
+  for (i=0;i<NUMCARDS;i++)
     if (!plyr->cards[i])     // only print message if at least one key added
       {                      // however, caller may overwrite message anyway
         plyr->cards[i] = true;
-        k++; // sf: fix multiple 'keys added' messages
       }
-                //sf : doom_printf
-   if(k) doom_printf("Keys Added");
 }
 
 static void cheat_kfa()
 {
-  cheat_k();
-  cheat_fa();
+  give_k();
+  give_fa();
         //sf: doom_printf
-  doom_printf(STSTR_KFAADDED);
+  doom_printf(s_STSTR_KFAADDED);
 }
 
 static void cheat_noclip()
@@ -440,11 +437,7 @@ char buf[3];
     }
 
   // Catch invalid maps.
-  if (epsd < 1 || map < 1 ||   // Ohmygod - this is not going to work.
-      (gamemode == retail     && (epsd > 4 || map > 9  )) ||
-      (gamemode == registered && (epsd > 3 || map > 9  )) ||
-      (gamemode == shareware  && (epsd > 1 || map > 9  )) ||
-      (gamemode == commercial && (epsd > 1 || map > 32 )) )
+  if (epsd < 1 || map < 1)   // Ohmygod - this is not going to work.
     return;
 
   // So be it.

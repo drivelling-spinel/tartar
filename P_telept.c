@@ -74,7 +74,9 @@ int EV_Teleport(line_t *line, int side, mobj_t *thing)
           if (!P_TeleportMove(thing, m->x, m->y, false)) // killough 8/9/98
             return 0;
 
-          thing->z = thing->floorz;
+          if(demo_version != 109 ||
+             (gamemission != pack_tnt && gamemission != pack_plut))
+            thing->z = thing->floorz;
 
           if (player) reset_viewz = true;       //sf: use this instead
                                         // of affecting viewz directly

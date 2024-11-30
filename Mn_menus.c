@@ -506,7 +506,7 @@ menu_t menu_tartar =
     {it_info, FC_GOLD "Tartar options",   NULL, },
     {it_toggle,   "Disable support for tall textures",      "comp_talltex"},   
     {it_toggle,   "HOM with sky on both floor & ceiling",   "comp_vpdup"},
-    {it_toggle,   "Remove slime trails (Firelines way)",    "p_rmslime"},
+    {it_toggle,   "Remove slime trails (Killough way)",     "p_rmslime"},
     {it_toggle,   "Apply wiggly wall fix (kb1 & e8y)",      "r_wigglefix"},
     {it_toggle,   "End game after the last custom map",     "detectfinal"},
     {it_toggle,   "Wait for game tic to refresh screen",    "i_ticwait"},
