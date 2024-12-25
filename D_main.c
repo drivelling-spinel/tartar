@@ -1652,6 +1652,22 @@ void D_DoomMain(void)
 	    D_AddFile(myargv[p]);
     }
 
+  if ((p = M_CheckParm ("-nwtwad")))
+    {
+      boolean file = modifiedgame = true;            // homebrew levels
+      while (++p < myargc)
+	if (*myargv[p] == '-')
+          file = !strcasecmp(myargv[p],"-nwtwad");
+	else
+	  if (file)
+            {
+              D_AddFile(myargv[p]);
+              D_AddFile("NWT_STRT");
+              D_AddFile(myargv[p]);
+              D_AddFile("NWT_END");
+            }
+    }
+
   codfound = D_HasWadInWadlist("cod");
   codlevfound = D_HasWadInWadlist("codlev");
 
@@ -2133,6 +2149,7 @@ void D_ReInitWadfiles()
 void D_NewWadLumps(int handle, extra_file_t extra)
 {
   int i;
+  int first = true;
   char wad_firstlevel[9] = "";
   int reset_finallevel = 0;
   char wad_finallevel[9] = "";
@@ -2142,7 +2159,7 @@ void D_NewWadLumps(int handle, extra_file_t extra)
     {
       if(lumpinfo[i]->handle != handle) continue;
       
-      if(!strncmp(lumpinfo[i]->name, "THINGS", 8))    // a level
+      if(!strncmp(lumpinfo[i]->name, "THINGS", 8) && !first)    // a level
 	{
 	  char *name = lumpinfo[i-1]->name; // previous lump
 	  
@@ -2221,6 +2238,8 @@ void D_NewWadLumps(int handle, extra_file_t extra)
           P_LoadEpisodeInfo(i);
 	}
 #endif
+
+      first = false;       
     } 
   
   if(*wad_firstlevel) // a new first level?
