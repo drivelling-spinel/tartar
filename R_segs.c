@@ -714,6 +714,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 	return scale;
 }
 
+extern boolean check_segs_only;
 
 //
 // R_StoreWallRange
@@ -745,6 +746,9 @@ void R_StoreWallRange(const int start, const int stop)
 
   // mark the segment as visible for auto map
   linedef->flags |= ML_MAPPED;
+
+  if(check_segs_only)
+    return;
 
   // calculate rw_distance for scale calculation
   rw_normalangle = curline->angle + ANG90;

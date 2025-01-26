@@ -1696,6 +1696,13 @@ default_t defaults[] = {
     "Suppress a fix for sky texture on same sector's floor and ceiling"
   },
 
+  {
+    "comp_livemap",
+    &default_comp[comp_livemap], &comp[comp_livemap],
+    1, {0,1}, dt_number, ss_comp, wad_yes,
+    "When off mark lines as visited even when in automap"
+  },
+
   {NULL}         // last entry
 };
 

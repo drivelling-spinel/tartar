@@ -319,7 +319,11 @@ void D_Display (void)
       HU_Erase();
 
       if (automapactive)
+      {
+          if(!comp[comp_livemap])
+            R_RenderPlayerView (&players[consoleplayer], -1);
           AM_Drawer();
+      }
       else
       {
           // see if the border needs to be updated to the screen
@@ -2375,7 +2379,7 @@ boolean D_AddNewFile(char *s)
 
 static void D_Banner()
 {
-  printf("%s built on %s at %s\n", D_DoomExeName(), version_date, version_time);
+  printf("\n%s built on %s at %s\n", D_DoomExeName(), version_date, version_time);
   printf("Internal version %i.%02i\n", VERSION/100, VERSION%100);
 }
 
@@ -2387,6 +2391,8 @@ static void D_Help()
   printf(" %-35s %s\n", "-file <file(-s)>[.wad|lmp|deh]", "load file(-s)");
   printf(" %-35s %s\n", "-deh <file(-s)>[.deh|bex]", "load DeHackEd patch(-es)");
   printf(" %-35s %s\n", "-bex <file(-s)>[.deh|bex]", "");
+  printf(" %-35s %s\n", "-nwtwad <file(-s)>[.wad]", "load WAD(-s) originally intended to");
+  printf(" %-35s %s\n", "", "be used after running nwt -merge on them");
   printf(" %-35s %s\n", "-config <file>", "use specified configuration file");
   printf(" %-35s %s\n", "-noload", "don't automatically load files");
   printf(" %-35s %s\n", "-fixes <directory>", "load all WAD-s in directory after IWAD");

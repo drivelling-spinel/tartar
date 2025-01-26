@@ -1381,9 +1381,9 @@ menu_t menu_options =
     {it_runcmd, "weapons",                      "mn_weapons"},
     {it_runcmd, "end game",                     "mn_endgame"},
     {it_info,   FC_GOLD "game widgets"},
-    {it_runcmd, "hud settings",                 "mn_hud"},
+    {it_runcmd, "ui settings",                  "mn_hud"},
     {it_runcmd, "status bar",                   "mn_status"},
-    {it_runcmd, "automap",                      "mn_automap"},
+    {it_runcmd, "automap colors",               "mn_automap"},
     {it_end},
   },
   100, 1,                               // x,y offsets
@@ -1610,9 +1610,10 @@ menu_t menu_hud =
     {it_toggle,     "crosshair type",               "crosshair"},
     {it_toggle,     "show frags in DM",             "show_scores"},
     {it_toggle,     "automap coords follow pointer",   "map_coords"},
+    {it_toggle,     "no level charting with automap on",   "comp_livemap"},
     {it_end},
   },
-  200, 1,                              // x,y offset
+  210, 1,                              // x,y offset
   2,
   mf_background,
 };

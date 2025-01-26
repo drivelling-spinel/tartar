@@ -695,7 +695,7 @@ int Ex_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file
 
   if(extra == EXTRA_PRESS)
     {
-      static char * names[] = { "AMMNUM", "STMBAR", "STABAR", "STCHAT", "STCFN", "STWEAP" };
+      static char * names[] = { "STMBAR", "STCHAT", "STCFN" };
       int i = 0;
 
       for(i = 0 ; i < 6 ; i += 1)

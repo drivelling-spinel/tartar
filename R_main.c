@@ -565,7 +565,7 @@ void R_SetupFrame (player_t *player, camera_t *camera)
   mobj = player->mo;
 
   viewcamera = camera;
-  if(!camera)
+  if(!camera || -1 == (long)camera)
   {
           viewx = mobj->x;
           viewy = mobj->y;
@@ -681,6 +681,7 @@ angle_t R_WadToAngle(int wadangle)
 static int render_ticker = 0;
 int flatskip = 0;
 boolean abort_render = false;
+boolean check_segs_only = false;
 
 //
 // R_RenderView
@@ -688,6 +689,7 @@ boolean abort_render = false;
 void R_RenderPlayerView (player_t* player, camera_t *camerapoint)
 {       
   R_SetupFrame (player, camerapoint);
+  check_segs_only = camerapoint == -1;
 
   // Clear buffers.
   R_ClearClipSegs ();
@@ -697,7 +699,7 @@ void R_RenderPlayerView (player_t* player, camera_t *camerapoint)
 
   R_ResetHeightMath();
     
-  if (autodetect_hom)
+  if (autodetect_hom && !check_segs_only)
         R_HOMdrawer();
 
   // check for new console commands.
@@ -718,6 +720,8 @@ void R_RenderPlayerView (player_t* player, camera_t *camerapoint)
       abort_render = false;
       return;
     }
+  if(check_segs_only)
+    return;
      
   if(!flatskip || render_ticker % flatskip) R_DrawPlanes ();
     

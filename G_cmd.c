@@ -558,14 +558,15 @@ const char *comp_strings[] =
   "everyline",
   "clighting",
   "talltex",
-  "vpdup"
+  "vpdup",
+  "livemap"
 };
 
 void G_AddCompat()
 {
   int i;
 
-  for(i=0; i<=comp_vpdup; i++)   // haleyjd: update this regularly
+  for(i=0; i<=comp_livemap; i++)   // haleyjd: update this regularly
     {
       variable_t *variable;
       command_t *command;

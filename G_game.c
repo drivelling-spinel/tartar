@@ -3269,7 +3269,7 @@ void doom_printf(const char *s, ...)
    
    C_Puts(msg);  // set new message
 #ifdef STBAR11
-   if(IS_EXTRA_LOADED(EXTRA_PRESS) && ST_FS_STYLE != ST_FULL_OFF)
+   if(IS_EXTRA_LOADED(EXTRA_PRESS) && (ST_FS_STYLE != ST_FULL_OFF || automapactive))
      ST_PlayerMsg(msg);
    else
 #endif

@@ -101,6 +101,7 @@ void V_LoadFont16()
       if(num >= 0)
         v_font16[i] = W_CacheLumpNum(num, PU_STATIC);
     }
+
 }
 #endif
 
