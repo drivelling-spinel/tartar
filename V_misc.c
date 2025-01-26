@@ -560,7 +560,7 @@ void V_ClassicFPSDrawer()
 //
 // killough 11/98: rewritten to support hires
 
-void V_Init(void)
+void V_Init(boolean extraScreen)
 {
   int known_height = (SCREEN_LOWEST > 0 ? SCREEN_LOWEST + 1: SCREENHEIGHT) << hires;
   int size = (SCREENWIDTH << hires) * CORRECT_ASPECT_SAFE(known_height);
@@ -569,10 +569,15 @@ void V_Init(void)
   if (screens[0]) free(screens[0]);
   if (screens[1]) free(screens[1]);
   if (screens[2]) free(screens[2]);
+  if (screens[3]) free(screens[3]);
 
   screens[0] = calloc(size, 1);
   screens[1] = calloc(size, 1);
   screens[2] = calloc(size, 1 <<rsize << rsize);
+  if(extraScreen)
+    screens[3] = calloc(size, 1 <<rsize << rsize);
+  else
+    screens[3] = 0;
 }
 
 /////////////////////////////

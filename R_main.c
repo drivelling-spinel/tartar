@@ -436,7 +436,7 @@ void R_ExecuteSetViewSize (void)
     
   // psprite scales
 
-  if(hires)
+  if(hires > 1)
     {                                                    // sf: zooming added
       pspritescale = FixedDiv(zoomfrac*viewwidth, SCREENWIDTH << FRACBITS);       // killough 11/98
       pspriteiscale = FixedDiv(SCREENWIDTH << FRACBITS, zoomfrac*viewwidth);       // killough 11/98

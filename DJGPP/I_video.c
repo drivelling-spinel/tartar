@@ -245,6 +245,7 @@ int in_graphics_mode;
 int in_page_flip, in_hires, linear;
 int scroll_offset;
 int blackband; // GB 2014: for 640x480 fallback mode
+boolean compat480;
 // GB 2014, FPS counter variables:
 char mode_string[128];
 int  modeswitched=0;
@@ -323,7 +324,7 @@ void show_info_proc()
 //-----------------------------------------------------------------------------
 void I_FinishUpdate(void)
 { 
-
+ 
    //I_GetTime_RealTime();
   // int a=I_GetTime_RealTime();
   // int b=I_GetTime_RealTime(); 
@@ -360,11 +361,19 @@ void I_FinishUpdate(void)
 
    if(screenSize > 8 || widescreen_mode) effective_band = 0;
 
-   if ((in_hires && (SCALING_TO_HIRES || CORRECTING_ASPECT)) || APPLIES_WIDESCREEN)
+   if (widescreen_mode ? APPLIES_WIDESCREEN || compat480 :
+       (in_hires && (SCALING_TO_HIRES || CORRECTING_ASPECT)))
      {
        I_ReadScreen(screens[2]);
        screens[0] = screens[2];
        screens[2] = swap;
+       if(compat480 && APPLIES_WIDESCREEN)
+       {
+          byte * swap2 = screens[0];
+          blitScreenAspectCorrected(screens[3]);          
+          screens[0] = screens[3];
+          screens[3] = swap2;
+       }
      }
 
    if (in_page_flip)
@@ -863,6 +872,7 @@ static void I_InitGraphicsMode(void)
   char safestring[]="SAFE MODE / ";     
   if (!safeparm) safestring[0]='\0';
   blackband = 0;
+  compat480 = false;
 
   // PREPARATION AT FIRST RUN
   if (!in_graphics_mode) 
@@ -914,6 +924,7 @@ static void I_InitGraphicsMode(void)
 		  screen_w=640; // Necessary for when mode 13h/X has overwritten them.
  		  screen_h=480;
                   blackband=CORRECTING_ASPECT ? 0 : 40;                     // color 8 is almost black, zero is black
+                  compat480=true;
 		}
 		else hiresfail=1;
 	 }
@@ -1000,7 +1011,7 @@ static void I_InitGraphicsMode(void)
   }
 
   // CONTINUE TO PREPARE GENERAL STUFF
-  V_Init(); // required buffer size has changed
+  V_Init(compat480); // required buffer size has changed
   scroll_offset = 0;
   in_graphics_mode = 1;
   clearscreen = 0;

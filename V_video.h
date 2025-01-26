@@ -92,7 +92,7 @@ extern int  usegamma, hires;        // killough 11/98
 void V_InitColorTranslation(void);
 
 // Allocates buffer screens, call before R_Init.
-void V_Init (void);
+void V_Init (boolean extraScreen);
 
 void V_CopyRect(int srcx,  int srcy,  int srcscrn, int width, int height,
 		int destx, int desty, int destscrn);
