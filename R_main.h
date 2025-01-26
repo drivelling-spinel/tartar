@@ -122,6 +122,9 @@ void R_ReInitIfNeeded(void);
 extern int flatskip;
 extern int viewdir;
 extern int zoom;
+extern fixed_t zoomfrac;
+
+extern int widescreen_mode;
 
 #endif
 

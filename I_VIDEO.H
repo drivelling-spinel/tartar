@@ -36,6 +36,7 @@
 #define SCALING_TO_HIRES (scale_to_hires && (hires + scale_to_hires) > 2 ? 2 - hires : scale_to_hires)
 #define CORRECTING_ASPECT (scale_aspect && screen_h != 200 && screen_h != 400)
 #define CORRECT_ASPECT(x) ( (CORRECTING_ASPECT) ? (x * 6 / 5) : (x) )
+#define CORRECT_ASPECT_SAFE(x) (x * 6 / 5)
 // last line of the screen that is still visible
 // in current resolution after all adjustments have been applied
 #define SCREEN_LOWEST ( (screen_h == 200 || screen_h == 400) ? SCREENHEIGHT : (scale_aspect ? ((screen_h * 5 / 6) >> RESULTING_SCALE) : (SCREENHEIGHT + ST_HEIGHT)) )

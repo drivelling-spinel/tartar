@@ -255,6 +255,7 @@ int disk_icon;
 int gammastyle;
 char *gammastyles[] = {"Doom 1.9", "Doom 1.1"};
 
+extern boolean inhelpscreens;
 
 //-----------------------------------------------------------------------------
 void I_UpdateNoBlit (void){}
@@ -357,9 +358,9 @@ void I_FinishUpdate(void)
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
    size = in_hires ? (SCREENWIDTH<<res_scale)*(CORRECT_ASPECT(effective_h)) : SCREENWIDTH*ymax;
 
-   if(screenSize > 8) effective_band = 0;
+   if(screenSize > 8 || widescreen_mode) effective_band = 0;
 
-   if (in_hires && (SCALING_TO_HIRES || CORRECTING_ASPECT))
+   if ((in_hires && (SCALING_TO_HIRES || CORRECTING_ASPECT)) || APPLIES_WIDESCREEN)
      {
        I_ReadScreen(screens[2]);
        screens[0] = screens[2];
@@ -486,6 +487,9 @@ void blitScreenAspectScaled(const byte * scr, int scale)
    byte z = 2;
    register byte shf = scale - 1;
 
+   if(H > screen_h)
+     H = screen_h;
+
    while ((h >> shf) < H)
      {
        for ( q = 0; q < z && (h >> shf) < H; q ++ )
@@ -548,6 +552,7 @@ void blitScreenAspectCorrected(const byte * scr)
     const byte * restore = screens[0];
     const byte * old_scr = scr;
     int z = 6;
+
     for ( i = 0 ; i <= sz ; i += 10 )
       {
         int q;
@@ -698,11 +703,19 @@ void I_ReadScreen(byte *scr)
     {
       blitScreenAspectScaled(scr, SCALING_TO_HIRES);
     }
+  else if (APPLIES_WIDESCREEN && SCALING_TO_HIRES)
+    {
+      blitScreenAspectScaled(scr, SCALING_TO_HIRES);
+    }
   else if (SCALING_TO_HIRES)
     {
       blitScreenScaled(scr, SCALING_TO_HIRES);
     }
   else if (CORRECTING_ASPECT)
+    {
+      blitScreenAspectCorrected(scr);
+    }
+  else if (APPLIES_WIDESCREEN)
     {
       blitScreenAspectCorrected(scr);
     }
@@ -1119,7 +1132,6 @@ CONSOLE_VARIABLE(v_scale_aspect, scale_aspect, 0)
 {
   V_ResetMode();
 }
-
 
 CONSOLE_VARIABLE(v_show_fps, show_fps, 0) {}
 

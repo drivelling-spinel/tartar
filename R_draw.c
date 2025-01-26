@@ -1104,6 +1104,9 @@ void R_VideoErase(unsigned ofs, int count)
 void R_DrawViewBorder(void) 
 { 
   int side, ofs, i;
+
+  if(widescreen_mode)
+    V_FillScreen(BG_COLOR, FG);
  
   if (scaledviewwidth == SCREENWIDTH) 
     return;

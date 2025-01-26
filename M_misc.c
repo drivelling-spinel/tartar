@@ -94,6 +94,8 @@ extern int show_vpo;
 
 extern int textmode_startup;
 
+extern int widescreen_mode;
+
 //jff 3/3/98 added min, max, and help string to all entries
 //jff 4/10/98 added isstr field to specify whether value is string or int
 //
@@ -191,6 +193,12 @@ default_t defaults[] = {
     &scale_aspect, NULL,
     0, {0,1}, dt_number, ss_gen, wad_no,
     "1 to correct aspect ratio to 4:3 by scaling renderer output"
+  },
+  {
+    "widescreen_mode",
+    &widescreen_mode, NULL,
+    0, {0,3}, dt_number, ss_gen, wad_no,
+    "1-3 correct rendering aspect ratio to better fit modern displays"
   },
   {
     "hires",
@@ -756,7 +764,7 @@ default_t defaults[] = {
   {
     "comp_evenlight",
     &default_comp[comp_evenlight], &comp[comp_evenlight],
-    0, {0,1}, dt_number, ss_comp, wad_yes,
+    1, {0,1}, dt_number, ss_comp, wad_yes,
     "Colormaps are applied unevenly to some walls"
   },
 

@@ -48,7 +48,8 @@ static const char rcsid[] = "$Id: r_main.c,v 1.13 1998/05/07 00:47:52 killough E
 #include "hu_stuff.h"
 
 // Fineangles in the SCREENWIDTH wide window.
-int fov=2048;   //sf: made an int from a #define
+#define NORMAL_FOV (2048);
+int fov=NORMAL_FOV;   //sf: made an int from a #define
 
 // killough: viewangleoffset is a legacy from the pre-v1.2 days, when Doom
 // had Left/Mid/Right viewing. +/-ANG90 offsets were placed here on each
@@ -69,8 +70,11 @@ extern lighttable_t **walllights;
 boolean  showpsprites=1; //sf
 camera_t *viewcamera;
 int zoom = 1;   // sf: fov/zooming
+fixed_t  zoomfrac = FRACUNIT;
 
 extern int screenSize;
+
+int widescreen_mode;
 
 extern int global_cmap_index; // haleyjd: NGCS
 
@@ -244,8 +248,8 @@ static void R_InitTextureMapping (void)
   //  so fov angles covers SCREENWIDTH.
 
                         // sf: zooming
-  focallength = FixedDiv(centerxfrac*zoom, finetangent[FINEANGLES/4+fov/2]);
-        
+  focallength = FixedDiv(centerx*zoomfrac, finetangent[FINEANGLES/4+((widescreen_mode ? 0 /*409*/ : 0)+fov)/2]);
+
   for (i=0 ; i<FINEANGLES/2 ; i++)
     {
       int t;
@@ -387,7 +391,8 @@ void R_ExecuteSetViewSize (void)
   if (setblocks == 11)
     {
       scaledviewwidth = SCREENWIDTH;
-      scaledviewheight = SCREENHEIGHT;                   // killough 11/98
+      scaledviewheight = SCREENHEIGHT;               // killough 11/98
+
     }
   else if (setblocks == 12)
     {
@@ -400,6 +405,22 @@ void R_ExecuteSetViewSize (void)
       scaledviewheight = (setblocks*168/10) & ~7;        // killough 11/98
     }
 
+  switch(widescreen_mode)
+    {
+      case 1:
+        zoomfrac = FRACUNIT * 5 / 6;
+        scaledviewheight = scaledviewheight * 5 / 6;
+        break;
+      case 2:
+        zoomfrac = FRACUNIT * 9 * 5 / 10 / 6;
+        scaledviewheight = scaledviewheight * 5 * 9 / 6 / 10;
+        break;
+      default:
+        zoomfrac = FRACUNIT;
+
+    }
+  zoomfrac *= zoom;
+
   viewwidth = scaledviewwidth << hires;                  // killough 11/98
   viewheight = scaledviewheight << hires;                // killough 11/98
 
@@ -407,7 +428,7 @@ void R_ExecuteSetViewSize (void)
   centery = viewheight/2;
   centerxfrac = centerx<<FRACBITS;
   centeryfrac = centery<<FRACBITS;
-  projection = centerxfrac * zoom;      // sf: zooming
+  projection = centerx * zoomfrac;      // sf: zooming
 
   R_InitBuffer(scaledviewwidth, scaledviewheight);       // killough 11/98
         
@@ -415,8 +436,8 @@ void R_ExecuteSetViewSize (void)
     
   // psprite scales
                                 // sf: zooming added
-  pspritescale = FixedDiv(zoom*viewwidth, SCREENWIDTH);       // killough 11/98
-  pspriteiscale = FixedDiv(SCREENWIDTH, zoom*viewwidth);       // killough 11/98
+  pspritescale = FixedDiv(zoomfrac*viewwidth, SCREENWIDTH << FRACBITS);       // killough 11/98
+  pspriteiscale = FixedDiv(SCREENWIDTH << FRACBITS, zoomfrac*viewwidth);       // killough 11/98
     
   // thing clipping
   for (i=0 ; i<viewwidth ; i++)
@@ -429,7 +450,7 @@ void R_ExecuteSetViewSize (void)
     {
       fixed_t dy = abs(((i-viewheight)<<FRACBITS)+FRACUNIT/2);
                 // sf: zooming
-      origyslope[i] = FixedDiv(viewwidth*zoom*(FRACUNIT/2), dy);
+      origyslope[i] = FixedDiv(viewwidth*zoomfrac/2, dy);
     }
    yslope = origyslope + (viewheight/2);
         
@@ -523,6 +544,7 @@ void R_SetupFrame (player_t *player, camera_t *camera)
 {               
   mobj_t *mobj;
   static int oldzoom;
+  fixed_t updownfrac;
 
   // check for change to zoom
   if(zoom != oldzoom)
@@ -558,12 +580,14 @@ void R_SetupFrame (player_t *player, camera_t *camera)
   viewcos = finecosine[viewangle>>ANGLETOFINESHIFT];
 
         // y shearing
-  updownangle *= zoom;          // sf: zooming
+  updownfrac = updownangle * zoomfrac;      // sf: zooming
                 // check for limits
-  updownangle = updownangle >  50 ?  50 :
-                updownangle < -50 ? -50 : updownangle;
+  updownfrac = updownfrac >  (50*FRACUNIT) ?  (50*FRACUNIT) :
+                updownfrac < (-50*FRACUNIT) ? (-50*FRACUNIT) : updownfrac;
         // scale to screen size
-  updownangle = (updownangle * viewheight) / 100;
+  updownfrac = (updownfrac * viewheight) / 100;
+  updownangle = (updownfrac + FRACUNIT - 1) >> FRACBITS;
+  
 
   centery = (viewheight/2) + updownangle;
   centeryfrac = (centery<<FRACBITS);
@@ -912,9 +936,13 @@ CONSOLE_VARIABLE(screensize, screenSize, cf_buffered)
 {
   S_StartSound(NULL,sfx_stnmov);
 
+  clearscreen = 1;
+
+  if(screenSize != 8)
+    widescreen_mode = 0;
+
   if(screenSize >= 8)
   {
-     clearscreen = 1;
      ST_Reposition();
      AM_LevelInit();
   }
@@ -1025,6 +1053,17 @@ CONSOLE_VARIABLE(r_norender0, norender0, 0) {
 VARIABLE_BOOLEAN(wigglefix, NULL, onoff);
 CONSOLE_VARIABLE(r_wigglefix, wigglefix, 0) {}
 
+char *widescreens[] =
+   {"no", "16:10", "16:9"};
+
+
+VARIABLE_INT(widescreen_mode, NULL, 0, 2, widescreens);
+CONSOLE_VARIABLE(r_wide, widescreen_mode, 0)
+{
+  C_RunTextCmd("screensize 8");
+}
+
+
 void R_AddCommands()
 {
    C_AddCommand(lefthanded);
@@ -1068,6 +1107,7 @@ void R_AddCommands()
 #endif
 
    C_AddCommand(r_wigglefix);
+   C_AddCommand(r_wide);
 }
 
 //----------------------------------------------------------------------------

@@ -327,7 +327,7 @@ void HU_CrossHairDraw()
   // where to draw??
   
   drawx = SCREENWIDTH/2 - crosshair->width/2;
-  drawy = (screenSize >= 8) ? SCREENHEIGHT/2 : (SCREENHEIGHT-ST_HEIGHT)/2;
+  drawy = (screenSize >= 7) ? scaledviewheight/2 : (SCREENHEIGHT-ST_HEIGHT)/2;
   
   // check for bfglook: make crosshair face forward
 

@@ -1426,7 +1426,7 @@ menu_t menu_video =
   {
     {it_title,        FC_GOLD "video",                NULL, "m_video"},
     {it_info,         FC_GOLD "mode"},
-    {it_toggle,       "renderer resolution",          "v_hires"},
+    {it_toggle,       "screen buffer size",           "v_hires"},
     {it_toggle,       "scale to higher resolution",   "v_scale_hi"},
     {it_toggle,       "aspect ratio to scale to",     "v_scale_aspect"},
     {it_toggle,       "use page-flipping",            "v_page_flip"},
@@ -1434,9 +1434,9 @@ menu_t menu_video =
     {it_toggle,       "show fps",                     "v_show_fps"},
     {it_slider,       "gamma correction",             "gamma"},
     
-    {it_info,         FC_GOLD "rendering"},
     {it_runcmd,       "particle options",             "mn_particle"},
     {it_slider,       "screen size",                  "screensize"},
+    {it_toggle,       "imitate widescreen resolution","r_wide"},
     {it_toggle,       "hom detector flashes",         "r_homflash"},
     {it_toggle,       "translucency",                 "r_trans"},
     {it_variable,     "translucency percentage",      "r_tranpct"},

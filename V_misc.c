@@ -35,6 +35,7 @@
 #include "v_misc.h"
 #include "w_wad.h"
 #include "ex_stuff.h"
+#include "r_main.h"
 
 extern int gamma_correct;
 
@@ -561,7 +562,7 @@ void V_ClassicFPSDrawer()
 void V_Init(void)
 {
   int known_height = (SCREEN_LOWEST > 0 ? SCREEN_LOWEST + 1: SCREENHEIGHT) << hires;
-  int size = (SCREENWIDTH << hires) * CORRECT_ASPECT(known_height);
+  int size = (SCREENWIDTH << hires) * CORRECT_ASPECT_SAFE(known_height);
   int rsize = RESULTING_SCALE - hires;
 
   if (screens[0]) free(screens[0]);

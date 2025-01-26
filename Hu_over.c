@@ -443,6 +443,7 @@ void HU_ToggleHUD()
 void HU_OverlaySetup()
 {
   int i;
+  int Y = scaledviewheight;
   
   // setup the drawers
   overlay[ol_health].drawer = HU_DrawHealth;
@@ -487,7 +488,7 @@ void HU_OverlaySetup()
 	
       case 1:
 	{
-	  int y = SCREENHEIGHT-8;
+          int y = Y-8;
 	  
 	  for(i=NUMOVERLAY-1; i >= 0; i--)
 	    {
@@ -504,7 +505,7 @@ void HU_OverlaySetup()
       
       case 2:
 	{
-	  int x = 0, y = 192;
+          int x = 0, y = Y-8;
 	  
 	  for(i=0; i<NUMOVERLAY; i++)
 	    {
@@ -526,18 +527,18 @@ void HU_OverlaySetup()
       case 3:
 	setol(ol_health, SCREENWIDTH-138, 0);
 	setol(ol_armor, SCREENWIDTH-138, 8);
-	setol(ol_weap, SCREENWIDTH-138, 184);
-	setol(ol_ammo, SCREENWIDTH-138, 192);
+        setol(ol_weap, SCREENWIDTH-138, Y-16);
+        setol(ol_ammo, SCREENWIDTH-138, Y-8);
 	if(deathmatch)  // if dm, put frags in place of keys
 	  {
-	    setol(ol_frag, 0, 192);
+            setol(ol_frag, 0, Y-8);
 	  }
 	else
 	  {
-	    setol(ol_key, 0, 192);
+            setol(ol_key, 0, Y-8);
 	  }
 	if(!hud_hidestatus)
-	  setol(ol_status, 0, 184);
+          setol(ol_status, 0, Y-16);
 	break;
 
     }
