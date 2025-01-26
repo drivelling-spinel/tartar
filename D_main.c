@@ -95,7 +95,10 @@ static char *D_dehout(void)
   return s;
 }
 
+#if 0
 char **wadfiles;
+#endif
+file_to_process_t **files;
 
 // killough 10/98: preloaded files
 #define MAXLOADFILES 2
@@ -624,6 +627,7 @@ void D_Reborn (void)
 static char title[128];
 #endif
 
+#if 0
 //
 // D_AddFile
 //
@@ -644,7 +648,25 @@ void D_AddFile(char *file)
   wadfiles[numwadfiles+1] = NULL;
   numwadfiles++;
 }
+#endif
 
+static int numfiles, numfiles_alloc;
+
+void D_AddFileToProcess(char *file, int processing)
+{
+  file_to_process_t * ftp;
+  if (numfiles+2 >= numfiles_alloc)
+    files = realloc(files, (numfiles_alloc = numfiles_alloc ?
+                               numfiles_alloc * 2 : 8)*sizeof(file_to_process_t*));
+  ftp = malloc(sizeof(*ftp));
+  files[numfiles] = ftp;
+  ftp->filename = strdup(file);
+  ftp->processing_type = processing;
+  files[numfiles+1] = NULL; //sf: always NULL at end
+  numfiles++;
+}
+
+#if 0
 void D_InsertFile(char *file, int index)
 {
   char ** newfiles;
@@ -668,8 +690,37 @@ void D_InsertFile(char *file, int index)
   wadfiles = newfiles;
   numwadfiles_alloc = newalloc;
 }
+#endif
 
+void D_InsertFileToProcess(char *file, int index, int processing)
+{
+  file_to_process_t ** newfiles;
+  file_to_process_t * ftp;
+  int newalloc;
+  newfiles = malloc((newalloc = numfiles_alloc ?
+                        numfiles + 2 >= numfiles_alloc ?
+                           numfiles_alloc * 2 : numfiles_alloc
+                        : 8)*sizeof(file_to_process_t *));
+  ftp = malloc(sizeof(*ftp));
+  if(numfiles_alloc)
+  {  
+     memcpy(newfiles, files, 
+        index * sizeof(file_to_process_t *));
+     newfiles[index] = ftp;
+     memcpy(newfiles + index + 1, files + index, 
+        (numfiles_alloc - index - 1) * sizeof(file_to_process_t *));
+     free(files);
+  }
+  else newfiles[0] = ftp;
+  ftp->filename = strdup(file); //sf: always NULL at end
+  ftp->processing_type = processing;
+  numfiles++;
+  newfiles[numfiles] = NULL;
+  files = newfiles;
+  numfiles_alloc = newalloc;
+}
 
+#if 0
 boolean D_HasFileInFilelist(const char * filenae, const char *EXT)
 {
   int s = strlen(filenae), i, el, nl;
@@ -694,12 +745,45 @@ boolean D_HasFileInFilelist(const char * filenae, const char *EXT)
    free(noext);
    return found;
 }
+#endif
 
+boolean D_HasFileToProcess(const char * filenae, const char *EXT)
+{
+  int s = strlen(filenae), i, el, nl;
+  char * ext = strcpy(malloc(s + 5), filenae), * noext = strcpy(malloc(s + 1), filenae);
+  boolean found = false;
+  
+  AddDefaultExtension(ext, EXT);
+  if(s > 4 && !stricmp(filenae + s - 4, EXT)) noext[s-4] = 0;
+  el = strlen(ext);
+  nl = strlen(noext);
+  
+  for (i = 0; i<numfiles && !found; i++)
+     {
+        int l = strlen(files[i]->filename);
+        found = found || (l>=el && !strnicmp(files[i]->filename+l-el, ext, el)
+              && (l==el || files[i]->filename[l-el-1] == '/' || files[i]->filename[l-el-1] == '\\'));
+        found = found || (l>=nl && !strnicmp(files[i]->filename+l-nl, noext, nl)
+              && (l==nl || files[i]->filename[l-nl-1] == '/' || files[i]->filename[l-nl-1] == '\\'));
+     }
 
+   free(ext);
+   free(noext);
+   return found;
+}
+
+#if 0
 boolean D_HasWadInWadlist(const char * wadname)
 {
   return D_HasFileInFilelist(wadname, ".WAD");
 }
+#endif
+
+boolean D_HasWadToProcess(const char * wadname)
+{
+  return D_HasFileToProcess(wadname, ".WAD");
+}
+
 
 #ifdef EPISINFO
 static void D_ListEpisodes()
@@ -722,8 +806,8 @@ void D_ListWads()
   int i;
   C_Printf(FC_GRAY "Loaded WADs:\n" FC_RED);
   
-  for(i=0; i<numwadfiles; i++)
-    C_Printf("%s\n",wadfiles[i]);
+  for(i=0; i<numfiles; i++)
+    C_Printf("%s\n", files[i]->filename);
 
   Ex_ListTapeWad();    
 }
@@ -1066,7 +1150,7 @@ void IdentifyVersion (void)
       else
 	puts("Error: -save path does not exist, using current dir");  // killough 8/8/98
     }
-
+                      
   // locate the IWAD and determine game mode from it
 
   iwad = FindIWADFile();
@@ -1157,7 +1241,7 @@ void IdentifyVersion (void)
       if (gamemode == indetermined)
         usermsg(game_name = "Unknown Game Version, may not work");  // killough 8/8/98
 
-      D_AddFile(iwad);
+      D_AddFileToProcess(iwad, wpt_iwad);
     }
   else
     I_Error("IWAD not found\n");
@@ -1318,7 +1402,7 @@ static void D_ProcessWadPreincludes(void)
 		AddDefaultExtension(strcpy(file, s), ".wad");
 		if (!access(file, R_OK))
 		  {
-		    D_AddFile(file);
+                    D_AddFileToProcess(file, wpt_file);
 		    modifiedgame = true;
 		  }
 		else
@@ -1452,21 +1536,23 @@ void D_SetGraphicsMode()
 }
 
 //
-// D_CheckRelatdWads
+// D_CheckRelatedWads
 //
 
 static int D_CheckRelatedWads()
 {
   int i = 1;
   int n = 0;
-  while(i < numwadfiles)
+  while(i < numfiles)
     {
-      int j = Ex_InsertRelatedWads(wadfiles[i], i);
+      int j = Ex_InsertRelatedWads(files[i]->filename, i);
       n += j;
       i += j + 1;
     }
   return n;
 }
+
+static void D_Help();
 
 //
 // D_DoomMain
@@ -1478,7 +1564,9 @@ void D_DoomMain(void)
   char file[PATH_MAX+1];      // killough 3/22/98
 
   byte codfound, codlevfound;
-  int i;
+
+  if(M_CheckParm("-help"))
+    D_Help();
 
   setbuf(stdout, NULL);
 
@@ -1649,7 +1737,9 @@ void D_DoomMain(void)
 	  file = !strcasecmp(myargv[p],"-file");
 	else
 	  if (file)
-	    D_AddFile(myargv[p]);
+            {
+              D_AddFileToProcess(myargv[p], wpt_file);
+            }
     }
 
   if ((p = M_CheckParm ("-nwtwad")))
@@ -1661,15 +1751,13 @@ void D_DoomMain(void)
 	else
 	  if (file)
             {
-              D_AddFile(myargv[p]);
-              D_AddFile("NWT_STRT");
-              D_AddFile(myargv[p]);
-              D_AddFile("NWT_END");
+              D_AddFileToProcess(myargv[p], wpt_nwtwad);
             }
     }
 
-  codfound = D_HasWadInWadlist("cod");
-  codlevfound = D_HasWadInWadlist("codlev");
+
+  codfound = D_HasWadToProcess("cod");
+  codlevfound = D_HasWadToProcess("codlev");
 
   if(!codfound)
      {
@@ -1680,7 +1768,7 @@ void D_DoomMain(void)
         // haleyjd: merged smmu.wad and eternity.wad
 
         sprintf(filestr, "%seternity.wad", D_DoomExeDir());
-        D_InsertFile(filestr, 1); 
+        D_InsertFileToProcess(filestr, 1, wpt_file);
      }
   else if(codlevfound)
     {
@@ -1702,7 +1790,7 @@ void D_DoomMain(void)
     {
       strcpy(file,myargv[p+1]);
       AddDefaultExtension(file,".lmp");     // killough
-      D_AddFile(file);
+      D_AddFileToProcess(file, wpt_file);
       usermsg("Playing demo %s",file);
     }
 
@@ -1821,22 +1909,20 @@ void D_DoomMain(void)
 
   if(!M_CheckParm("-noload")) D_CheckRelatedWads(); 
 
-//  D_AddFile(NULL);           // killough 11/98
-
-   MARK_EXTRA_LOADED(EXTRA_WIMAPS, !M_CheckParm("-noload") &&
+  MARK_EXTRA_LOADED(EXTRA_WIMAPS, !M_CheckParm("-noload") &&
     ((IS_EXTRA_LOADED(EXTRA_WIMAPS) && !modifiedgame) || M_CheckParm("-wimaps")));
 
   startupmsg("W_Init", "Init WADfiles.");
-  
-  Ex_DetectAndLoadTapeWads(wadfiles, !M_CheckParm("-noload"));
 
-  Ex_InsertFixes(wadfiles[0], !M_CheckParm("-noload"));
+  Ex_DetectAndLoadTapeWads(files, !M_CheckParm("-noload"));
+
+  Ex_InsertFixes(files[0]->filename, !M_CheckParm("-noload"));
   if (M_CheckParm ("-skins"))
     {
       startupmsg("Extras","Detecting skin WADs to autoload.");
       Ex_DetectAndAddSkins();
     }
-  W_InitMultipleFiles(wadfiles);
+  W_ProcessMultipleFiles(files);
 
   usermsg("");  // gap
 
@@ -1944,11 +2030,12 @@ void D_DoomMain(void)
       Ex_DetectAndLoadExtras();
     }
 
+
   //////////////////////////////////////////////////////////////////////
   //
   // Must be in Graphics mode by now!
   //
-    
+
   // check
   if(in_textmode)
     {
@@ -2280,10 +2367,105 @@ boolean D_AddNewFile(char *s)
   c_showprompt = false;
   if(W_AddNewFile(c_argv[0])) return false;
   modifiedgame = true;
-  D_AddFile(c_argv[0]);   // add to the list of wads
+  D_AddFileToProcess(c_argv[0], wpt_file); // add to the list of wads
   C_SetConsole();
   D_ReInitWadfiles();
   return true;
+}
+
+static void D_Banner()
+{
+  printf("%s built on %s at %s\n", D_DoomExeName(), version_date, version_time);
+  printf("Internal version %i.%02i\n", VERSION/100, VERSION%100);
+}
+
+static void D_Help()
+{
+  D_Banner();
+  printf("Game content\n");
+  printf(" %-35s %s\n", "-iwad <file>[.wad]", "use specified IWAD");
+  printf(" %-35s %s\n", "-file <file(-s)>[.wad|lmp|deh]", "load file(-s)");
+  printf(" %-35s %s\n", "-deh <file(-s)>[.deh|bex]", "load DeHackEd patch(-es)");
+  printf(" %-35s %s\n", "-bex <file(-s)>[.deh|bex]", "");
+  printf(" %-35s %s\n", "-config <file>", "use specified configuration file");
+  printf(" %-35s %s\n", "-noload", "don't automatically load files");
+  printf(" %-35s %s\n", "-fixes <directory>", "load all WAD-s in directory after IWAD");
+  printf(" %-35s %s\n", "-shim <file>[.wad]", "load helper \"shim\" WAD specified");
+  printf(" %-35s %s\n", "-tape <file>[.wad]", "");
+  printf(" %-35s %s\n", "-skins", "load all WAD-s found in SKINS directory");
+  printf(" %-35s %s\n", "-wimaps", "force alternative Doom II intermissions");
+  printf(" %-35s %s\n", "-press", "force \"press release\" style status bar");
+  printf(" %-35s %s\n", "-save <directory>", "directory to store savagemes in");
+  printf(" %-35s %s\n", "-nocscload", "don't automatically load scripts");
+  printf("Hardware\n");
+  printf(" %-35s %s\n", "-safe", "use settings deemed the most compatible");
+  printf(" %-35s %s\n", "-nosound", "don't play sound or music");
+  printf(" %-35s %s\n", "-nomusic", "don't play music");
+  printf(" %-35s %s\n", "-nosfx", "don't play sound effects");
+  printf(" %-35s %s\n", "-nolfb", "don't select LFB VESA modes");
+  printf(" %-35s %s\n", "-nopm", "don't use VESA PM");
+  printf(" %-35s %s\n", "-asmp6", "use assembly for P6-level CPUs");
+#ifdef CALT
+  printf(" %-35s %s\n", "-noasmx", "use C-language rendering functions");
+#endif
+  printf(" %-35s %s\n", "-cdrom", "run game from read-only medium");
+  printf("Demos\n");
+  printf(" %-35s %s\n", "-playdemo <demo>[.lmp]", "play specified demo");
+  printf(" %-35s %s\n", "-timedemo <demo>[.lmp]", "benchmark using specified demo");
+  printf(" %-35s %s\n", "-fastdemo <demo>[.lmp]", "play specified demo with min waiting");
+  printf(" %-35s %s\n", "-record <demo>[.lmp]", "start in demo recording mode");
+  printf(" %-35s %s\n", "-recordfrom <num> <demo>[.lmp]", "load specified savegame and record");
+  printf(" %-35s %s\n", "-maxdemo <size>", "limit demo file to specified size, kb");
+  printf(" %-35s %s\n", "-nodemo", "don't play demos");
+  printf("Gameplay and multiplayer\n");
+  printf(" %-35s %s\n", "-loadgame <num>", "start with loading specified savegame");
+  printf(" %-35s %s\n", "-warp <level>", "start game at specified level");
+  printf(" %-35s %s\n", "-wart <level>", "");
+  printf(" %-35s %s\n", "-skill <num>", "start game with specified difficulty");
+  printf(" %-35s %s\n", "-episode <num>", "start game at specified episode");
+  printf(" %-35s %s\n", "-nomonsters", "don't put monsters in levels");
+  printf(" %-35s %s\n", "-respawn", "monsters respawn");
+  printf(" %-35s %s\n", "-fast", "faster monsters and projectiles");
+  printf(" %-35s %s\n", "-deathmatch", "start deathmatch game");
+  printf(" %-35s %s\n", "-altdeath", "start deathmatch 2 game");
+  printf(" %-35s %s\n", "-trideath", "start deathmatch 3 game");
+  printf(" %-35s %s\n", "-turbo <num>", "increase players speed");
+  printf(" %-35s %s\n", "-timer <num>", "ends levels after <num> minutes");
+  printf(" %-35s %s\n", "-frags <num>", "set frags limit");
+  printf(" %-35s %s\n", "-avg", "ends levels after 20 minutes");
+#ifdef DOGS
+  printf(" %-35s %s\n", "-dog [num]", "start game with helper actors");
+  printf(" %-35s %s\n", "-dogs [num]", "");
+#endif
+  printf("Debug and troubleshooting\n");
+  printf(" %-35s %s\n", "-devparm", "start in developer mode");
+  printf(" %-35s %s\n", "-dehout <file>", "save DEH debug in file");
+  printf(" %-35s %s\n", "-bexout <file>", "");
+  printf(" %-35s %s\n", "-debugfile", "save debug text into debugX.txt");
+  printf(" %-35s %s\n", "-debugstd", "output debug text");
+  printf(" %-35s %s\n", "-blockmap", "force BLOCKMAP generation");
+#ifdef NORENDER
+  printf(" %-35s %s\n", "-norender", "enable r_nodenderX cvars");
+#endif
+  printf(" %-35s %s\n", "-nodraw", "switch rendering off");
+  printf(" %-35s %s\n", "-noblit", "don't output graphics");
+  printf(" %-35s %s\n", "-numparticles <num>", "override max number of particles");
+  printf(" %-35s %s\n", "-statcopy <address>", "use external stats server");
+  printf(" %-35s %s\n", "-speed <num>", "override game clock rate");
+  printf(" %-35s %s\n", "-net <address>", "network game configuration options");
+  printf(" %-35s %s\n", "-dup <num>", "");
+  printf(" %-35s %s\n", "-extratic", "");
+  printf("Useful console commands:\n");
+  printf("(use [~] key to toggle console, use [Tab] key for command autocompletion)\n");
+  printf(" %-35s %s\n", "cmdlist", "print a list of all defined commands");
+  printf(" %-35s %s\n", "bindings", "print key bindings");
+  printf(" %-35s %s\n", "dumplog <file>", "save console contents to file");
+  printf(" %-35s %s\n", "force_load <num>", "force loading specified savegame");
+  printf(" %-35s %s\n", "starttitle", "escape to title screen");
+  printf(" %-35s %s\n", "tartar", "show credits screen");
+  printf(" %-35s %s\n", "quit", "exit the game");
+
+  I_Error("");
 }
 
 //----------------------------------------------------------------------------

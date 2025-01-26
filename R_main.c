@@ -248,7 +248,7 @@ static void R_InitTextureMapping (void)
   //  so fov angles covers SCREENWIDTH.
 
                         // sf: zooming
-  focallength = FixedDiv(centerx*zoomfrac, finetangent[FINEANGLES/4+((widescreen_mode ? 0 /*409*/ : 0)+fov)/2]);
+  focallength = FixedDiv(centerx*zoomfrac, finetangent[FINEANGLES/4+fov/2]);
 
   for (i=0 ; i<FINEANGLES/2 ; i++)
     {
@@ -435,9 +435,17 @@ void R_ExecuteSetViewSize (void)
   R_InitTextureMapping();
     
   // psprite scales
-                                // sf: zooming added
-  pspritescale = FixedDiv(zoomfrac*viewwidth, SCREENWIDTH << FRACBITS);       // killough 11/98
-  pspriteiscale = FixedDiv(SCREENWIDTH << FRACBITS, zoomfrac*viewwidth);       // killough 11/98
+
+  if(hires)
+    {                                                    // sf: zooming added
+      pspritescale = FixedDiv(zoomfrac*viewwidth, SCREENWIDTH << FRACBITS);       // killough 11/98
+      pspriteiscale = FixedDiv(SCREENWIDTH << FRACBITS, zoomfrac*viewwidth);       // killough 11/98
+    }
+  else
+    {                                                    
+      pspritescale = FixedDiv(zoom*viewwidth, SCREENWIDTH);       // killough 11/98
+      pspriteiscale = FixedDiv(SCREENWIDTH, zoom*viewwidth);       // killough 11/98
+    }                           
     
   // thing clipping
   for (i=0 ; i<viewwidth ; i++)
@@ -904,7 +912,11 @@ CONSOLE_VARIABLE(r_blockmap, r_blockmap, 0) {}
 // CONSOLE_VARIABLE(r_flatskip, flatskip, 0) {}
 CONSOLE_VARIABLE(r_homflash, flashing_hom, 0) {}
 CONSOLE_VARIABLE(r_planeview, visplane_view, 0) {}
-CONSOLE_VARIABLE(r_zoom, zoom, 0) {}
+CONSOLE_VARIABLE(r_zoom, zoom, 0)
+{
+  if(zoom <= 1)
+    zoom = 1;
+}
 CONSOLE_VARIABLE(r_precache, r_precache, 0) {}
 CONSOLE_VARIABLE(r_showgun, showpsprites, 0) {}
 CONSOLE_VARIABLE(r_showhom, autodetect_hom, 0)

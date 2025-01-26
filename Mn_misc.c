@@ -365,7 +365,7 @@ void MN_DrawTartar(void)
               FC_GRAY "ZDoom, PrBoom contributors,\n"
               FC_GRAY "Kurt Baumgardner and Andrey Budko\n"
               "\n"
-              FC_GRAY "Programmed in 2021-2024 by\n"
+              FC_GRAY "Programmed in 2021-2025 by\n"
               FC_GREEN "  Ludicrous_peridot\n"
               FC_GRAY  "  https://www.moddb.com/\n"
               FC_GRAY  "           company/ludicrous-peridot\n"

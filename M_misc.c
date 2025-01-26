@@ -197,8 +197,8 @@ default_t defaults[] = {
   {
     "widescreen_mode",
     &widescreen_mode, NULL,
-    0, {0,3}, dt_number, ss_gen, wad_no,
-    "1-3 correct rendering aspect ratio to better fit modern displays"
+    0, {0,2}, dt_number, ss_gen, wad_no,
+    "1-2 correct rendering aspect ratio to better fit modern displays"
   },
   {
     "hires",
@@ -1398,7 +1398,7 @@ default_t defaults[] = {
   {     //sf : fullscreen hud style
     "hud_overlaystyle",
     &hud_overlaystyle, NULL,
-    1, {0,3}, 0, ss_mess, wad_yes,
+    1, {0,4}, 0, ss_mess, wad_yes,
     "fullscreen hud style"
   },
 

@@ -138,7 +138,7 @@ static int Ex_DetectAndLoadSigilShims(char * filename)
     return 0;
 }
 
-int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
+int Ex_DetectAndLoadTapeWads(file_to_process_t *const *files, int autoload)
 {
   if(*Ex_tape()) 
     {
@@ -148,10 +148,10 @@ int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
       if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
     }
   
-  while(*filenames && autoload)
+  while(*files && autoload)
     {
       struct stat sbuf;
-      ExtractFileBase(*filenames, filestr, sizeof(filestr) - 1);
+      ExtractFileBase((*files)->filename, filestr, sizeof(filestr) - 1);
       assert(strlen(D_DoomExeDir()) + strlen(filestr) + 10 <= sizeof(tapestr));
       sprintf(tapestr, "%sshims/%s", D_DoomExeDir(), filestr);
       AddDefaultExtension(tapestr, ".wad");
@@ -162,9 +162,9 @@ int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload)
       if (!stat(tapestr, &sbuf)) 
         if(!W_AddExtraFile(tapestr, EXTRA_TAPE)) return 1;
 
-      if(Ex_DetectAndLoadSigilShims(*filenames))
+      if(Ex_DetectAndLoadSigilShims((*files)->filename))
         return 1;
-      filenames++;
+      files++;
     }
     
   *tapestr = 0;
@@ -299,7 +299,7 @@ int Ex_DetectAndAddSkins()
 
   for(i = 0 ; i < numwads ; i += 1)
     {
-      D_AddFile(fnames[i]);
+      D_AddFileToProcess(fnames[i], wpt_file);
       ExtractFileBase(fnames[i], filestr, sizeof(filestr) -1);
       loaded += 1;
     }
@@ -334,8 +334,8 @@ int Ex_InsertAllFixesInDir(char * dirname)
           if(numfixes)
             {
               for(i = numfixes - 1 ; i >= 0 ; i -= 1)
-              {
-                D_InsertFile(fnames[i], 1); 
+              { 
+                D_InsertFileToProcess(fnames[i], 1, wpt_file);
                 free(fnames[i]);
               }
               free(fnames);
@@ -485,11 +485,29 @@ int Ex_DetectAndLoadNerve()
   return loaded;
 }
 
+static boolean Ex_IsSafeToLoadPressRelease()
+{
+  int i = 0, c = 0;
+
+  if(M_CheckParm("-press"))
+    return true;
+
+  for(i = 0 ; i < numlumps ; i += 1)
+  {
+    if(!strnicmp(lumpinfo[i]->name, "STBAR", 5))
+      c += 1;
+    if(c > 1)
+      return false;
+  }
+}
 
 int Ex_DetectAndLoadPressRelease()
 {
   struct stat sbuf;
   int i = 0;
+
+  if(!Ex_IsSafeToLoadPressRelease())
+    return false;
   
   *filestr = 0;
   sprintf(filestr, "%sdoompres.wad", D_DoomExeDir());
@@ -669,7 +687,7 @@ int Ex_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file
       int i = 0;
 
       for(i = 0 ; i < 7 ; i += 1)
-        {
+        {                                                         
           if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 1;
         }
       return 0;
@@ -686,6 +704,30 @@ int Ex_ShouldKeepLump(lumpinfo_t * lump, int lumpnum, char * wadname, extra_file
         }
       return 0;
     }
+
+  if(extra == EXTRA_NWTSPRITES)
+    {
+      static char * names[] = { "PLAYPAL", "S_START", "S_END", "SS_START" };
+      int i = 0;
+
+      for(i = 0 ; i < 4; i += 1)
+        {
+          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 0;
+        }
+    }
+
+
+  if(extra == EXTRA_NWT || extra == EXTRA_NWTFLATS)
+    {
+      static char * names[] = { "F_START", "F_END", "FF_START", "S_START", "SS_START", "S_END" };
+      int i = 0;
+
+      for(i = 0 ; i < 6 ; i += 1)
+        {
+          if(!strnicmp(names[i], lump->name, strlen(names[i]))) return 0;
+        }
+    }
+
 
   return 1;
 }
@@ -931,14 +973,14 @@ int Ex_InsertResWadIfMissing(const char * wadname, int index, const char * reswa
 {
   int i = strlen(wadname); 
   struct stat sbuf;
-  if(D_HasWadInWadlist(reswadname)) return 0;
+  if(D_HasWadToProcess(reswadname)) return 0;
   for(i = strlen(wadname) - 1 ; i >= 0 && wadname[i] != '/' && wadname[i] != '\\' ; i -= 1);
   assert(++i + strlen(reswadname) < sizeof(filestr));
   strncpy(filestr, wadname, i);
   filestr[i] = 0;
   strcat(filestr, reswadname);
   if(stat(filestr, &sbuf)) return 0;
-  D_InsertFile(filestr, index);  
+  D_InsertFileToProcess(filestr, index, wpt_file);
   return 1;
 }
 

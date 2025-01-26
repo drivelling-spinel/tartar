@@ -29,8 +29,10 @@
 
 #include "d_event.h"
 #include "p_chase.h"
+#include "w_wad.h"
 
 extern char **wadfiles;       // killough 11/98
+extern file_to_process_t **files;
 
 // jff make startskill globally visible
 extern skill_t startskill;
@@ -39,6 +41,12 @@ extern char *startlevel;
 void D_AddFile(char *file);
 void D_InsertFile(char *file,  int index);
 boolean D_HasWadInWadlist(const char *);
+
+
+void D_AddFileToProcess(char *file, int process);
+void D_InsertFileToProcess(char *file,  int index, int process);
+boolean D_HasWadToProcess(const char *);
+
 void D_ListWads();
 void D_ReInitWadfiles();
 void D_NewWadLumps(int handle, extra_file_t extra);

@@ -263,6 +263,175 @@ static int W_AddFile(const char *name, const extra_file_t extra) // killough 1/3
   return false;       // no error
 }
 
+static int W_AddNwtWad(const char *name) 
+{
+  wadinfo_t   header;
+  lumpinfo_t* lump_p;
+  unsigned    i;
+  int         handle;
+  int         length;
+  int         startlump;
+  filelump_t  *fileinfo, *fileinfo2free=NULL; //killough
+  char        *filename = strcpy(malloc(strlen(name)+5), name);
+  lumpinfo_t* newlumps;
+  char        basename[257];
+
+  NormalizeSlashes(AddDefaultExtension(filename, ".wad"));  // killough 11/98
+
+  // open the file and add to directory
+
+  if ((handle = open(filename,O_RDONLY | O_BINARY)) == -1)
+    {
+      if(in_textmode)
+        I_Error("Error: couldn't open %s\n",name);  // killough
+      else
+        {
+          C_Printf("couldn't open %s\n",name);
+          return true;  // error
+	}
+    }
+  
+  usermsg(" adding %s",filename);   // killough 8/8/98
+  startlump = numlumps;
+
+  // WAD file
+  read(handle, &header, sizeof(header));
+  if (strncmp(header.identification,"IWAD",4) &&
+      strncmp(header.identification,"PWAD",4))
+    I_Error("Wad file %s doesn't have IWAD or PWAD id\n", filename);
+  header.numlumps = LONG(header.numlumps);
+  header.infotableofs = LONG(header.infotableofs);
+  length = header.numlumps*sizeof(filelump_t);
+  fileinfo2free = fileinfo = malloc(length);    // killough
+  lseek(handle, header.infotableofs, SEEK_SET);
+  read(handle, fileinfo, length);
+  numlumps += header.numlumps;
+
+  memset(basename, 0, sizeof(basename));
+  ExtractFileBase(filename, basename, sizeof(basename) - 1);
+
+  free(filename);           // killough 11/98                          
+  
+  // Fill in lumpinfo
+  //sf :ptr to ptr
+  lumpinfo = realloc(lumpinfo, (numlumps+2)*sizeof(lumpinfo_t*));
+
+  // space for new lumps
+  newlumps = malloc((numlumps-startlump) * sizeof(lumpinfo_t));
+  lump_p = newlumps;
+  //&lumpinfo[startlump];
+  
+  for (i=startlump ; i<numlumps ; i++,lump_p++, fileinfo++)
+    {
+      lumpinfo[i] = lump_p;
+      lump_p->handle = handle;                    //  killough 4/25/98
+      lump_p->position = LONG(fileinfo->filepos);
+      lump_p->size = LONG(fileinfo->size);
+      // sf:cache
+      lump_p->data = lump_p->cache = NULL;         // killough 1/31/98
+      lump_p->namespace = ns_global;              // killough 4/17/98
+      strncpy (lump_p->name, fileinfo->name, 8);
+      if(!Ex_DynamicLumpFilterProc(lump_p, i, basename, EXTRA_NWT))
+        {
+          i--;
+          numlumps--;
+          continue;
+        }
+    }
+
+  Ex_DynamicLumpsInWad(handle, startlump, (numlumps - startlump), EXTRA_NWT);
+
+
+  startlump = numlumps;
+  numlumps += header.numlumps + 2;
+  lumpinfo = realloc(lumpinfo, (numlumps+2)*sizeof(lumpinfo_t*));
+  newlumps = malloc((numlumps-startlump) * sizeof(lumpinfo_t));
+  lump_p = newlumps;
+  fileinfo = fileinfo2free;
+
+  lumpinfo[startlump] = lump_p;
+  lump_p->handle = handle;
+  lump_p->position = 0;
+  lump_p->size = 0;
+  lump_p->data = lump_p->cache = NULL;
+  lump_p->namespace = ns_global;
+  strcpy(lump_p->name, "S_START");
+  lump_p++;
+  
+  for (i=startlump + 1 ; i<numlumps - 1 ; i++,lump_p++, fileinfo++)
+    {
+      lumpinfo[i] = lump_p;
+      lump_p->handle = handle;                    //  killough 4/25/98
+      lump_p->position = LONG(fileinfo->filepos);
+      lump_p->size = LONG(fileinfo->size);
+      // sf:cache
+      lump_p->data = lump_p->cache = NULL;         // killough 1/31/98
+      lump_p->namespace = ns_global;              // killough 4/17/98
+      strncpy (lump_p->name, fileinfo->name, 8);
+      if(!Ex_DynamicLumpFilterProc(lump_p, i, basename, EXTRA_NWTSPRITES))
+        {
+          i--;
+          numlumps--;
+          continue;
+        }
+    }
+
+  lumpinfo[i] = lump_p;
+  lump_p->handle = handle;
+  lump_p->position = 0;
+  lump_p->size = 0;
+  lump_p->data = lump_p->cache = NULL;
+  lump_p->namespace = ns_global;
+  strcpy(lump_p->name, "S_END");
+
+  startlump = numlumps;
+  numlumps += header.numlumps + 2;
+  lumpinfo = realloc(lumpinfo, (numlumps+2)*sizeof(lumpinfo_t*));
+  newlumps = malloc((numlumps-startlump) * sizeof(lumpinfo_t));
+  lump_p = newlumps;
+  fileinfo = fileinfo2free;
+
+  lumpinfo[startlump] = lump_p;
+  lump_p->handle = handle;
+  lump_p->position = 0;
+  lump_p->size = 0;
+  lump_p->data = lump_p->cache = NULL;
+  lump_p->namespace = ns_global;
+  strcpy(lump_p->name, "F_START");
+  lump_p++;
+
+  for (i=startlump + 1 ; i<numlumps - 1; i++,lump_p++, fileinfo++)
+    {
+      lumpinfo[i] = lump_p;
+      lump_p->handle = handle;                    //  killough 4/25/98
+      lump_p->position = LONG(fileinfo->filepos);
+      lump_p->size = LONG(fileinfo->size);
+      // sf:cache
+      lump_p->data = lump_p->cache = NULL;         // killough 1/31/98
+      lump_p->namespace = ns_global;              // killough 4/17/98
+      strncpy (lump_p->name, fileinfo->name, 8);
+      if(!Ex_DynamicLumpFilterProc(lump_p, i, basename, EXTRA_NWTFLATS))
+        {
+          i--;
+          numlumps--;
+          continue;
+        }
+    }
+
+  lumpinfo[i] = lump_p;
+  lump_p->handle = handle;
+  lump_p->position = 0;
+  lump_p->size = 0;
+  lump_p->data = lump_p->cache = NULL;
+  lump_p->namespace = ns_global;
+  strcpy(lump_p->name, "F_END");
+
+  free(fileinfo2free);      // killough
+
+  return false;       // no error
+}
+
+
 // jff 1/23/98 Create routines to reorder the master directory
 // putting all flats into one marked block, and all sprites into another.
 // This will allow loading of sprites and flats from a PWAD with no
@@ -520,6 +689,39 @@ void W_InitMultipleFiles(char *const *filenames)
 
   Ex_SetDefaultDynamicLumpNames();
 }
+
+
+void W_ProcessMultipleFiles(file_to_process_t *const *files)
+{
+  Ex_InitDynamicLumpNames();
+
+  // killough 1/31/98: add predefined lumps first
+
+        //sf : move predefine adding to a seperate function
+  W_AddPredefines();
+
+  // open all the files, load headers, and count lumps
+  while (*files)
+    {
+      switch((*files)->processing_type)
+        {
+          case wpt_nwtwad:
+            W_AddNwtWad((*files)->filename);
+            break;
+          default:
+            W_AddFile((*files)->filename, EXTRA_NONE);
+        }
+      files++;
+    }
+
+  if (!numlumps)
+    I_Error ("W_InitFiles: no files found");
+
+  W_InitResources();
+
+  Ex_SetDefaultDynamicLumpNames();
+}
+
 
 int W_AddNewFile(char *filename)
 {

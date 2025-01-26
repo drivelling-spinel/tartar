@@ -432,7 +432,7 @@ overlay_t overlay[NUMOVERLAY];
 void HU_OverlayStyle()
 {
   hud_enabled = true;
-  hud_overlaystyle = (hud_overlaystyle+1) % 4;
+  hud_overlaystyle = (hud_overlaystyle+1) % 5;
 }
 
 void HU_ToggleHUD()
@@ -525,8 +525,9 @@ void HU_OverlaySetup()
       // 3: similar to boom 'distributed' style
 
       case 3:
-	setol(ol_health, SCREENWIDTH-138, 0);
-	setol(ol_armor, SCREENWIDTH-138, 8);
+      case 4:
+        setol(ol_health, SCREENWIDTH-138, (hud_overlaystyle == 4 ? 8 : 0) + 0);
+        setol(ol_armor, SCREENWIDTH-138, (hud_overlaystyle == 4 ? 8 : 0) + 8);
         setol(ol_weap, SCREENWIDTH-138, Y-16);
         setol(ol_ammo, SCREENWIDTH-138, Y-8);
 	if(deathmatch)  // if dm, put frags in place of keys
@@ -573,9 +574,10 @@ char *str_style[] =
   "boom style",
   "flat",
   "distributed",
+  "sunken"
 };
 
-VARIABLE_INT(hud_overlaystyle,  NULL,   0, 3,    str_style);
+VARIABLE_INT(hud_overlaystyle,  NULL,   0, 4,    str_style);
 CONSOLE_VARIABLE(hu_overlay, hud_overlaystyle, 0)
 {
    // haleyjd: this ought to enable the HUD as well

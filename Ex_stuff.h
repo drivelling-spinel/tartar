@@ -27,8 +27,10 @@
 #ifndef __EX_STUFF__
 #define __EX_STUFF__
 
+#include "w_wad.h"
+
 void Ex_DetectAndLoadExtras(void);
-int Ex_DetectAndLoadTapeWads(char *const *filenames, int autoload);
+int Ex_DetectAndLoadTapeWads(file_to_process_t *const *files, int autoload);
 int Ex_InsertFixes(char * iwadfile, int autoload);
 void Ex_ListTapeWad();
 int Ex_DetectAndAddSkins();

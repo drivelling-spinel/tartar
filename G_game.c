@@ -1628,11 +1628,11 @@ void G_SaveCurrentLevel(char *filename, char *description)
 
   // killough 3/16/98: store pwad filenames in savegame
   {
-    char **w = wadfiles;
-    for (*save_p = 0; *w; w++)
+    file_to_process_t **f = files;
+    for (*save_p = 0; *f; f++)
       {
-	CheckSaveGame(strlen(*w)+2);
-	strcat(strcat(save_p, *w), "\n");
+        CheckSaveGame(strlen((*f)->filename)+2);
+        strcat(strcat(save_p, (*f)->filename), "\n");
       }
     save_p += strlen(save_p)+1;
   }
@@ -3269,7 +3269,7 @@ void doom_printf(const char *s, ...)
    
    C_Puts(msg);  // set new message
 #ifdef STBAR11
-   if(IS_EXTRA_LOADED(EXTRA_PRESS))
+   if(IS_EXTRA_LOADED(EXTRA_PRESS) && ST_FS_STYLE != ST_FULL_OFF)
      ST_PlayerMsg(msg);
    else
 #endif

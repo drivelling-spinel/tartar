@@ -774,7 +774,7 @@ void HU_CoordHandler(struct textwidget_s *widget)
 
 textwidget_t hu_videomode1 =
 {
-  0, 0,                                          // x, y
+  0, 8,                                          // x, y
   1,                                             // overlay font
   NULL,                                          // null msg
   HU_VideomodeHandler                            // handler
@@ -782,7 +782,7 @@ textwidget_t hu_videomode1 =
 
 textwidget_t hu_videomode2 =
 {
-  0, 8,                                          // x, y
+  0, 16,                                         // x, y
   1,                                             // overlay font
   NULL,                                          // null msg
   HU_VideomodeHandler2                           // handler

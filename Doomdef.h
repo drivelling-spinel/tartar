@@ -368,6 +368,9 @@ typedef enum {
   EXTRA_NERVE,
   EXTRA_ARCTIC,
   EXTRA_PRESS,
+  EXTRA_NWT,
+  EXTRA_NWTSPRITES,
+  EXTRA_NWTFLATS,
   NUM_EXTRAS
 } extra_file_t; 
 

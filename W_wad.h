@@ -85,6 +85,19 @@ extern int        numlumps;
 
 void W_InitMultipleFiles(char *const*filenames);
 
+typedef struct
+{
+  char * filename;
+  enum
+  {
+    wpt_iwad,
+    wpt_file,
+    wpt_nwtwad
+  } processing_type;
+} file_to_process_t;
+
+void W_ProcessMultipleFiles(file_to_process_t *const*files);
+
 // sf: add a new wad file after the game has already begun
 int W_AddNewFile(char *filename);
 int W_AddExtraFile(char *filename, extra_file_t extra);
