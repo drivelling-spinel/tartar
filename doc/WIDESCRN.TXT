@@ -1,0 +1,112 @@
+Tartar "Widescreen" Capabilities
+
+For modern displays and TVs the following mostly holds true: fullscreen images
+  A. use square pixels
+  B. have 16:9 or 16:10 width to height ratio
+This was, however, very much not true for mid 1990-s to early 2000-s
+displays - the period most of Tartar's source comes from.              
+Back then it was more like:
+  A. some very commonplace resolutions implied non-square pixels
+  B. screen width to height ratios were mostly 4:3,
+     but one could also run into a 5:4 LCD display (*)
+
+(*) here laptops are not referred to at all
+
+In order to have Doom retain its 1990-s looks even on modern displays,
+Tartar offers an option of tweaking player's view rendering
+to align with modern screen geometry, while using "classic" VGA and
+VESA "SVGA" display resolutions available in DOS. Today one finds more
+screen real estate to the sides, as opposed to in the vertical direction,
+so "widescreen" will be used as the word to describe this rendering mode,
+and the exact menu option name one finds under Video settings in Tartar is
+"Widescreen Mode to Imitate".
+
+In "widescreen" mode Tartar "pulls" first person camera slighly towards
+the player capturing wider field of view. Since the number of pixels remains
+the same as in "non-widescreen" modes (that being defined by screen
+resolution), more pixels will be used to the sides, and less in vertical
+direction - leaving (lower) part of the screen blank. In order not to eat up
+even more useful pixels available to the renderer, switching to "widescreen"
+mode automatically selects full screen "Screen size" with status bar
+hidden. Changing "Screen size" while in "widescreen" to anything but
+full screen deactivates "widescreen" mode.
+
+The result is wider field of view, with the center area capturing exactly
+the same part of the world as the "non-widescreen" mode would, but with
+somewhat lower fidelity in the vertical direction.
+
+
+  player's view rendered in "16:10 widescreen" mode compared to
+  aspect ratio (horizontally) adjusted "non widescreen" view
+
+
+The gain in field of view (and the loss in the "vertical" fidelity) becomes
+more when switching from 16:10 to 16:9 mode.
+
+
+  top to bottom - 16:9, 16:10 and "non-widescreen" rendered views
+  compared with 1280x800 screen buffer option
+
+After having selected the "widescreen" mode best suited to the connected
+display (or preferred widow geometry if running n emulator),
+players are advised to use the display's (or emulator's) scale and crop
+fine tuning capabilities to fully fill the screen with the image.
+
+
+  TV screen showing scaled 16:9 "widescreen" mode output
+
+As an example, the following settings can be used for running Tartar
+in RetroArch (DOSBoxPure core) effectively in 1980x1200 resolution:
+
+| Tartar screen buffer    | 1280x800
+| Tartar aspect ratio     | Original                       
+| Tartar widescreen       | 16:9
+| Tartar page flipping    | Yes (recommended)                              
+| Tartar wait for retrace | Yes (recommended)                              
+| DOSBoxPure video        | (recommended)
+| DOSBoxPure aspect ratio |
+| RetroArch aspect ratio  | Custom
+| RetroArch video X       | 0
+| RetroArch video Y       | 0
+| RetroArch video width   | 1980
+| RetroArch video height  |  (= 1980 * 1.2 / 1.25)
+
+Tartar offers built in means of aspect ratio correction via vertical
+scaling of the rendered image before outputting to the screen. While less
+visually appealing than scaling performed by modern displays or graphic
+adapters, it has several nice features enabled specifically when running
+in "widescreen" mode.
+
+Firstly it is applied only to the 3d view of the player, and going into
+menus, automap or help screens, selects integer scaling automatically
+resulting in an image that always fits the selected screen resolution
+and is not cut off at the bottom.
+
+  Emulator window with 16:10 "widescreen" mode output
+  to 640x400 resolution with built in aspect ratio correction active
+
+Secondly, for the special case of 640x480 resolution scaling is applied
+in a way which fills the screen completely and also compensates
+for display device subsequently "flattening" the image to 16:10 ratio.
+This is particularly useful for those laptops with 16:10 screens that are
+equipped with graphics chip lacking support of 640x400 VESA graphics
+mode in DOS (e.g. ubiquitous Intel chips).
+
+
+However, because scale is always set to fixed ratio for the built in aspect
+correction, this option is less useful for 16:9 "widescreen" mode.
+
+
+  For coparison default renderer output in non "widescreen" mode
+  with no scaling applied 
+
+                     
+As the final remark (and acknowledging that the topic of aspect ratio in
+DOS games and Doom in particular has been extensively studied and covered
+(doomwiki link)), would like to remind that that the use of any of the
+above options is at each individual player's discretion, with prgmatism and
+esthetic sense of the person - as opposed to a "universal rule" of any kind -
+guiding the choice of settings that yield best results and most fun from
+the game in every case.
+
+
