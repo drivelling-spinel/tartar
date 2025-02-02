@@ -549,7 +549,11 @@ menu_t menu_features =
     {it_runcmd, "load wad",             "mn_loadwad" },
     {it_runcmd, "demos",                "mn_demos" },
     {it_gap},
-    {it_runcmd, "Start in arcade mode", "use_continue 1; mn_newgame"},
+    {it_info,  FC_GOLD "Game modes",     NULL},
+    {it_runcmd, "Arcade", "use_continue 1; mn_newgame"},
+    {it_runcmd, "Top down", "use_topdown 1; mn_newgame"},
+    {it_runcmd, "Pistol start", "use_pistolstart 1; mn_newgame"},
+    {it_gap},
     {it_runcmd, "Set tip message",      "mn_tartar_more"},
     {it_runcmd, "Restart level",        "mn_reborn" },
     {it_gap},
@@ -566,6 +570,11 @@ menu_t menu_features =
 VARIABLE_INT(use_continue, NULL, 0, 1, onoff);
 CONSOLE_VARIABLE(use_continue, use_continue, 0) {}
 
+VARIABLE_INT(use_topdown, NULL, 0, 1, onoff);
+CONSOLE_VARIABLE(use_topdown, use_topdown, 0) {}
+
+VARIABLE_INT(use_pistolstart, NULL, 0, 1, onoff);
+CONSOLE_VARIABLE(use_pistolstart, use_pistolstart, 0) {}
 
 CONSOLE_COMMAND(mn_features, 0)
 {
@@ -2160,6 +2169,8 @@ void MN_AddMenus()
   C_AddCommand(mn_tartar);
   C_AddCommand(mn_tartar_more);
   C_AddCommand(use_continue);
+  C_AddCommand(use_topdown);
+  C_AddCommand(use_pistolstart);
 
   MN_CreateSaveCmds();
 }

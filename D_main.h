@@ -72,6 +72,8 @@ extern int detect_finallevel;
 extern boolean redrawsbar, redrawborder, redrawdlgdone;
 
 extern int use_continue;
+extern int use_topdown;
+extern int use_pistolstart;
 
 extern boolean v11detected;
 

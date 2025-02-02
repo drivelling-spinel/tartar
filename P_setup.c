@@ -1829,7 +1829,7 @@ void P_InitEternityVars(void)
 
 void P_ApplyPersistentOptions(void) 
 {
-    int bloodvar, wolfvar, contvar, bjvar, musloopvar;
+    int bloodvar, wolfvar, contvar, bjvar, musloopvar, topdownvar, pistolvar;
 
     hint_bloodcolor = "";
     bloodvar = T_GetGlobalIntVar("_private_bloodcolor", -1);
@@ -1878,13 +1878,23 @@ void P_ApplyPersistentOptions(void)
         T_EnsureGlobalIntVar("_private_bjskin", bjvar);
       }
 
-
     contvar = T_GetGlobalIntVar("_private_continue", -1);
     if(contvar >= 0)
       {
         T_EnsureGlobalIntVar("_private_continue", contvar);
       }
 
+    topdownvar = T_GetGlobalIntVar("_private_topdown", -1);
+    if(topdownvar >= 0)
+      {
+        T_EnsureGlobalIntVar("_private_topdown", topdownvar);
+      }
+
+    pistolvar = T_GetGlobalIntVar("_private_pistolstart", -1);
+    if(pistolvar >= 0)
+      {
+        T_EnsureGlobalIntVar("_private_pistolstart", pistolvar);
+      }
 
     musloopvar = T_GetGlobalIntVar("_private_continuous_music", -1);
     if(musloopvar >= 0)

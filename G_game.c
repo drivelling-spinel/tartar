@@ -741,6 +741,12 @@ static void G_DoLoadLevel(void)
    }
 
    abort_render = true;
+
+   if(T_GetGlobalIntVar("_private_topdown", -1) > 0)
+   {
+      comp[comp_livemap] = 0;
+      AM_Start();
+   }
 }
 
 //
@@ -1006,6 +1012,8 @@ void G_SecretExitLevel(void)
 //
 static void G_PlayerFinishLevel(int player)
 {
+   int i;
+
    player_t *p = &players[player];
    memset(p->powers, 0, sizeof p->powers);
    memset(p->cards, 0, sizeof p->cards);
@@ -1015,6 +1023,24 @@ static void G_PlayerFinishLevel(int player)
    p->fixedcolormap = 0;   // cancel ir gogles
    p->damagecount = 0;     // no palette changes
    p->bonuscount = 0;
+
+   if(T_GetGlobalIntVar("_private_pistolstart", -1) > 0)
+   {
+      p->readyweapon = p->pendingweapon = wp_pistol;
+      p->health = initial_health;
+      p->armortype = 0;
+      p->armorpoints = 0;
+      memcpy(p->weaponowned, default_weaponowned, sizeof(p->weaponowned));
+      p->weaponowned[wp_fist] = true;    
+      p->weaponowned[wp_pistol] = true;
+   
+      for(i = 0; i < NUMAMMO; i++)
+      {
+         p->ammo[i] = 0;
+         p->maxammo[i] = maxammo[i];
+      }
+      p->ammo[am_clip] = initial_bullets;
+   }
 }
 
 //
@@ -1036,7 +1062,7 @@ static void G_DoCompleted(void)
    // clear hubs now
    P_ClearHubs();
    
-   if(automapactive)
+   if(automapactive && T_GetGlobalIntVar("_private_topdown", -1) == -1)
       AM_Stop();
       
    if(gamemode != commercial) // kilough 2/7/98
@@ -2664,7 +2690,17 @@ void G_DoNewGame (void)
      {
        T_EnsureGlobalIntVar("_private_continue", 1);
      }
+   if(use_topdown)
+     {
+       T_EnsureGlobalIntVar("_private_topdown", 1);
+     }
+   if(use_pistolstart)
+     {
+       T_EnsureGlobalIntVar("_private_pistolstart", 1);
+     }
    use_continue = 0;
+   use_topdown = 0;
+   use_pistolstart = 0;
 
    if(randomize_music)
      {

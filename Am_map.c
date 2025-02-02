@@ -1309,6 +1309,8 @@ void AM_drawWalls(void)
             )
           )
           AM_drawMline(&l, mapcolor_secr); // line bounding secret sector
+        else if (mapcolor_tele && lines[i].special && !comp[comp_livemap])
+          AM_drawMline(&l, mapcolor_tele);
         else                               //jff 2/16/98 fixed bug
           AM_drawMline(&l, mapcolor_wall); // special was cleared
       }
@@ -1415,13 +1417,15 @@ void AM_drawWalls(void)
         } //jff 1/6/98 end secret sector line change
         else if (lines[i].backsector->floorheight !=
                   lines[i].frontsector->floorheight)
-        {
-          AM_drawMline(&l, mapcolor_fchg); // floor level change
+        {          
+          AM_drawMline(&l, (mapcolor_tele && lines[i].special && !comp[comp_livemap]) ?
+                           mapcolor_tele : mapcolor_fchg); // floor level change
         }
         else if (lines[i].backsector->ceilingheight !=
                   lines[i].frontsector->ceilingheight)
         {
-          AM_drawMline(&l, mapcolor_cchg); // ceiling level change
+          AM_drawMline(&l, (mapcolor_tele && lines[i].special && !comp[comp_livemap]) ?
+                           mapcolor_tele : mapcolor_cchg); // ceiling level change
         }
         else if (mapcolor_flat && ddt_cheating)
         { 
@@ -1645,6 +1649,12 @@ void AM_drawThings
       if(t->player ||
          (ddt_cheating != 2 && (comp[comp_livemap] || !t->args[1]))
         )
+      {
+        t = t->snext;
+        continue;
+      }
+
+      if(ddt_cheating != 2 && map_secret_after && P_IsSecret(&sectors[i]))
       {
         t = t->snext;
         continue;

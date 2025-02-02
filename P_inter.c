@@ -808,7 +808,8 @@ void P_KillMobj(mobj_t *source, mobj_t *target)
       P_DropWeapon (target->player);
 
       if (target->player == &players[consoleplayer] && automapactive)
-	if (!demoplayback) // killough 11/98: don't switch out in demos, though
+        if (!demoplayback  // killough 11/98: don't switch out in demos, though
+            && T_GetGlobalIntVar("_private_topdown", -1) == -1)
 	  AM_Stop();    // don't die in auto map; switch view prior to dying
     }
 
