@@ -53,6 +53,7 @@ extern int obcolour;       // the colour of death messages
 extern int showMessages;   // Show messages has default, 0 = off, 1 = on
 extern int mess_colour;    // the colour of normal messages
 extern char *chat_macros[10];
+extern int hud_showinmap;
 
 void HU_Init();
 void HU_Drawer();

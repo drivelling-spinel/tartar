@@ -679,6 +679,8 @@ void R_ProjectSprite (mobj_t* thing)
   vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;
   iscale = FixedDiv(FRACUNIT, xscale);
 
+  if(!comp[comp_livemap]) thing->args[1] = 255;
+
   if (flip)
     {
       vis->startfrac = spritewidth[lump]-1;

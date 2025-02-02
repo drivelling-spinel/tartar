@@ -1038,7 +1038,7 @@ int Ex_CheckSpearWads(const char * wadname, const int index)
 
 
 static char * NOCT_PWADS[] = {"CONFRONT.WAD", "TRAIL.WAD", "SECRET.WAD"};
-static char * NOCT_RES_WADS[] = { "NOCTFX.WAD", "BJ.WAD", "DISKSKIN.WAD" };
+static char * NOCT_RES_WADS[] = { "NOCTFX.WAD", "BJ.WAD", "DISKSKIN.WAD", "NOCT.DEH" };
 
 int Ex_CheckNoctWads(const char * wadname, const int index) 
 {
@@ -1047,7 +1047,7 @@ int Ex_CheckNoctWads(const char * wadname, const int index)
 }
 
 static char * ORG_PWADS[] = {"FUHRER.WAD", "FAUST.WAD", "ESCAPE.WAD"};
-static char * ORG_RES_WADS[] = { "ORGFX.WAD", "BJ.WAD", "DISKSKIN.WAD" };
+static char * ORG_RES_WADS[] = { "ORGFX.WAD", "BJ.WAD", "DISKSKIN.WAD", "ORIGINAL.DEH" };
 
 int Ex_CheckOriginalWads(const char * wadname, const int index) 
 {

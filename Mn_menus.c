@@ -1609,7 +1609,8 @@ menu_t menu_hud =
     {it_info,       FC_GOLD "misc."},
     {it_toggle,     "crosshair type",               "crosshair"},
     {it_toggle,     "show frags in DM",             "show_scores"},
-    {it_toggle,     "automap coords follow pointer",   "map_coords"},
+    {it_toggle,     "automap coords follow pointer", "map_coords"},
+    {it_toggle,     "show text labeles in automap",  "hu_showinmap"},
     {it_toggle,     "no level charting with automap on",   "comp_livemap"},
     {it_end},
   },
@@ -2041,6 +2042,8 @@ menu_t menu_envbindings =
 	{it_binding,      "quickload",             "quickload"},
 	{it_binding,      "quit",                  "mn_quit"},
 	{it_binding,      "gamma correction",      "gamma /"},
+        {it_binding,      "toggle map labels",     "hu_showinmap /"},
+        {it_binding,      "restart level",         "mn_reborn"},
 	{it_end},
     },
     150, 1,                        // x,y offsets
@@ -2075,7 +2078,6 @@ menu_t menu_extrabindings =
         {it_binding,      "zoom in",               "r_zoom +"},
         {it_binding,      "zoom out",              "r_zoom -"},
         {it_binding,      "show tip",              "tip"},
-        {it_binding,      "restart level",         "mn_reborn"},
         {it_end},
     },
     150, 1,                        // x,y offsets

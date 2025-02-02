@@ -88,6 +88,7 @@ extern int hud_msg_scrollup;// killough 11/98: whether message list scrolls up
 extern int hud_overlaystyle;  // sf: overlay style
 extern int hud_enabled;       // sf: fullscreen hud on/off
 extern int hud_hidestatus;      // sf
+extern int hud_showinmap;
 extern int message_timer;   // killough 11/98: timer used for normal messages
 extern int show_scores;
 extern int show_vpo;
@@ -1371,6 +1372,13 @@ default_t defaults[] = {
   },
 
   //jff 1/7/98 end additions for automap
+
+  { // show hud widgents in map
+    "hud_showinmap",
+    &hud_showinmap, NULL,
+    1, {0,1}, dt_number, ss_auto, wad_yes,
+    "0 to hide text widgets in automap"
+  },
 
   //jff 2/16/98 defaults for color ranges in hud and status
 

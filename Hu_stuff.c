@@ -90,6 +90,7 @@ int obituaries = 0;
 int obcolour = CR_BRICK;       // the colour of death messages
 int showMessages;    // Show messages has default, 0 = off, 1 = on
 int mess_colour = CR_RED;      // the colour of normal messages
+int hud_showinmap;
 
 // main message list
 unsigned char *levelname;
@@ -571,7 +572,7 @@ void HU_LevelTimeHandler(struct textwidget_s *widget)
   static char timestr[100];
   int seconds;
   
-  if(!automapactive)
+  if(!automapactive || !hud_showinmap)
     {
       hu_leveltime.message = NULL;
       return;
@@ -602,7 +603,7 @@ textwidget_t hu_levelname =
 
 void HU_LevelNameHandler(struct textwidget_s *widget)
 {
-  hu_levelname.message = automapactive ? levelname : NULL;
+  hu_levelname.message = (automapactive && hud_showinmap) ? levelname : NULL;
   hu_levelname.y = EFFECTIVE_HEIGHT-ST_HEIGHT -8;
 }
 
@@ -706,7 +707,7 @@ boolean HU_ChatRespond(event_t *ev)
 
 textwidget_t hu_coordx =
 {
-  SCREENWIDTH-55, 8,    // x,y
+  SCREENWIDTH-55, 9,    // x,y
   0,                    // use normal font
   NULL,                 // empty message
   HU_CoordHandler       // handler
@@ -714,7 +715,7 @@ textwidget_t hu_coordx =
 
 textwidget_t hu_coordy =
 {
-  SCREENWIDTH-55, 17,   // x,y
+  SCREENWIDTH-55, 18,   // x,y
   0,                    // use normal font
   NULL,                 // empty message
   HU_CoordHandler       // handler
@@ -722,7 +723,7 @@ textwidget_t hu_coordy =
 
 textwidget_t hu_coordz =
 {
-  SCREENWIDTH-55, 25,   // x,y
+  SCREENWIDTH-55, 27,   // x,y
   0,                    // use normal font
   NULL,                 // empty message
   HU_CoordHandler       // handler
@@ -741,7 +742,7 @@ void HU_CoordHandler(struct textwidget_s *widget)
    static char coordystr[48];
    static char coordzstr[48];
 
-   if(!automapactive)
+   if(!automapactive || !hud_showinmap)
    {
       widget->message = NULL;
       return;
@@ -937,6 +938,8 @@ VARIABLE_INT(hud_msg_lines,     NULL, 0, 14,            NULL);
 VARIABLE_INT(message_timer,     NULL, 0, 100000,        NULL);
 VARIABLE_BOOLEAN(hud_msg_scrollup,  NULL,               yesno);
 
+VARIABLE_BOOLEAN(hud_showinmap,  NULL,               yesno);
+
 CONSOLE_VARIABLE(obituaries, obituaries, 0) {}
 CONSOLE_VARIABLE(obcolour, obcolour, 0) {}
 CONSOLE_VARIABLE(crosshair, crosshairnum, 0)
@@ -982,6 +985,9 @@ CONSOLE_VARIABLE(settip, tip_str, 0)
   tip_str = strdup("");
 }
 
+CONSOLE_VARIABLE(hu_showinmap, hud_showinmap, 0) {}
+
+
 void HU_AddCommands()
 {
   C_AddCommand(obituaries);
@@ -998,6 +1004,8 @@ void HU_AddCommands()
 
   C_AddCommand(tip);
   C_AddCommand(settip);
+
+  C_AddCommand(hu_showinmap);
 
   HU_FragsAddCommands();
   HU_OverAddCommands();

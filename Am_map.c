@@ -71,6 +71,9 @@ int map_secret_after;
 #define NC 0
 #define BC 247
 
+#define GREEN 112
+#define RED 47
+
 // drawing stuff
 #define FB    0
 
@@ -1594,7 +1597,6 @@ void AM_drawPlayers(void)
     else
       {
 	// sf: extended colour range
-#define GREEN 112
 	if(their_color == 0)
 	  {
 	    color = GREEN;
@@ -1632,6 +1634,7 @@ void AM_drawThings
 {
   int   i;
   mobj_t* t;
+  int   c;
 
   // for all sectors
   for (i=0;i<numsectors;i++)
@@ -1639,6 +1642,14 @@ void AM_drawThings
     t = sectors[i].thinglist;
     while (t) // for all things in that sector
     {
+      if(t->player ||
+         (ddt_cheating != 2 && (comp[comp_livemap] || !t->args[1]))
+        )
+      {
+        t = t->snext;
+        continue;
+      }
+
       //jff 1/5/98 case over doomednum of thing being drawn
       if (mapcolor_rkey || mapcolor_ykey || mapcolor_bkey)
       {
@@ -1688,6 +1699,31 @@ void AM_drawThings
             break;
         }
       }
+
+      if(!comp[comp_livemap] && ddt_cheating != 2 && (t->flags & MF_SPECIAL))
+      {
+        AM_drawLineCharacter
+        (
+          cross_mark,
+          NUMCROSSMARKLINES,
+          16<<FRACBITS,
+          t->angle,
+          mapcolor_frnd != -1 ? mapcolor_frnd : mapcolor_sprt,
+          t->x,
+          t->y
+        );
+        t = t->snext;
+        continue;
+      }
+
+      // killough 8/8/98: mark friends specially
+      c = mapcolor_sprt;
+
+      if(t->flags & MF_FRIEND)
+         c = mapcolor_frnd;
+      else if(ddt_cheating != 2 && !comp[comp_livemap])
+         c = sentient(t) ? RED - (t->args[1] >> 4) : mapcolor_sngl;
+
       //jff 1/5/98 end added code for keys
       //jff previously entire code
       AM_drawLineCharacter
@@ -1696,8 +1732,7 @@ void AM_drawThings
         NUMTHINTRIANGLEGUYLINES,
         16<<FRACBITS,
         t->angle,
-	// killough 8/8/98: mark friends specially
-	t->flags & MF_FRIEND && !t->player ? mapcolor_frnd : mapcolor_sprt,
+        c,
         t->x,
         t->y
       );
@@ -1777,7 +1812,7 @@ void AM_Drawer (void)
     AM_drawGrid(mapcolor_grid);      //jff 1/7/98 grid default color
   AM_drawWalls();
   AM_drawPlayers();
-  if (ddt_cheating==2)
+  if (ddt_cheating==2 || !comp[comp_livemap])
     AM_drawThings(mapcolor_sprt, 0); //jff 1/5/98 default double IDDT sprite
   AM_drawCrosshair(mapcolor_hair);   //jff 1/7/98 default crosshair color
 

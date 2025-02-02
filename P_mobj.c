@@ -863,9 +863,12 @@ void P_NightmareRespawn(mobj_t* mobj)
 
 void P_MobjThinker (mobj_t* mobj)
 {
-  // killough 11/98: 
+  // killough 11/98:
   // removed old code which looked at target references
   // (we use pointer reference counting now)
+  if(!comp[comp_livemap] && mobj->args[1]
+     && sentient(mobj) && !(mobj->flags & MF_FRIEND))
+     mobj->args[1] -= 1;
 
   // haleyjd: sentient things do not think during cinemas
   if(cinema_pause && sentient(mobj))
