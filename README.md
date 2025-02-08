@@ -1,8 +1,8 @@
 # Tartar
 
 Tartar is a Doom source port for DOS, author aiming for it to be useful
-to players running pure (as in non-emulated) DOS or Windows 9X on modern 
-machines for retro gaming. 
+to players running capable computers whether with non-emulated
+DOS or Windows 9X or with emulators for retro gaming. 
 
 ## Tartar highlights
 
@@ -10,8 +10,9 @@ machines for retro gaming.
   from [MBF 2.0.4 Maintenance Release](doc/COPYRGHT/MBFUP204.TXT)
   and plays 16 bit sound effects (useful if you have SB16 or later)
 - Supports additional screen resolutions 640x480 and 1280x1024
-  with and without upscaling from smaller core rendering resolution
-  and optional aspect ratio correction for non-CRT displays
+  with and without upscaling from smaller core rendering resolution,
+  optional aspect ratio correction for non-CRT displays,
+  and optional rendering mode for "widescreen" resolutions.
 - Includes numerous quality of life improvements including 
   auto-loading of WAD, DEH and BEX files to include
   skins, fixes and WAD compatibility packs for specific PWADs
@@ -53,13 +54,9 @@ machines for retro gaming.
 - 2022 A Doom Odyssey with non-episodic linear progression through all maps,
   proper secrets progression and intermission screens 
   with helper WAD included in the distribution
-- ??? and maps with non-Unix line endings in DeHackEd patches, 
-  or other DeHackEd patches sheninegans like references to non-existant code pointers
-  (e.g. Rush)
-- HACX 1.1 without Doom II IWAD  
-  (but make sure Tartar is given a PLAYPAL, e.g. by putting one of InstaDoom
-  filter WAD-s into FILTERS directory AND that text mode startup is on!)
-- Also - only if you are desperate enough - The People's Doom as IWAD
+- original releases of Mordeth, The Trooper's Playground,
+  mods by The Innocent Crew and others that would otherwise
+  require to be preprocessed with NWT.EXE
 - ... and last but not least Doom 1.1 with tiled status bar extravaganza and demo playback
 
 ## Also...
@@ -78,6 +75,8 @@ WAD-s for that matter) without restarting the level
   -- drop in JUMPWAD.WAD to switch to "pogo stick" mode in any PWAD
      and jump around by pressing fire
      (by the way, you can also load Jumpwad as a PWAD with Tartar)
+  -- drop in DOOMPRES.WAD to enable Beta-style in-status-bar pick up log 
+- "Live" automap, top down view and pistol start game modes
 - Send regards to the loved ones with a bindable hotkey, 
   (e.g. while recording a video)
 
@@ -95,25 +94,32 @@ this is not what Tartar supports:
 
 ## Documentation
 
-1. [CHANGES](doc/changes.md)     - comprehensive list of changes in Tartar 
-                                   milestone release compared to the 
-                                   Eternity Engine version it is based on
-2. [MAINTAIN](doc/maintain.md)   - changes in latest maintenance release 
+1. [STAGE3](doc/stage3.md)       - comprehensive list of changes in Tartar 
+                                   up to Stage 3 milestone release 
+2. [STAGE3M](doc/stage3m.md)     - description of changes in maintenance 
+                                   releases that followed Stage 3
                                    not covered by the above doc
 3. [AUTHORS](doc/authors.md)     - acknowledgements for authors of the ports 
                                    Tartar is based on and their work
 4. [STAGE1](doc/STAGE1.TXT)      - templated (and outdated ) readme one 
                                    would expect to accompany any Doom mod
 5. [BUGS](doc/bugs.md)           - list of known issues in Tartar 
-6. [EXTRAS](doc/extras.md)       - notes on extras and goodies included with 
-                                   the distribution 
+6. [EXTRAS](doc/extras.md)       - notes on using extras with Tartar
+7. [VIDEO](doc/VIDEO.TXT)        - explanation of the port's video settings
+8. [LOADORDR](doc/LOADORDR.TXT)  - all the ways of loading content
+                                   with Tartar listed in a single place
+                                   in the order applied
+9. [WIDESCRN](doc/WIDESCRN.TXT)  - notes on "widescreen" rendering mode
 
 ## Obtaining and installing Tartar
 
 Tartar distribution is available following the link below:
-<https://www.moddb.com/mods/tartar/downloads/tartar-distro>
-There, TARTAR directory contains latest version of the port 
-including TARTAR.EXE and additional assets and files required to run it. 
+<https://www.moddb.com/mods/tartar/download>
+including latest milestone release of TARTAR.EXE and additional assets 
+and files required to run it.
+
+Binaries without dependencies (`.EXE`-files) are also available 
+as releases.
 
 
 ### Playing Doom with TARTAR
@@ -306,13 +312,7 @@ Follow the below steps to have them installed with Tartar
    the game is launched midway though. Tartar will automatically reload 
    the required PWAD/DEH combination based on the level being played.
 
-6. _Optionally_ add WOLFMIDI.WAD to play with original Wolfenstein music. 
-   The music tracks (courtesy of [VGMPF](https://www.vgmpf.com/Wiki/index.php?title=Wolfenstein_3D_(DOS)))
-   can be found in GOODIES\WOLFMIDI directory of the distribution.
-   
-   TARTAR.EXE -nodemo -file HALTEN WOLFMIDI
-
-7. _Optionally_ Tartar will automatically load B J Blazkowicz skin with
+8. _Optionally_ Tartar will automatically load B J Blazkowicz skin with
    Wolfendoom. Obtain it [here](https://doomworld.com/3ddownloads/wolfendoom/Lrbjskin.zip),
    and put BJ.WAD side by side with the PWAD-s to be played. Then start the
    game as normal.
@@ -326,8 +326,7 @@ Here's how to enable Doom 2 intermission screen maps created by \@olyacim.
 
 1. Install Tartar.
 
-2. Drop INTMAPD2.WAD found in GOODIES\OLIACYM directory of the distribution 
-   and place into the same same directory as TARTAR.EXE. For example:
+2. Drop INTMAPD2.WAD and place into the same same directory as TARTAR.EXE. For example:
 
    C:\GAMES\TARTAR\   
    C:\GAMES\TARTAR\TARTAR.EXE   

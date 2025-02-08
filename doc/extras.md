@@ -17,8 +17,7 @@ for WAD-s, and all WAD-s found will be loaded for the purpose of registering
 the palettes and color maps defined in them. Players can use PAL_NEXT and 
 PAL_PREV console commands to cycle through those palettes while playing the 
 game with arbitrary PWAD-s loaded. The commands can be bound to key in 
-Extra Keys submenu of Key Bindings. By default \[ and \] are assigned to the
-commands. 
+Extra Keys submenu of Key Bindings. 
 
 To try palette cycling in action:
 
@@ -37,7 +36,7 @@ To try palette cycling in action:
    console mentioning the number of loaded filters.
 
 6. While in game (starting immediately from the title screen) 
-   use \[ and \] keys to switch palettes.
+   use assigned keys, e.g. \[ and \], to switch palettes.
 
 ### InstaDoom selfie stick
 
@@ -97,19 +96,19 @@ To use Intermission Maps with Tartar:
    
 ### Helper WAD-s
 
-Helper WAD-s found in GOODIES\SHIMS directory are PWAD-specific extras that add
+Helper WAD-s found in SHIMS directory are PWAD-specific extras that add
 to players experience with particular WAD-s or fix bugs that would make 
 playing those WAD-s with Tartar impossible or less enjoyable.
 
-Among other goodies the following helper WAD-s are included in the distribution:
+Some example of helper WAD-s included in the distribution:
 
- - GOODIES\SHIMS\LONGTREK.WAD - adds custom intermission backgrounds; will crash
+ - SHIMS\LONGTREK.WAD        - adds custom intermission backgrounds; will crash
                                unless INTMAPD2.WAD is also loaded. See Custom
                                Intermission Maps section of this file for 
                                instructions
- - GOODIES\SHIMS\3DODOOM.WAD  - fixes an issue with garbage output as options menu 
+ - SHIMS\3DODOOM.WAD         - fixes an issue with garbage output as options menu 
                                background 
- - GOODIES\SHIMS\NERVE.WAD    - adds custom title pic, level names, assigns 
+ - SHIMS\NERVE.WAD           - adds custom title pic, level names, assigns 
                                correct music tracks and ensures intended level 
                                progression for No Rest for the Living. Also 
                                enables custom intermission backgrounds provided 
@@ -123,7 +122,7 @@ helper WAD provided:
 2. _Optional_ obtain INTMAPNR.WAD and place it in the same directory as 
    TARTAR.EXE.
 
-3. Put _helper_ NERVE.WAD found in GOODIES\SHIMS directory of the distribution
+3. Put _helper_ NERVE.WAD found in SHIMS directory of the distribution
    into SHIMS directory sitting side by side with TARTAR.EXE. E.g.
    
    C:\GAMES\DOOM2\TARTAR.EXE  
@@ -171,66 +170,4 @@ Step by step instructions for activating the mod:
 Note that Tartar also has experimental support for actually playing JUMPWAD.
 For that players have to load JUMPWAD.WAD in "the conventional manner" 
 with -file command line argument when starting TARTAR.EXE .
-
-## Goodies
-
-### COD10
-
-GOODIES\COD10 contains Caverns of Darkness engine executable (COD.EXE) 
-built from the sources found in COD10SRC.ZIP that Joel Murdoch 
-has shared in 2020 without any modifications, the only change being 
-that allegro.h was replaced with the version coming from MBF 2.0.4
-sources. The binary was built with the same version of DJGPP as MBF 2.0.4 
-binaries and linked with Allegro library produced from MBF 2.0.4 sources.
-That alone has improved stability of COD.EXE on the author's 
-target system.
-
-To use, download the original COD distribution (the file I got was 
-named CC-COD.ZIP), unzip it and then copy over the contents of GOODIES\COD10.
-It is not necessary to overrite KEYS.CSC with the version provided,
-if it's already present in your COD directory. Simply run COD.EXE to play.
-
-### Eternity dialog tools
-
-A Python-based tool to compile dialog scripts into binary format that 
-Eternity Engine originally used for dialogs is included in GOODIES\DLGTOOLS. 
-Sample scripts in plain text format and resulting binary lumps are provided
-as well. To run the tool first make sure Python 3 is installed, then run 
-the following command, replacing the names of script file and dialog lump 
-as appropriate:
-
-python dlgtools.py compile <script0.txt >dialog0.lmp  
-
-The sample dialogs are in fact from the "Fun in Dreadmere" map included in the 
-Eternity TC assets demo pack.
-
-### Edited Eternal Doom shell 
-
-Eternal Doom by Team TNT has a powerfull shell executable that unfortunatelly 
-requires that player's Doom source port file is named DOOM2.EXE. Provided in 
-GOODIES\ETERNAL is a hex-edited copy of the shell that calls ETERNITY.EXE 
-instead, so that players wishing to play Eternal Doom via Eternity Engine 
-can do so from the shell, enjoying all of the extras: simple level 
-(and extra level) selection, WAD patching and the like.
-
-### MAPINFO lumps for No Rest for the Living
-
-By version 3.29db5-joel2 Eternity Engine had developed support for advanced 
-features via MAPINFO files, allowing for example exiting to secret levels or 
-ending the game from arbitrary maps. Unlike other ports, SMMU and older 
-versions of Eternity did not keep all MAPINFO details in a single lump, and 
-instead looked for these details in the index entries of the each map itself 
-(e.g. MAPINFO for MAP01 would be in the lump MAP01, MAPINFO for MAP02 - 
-in the lump MAP02 of the same wad file, etc.). 
-
-In GOODIES\NERVE\LUMPS\NOINTMAP one can find a set of such lumps that, 
-if incorporated into NERVE.WAD allows for No Rest for the Living to be played 
-via Tartar with intended map names, music tracks and end game text.
-
-Alternatively in GOODIES\NERVE\LUMPS\INTMAPS a similar set of lumps is 
-provided that uses intermission screen backgrounds from [No Rest for the Living
- Intermission Maps](https://www.doomworld.com/forum/topic/129415) by
-\@oliacym. These are also included in the NERVE.WAD helper WAD shipped with
-Tartar distribution, so check the secsion on Helper WADs in Extras section 
-of this file for more information. 
 
