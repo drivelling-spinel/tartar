@@ -387,9 +387,6 @@ made available as COD10SRC.ZIP.
 ![size9.png](size9.png)
   _"Full", "extended" and "normal" screen sizes (left to right)_
 
-![size9aspect.png](size9aspect.png)
-  _Same with 4x3 aspect ratio switched on in Video Options_
-
 ### Fuzz effect is more pronounced now
   
   Fuzz effect is more "blocky" in higher resolutions, making Specters and 
@@ -484,8 +481,6 @@ or interest in classic vanilla/BOOM/MBF experience.
 
 320x200 resolution will be configured by Tartar.
 
-![usecase1.png](usecase1.png)
-
 ### 2. Classic MBF hires
 
 Player has access to slightly more powerful hardware including 
@@ -508,8 +503,6 @@ but their videocard only supports 640x480 and not 640x400.
 
 640x480 resolution will be configured by Tartar.
 
-![usecase3.png](usecase3.png)
-
 ### 4. Gaming system with a retro LCD monitor attached
 
 Player has a 1280x1024 LCD display with 5:4 aspect ratio and
@@ -521,9 +514,6 @@ resolution.
 - Aspect ratio to scale to - 4:3
 
 1280x1024 resolution will be configured by Tartar.
-
-![usecase4.png](usecase4.png)
-
 
 ### 5. Square pixel appreciation on a retro LCD monitor
 
@@ -537,8 +527,6 @@ look in a graphical editor had they loaded them.
 - Aspect ratio to scale to - Original
 
 1280x1024 resolution will be configured by Tartar.
-
-![usecase5.png](usecase5.png)
 
 ## Mouse changes
 

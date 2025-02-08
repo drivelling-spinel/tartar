@@ -97,19 +97,19 @@ To use Intermission Maps with Tartar:
    
 ### Helper WAD-s
 
-Helper WAD-s found in GOODIES\TAPE directory are PWAD-specific extras that add
+Helper WAD-s found in GOODIES\SHIMS directory are PWAD-specific extras that add
 to players experience with particular WAD-s or fix bugs that would make 
 playing those WAD-s with Tartar impossible or less enjoyable.
 
 Among other goodies the following helper WAD-s are included in the distribution:
 
- - GOODIES\TAPE\LONGTREK.WAD - adds custom intermission backgrounds; will crash
+ - GOODIES\SHIMS\LONGTREK.WAD - adds custom intermission backgrounds; will crash
                                unless INTMAPD2.WAD is also loaded. See Custom
                                Intermission Maps section of this file for 
                                instructions
- - GOODIES\TAPE\3DODOOM.WAD  - fixes an issue with garbage output as options menu 
+ - GOODIES\SHIMS\3DODOOM.WAD  - fixes an issue with garbage output as options menu 
                                background 
- - GOODIES\TAPE\NERVE.WAD    - adds custom title pic, level names, assigns 
+ - GOODIES\SHIMS\NERVE.WAD    - adds custom title pic, level names, assigns 
                                correct music tracks and ensures intended level 
                                progression for No Rest for the Living. Also 
                                enables custom intermission backgrounds provided 
@@ -123,14 +123,14 @@ helper WAD provided:
 2. _Optional_ obtain INTMAPNR.WAD and place it in the same directory as 
    TARTAR.EXE.
 
-3. Put _helper_ NERVE.WAD found in GOODIES\TAPE directory of the distribution
-   into TAPE directory sitting side by side with TARTAR.EXE. E.g.
+3. Put _helper_ NERVE.WAD found in GOODIES\SHIMS directory of the distribution
+   into SHIMS directory sitting side by side with TARTAR.EXE. E.g.
    
    C:\GAMES\DOOM2\TARTAR.EXE  
    C:\GAMES\DOOM2\INTMAPNR.WAD    - optional
    ...  
-   C:\GAMES\DOOM2\TAPE  
-   C:\GAMES\DOOM2\TAPE\NERVE.WAD  
+   C:\GAMES\DOOM2\SHIMS  
+   C:\GAMES\DOOM2\SHIMS\NERVE.WAD  
 
 4. Obtain actual No Rest for the Living NERVE.WAD - e.g. from Doom 3 BFG
    edition installation and put it into the same directory as TARTAR.EXE.
