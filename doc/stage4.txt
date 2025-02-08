@@ -1,0 +1,92 @@
+Below is the list of Wolfendoom specific changes in current Tartar devlopment branch,
+in no particualr order
+ 
+* Loading and playing sound effects with alternative word-endianess found in Wolfendoom WADs 
+  originally from Macs
+* Loading DeHackEd pactches with arbitrary line ending character and sporadic non-printing 
+  characters in Wolfendoom DEH-s originally from Macs
+* Fix for player weapon flash sprite bugs found in Wolfendoom WADs 
+  (with `hide_weapon_on_flash` OPTIONS property) 
+* Zombie and Uber-zombies bleeding purple if bloor recoloring is activated 
+  (with `wolfcolor` MAPINFO property)
+* SMMU (or Doom Legacy) skins loading is possible, even though sound replacements are ignored
+* Loading skins which have sprite names partly simiar to those of non-sprite asstes in the WAD-s loaded 
+  no longer crashes the game, which allows for BJ.WAD or DISKSKIN.WAD to be loaded
+* Automatically enabling Wolfenstein 3D-like gameplay feature package (with `wolf3d` MAPINFO property):
+  - monsters do not fight between themselves
+  - pressing Fire continuously while shooting with bullet weapons does not decrease shot accuracy
+  - SMMU-stlyle back is not applied to players when shooting
+  - armor does not cap at 200 nor does it absorb any of the damage dealt to the players
+  - HUD shows up to 9999 of armor points collected
+  - If "BJ" skin has been loaded and is available it will be activated at the start of the level,
+    but only for player sprite, not HUD mugshot 
+  - the same can be activated by the players by going into Option > Features > Tartar Options
+    and with `wolfendoom` configuration file property
+* Wolfenstein 3D-like presentation feature package available in Options > Features > Tartar Options
+  and with `wolflooks` configuration file property:   
+  - no diminishing light effect   
+  - no head-bobbing when moving   
+  - all rooms and objects in the level are at shown at the same light level   
+  - "fake contrast" effect is reversed (as in North-facing walls are shaded as if they were
+    East-facing and vice versa) to better match Wolfendoom levels geometry. 
+  - "Fake contrast" is not applied to doors at all
+* Lost souls that are revived with DeHackEd patch by looping from the dead state into the living state,
+  will come alive with their normal hitpoints and actually shootable and vulnerable to player attacks
+  (with `ghostskull` MAPINFO property). This fixes ghosts behaviour in the final level of Spear of Destiny.
+* A static image can be shown after the level intermission screen with `endpic` MAPINFO property;
+  this is employed by helper WAD-s for Original Missions, Nocturnal Missions and Spear of Destiny
+* In case Operation Arctic Wolf or Operation Arctic Wolf Special Edition are detected,
+  corresponding assets WAD and DeHackEd patch will be loaded based on the level the player enters.   
+  E.g. for Arctic Wolf GFX1.WAD and ARCTIC1.DEH will be loaded for the first part of the game,
+  and GFX2.WAD and ARCTIC2.DEH will be automatically added and used for the second part of the game,
+  once the player reaches it. That there is no need for the player to leave the game and start with
+  a different set of WAD-s nor be mindful of loading a particular set of WAD-s to contiunue playing next time.
+* When it is determined that the player has specified one of the PWAD-s in a multi-WAD package,
+  that PWAD's directoty will be scanned for the remaining WAD-s and all that are found will be automatically loaded.   
+  The following Wolfendoom PWAD-s are supported:   
+  - "FUHRER.WAD", "FAUST.WAD", "ESCAPE.WAD" for Original Missions (Macintosh version)   
+  - "CONFRONT.WAD", "TRAIL.WAD", "SECRET.WAD" for Nocturnal Mission (Macintosh version)   
+  - "1ST_ENC.WAD", "AFTERMTH.WAD" for the original Wolfendoom scenarios (DOS versions)   
+  - "ARCTIC.WAD" OR "GFX1.WAD", "GFX2.WAD" for Operaion Arctic Wolf   
+  - "ARCTIC.WAD" OR "ARCTGFX1.WAD", "ARCTGFX2.WAD" for Operation Arctic Wolf Special Edition   
+  NOTE TO PLAYERS: DeHackEd patches still need to be explicitly specified with either `-deh` or `-file`    
+                   command line arguments, except for Arctic Wolf (see point about Arctic Wolf above)
+* When Original Missions, Nocturnal Missions or Spear of Destiny is loaded and "BJ.WAD" or "DISKSKIN.WAD"
+  is found in the PWAD's directory, it will be automatically loaded to have "BJ" skin available
+* Helper "tape" WAD-s included that define OPTION or MAPINFO properties appropriately 
+  for the following Wolfendoom PWADs:   
+  + Fist Encounter (aka Wolfendoom)                      - `1st_enc.wad`   
+  + Aftermath by Bruce Ryder                             - `aftermth.wad`   
+  + Second Encounter                                     - `2nd_enc.wad`   
+  + Treasure Hunt                                        - `hunt.wad`   
+  + Die Fuehrer, Die                                     - `die.wad`   
+  + Astrostein ep1                                       - `astro.wad`   
+  + Astrostein ep2                                       - `astro2.wad`   
+  + Astrostein ep3                                       - `astro3.wad`   
+  + Totenhaus                                            - `toten.wad`   
+  + Operation Eisenman                                   - `eisen.wad`   
+  + Atctic Wolf (original)                               - `gfx1.wad` and `gfx2.wad`   
+  + Rheingold ep1                                        - `rhein1.wad`   
+  + Rheingold ep2                                        - `rhein2.wad`   
+  + Halten Sie                                           - `halten.wad`   
+  + Original Missions: Escape from Cast Wolfenstein      - `escape.wad`   
+  + Original Missions: Operation Eisenfaust              - `faust.wad`   
+  + Original Missions: Die, Fuehrer, Die!                - `fuhrer.wad`   
+  + Nocturnal Missions: The Dark Secret                  - `secret.wad`   
+  + Nocturnal Missions: Trail of the Madman              - `trail.wad`   
+  + Nocturnal Missions: Confrontation                    - `confront.wad`   
+  + Spear of Destiny                                     - `sod.wad`   
+  + Arctic Wolf (special edition)                        - `arctlev.wad`   
+ 
+ 
+ 
+Additionally, the following convenience features of Tartar contribute to players experience with Wolfendoom:
+* Automatically starting the game at the first level of loaded PWAD-s rather then at MAP01,
+  so that specifying the PWAD with `-file` and starting new game is sufficient to go the the first level of the map pack,
+  and no `-warp` commands are required
+* Automatically finishing the game and going to monsters carousell screen after the last level of loaded PWAD-s
+  so that the game actually ends with the last level of PWAD rather then going into a weirdly textured vanilla level
+* Bindable "Next track" and "Previous track" commands that can be configured via Options > Keyboard > Extra Keys 
+  that allow switching to an arbitrary music track found in loaded PWAD-s without typing an `idmus`-style cheat.   
+  Best used with WOLFMIDI.WAD containing Wolfenstein 3D and Spear of Destiny music tracks by Bobby Prince 
+  that is provided as a downloadable goodie.
