@@ -92,7 +92,8 @@ typedef struct
   {
     wpt_iwad,
     wpt_file,
-    wpt_nwtwad
+    wpt_nwtwad,
+    wpt_fix
   } processing_type;
 } file_to_process_t;
 

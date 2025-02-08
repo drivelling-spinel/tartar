@@ -668,7 +668,7 @@ void W_AddPredefines()
 // The name searcher looks backwards, so a later file
 //  does override all earlier ones.
 //
-
+#if 0
 void W_InitMultipleFiles(char *const *filenames)
 {
   Ex_InitDynamicLumpNames();
@@ -689,7 +689,7 @@ void W_InitMultipleFiles(char *const *filenames)
 
   Ex_SetDefaultDynamicLumpNames();
 }
-
+#endif
 
 void W_ProcessMultipleFiles(file_to_process_t *const *files)
 {
@@ -707,6 +707,9 @@ void W_ProcessMultipleFiles(file_to_process_t *const *files)
         {
           case wpt_nwtwad:
             W_AddNwtWad((*files)->filename);
+            break;
+          case wpt_fix:
+            W_AddFile((*files)->filename, EXTRA_FIXES);
             break;
           default:
             W_AddFile((*files)->filename, EXTRA_NONE);

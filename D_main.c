@@ -1808,13 +1808,13 @@ void D_DoomMain(void)
   startmap = 1;
   autostart = false;
 
-  if ((p = M_CheckParm ("-skill")) && p < myargc-1)
+  if ((p = M_CheckParm ("-skill")) && p < myargc-1 && !M_CheckParm("-nostart"))
     {
       startskill = myargv[p+1][0]-'1';
       autostart = true;
     }
 
-  if ((p = M_CheckParm ("-episode")) && p < myargc-1)
+  if ((p = M_CheckParm ("-episode")) && p < myargc-1 && !M_CheckParm("-nostart"))
     {
       startepisode = myargv[p+1][0]-'0';
       startmap = 1;
@@ -1855,7 +1855,7 @@ void D_DoomMain(void)
   }
 
   if (((p = M_CheckParm ("-warp")) ||      // killough 5/2/98
-       (p = M_CheckParm ("-wart"))) && p < myargc-1)
+       (p = M_CheckParm ("-wart"))) && p < myargc-1 && !M_CheckParm("-nostart"))
     if (gamemode == commercial)
       {
 	startmap = atoi(myargv[p+1]);
@@ -2253,7 +2253,7 @@ void D_NewWadLumps(int handle, extra_file_t extra)
     {
       if(lumpinfo[i]->handle != handle) continue;
       
-      if(!strncmp(lumpinfo[i]->name, "THINGS", 8) && !first)    // a level
+      if(!strncmp(lumpinfo[i]->name, "THINGS", 8) && !first && extra != EXTRA_FIXES) // a level
 	{
 	  char *name = lumpinfo[i-1]->name; // previous lump
 	  
@@ -2442,6 +2442,7 @@ static void D_Help()
   printf(" %-35s %s\n", "-timer <num>", "ends levels after <num> minutes");
   printf(" %-35s %s\n", "-frags <num>", "set frags limit");
   printf(" %-35s %s\n", "-avg", "ends levels after 20 minutes");
+  printf(" %-35s %s\n", "-nostart", "stay in menu after loading game");
 #ifdef DOGS
   printf(" %-35s %s\n", "-dog [num]", "start game with helper actors");
   printf(" %-35s %s\n", "-dogs [num]", "");

@@ -371,6 +371,7 @@ typedef enum {
   EXTRA_NWT,
   EXTRA_NWTSPRITES,
   EXTRA_NWTFLATS,
+  EXTRA_FIXES,
   NUM_EXTRAS
 } extra_file_t; 
 

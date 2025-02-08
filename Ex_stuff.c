@@ -335,7 +335,7 @@ int Ex_InsertAllFixesInDir(char * dirname)
             {
               for(i = numfixes - 1 ; i >= 0 ; i -= 1)
               { 
-                D_InsertFileToProcess(fnames[i], 1, wpt_file);
+                D_InsertFileToProcess(fnames[i], 1, wpt_fix);
                 free(fnames[i]);
               }
               free(fnames);
@@ -372,6 +372,8 @@ int Ex_InsertFixes(char * iwadfile, int autoload)
   strcat(filestr, "/");
   ExtractFileBase(iwadfile, filestr + l + 1, sizeof(filestr) - l - 1);
   numfixes += Ex_InsertAllFixesInDir(filestr);
+
+  MARK_EXTRA_LOADED(EXTRA_FIXES, numfixes);
 
   return numfixes;
 }
@@ -491,6 +493,9 @@ static boolean Ex_IsSafeToLoadPressRelease()
 
   if(M_CheckParm("-press"))
     return true;
+
+  if(gamemission == chex)
+    return false;
 
   for(i = 0 ; i < numlumps ; i += 1)
   {
