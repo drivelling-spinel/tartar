@@ -19,7 +19,7 @@ VESA "SVGA" display resolutions available in DOS. Today one finds more
 screen real estate to the sides, as opposed to in the vertical direction,
 so "widescreen" will be used as the word to describe this rendering mode,
 and the exact menu option name one finds under Video settings in Tartar is
-"Widescreen Mode to Imitate".
+"Imitate Widescreen Resolution".
 
 In "widescreen" mode Tartar "pulls" first person camera slighly towards
 the player capturing wider field of view. Since the number of pixels remains
@@ -32,44 +32,46 @@ hidden. Changing "Screen size" while in "widescreen" to anything but
 full screen deactivates "widescreen" mode.
 
 The result is wider field of view, with the center area capturing exactly
-the same part of the world as the "non-widescreen" mode would, but with
+the same part of the game world as the "non-widescreen" mode would, but with
 somewhat lower fidelity in the vertical direction.
 
 
-  player's view rendered in "16:10 widescreen" mode compared to
-  aspect ratio (horizontally) adjusted "non widescreen" view
-
+  Player's view rendered in "16:10 widescreen" (top) mode compared to
+  aspect ratio (horizontally) adjusted "non widescreen" view (bottom)
 
 The gain in field of view (and the loss in the "vertical" fidelity) becomes
 more when switching from 16:10 to 16:9 mode.
 
 
-  top to bottom - 16:9, 16:10 and "non-widescreen" rendered views
-  compared with 1280x800 screen buffer option
+  Top to bottom - 16:9, 16:10 and "non-widescreen" rendered views compared
+  (1280x800 screen buffer size) 
 
 After having selected the "widescreen" mode best suited to the connected
-display (or preferred widow geometry if running n emulator),
+display (or preferred widow geometry if running in emulator),
 players are advised to use the display's (or emulator's) scale and crop
 fine tuning capabilities to fully fill the screen with the image.
 
 
-  TV screen showing scaled 16:9 "widescreen" mode output
+  TV screen showing scaled 16:9 "widescreen" mode
+  output in VGA 320x200 mode
 
 As an example, the following settings can be used for running Tartar
-in RetroArch (DOSBoxPure core) effectively in 1980x1200 resolution:
+in RetroArch (in this example with DOSBox Pure core) effectively in 1980x1200 resolution:
 
-| Tartar screen buffer    | 1280x800
-| Tartar aspect ratio     | Original                       
-| Tartar widescreen       | 16:9
-| Tartar page flipping    | Yes (recommended)                              
-| Tartar wait for retrace | Yes (recommended)                              
-| DOSBoxPure video        | (recommended)
-| DOSBoxPure aspect ratio |
-| RetroArch aspect ratio  | Custom
-| RetroArch video X       | 0
-| RetroArch video Y       | 0
-| RetroArch video width   | 1980
-| RetroArch video height  |  (= 1980 * 1.2 / 1.25)
+| Tartar screen buffer            | 1280x800
+| Tartar aspect ratio             | Original
+| Tartar widescreen               | 16:9
+| Tartar page flipping            | Yes (recommended)
+| Tartar wait for retrace         | Yes (recommended)
+| DOSBox Pure SVGA mode           | S3 Trio64 (default)
+| DOSBox Pure SVGA memory         | 4 mb
+| DOSBox Pure aspect ratio        | Off
+| RetroArch scaling aspect ratio  | Custom
+| RetroArch scaling X position    | 0
+| RetroArch scaling Y position    | 0
+| RetroArch scaling width         | 1920
+| RetroArch scaling height        | 1843 (= 1920 * 1.2 / 1.25)
+| RetroArch scaling crop overscan | On (recommended)
 
 Tartar offers built in means of aspect ratio correction via vertical
 scaling of the rendered image before outputting to the screen. While less
@@ -97,7 +99,7 @@ However, because scale is always set to fixed ratio for the built in aspect
 correction, this option is less useful for 16:9 "widescreen" mode.
 
 
-  For coparison default renderer output in non "widescreen" mode
+  For coparison - default renderer output in non "widescreen" mode
   with no scaling applied 
 
                      

@@ -1,29 +1,110 @@
 By default Tartar supports rendering in three buffer formats,
 which correspond to display resolutions in the following manner:
+
 320x200          - 320x200
 640x400          - 640x400 if possible, otherwise 640x480
 1280x800         - 1280x1024
+
+  The three buffer sizes compared
           
 By selecting "extra" screen size option (rightmost screen side slider
 position) players can relocate status bar below player view so that
 it occupies part of the screen which is otherwise left empty
 in 640x480 and 1280x1024.
 
+
+  Extra screen size option (center) compared to conventional fullscreen size with HUD on (left)
+  and maximum conventional screen size with status bar visible (right)
+
 Otherwise, in these resolutions player view with overlay HUD or status
 bar is positioned in the center of the screen, with black
 "horizontal pillars" above and below it.
 
+
+  Fullscreen screen size option selected in 640x480 resolution.
+
 In case when higher display resolution is desired but rendering
 to smaller size buffer is preferred (due to, e.g. performance considerations
-or for more "authentic" look), Scale to higher resolution menu item
+- the smaller the faster, i.e. game runs with more frames per second, 
+or for more "authentic" look), "Scale to Higher Resolution" menu item
 offers the following options:
 
-320x200  -   No    -  320x200  - 320x200
-320x200  -   x2    -  640x400  - 640x400 if possible, otherwise 640x480
-320x200  -   x4    - 1280x800  - 1280x1024
-640x400  -   No    -  640x400  - 640x400 if possible, otherwise 640x480
-640x400  -  x2,x4  - 1280x800  - 1280x1024 
-1280x800 -   any   - 1280x800  - 1280x1024
+Buffer   - Scaling option - Resulting buffer and resolution
+
+320x200  -       No       -  320x200  - 320x200
+320x200  -       x2       -  640x400  - 640x400 if possible, otherwise 640x480
+320x200  -       x4       - 1280x800  - 1280x1024
+640x400  -       No       -  640x400  - 640x400 if possible, otherwise 640x480
+640x400  -     x2,x4      - 1280x800  - 1280x1024 
+1280x800 -      any       - 1280x800  - 1280x1024
+
+Buffer size of 1280x800 combined with extra screen size allow for the best 
+level of rendering detail the engine supports and both the resulting player view 
+and the status bar fit the corresponding resolution of 1024x768 without 
+losing any pixels. Because of this, when running in an emulator, 
+one can take advantage of the scaling and cropping options 
+to get the maximum out of Tartar's video settings.
+
+
+  Tartar running in an emulator with maximum detail setting
+
+Below are the settings used used for running Tartar in RetroArch 
+(in this example with DOSBox Pure core) with "as intended" 
+player view aspect ratio in 1920x1200 resolution:
+
+| Tartar screen buffer            | 1280x800
+| Tartar aspect ratio             | Original
+| Tartar widescreen               | No
+| Tartar page flipping            | Yes (recommended)
+| Tartar wait for retrace         | Yes (recommended)
+| Tartar screen size              | Extra (rightmost slider position)
+| DOSBox Pure SVGA mode           | S3 Trio64 (default)
+| DOSBox Pure SVGA memory         | 4 mb
+| DOSBox Pure aspect ratio        | Off
+| RetroArch scaling aspect ratio  | Custom
+| RetroArch scaling X position    | 270
+| RetroArch scaling Y position    | 0
+| RetroArch scaling width         | 1379 (= (800 * 4 / 3) * 1200 / (800 + 128))
+| RetroArch scaling height        | 1324 (= 1024 * 1200 / (800 + 128))
+| RetroArch scaling crop overscan | On (recommended)
+| RetroArch overlay               | On (custom) 
+
+
+With DOSBox variants one should be careful with running games in resolutions as high as 1280x1024,
+as this may result in graphical glitches and artifacts. In case these are observed 
+(mostly noticeable during tinted flashes when picking up items or feeling pain in game), 
+the below settings should be safer to use, e.g. for the same screen resolution of 1920x1200.
+
+Firstly, for DOSBox to "forget" it supports 640x400 and favor 640x480 ``VBEPlus`` 
+utility can be loaded before starting Tartar with the following contents of ``VBEPLUS.CFG``:
+
+```
+BPP = 8
+BlockOldModes = yes
+320 200
+640 480
+1280 1024
+```
+
+Then, the following configuration settings can be applied:
+
+| Tartar screen buffer            | 640x400
+| Tartar aspect ratio             | Original
+| Tartar widescreen               | No
+| Tartar page flipping            | Yes (recommended)
+| Tartar wait for retrace         | Yes (recommended)
+| Tartar screen size              | Extra (rightmost slider position)
+| DOSBox Pure SVGA mode           | S3 Trio64 (default)
+| DOSBox Pure SVGA memory         | 2 mb
+| DOSBox Pure aspect ratio        | Off
+| RetroArch scaling aspect ratio  | Custom
+| RetroArch scaling X position    | 270
+| RetroArch scaling Y position    | 0
+| RetroArch scaling width         | 1379 (= (400 * 4 / 3) * 1200 / (400 + 64))
+| RetroArch scaling height        | 1241 (= 640 * 1200 / (400 + 64))
+| RetroArch scaling crop overscan | On (recommended)
+| RetroArch overlay               | On (custom)
+
 
 Aspect ratio correction activated by setting Aspect ratio scale to 4:3
 scales rendered buffer vertically more to fill the screen with it completely
@@ -33,9 +114,26 @@ displays originally (i.e. less "squashed") but portion of the screen
 still remains blank. Again, "extra" screen size can be selected to
 relocate status bar covering the blank area.
 
+
+  4 by 4 times scaled 320x200 buffer displayed in 1280x1024 resolution
+  with extra screen size option selected and aspect correction activated
+
 Aspect ratio correction option has no effect in 320x200 and 640x400
 display resolutions unless "widescreen" rendering imitation is also enabled.
 With "widescreen" mode on, however, rendered raster will be scaled 
 when in a level (or watching demo) and neither menu nor automap,
 or help screens are active. This trait applies to all display resolutions.
 
+
+## Troubleshooting
+
+Tartar supports the following command line arguments to control how 
+video card interaction is handled under the hood:
+
+`-safe`
+
+
+`-nolfb`
+
+
+`-nopm`
