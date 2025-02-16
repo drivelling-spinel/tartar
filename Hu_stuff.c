@@ -585,7 +585,7 @@ void HU_LevelTimeHandler(struct textwidget_s *widget)
 	  seconds%60);
   
   hu_leveltime.message = timestr;
-  hu_leveltime.y = EFFECTIVE_HEIGHT-ST_HEIGHT-8;        
+  hu_leveltime.y = EFFECTIVE_HEIGHT-ST_HEIGHT-9;        
 }
 
 ///////////////////////////////////////////
@@ -604,7 +604,7 @@ textwidget_t hu_levelname =
 void HU_LevelNameHandler(struct textwidget_s *widget)
 {
   hu_levelname.message = (automapactive && hud_showinmap) ? levelname : NULL;
-  hu_levelname.y = EFFECTIVE_HEIGHT-ST_HEIGHT -8;
+  hu_levelname.y = EFFECTIVE_HEIGHT-ST_HEIGHT -9;
 }
 
 ///////////////////////////////////////////////

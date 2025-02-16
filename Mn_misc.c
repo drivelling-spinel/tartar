@@ -237,7 +237,6 @@ typedef struct
 static helpscreen_t helpscreens[120];  // 100 + credit/built-in help screens
 static int num_helpscreens;
 static int viewing_helpscreen;     // currently viewing help screen
-extern boolean inhelpscreens; // indicates we are in or just left a help screen
 
 static void AddHelpScreen(char *screenname)
 {
@@ -308,8 +307,6 @@ static void MN_FindHelpScreens()
 
 void MN_DrawCredits(void)
 {
-  inhelpscreens = true;
-
   // sf: altered for SMMU
   // haleyjd: altered for Eternity :)
 
@@ -342,8 +339,6 @@ void MN_DrawCredits(void)
 
 void MN_DrawTartar(void)
 {
-  inhelpscreens = true;
-
   // LP: added for Tartar
 
   V_DrawDistortedBackground("FLAT14", screens[0]);

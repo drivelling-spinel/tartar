@@ -256,8 +256,6 @@ int disk_icon;
 int gammastyle;
 char *gammastyles[] = {"Doom 1.9", "Doom 1.1"};
 
-extern boolean inhelpscreens;
-
 //-----------------------------------------------------------------------------
 void I_UpdateNoBlit (void){}
 
@@ -348,9 +346,6 @@ void I_FinishUpdate(void)
    //M_DrawText2(1,0,CR_BLUE,true,mode_string); 
 
    if (show_fps || safeparm) show_info_proc();
-
-   // GB 2014, first part of code to check if statusbar needs to be (re)drawn on screen:
-   // if ((viewactive || automapactive) && scaledviewheight<200 && !inhelpscreens) ymax=168; 
 
    // draws little dots on the bottom of the screen:
    if (devparm) devparm_proc(ymax);

@@ -713,6 +713,7 @@ void C_SetConsole()
 {
    gamestate = GS_CONSOLE;
    gameaction = ga_nothing;
+   idmusnum = -1;
    current_height = SCREENHEIGHT;
    current_target = SCREENHEIGHT;
    

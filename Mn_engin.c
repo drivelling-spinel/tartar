@@ -48,8 +48,6 @@
 
 #include "g_bind.h"    // haleyjd: dynamic key bindings
 
-boolean inhelpscreens; // indicates we are in or just left a help screen
-
         // menu keys
 int     key_menu_right;
 int     key_menu_left;

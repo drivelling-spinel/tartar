@@ -110,7 +110,7 @@ extern byte *ylookup[];       // killough 11/98
 
 extern int widescreen_mode;
 
-#define APPLIES_WIDESCREEN (widescreen_mode && scale_aspect && gamestate == GS_LEVEL && !menuactive && !inhelpscreens && !automapactive)
+#define APPLIES_WIDESCREEN (widescreen_mode && scale_aspect && gamestate == GS_LEVEL && !menuactive && !automapactive)
 
 #endif
 

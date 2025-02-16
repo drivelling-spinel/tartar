@@ -14,10 +14,5 @@
   in principle works, game crashes eventually. It is also not compatible with
   COD10MBF.EXE build published in fall 2021, funny artifacts occurring game
   is loaded
-- After option for random music is switched off while in game, restarting 
-  current level is not sufficient to go back to the original track. 
-  In case of the first level, starting new game is not sufficuent either. 
-  To go back to the original track warping to another level and warping back 
-  or restarting the game executable is nceessary
 - Time spent in level is cut off in automap for WAD-s with wider fonts (e.g. 
   Eviternity).

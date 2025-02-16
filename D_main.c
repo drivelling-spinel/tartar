@@ -150,9 +150,6 @@ boolean singletics = false; // debug flag to cancel adaptiveness
 boolean nosfxparm;
 boolean nomusicparm;
 
-//jff 4/18/98
-extern boolean inhelpscreens;
-
 skill_t startskill;
 int     startepisode;
 int     startmap;
@@ -620,6 +617,7 @@ void D_StartTitle (void)
   S_ResetTitleMusic();
   gameaction = ga_nothing;
   demosequence = -1;
+  idmusnum = -1;
   D_AdvanceDemo();
 }
 

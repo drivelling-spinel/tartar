@@ -265,7 +265,10 @@ static void cheat_loops()
       S_RestartMusic();
     }
   else
-    C_Printf("The boring mode\n");
+    {
+      C_Printf("The boring mode\n");
+      idmusnum = -1;
+    }
   T_EnsureGlobalIntVar("_private_continuous_music", loop_music ? 0 : 1);
 }
 

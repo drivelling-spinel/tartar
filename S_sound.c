@@ -436,11 +436,6 @@ void S_ResumeSound(void)
     }
 }
 
-void S_RestartMusic(void)
-{
-  S_UpdateMusicLooping(true);
-}
-
 static void S_UpdateMusicLooping(boolean force)
 {
   if(!title_mus_tampered && 
@@ -482,6 +477,24 @@ static void S_UpdateMusicLooping(boolean force)
           S_DoChangeMusic(mus_playing, loop_music);
         }
     }
+}
+
+
+void S_RestartMusic(void)
+{
+  int i;
+
+  S_UpdateMusicLooping(true);
+
+  if(loop_music)
+    return;
+
+  for(i = mus_None + 1 ; i < NUMMUSIC && idmusnum == -1 && mus_playing ; i += 1)
+    if(mus_playing == &S_music[i])
+      idmusnum = i;
+
+  title_mus_tampered = true;
+  finale_mus_tampered = true;
 }
 
 //
@@ -659,6 +672,10 @@ int S_PreselectRandomMusic(boolean no_runnin)
     {
       max = mus_e1m9;
     }
+  else if(gamemission == chex)
+    {
+      max = mus_e1m5;
+    }
   if(no_runnin) min += 1;
 
   if(seed == -1)
@@ -751,7 +768,8 @@ char * S_ChangeToNextMusic(boolean next)
 
   if(!music)
     {
-      music = &S_music[(gamemode == commercial) ? mus_runnin : mus_e1m1];
+      i = (gamemode == commercial) ? mus_runnin : mus_e1m1;
+      music = &S_music[i];
     }
 
   if(music) S_ChangeMusic(music, loop_music);
@@ -868,6 +886,7 @@ void S_StartTitleMusic(int m_id)
             m_id = mus_introa;
         }
       S_StartMusic(m_id);
+      doom_printf("");    // push last message up; LP 2025
     }
 }
 
@@ -880,6 +899,7 @@ void S_StartFinaleMusic(int mus)
 {
   finale_mus_tampered = false;
   S_StartMusic(mus);
+  doom_printf("");         // push last message up; LP 2025
 }
 
 //
@@ -978,7 +998,12 @@ void S_Start(void)
 	  }
      
       // start music
-      S_ChangeMusicNum(mnum, true);
+      S_ChangeMusicNum(mnum, loop_music);
+
+      if(mus_playing && !loop_music)
+      {
+        idmusnum = mnum;
+      }
     }
 }
 
