@@ -2090,7 +2090,7 @@ menu_t menu_extrabindings =
         {it_end},
     },
     150, 1,                        // x,y offsets
-    1,
+    2,
     mf_background,  // draw background: not a skull menu
   };
 

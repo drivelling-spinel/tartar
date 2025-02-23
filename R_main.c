@@ -248,7 +248,7 @@ static void R_InitTextureMapping (void)
   //  so fov angles covers SCREENWIDTH.
 
                         // sf: zooming
-  focallength = FixedDiv(centerx*zoomfrac, finetangent[FINEANGLES/4+fov/2]);
+  focallength = FixedDiv(FixedMul(centerxfrac+((widescreen_mode>>1) ? (FRACUNIT >> 6) : 0), zoomfrac), finetangent[FINEANGLES/4+fov/2]);
 
   for (i=0 ; i<FINEANGLES/2 ; i++)
     {
