@@ -68,10 +68,21 @@ void set_config_rel(const char * config)
   set_config_file(filestr);
 }
 
+#ifdef EMBEDSETUP
+int setup_main();
+#endif
+
 int main(int argc, char **argv)
 {
   myargc = argc;
   myargv = argv;
+
+
+#ifdef EMBEDSETUP
+  if(M_CheckParm("-setup") || M_CheckParm("-asetup"))
+    return setup_main();
+#endif
+
 
   /*
      killough 1/98:

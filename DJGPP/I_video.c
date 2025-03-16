@@ -216,9 +216,11 @@ void I_StartTic(){ I_GetEvent();}
 //
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef EMBEDSETUP
 // GB 2014: Make allegro smaller, no graphics services requires:
 DECLARE_GFX_DRIVER_LIST()
 DECLARE_COLOR_DEPTH_LIST()
+#endif
 
 //procedures:
 extern void ppro_blit(void *, size_t);

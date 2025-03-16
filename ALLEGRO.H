@@ -485,21 +485,6 @@ int load_joystick_data(char *filename);
 #ifdef DJGPP 
 
 /* for djgpp */
-#define GFX_VESA1             3
-#define GFX_VESA2B            4
-#define GFX_VESA2L            5
-#define GFX_VBEAF             6
-#define GFX_XTENDED           7
-#define GFX_ATI               8
-#define GFX_MACH64            9
-#define GFX_CIRRUS64          10
-#define GFX_CIRRUS54          11
-#define GFX_PARADISE          12
-#define GFX_S3                13
-#define GFX_TRIDENT           14
-#define GFX_ET3000            15
-#define GFX_ET4000            16
-#define GFX_VIDEO7            17
 
 #else 
 
@@ -531,12 +516,7 @@ extern GFX_DRIVER gfx_vga, gfx_modex;
 
 #ifdef DJGPP 
 
-/* for djgpp */
-extern GFX_DRIVER gfx_vesa_1, gfx_vesa_2b, gfx_vesa_2l, gfx_vbeaf, 
-		  gfx_xtended, gfx_ati, gfx_mach64, gfx_cirrus64, 
-		  gfx_cirrus54, gfx_realtek, gfx_s3, gfx_trident, 
-		  gfx_et3000, gfx_et4000, gfx_paradise, gfx_video7;
-
+/* for djgpp */ 
 #else 
 
 /* for linux */
@@ -570,52 +550,6 @@ extern _GFX_DRIVER_INFO _gfx_driver_list[];
 
 #define GFX_DRIVER_MODEX                                                     \
    {  GFX_MODEX,        &gfx_modex,          TRUE  },
-
-#define GFX_DRIVER_VBEAF                                                     \
-   {  GFX_VBEAF,        &gfx_vbeaf,          FALSE  },
-
-#define GFX_DRIVER_VESA2L                                                    \
-   {  GFX_VESA2L,       &gfx_vesa_2l,        TRUE   },
-
-#define GFX_DRIVER_VESA2B                                                    \
-   {  GFX_VESA2B,       &gfx_vesa_2b,        TRUE   },
-
-#define GFX_DRIVER_XTENDED                                                   \
-   {  GFX_XTENDED,      &gfx_xtended,        FALSE  },
-
-#define GFX_DRIVER_ATI                                                       \
-   {  GFX_ATI,          &gfx_ati,            TRUE   },
-
-#define GFX_DRIVER_MACH64                                                    \
-   {  GFX_MACH64,       &gfx_mach64,         TRUE   },
-
-#define GFX_DRIVER_CIRRUS64                                                  \
-   {  GFX_CIRRUS64,     &gfx_cirrus64,       FALSE  },
-
-#define GFX_DRIVER_CIRRUS54                                                  \
-   {  GFX_CIRRUS54,     &gfx_cirrus54,       TRUE   },
-
-#define GFX_DRIVER_PARADISE                                                  \
-   {  GFX_PARADISE,     &gfx_paradise,       TRUE   },
-
-#define GFX_DRIVER_S3                                                        \
-   {  GFX_S3,           &gfx_s3,             TRUE   },
-
-#define GFX_DRIVER_TRIDENT                                                   \
-   {  GFX_TRIDENT,      &gfx_trident,        TRUE   },
-
-#define GFX_DRIVER_ET3000                                                    \
-   {  GFX_ET3000,       &gfx_et3000,         FALSE  },
-
-#define GFX_DRIVER_ET4000                                                    \
-   {  GFX_ET4000,       &gfx_et4000,         TRUE   },
-
-#define GFX_DRIVER_VIDEO7                                                    \
-   {  GFX_VIDEO7,       &gfx_video7,         TRUE   },
-
-#define GFX_DRIVER_VESA1                                                     \
-   {  GFX_VESA1,        &gfx_vesa_1,         TRUE   },
-
 
 extern GFX_DRIVER *gfx_driver;   /* the driver currently in use */
 
