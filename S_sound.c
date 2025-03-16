@@ -756,6 +756,10 @@ char * S_ChangeToNextMusic(boolean next)
             {
               max = mus_e1m9;
             }
+          else if(gamemission == chex)
+            {
+              max = mus_e1m5;
+            }
 
           if(m > max) m = min;
           else if(m < min) m = max;

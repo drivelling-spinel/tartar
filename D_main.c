@@ -2405,8 +2405,10 @@ static void D_Help()
   printf(" %-35s %s\n", "-nocscload", "don't automatically load scripts");
   printf("Hardware\n");
   printf(" %-35s %s\n", "-config <file>", "use specified configuration file");
+#ifdef EMBEDSETUP
   printf(" %-35s %s\n", "-setup", "show sound and music setup screen");
   printf(" %-35s %s\n", "-asetup", "");
+#endif
   printf(" %-35s %s\n", "-safe", "use settings deemed the most compatible");
   printf(" %-35s %s\n", "-nosound", "don't play sound or music");
   printf(" %-35s %s\n", "-nomusic", "don't play music");
