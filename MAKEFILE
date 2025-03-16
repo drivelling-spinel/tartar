@@ -37,7 +37,7 @@ CFLAGS_COMMON=-Wall
 
 # new features; comment out what you don't want at the moment
 # -DDOGS -DTRANWATER -DFAUXTRAN -DNORENDER -DARCTIC_STUFF -DSTBAR11 -DDEMO11 -DINTELHACK -DCRVSFIX -DEMBEDSETUP
-CFLAGS_NEWFEATURES=-DDOGS -DFAUXTRAN -DBOSSACTION -DARCTIC_STUFF -DSTBAR11 -DEPISINFO -DDEMO11 -DINTELHACK -DCRVSFIX -DEMBEDSETUP
+CFLAGS_NEWFEATURES=-DDOGS -DFAUXTRAN -DBOSSACTION -DARCTIC_STUFF -DSTBAR11 -DEPISINFO -DDEMO11 -DINTELHACK -DCRVSFIX
         
 # debug options
 CFLAGS_DEBUG=-g -DRANGECHECK -DINSTRUMENTED -DZONEIDCHECK
@@ -902,10 +902,10 @@ $(O)/p_partcl.o: p_partcl.c p_partcl.h d_main.h doomstat.h doomtype.h p_setup.h 
 # Allegro patches required to function satisfactorily
 
 $(O)/emu8kmid.o: $(PLATFORM)/emu8kmid.c $(PLATFORM)/emu8k.h djgpp/internal.h \
-  $(PLATFORM)/interndj.h $(PLATFORM)/allegro.h
+  $(PLATFORM)/interndj.h allegro.h
 
 $(O)/keyboard.o: $(PLATFORM)/keyboard.c $(PLATFORM)/internal.h $(PLATFORM)/keyboard.h \
-  $(PLATFORM)/interndj.h $(PLATFORM)/allegro.h
+  $(PLATFORM)/interndj.h allegro.h
 	$(CC) $(CFLAGS_COMMON) -O $(CFLAGS_NEWFEATURES) -c $< -o $@
 
 endif

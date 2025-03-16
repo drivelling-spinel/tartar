@@ -2394,7 +2394,6 @@ static void D_Help()
   printf(" %-35s %s\n", "-bex <file(-s)>[.deh|bex]", "");
   printf(" %-35s %s\n", "-nwtwad <file(-s)>[.wad]", "load WAD(-s) originally intended to");
   printf(" %-35s %s\n", "", "be used after running nwt -merge on them");
-  printf(" %-35s %s\n", "-config <file>", "use specified configuration file");
   printf(" %-35s %s\n", "-noload", "don't automatically load files");
   printf(" %-35s %s\n", "-fixes <directory>", "load all WAD-s in directory after IWAD");
   printf(" %-35s %s\n", "-shim <file>[.wad]", "load helper \"shim\" WAD specified");
@@ -2405,6 +2404,9 @@ static void D_Help()
   printf(" %-35s %s\n", "-save <directory>", "directory to store savagemes in");
   printf(" %-35s %s\n", "-nocscload", "don't automatically load scripts");
   printf("Hardware\n");
+  printf(" %-35s %s\n", "-config <file>", "use specified configuration file");
+  printf(" %-35s %s\n", "-setup", "show sound and music setup screen");
+  printf(" %-35s %s\n", "-asetup", "");
   printf(" %-35s %s\n", "-safe", "use settings deemed the most compatible");
   printf(" %-35s %s\n", "-nosound", "don't play sound or music");
   printf(" %-35s %s\n", "-nomusic", "don't play music");

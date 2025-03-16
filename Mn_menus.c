@@ -1520,7 +1520,11 @@ menu_t menu_sound_advanced =
     {it_title,      FC_GOLD "sound",                NULL, "m_sound"},
     {it_info,       FC_GOLD "warning: for advanced use only" },
     {it_gap},
+#ifndef EMBEDSETUP
     {it_info,       FC_GOLD "use setup.exe to select" },
+#else
+    {it_info,       FC_GOLD "run game with -setup to select" },
+#endif                                        
     {it_info,       FC_GOLD "digi and midi cards"},
     {it_info,       FC_GOLD "and number of digi channels"},
     {it_gap},
