@@ -7,6 +7,8 @@ O = $(O_$(MODE))
 O_RELEASE = obj
 O_DEBUG = objdebug
 DEPENDENCIES = 1
+EXENAME=tartar
+
 
 # 15/10/99 sf: added multi-platform support
 
@@ -19,7 +21,13 @@ DJGPPDOS=1
 ifdef DJGPPDOS
 
 PLATFORM = djgpp
-        
+
+STUB = $(O)\stub.exe
+
+UPXOPT=--ultra-brute
+#For older versions of UPX or less powerful PCs
+#UPXOPT=-9
+
 # compiler
 CC=gcc
         
@@ -28,16 +36,16 @@ RM=del
         
 # the command you use to copy files
 CP=copy /y
-          
+
 # the exe file name -sf
-EXE=$(O)/tartar.exe
+EXE=$(O)/$(EXENAME).exe
         
 # options common to all builds
 CFLAGS_COMMON=-Wall
 
 # new features; comment out what you don't want at the moment
 # -DDOGS -DTRANWATER -DFAUXTRAN -DNORENDER -DARCTIC_STUFF -DSTBAR11 -DDEMO11 -DINTELHACK -DCRVSFIX -DEMBEDSETUP
-CFLAGS_NEWFEATURES=-DDOGS -DFAUXTRAN -DBOSSACTION -DARCTIC_STUFF -DSTBAR11 -DEPISINFO -DDEMO11 -DINTELHACK -DCRVSFIX
+CFLAGS_NEWFEATURES=-DDOGS -DFAUXTRAN -DBOSSACTION -DARCTIC_STUFF -DSTBAR11 -DEPISINFO -DDEMO11 -DINTELHACK -DCRVSFIX 
         
 # debug options
 CFLAGS_DEBUG=-g -DRANGECHECK -DINSTRUMENTED -DZONEIDCHECK
@@ -54,7 +62,7 @@ LIBS=-lalleg -lm -lemu
         
 # this selects flags based on debug and release tagets
 CFLAGS=$(CFLAGS_COMMON)  $(CFLAGS_$(MODE)) $(CFLAGS_NEWFEATURES)
-LDFLAGS=$(LDFLAGS_COMMON) $(LDFLAGS_$(MODE)) -Wl,-Map=$(O)/tartar.map
+LDFLAGS=$(LDFLAGS_COMMON) $(LDFLAGS_$(MODE)) -Wl,-Map=$(O)/$(EXENAME).map
         
 # system-specific object files
 PLATOBJS =                  \
@@ -78,53 +86,38 @@ PLATOBJS =                  \
 build : $(EXE) 
 
 
-$(O)/chex.exe : $(EXE)
-	del $(O)\chex.exe     
-	copy $(O)\doom.exe $(O)\chex.exe     
-
-
-$(O)/doom2.exe : $(EXE)
-	del $(O)\doom2.exe
-	copy $(O)\doom.exe $(O)\doom2.exe
-
-
-$(O)/cod.exe : $(EXE)
-	del $(O)\cod.exe
-	copy $(O)\doom.exe $(O)\cod.exe
-
-
 $(EXE): $(OBJS) $(O)/version.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(O)/version.o -o $@ $(LIBS)
+ifneq ($(wildcard $(STUB)),)
+	exe2coff $(O)\$(EXENAME).EXE
+	del $(O)\$(EXENAME).EXE
+	copy /B $(STUB) + $(O)\$(EXENAME) $(O)\$(EXENAME).EXE
+	del $(O)\$(EXENAME)
+endif
+ifneq ($(wildcard $(addsuffix /upx.exe,$(subst ;, ,$(PATH)))),)
+	upx $(UPXOPT) $(O)\$(EXENAME).EXE
+else
+ifneq ($(wildcard $(addsuffix /djp.exe,$(subst ;, ,$(PATH)))),)
+	djp $(O)\$(EXENAME).EXE
+endif
+endif
 
-release: sources binaries
-
-sources:
-# build source zip
-	make clean
-	$(RM) etc-src.zip
-	pkzip -a -ex -rp etc-src
-
-binaries:
-# build binaries zip
-	del $(O)\eternity.exe
-	make build
-	strip $(O)/eternity.exe
-	djp $(O)/eternity.exe
-	if exist etc.zip del etc.zip
-	pkzip -a -ex eternity $(O)/eternity.exe $(O)/eternity.wad               \
-			smmu.txt smmuedit.txt                       \
-			doomlic.txt copying copying.dj 
-	pkzip -a -ex -rp smmu examples/*.wad
 
 clean:
 	del *.c~
 	del *.h~
-	del $(O)\tranmap.dat
-	del $(O)\eternity.cfg
-	if exist $(O_RELEASE)\*.exe del $(O_RELEASE)\*.exe
-	if exist $(O_DEBUG)\*.exe del $(O_DEBUG)\*.exe
+	if exist $(O)\tranmap.dat del $(O)\tranmap.dat
+	if exist $(O)\$(EXENAME).cfg del $(O)\$(EXENAME).cfg
+	if exist $(O)\ETRN_ERR.TXT del $(O)\ETRN_ERR.TXT
+	if exist $(O)\KEYS.CSC del $(O)\KEYS.CSC
+	if exist $(O)\DEHOUT.TXT del $(O)\DEHOUT.TXT
+	if exist $(O)\DEBUG?.TXT del $(O)\DEBUG?.TXT
+	if exist $(O_RELEASE)\$(EXENAME).exe del $(O_RELEASE)\$(EXENAME).exe
 	if exist $(O_RELEASE)\*.o del $(O_RELEASE)\*.o
+	if exist $(O_RELEASE)\$(EXENAME) del $(O_RELEASE)\$(EXENAME)
+	if exist $(O_DEBUG)\$(EXENAME).exe del $(O_DEBUG)\$(EXENAME).exe
 	if exist $(O_DEBUG)\*.o del $(O_DEBUG)\*.o
+	if exist $(O_DEBUG)\$(EXENAME) del $(O_DEBUG)\$(EXENAME)
 
 endif
 
@@ -910,12 +903,3 @@ $(O)/keyboard.o: $(PLATFORM)/keyboard.c $(PLATFORM)/internal.h $(PLATFORM)/keybo
 
 endif
 
-# bin2c utility
-
-bin2c: $(O)/bin2c.exe
-	$(CP) $(O)\bin2c.exe .
-
-$(O)/bin2c.exe: $(O)/bin2c.o
-	$(CC) $(CFLAGS) $(LDFLAGS) $(O)/bin2c.o -o $@ $(LIBS)
-
-$(O)/bin2c.o: bin2c.c
