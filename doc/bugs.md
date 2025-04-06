@@ -16,3 +16,5 @@
   is loaded
 - Time spent in level is cut off in automap for WAD-s with wider fonts (e.g. 
   Eviternity).
+- When PWAD defining custom episodes via EPISINFO is loaded with CHEX.WAD IWAD,
+  episode selection menu shows 4 built-in episodes, instead of 1

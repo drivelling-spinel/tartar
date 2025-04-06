@@ -79,6 +79,7 @@ byte savegamestates[SAVESLOTS];
 
 #ifdef EPISINFO
 static menu_t * Mn_BuildEpisodeMenu(void);
+static boolean Mn_HasDynamicEpisodes(void);
 char * menu_layout = "";
 #endif
 
@@ -171,11 +172,18 @@ CONSOLE_COMMAND(mn_newgame, 0)
 
   if(gamemode == commercial || gamemission == chex)
     {
+#ifdef EPISINFO
+      boolean has_menu = Mn_HasDynamicEpisodes();
+#endif
        
       // dont use new game menu if not needed
       if(!modifiedgame && gamemode == commercial
 	 && W_CheckNumForName("START") >= 0
-	 && use_startmap)
+	 && use_startmap
+#ifdef EPISINFO
+         && !has_menu
+#endif
+         )
         {
 	  if(use_startmap == -1)              // not asked yet
 	    MN_StartMenu(&menu_startmap);
@@ -186,7 +194,11 @@ CONSOLE_COMMAND(mn_newgame, 0)
             }
         }
       else
-	MN_StartMenu(&menu_newgame);
+#ifdef EPISINFO
+        if(has_menu) MN_StartMenu(Mn_BuildEpisodeMenu());
+        else
+#endif
+        MN_StartMenu(&menu_newgame);
     }
   else
     {
@@ -268,17 +280,82 @@ static menu_t menu_episode_dynamic =
   mf_skullmenu,        // skull menu
 };
 
-#define SLADE_IDX 4
+#define SLATE_IDX 4
+
+static boolean Mn_HasDynamicEpisodes(void)
+{
+  int builtin = gamemode == commercial ? 0 : (gamemode == retail ? 4 : 3);
+  int extra = info_epis_count;
+  int position = 1;
+  int idx = SLATE_IDX;
+
+  if(builtin + extra + idx + 1 > MAXMENUITEMS)
+    {
+      extra = MAXMENUITEMS - idx - builtin - 1;
+    }
+
+  if(extra <= 0)
+    return false;
+
+  while(builtin + extra > 0)
+    {
+      int j = 0;
+      for(j = 0; j < info_epis_count ; j ++)
+        if(info_epis_num[j] == position) break;
+
+      if(j == info_epis_count)
+        switch(position)
+          {
+          case 1:
+          case 2:
+          case 3:
+            if(gamemode != commercial)
+              {
+                builtin -= 1;
+                idx += 1;
+              }
+            break;
+          case 4:
+            if(gamemode == retail)
+              {
+                builtin -= 1;
+                idx += 1;
+              }
+            break;
+          default:
+            break;
+        }
+      else
+        {
+          //FIXME: a bad place to make the episode validity checks
+          //       as can actually sit in one of slots 1-3
+          //       but works for now -- LP 2025
+          if(!Ex_IsSigilGarbageEpisode(info_epis_name[j], info_epis_pic[j]))
+            {
+              idx += 1;
+              if(gamemode != commercial && position <= 3)
+                builtin -= 1;
+              else if(gamemode == retail && position == 4)
+                builtin -= 1;
+            }
+          extra -= 1;
+        }
+
+      position += 1;
+    }
+
+  return idx > SLATE_IDX;
+}
 
 static menu_t * Mn_BuildEpisodeMenu(void)
 {
   menu_t * menu = &menu_episode_dynamic;
-  int builtin = gamemode == retail ? 4 : 3;
+  int builtin = gamemode == commercial ? 0 : (gamemode == retail ? 4 : 3);
   int extra = info_epis_count;
   int position = 1;
-  int idx = SLADE_IDX;
+  int idx = SLATE_IDX;
 
-  menu->menuitems[SLADE_IDX].type = it_end;
+  menu->menuitems[SLATE_IDX].type = it_end;
 
   if(builtin + extra + idx + 1 > MAXMENUITEMS)
     {
@@ -295,31 +372,40 @@ static menu_t * Mn_BuildEpisodeMenu(void)
         switch(position)
           {
           case 1:
-            menu->menuitems[idx].type = it_runcmd;
-            menu->menuitems[idx].description = "knee deep in the dead";
-            sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
-             "mn_episode %d", position);
-            menu->menuitems[idx].patch = "M_EPI1";
-            builtin -= 1;
-            idx += 1;
+            if(gamemode != commercial)
+              {
+                menu->menuitems[idx].type = it_runcmd;
+                menu->menuitems[idx].description = "knee deep in the dead";
+                sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
+                 "mn_episode %d", position);
+                menu->menuitems[idx].patch = "M_EPI1";
+                builtin -= 1;
+                idx += 1;
+              }
             break;
           case 2:
-            menu->menuitems[idx].type = it_runcmd;
-            menu->menuitems[idx].description = "the shores of hell";
-            sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
-              "mn_episode %d", position);
-            menu->menuitems[idx].patch = "M_EPI2";
-            builtin -= 1;
-            idx += 1;
+            if(gamemode != commercial)
+              {
+                menu->menuitems[idx].type = it_runcmd;
+                menu->menuitems[idx].description = "the shores of hell";
+                sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
+                  "mn_episode %d", position);
+                menu->menuitems[idx].patch = "M_EPI2";
+                builtin -= 1;
+                idx += 1;
+              }
             break;
           case 3:
-            menu->menuitems[idx].type = it_runcmd;
-            menu->menuitems[idx].description = "inferno!";
-            sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
-              "mn_episode %d", position);
-            menu->menuitems[idx].patch = "M_EPI3";
-            builtin -= 1;
-            idx += 1;
+            if(gamemode != commercial)
+              {
+                menu->menuitems[idx].type = it_runcmd;
+                menu->menuitems[idx].description = "inferno!";
+                sprintf(menu->menuitems[idx].data = calloc(1, strlen("mn_episode " + 4)),
+                  "mn_episode %d", position);
+                menu->menuitems[idx].patch = "M_EPI3";
+                builtin -= 1;
+                idx += 1;
+              }
             break;
           case 4:
             if(gamemode == retail)
@@ -337,6 +423,9 @@ static menu_t * Mn_BuildEpisodeMenu(void)
         }
       else
         {
+          //FIXME: a bad place to make the episode validity checks
+          //       as can actually sit in one of slots 1-3
+          //       but works for now -- LP 2025
           if(!Ex_IsSigilGarbageEpisode(info_epis_name[j], info_epis_pic[j]))
             {
               menu->menuitems[idx].type = it_runcmd;
@@ -345,6 +434,10 @@ static menu_t * Mn_BuildEpisodeMenu(void)
                 "mn_episode %d", position);
               menu->menuitems[idx].patch = info_epis_pic[j];
               idx += 1;
+              if(gamemode != commercial && position <= 3)
+                builtin -= 1;
+              else if(gamemode == retail && position == 4)
+                builtin -= 1;
             }
           extra -= 1;
         }
@@ -417,31 +510,30 @@ CONSOLE_COMMAND(newgame, cf_notnet)
   
   if(c_argc) skill = atoi(c_argv[0]);
 
-  if(gamemode == commercial || (!start_episode && modifiedgame))
-    {
-      // start on newest level from wad
-      G_DeferedInitNew(skill, firstlevel);
-    }
-  else
-    {
+  {
 #ifdef EPISINFO
-      int j = 0;
-      for(j = 0 ; j < info_epis_count ; j ++)
-        if(start_episode == info_epis_num[j]) break;
-      if(j == info_epis_count)
-        {
+    int j = 0;
+    for(j = 0 ; j < info_epis_count ; j ++)
+      if(start_episode == info_epis_num[j]) break;
+    if(j == info_epis_count)
+      {
 #endif
-          // start on first level of selected episode
-          G_DeferedInitNewNum(skill, start_episode, 1);
+        if(gamemode == commercial || (!start_episode && modifiedgame))
+          {
+            // start on newest level from wad
+            G_DeferedInitNew(skill, firstlevel);
+          }
+        else
+            // start on first level of selected episode
+            G_DeferedInitNewNum(skill, start_episode, 1);
 #ifdef EPISINFO
-        }
-      else
-        {
-          G_DeferedInitNew(skill, info_epis_start[j]);
-        }
+      }
+    else
+      {
+        G_DeferedInitNew(skill, info_epis_start[j]);
+      }
 #endif
-    }
-
+  }
   MN_ClearMenus();
 }
 

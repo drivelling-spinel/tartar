@@ -206,7 +206,7 @@ void P_ParseInfoCmd(char *line)
       {
          P_TryStoreEpisodeInfo();
          readtype = RT_EPISINFO;
-      }
+      } 
 #endif
       if(!strncmp(line, "level info", 10))
 	 readtype = RT_LEVELINFO;
@@ -357,7 +357,7 @@ void P_ParseLevelVar(char *cmd, boolean epis)
 	    {
 	    case IVT_STRING:
 	      *(char**)current->variable         // +5 for safety
-		= Z_Malloc(strlen(equals)+5, PU_LEVEL, NULL);
+                = Z_Malloc(strlen(equals)+5, epis ? PU_STATIC : PU_LEVEL, NULL);
 	      strcpy(*(char**)current->variable, equals);
 	      break;
 	      
