@@ -247,7 +247,7 @@ int in_graphics_mode;
 int in_page_flip, in_hires, linear;
 int scroll_offset;
 int blackband; // GB 2014: for 640x480 fallback mode
-boolean compat480;
+boolean res640;
 // GB 2014, FPS counter variables:
 char mode_string[128];
 int  modeswitched=0;
@@ -360,13 +360,13 @@ void I_FinishUpdate(void)
 
    if(screenSize > 8 || widescreen_mode) effective_band = 0;
 
-   if ((compat480 && APPLIES_WIDESCREEN && CORRECTING_ASPECT) || 
+   if ((APPLIES_WIDESCREEN && (res640 || CORRECTING_ASPECT)) || 
        (in_hires && (SCALING_TO_HIRES || CORRECTING_ASPECT)))
      {
        I_ReadScreen(screens[2]);
        screens[0] = screens[2];
        screens[2] = swap;
-       if(compat480 && APPLIES_WIDESCREEN && CORRECTING_ASPECT)
+       if(APPLIES_WIDESCREEN && scale_aspect && res640)
        {
           byte * swap2 = screens[0];
           blitScreenAspectCorrected(screens[3]);          
@@ -863,7 +863,7 @@ static void I_InitGraphicsMode(void)
   char safestring[]="SAFE MODE / ";     
   if (!safeparm) safestring[0]='\0';
   blackband = 0;
-  compat480 = false;
+  res640 = false;
 
   // PREPARATION AT FIRST RUN
   if (!in_graphics_mode) 
@@ -904,6 +904,7 @@ static void I_InitGraphicsMode(void)
   		  if (current_mode!=current_mode_info) vesa_get_mode_info(current_mode); 
 		  screen_w=640; // Necessary for when mode 13h/X has overwritten them.
  		  screen_h=400;
+                  res640=true;
 	 	}
 		else hiresfail=1;
      }
@@ -915,7 +916,7 @@ static void I_InitGraphicsMode(void)
 		  screen_w=640; // Necessary for when mode 13h/X has overwritten them.
  		  screen_h=480;
                   blackband=CORRECTING_ASPECT ? 0 : 40;                     // color 8 is almost black, zero is black
-                  compat480=true;
+                  res640=true;
 		}
 		else hiresfail=1;
 	 }
@@ -1002,7 +1003,7 @@ static void I_InitGraphicsMode(void)
   }
 
   // CONTINUE TO PREPARE GENERAL STUFF
-  V_Init(compat480); // required buffer size has changed
+  V_Init(res640); // required buffer size has changed
   scroll_offset = 0;
   in_graphics_mode = 1;
   clearscreen = 0;
