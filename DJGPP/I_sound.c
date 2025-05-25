@@ -550,7 +550,7 @@ void I_UnRegisterSong(int handle)
 
 // jff 1/16/98 created to convert data to MIDI ala Allegro
 
-int I_RegisterSong(void *data)
+int I_RegisterSong(void *data, int lumplength)
 {
   int handle, err;
 
@@ -558,9 +558,15 @@ int I_RegisterSong(void *data)
     destroy_midi(_mididata);
   _mididata = 0;
 
+  if(lumplength < 4)
+    {
+      doom_printf("Error loading midi: %d", MUSDATAMT);
+      return -1;
+    }
+
   if(!strncmp("OggS", data, 4))
     {
-      doom_printf("Error loading midi: %d", BADMIDHDR);
+      doom_printf("Error loading midi: %d", MUSDATACOR);
       return -1;
     }
 

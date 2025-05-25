@@ -177,6 +177,12 @@ void Ex_ListTapeWad()
     C_Printf(FC_GRAY "Shim loaded: " FC_RED "Lumps from shim %s will override those from all other loaded WADs\n", tapestr);
 }
 
+boolean Ex_IsLumpFromTapeWad(lumpinfo_t * lump)
+{
+  return lump && lump->handle == tapehandle;
+}
+
+
 int Ex_FindAllFilesByExtension(char * dir, char * ext, char *** fnames)
 {
   DIR *dirp;

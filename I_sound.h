@@ -93,7 +93,7 @@ void I_PauseSong(int handle);
 void I_ResumeSong(int handle);
 
 // Registers a song handle to song data.
-int I_RegisterSong(void *data);
+int I_RegisterSong(void *data, int lumplength);
 
 // Called by anything that wishes to start music.
 //  plays a song, and when the song is done,

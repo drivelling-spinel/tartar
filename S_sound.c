@@ -854,11 +854,11 @@ static void S_DoChangeMusic(musicinfo_t *music, int looping)
 
   // load & register it
   music->data = W_CacheLumpNum(lumpnum, PU_MUSIC);
-  music->handle = I_RegisterSong(music->data);
+  music->handle = I_RegisterSong(music->data, W_LumpLength(lumpnum));
 
   // play it
   I_PlaySong(music->handle, looping);
-
+       
   mus_playing = music;
 }
 
@@ -870,7 +870,7 @@ void S_ChangeMusic(musicinfo_t *music, int looping)
 
   // same as the one playing ?
 
-  if(mus_playing == music )
+  if(mus_playing == music)
     return;  
 
   // shutdown old music
@@ -924,7 +924,8 @@ void S_StopMusic(void)
 
   I_StopSong(mus_playing->handle);
   I_UnRegisterSong(mus_playing->handle);
-  Z_ChangeTag(mus_playing->data, PU_CACHE);
+  if (mus_playing->data)
+    Z_ChangeTag(mus_playing->data, PU_CACHE);
 
   mus_playing->data = 0;
   mus_playing = 0;

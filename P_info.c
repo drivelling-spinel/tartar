@@ -350,9 +350,6 @@ void P_ParseLevelVar(char *cmd, boolean epis)
     {
       if(!strcmp(current->name, varname))
 	{
-          // seemingly valid levelinfo found, so reset detected finallevel
-          if(!epis)
-            finallevel[0] = 0;
           switch(current->type)
 	    {
 	    case IVT_STRING:

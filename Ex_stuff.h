@@ -34,6 +34,7 @@ int Ex_DetectAndLoadTapeWads(file_to_process_t *const *files, int autoload);
 int Ex_InsertFixes(char * iwadfile, int autoload);
 void Ex_ListTapeWad();
 int Ex_DetectAndAddSkins();
+boolean Ex_IsLumpFromTapeWad(lumpinfo_t * lump);
 
 // load a specialy treated wad file that if game detects it 
 

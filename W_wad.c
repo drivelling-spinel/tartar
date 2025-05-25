@@ -668,28 +668,6 @@ void W_AddPredefines()
 // The name searcher looks backwards, so a later file
 //  does override all earlier ones.
 //
-#if 0
-void W_InitMultipleFiles(char *const *filenames)
-{
-  Ex_InitDynamicLumpNames();
-
-  // killough 1/31/98: add predefined lumps first
-
-        //sf : move predefine adding to a seperate function
-  W_AddPredefines();
-
-  // open all the files, load headers, and count lumps
-  while (*filenames)
-    W_AddFile(*filenames++, EXTRA_NONE);
-
-  if (!numlumps)
-    I_Error ("W_InitFiles: no files found");
-
-  W_InitResources();
-
-  Ex_SetDefaultDynamicLumpNames();
-}
-#endif
 
 void W_ProcessMultipleFiles(file_to_process_t *const *files)
 {

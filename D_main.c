@@ -95,9 +95,6 @@ static char *D_dehout(void)
   return s;
 }
 
-#if 0
-char **wadfiles;
-#endif
 file_to_process_t **files;
 
 // killough 10/98: preloaded files
@@ -173,8 +170,8 @@ char firstlevel[9] = "";
 // detecting
 char finallevel[9] = "";
 int detect_finallevel = 1;
-
-
+boolean redo_first_final = true;
+static boolean iwad_levels = true;
 int estimated_maps_no;
 
 
@@ -632,29 +629,6 @@ void D_Reborn (void)
 static char title[128];
 #endif
 
-#if 0
-//
-// D_AddFile
-//
-// Rewritten by Lee Killough
-//
-// killough 11/98: remove limit on number of files
-//
-
-static int numwadfiles, numwadfiles_alloc;
-
-void D_AddFile(char *file)
-{
-        // sf: allocate for +2 for safety
-  if (numwadfiles+2 >= numwadfiles_alloc)
-    wadfiles = realloc(wadfiles, (numwadfiles_alloc = numwadfiles_alloc ?
-                                  numwadfiles_alloc * 2 : 8)*sizeof(char*));
-  wadfiles[numwadfiles] = strdup(file); //sf: always NULL at end
-  wadfiles[numwadfiles+1] = NULL;
-  numwadfiles++;
-}
-#endif
-
 static int numfiles, numfiles_alloc;
 
 void D_AddFileToProcess(char *file, int processing)
@@ -670,32 +644,6 @@ void D_AddFileToProcess(char *file, int processing)
   files[numfiles+1] = NULL; //sf: always NULL at end
   numfiles++;
 }
-
-#if 0
-void D_InsertFile(char *file, int index)
-{
-  char ** newfiles;
-  int newalloc;
-  newfiles = malloc((newalloc = numwadfiles_alloc ?
-                        numwadfiles + 2 >= numwadfiles_alloc ?
-                           numwadfiles_alloc * 2 : numwadfiles_alloc
-                        : 8)*sizeof(char*));
-  if(numwadfiles_alloc)
-  {  
-     memcpy(newfiles, wadfiles, 
-        index * sizeof(char*));
-     newfiles[index] = strdup(file);
-     memcpy(newfiles + index + 1, wadfiles + index, 
-        (numwadfiles_alloc - index - 1) * sizeof(char*));
-     free(wadfiles);
-  }
-  else newfiles[0] = strdup(file); //sf: always NULL at end
-  numwadfiles++;
-  newfiles[numwadfiles] = NULL;
-  wadfiles = newfiles;
-  numwadfiles_alloc = newalloc;
-}
-#endif
 
 void D_InsertFileToProcess(char *file, int index, int processing)
 {
@@ -725,33 +673,6 @@ void D_InsertFileToProcess(char *file, int index, int processing)
   numfiles_alloc = newalloc;
 }
 
-#if 0
-boolean D_HasFileInFilelist(const char * filenae, const char *EXT)
-{
-  int s = strlen(filenae), i, el, nl;
-  char * ext = strcpy(malloc(s + 5), filenae), * noext = strcpy(malloc(s + 1), filenae);
-  boolean found = false;
-  
-  AddDefaultExtension(ext, EXT);
-  if(s > 4 && !stricmp(filenae + s - 4, EXT)) noext[s-4] = 0;
-  el = strlen(ext);
-  nl = strlen(noext);
-  
-  for (i = 0; i<numwadfiles && !found; i++)
-     {
-        int l = strlen(wadfiles[i]);
-        found = found || (l>=el && !strnicmp(wadfiles[i]+l-el, ext, el)
-              && (l==el || wadfiles[i][l-el-1] == '/' || wadfiles[i][l-el-1] == '\\'));
-        found = found || (l>=nl && !strnicmp(wadfiles[i]+l-nl, noext, nl)
-              && (l==nl || wadfiles[i][l-nl-1] == '/' || wadfiles[i][l-nl-1] == '\\'));
-     }
-
-   free(ext);
-   free(noext);
-   return found;
-}
-#endif
-
 boolean D_HasFileToProcess(const char * filenae, const char *EXT)
 {
   int s = strlen(filenae), i, el, nl;
@@ -776,13 +697,6 @@ boolean D_HasFileToProcess(const char * filenae, const char *EXT)
    free(noext);
    return found;
 }
-
-#if 0
-boolean D_HasWadInWadlist(const char * wadname)
-{
-  return D_HasFileInFilelist(wadname, ".WAD");
-}
-#endif
 
 boolean D_HasWadToProcess(const char * wadname)
 {
@@ -2221,7 +2135,7 @@ void D_DoomMain(void)
     }
 }
 
-// re init everything after loading a wad
+// reinit everything after loading a wad
 
 void D_ReInitWadfiles()
 {
@@ -2241,19 +2155,36 @@ void D_ReInitWadfiles()
 void D_NewWadLumps(int handle, extra_file_t extra)
 {
   int i;
-  int first = true;
-  char wad_firstlevel[9] = "";
+  static char wad_firstlevel[9] = "";
   int reset_finallevel = 0;
-  char wad_finallevel[9] = "";
-  strncpy(wad_finallevel, finallevel, 8);
+  static char wad_finallevel[9] = "";
+  boolean firstlump = true;
+  if(redo_first_final)
+    {
+      wad_firstlevel[0] = 0;
+      wad_finallevel[0] = 0;
+      firstlevel[0] = 0;
+      finallevel[0] = 0;
+      redo_first_final = false;
+    }
   
   for(i=0; i<numlumps; i++)
     {
       if(lumpinfo[i]->handle != handle) continue;
-      
-      if(!strncmp(lumpinfo[i]->name, "THINGS", 8) && !first && extra != EXTRA_FIXES) // a level
+
+      if(!strncmp(lumpinfo[i]->name, "THINGS", 8) &&
+         (!firstlump || Ex_IsLumpFromTapeWad(lumpinfo[i-1])) &&
+         extra == EXTRA_NONE) // a level
 	{
 	  char *name = lumpinfo[i-1]->name; // previous lump
+
+          // found a modified map, let's reset IWAD maps then:
+          if(iwad_levels && !W_IsLumpFromIWAD(i))
+            {
+              wad_firstlevel[0] = 0;
+              wad_finallevel[0] = 0;
+              iwad_levels = false;
+            }
 	  
 	  // 'ExMy'
           // TODO: for DOOM1 we don't actually detect final level of a pwad
@@ -2331,7 +2262,7 @@ void D_NewWadLumps(int handle, extra_file_t extra)
 	}
 #endif
 
-      first = false;       
+      firstlump = false;
     } 
   
   if(*wad_firstlevel) // a new first level?
@@ -2370,6 +2301,7 @@ void usermsg(char *s, ...)
 boolean D_AddNewFile(char *s)
 {
   c_showprompt = false;
+  redo_first_final = true;
   if(W_AddNewFile(c_argv[0])) return false;
   modifiedgame = true;
   D_AddFileToProcess(c_argv[0], wpt_file); // add to the list of wads
