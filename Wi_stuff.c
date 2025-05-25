@@ -862,7 +862,8 @@ static void WI_drawEL(void)
             {
               sprintf(name, "WILV%1.1d%1.1d", wbs->epsd, wbs->next);
             }
-          patch = W_CacheLumpName(name, PU_CACHE);
+          if(W_CheckNumForName(name) >= 0)
+            patch = W_CacheLumpName(name, PU_CACHE);
         }
 
       if(patch)

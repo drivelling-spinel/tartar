@@ -267,6 +267,8 @@ void S_StartSfxInfo(const mobj_t *origin, sfxinfo_t *sfx)
   //jff 1/22/98 return if sound is not enabled
   if (!snd_card || nosfxparm)
     return;
+  if (!sfx || !sfx->data)
+    return;
 
   // haleyjd:  we must weed out degenmobj_t's before trying to dereference
   // these fields -- a thinker check perhaps?

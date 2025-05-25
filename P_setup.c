@@ -1009,6 +1009,11 @@ void P_LoadExtended(int lumpnum)
   byte *data = W_CacheLumpNum(lumpnum, PU_STATIC);
   int len = W_LumpLength(lumpnum);
   byte * runner = data;
+
+  if(len >= 4 && !strncmp("ZNOD", runner, 4))
+    {
+      C_Puts(FC_GOLD "Unsupported nodes format: "FC_RED "ZNOD" );
+    }
   
   if(len < 4 || strncmp("XNOD", runner, 4)) 
     {
