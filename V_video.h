@@ -138,7 +138,8 @@ void V_GetBlock(int x, int y, int scrn, int width, int height, byte *dest);
 
 byte V_FindBestColor(const byte *palette, int r, int g, int b);
 
-#define V_FillScreen(c, s) V_FillRect(c, SCREENWIDTH, SCREEN_LOWEST, 0, 0, s);
+#define V_FillScreen(c, s) { V_FillRect(c, SCREENWIDTH, SCREEN_LOWEST, 0, 0, s); \
+                             I_EraseScreen(); }
 
 #include "v_misc.h"
 

@@ -18,3 +18,6 @@
   Eviternity).
 - When PWAD defining custom episodes via EPISINFO is loaded with CHEX.WAD IWAD,
   episode selection menu shows 4 built-in episodes, instead of 1
+- Aspect ratio correction malfunctions in VGA Mode X, so this feature is disabled 
+  unless one of high resolution options is chosen 
+

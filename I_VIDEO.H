@@ -65,6 +65,8 @@ int I_ScanCode2DoomCode(int);   // killough
 
 void I_ResetScreen(void);   // killough 10/98
 
+void I_EraseScreen(void);
+
 extern int show_fps;   // GB 2014
 extern int use_vsync;  // killough 2/8/98: controls whether vsync is called
 extern int page_flip; 
@@ -80,7 +82,6 @@ extern int modeswitched;
 extern int fps;
 extern char mode_string[];
 extern int blackband;
-extern int clearscreen;
 extern int gammastyle;
 
 #endif

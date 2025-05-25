@@ -109,8 +109,8 @@ extern byte *main_tranmap;    // killough 4/11/98
 extern byte *ylookup[];       // killough 11/98
 
 extern int widescreen_mode;
-
-#define APPLIES_WIDESCREEN (widescreen_mode && scale_aspect && gamestate == GS_LEVEL && !menuactive && !automapactive)
+#define APPLIES_WIDESCREEN (widescreen_mode &&              \
+  (gamestate == GS_LEVEL && !menuactive && !automapactive))
 
 #endif
 

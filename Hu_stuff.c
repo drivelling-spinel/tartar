@@ -804,6 +804,7 @@ void HU_VideomodeHandler(struct textwidget_s *widget)
   while (mode_string[len] != ' ' && mode_string[len]) len++;
   if (mode_string[len]) len++;
   strncpy(msg_string2, mode_string, len);
+  msg_string2[len] = 0;
   sprintf(msg_string1, "%c%s", *FC_GOLD, msg_string2);
   hu_videomode1.message = msg_string1;
   sprintf(msg_string2, "%c%s", *FC_GOLD, mode_string + len);

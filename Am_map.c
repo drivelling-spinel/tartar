@@ -645,6 +645,7 @@ void AM_Start()
   }
   AM_initVariables();
   AM_loadPics();
+  I_EraseScreen();
 }
 
 //

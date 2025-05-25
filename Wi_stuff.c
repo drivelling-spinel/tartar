@@ -2217,7 +2217,9 @@ void WI_Ticker(void)
       if ( gamemode == commercial )
         S_ChangeMusicNum(mus_dm2int, true);
       else
-        S_ChangeMusicNum(mus_inter, true); 
+        S_ChangeMusicNum(mus_inter, true);
+
+      I_EraseScreen();
     }
 
   WI_checkForAccelerate();

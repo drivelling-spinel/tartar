@@ -405,15 +405,18 @@ void R_ExecuteSetViewSize (void)
       scaledviewheight = (setblocks*168/10) & ~7;        // killough 11/98
     }
 
+  i = scaledviewheight;
   switch(widescreen_mode)
     {
       case 1:
         zoomfrac = FRACUNIT * 5 / 6;
-        scaledviewheight = scaledviewheight * 5 / 6;
+        scaledviewheight = scaledviewheight * 5 / 6;          
+        if (6 * scaledviewheight / 5 < i) scaledviewheight += 1;
         break;
       case 2:
         zoomfrac = FRACUNIT * 9 * 5 / 10 / 6;
         scaledviewheight = scaledviewheight * 5 * 9 / 6 / 10;
+        if (6 * 10 * scaledviewheight / 5 / 9 < i) scaledviewheight += 1;
         break;
       default:
         zoomfrac = FRACUNIT;
@@ -952,7 +955,7 @@ CONSOLE_VARIABLE(screensize, screenSize, cf_buffered)
 {
   S_StartSound(NULL,sfx_stnmov);
 
-  clearscreen = 1;
+  I_EraseScreen();
 
   if(screenSize != 8)
     widescreen_mode = 0;

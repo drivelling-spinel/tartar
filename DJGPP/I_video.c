@@ -241,7 +241,7 @@ int show_fps;
 int scale_to_hires;
 int scale_aspect;
 int fps;
-int clearscreen;
+static int clearscreen;
 
 int in_graphics_mode;
 int in_page_flip, in_hires, linear;
@@ -354,23 +354,25 @@ void I_FinishUpdate(void)
 
    // GB 2014, code to check if statusbar needs to be drawn (e.g. has anything changed, e.g. is dirty?): 
    // if (statusbar_dirty>0) {ymax=200; statusbar_dirty--; if (!in_page_flip) statusbar_dirty=0;}
-   size = in_hires ? (SCREENWIDTH<<res_scale)*(CORRECT_ASPECT(effective_h)) : SCREENWIDTH*ymax;
+   size = in_hires ? (SCREENWIDTH<<res_scale)*
+     ((CORRECTING_ASPECT) ? CORRECT_ASPECT_SAFE(effective_h) : effective_h)
+       : SCREENWIDTH*ymax;
 
    if(screenSize > 8 || widescreen_mode) effective_band = 0;
 
-   if (widescreen_mode ? APPLIES_WIDESCREEN || compat480 :
+   if ((compat480 && APPLIES_WIDESCREEN && CORRECTING_ASPECT) || 
        (in_hires && (SCALING_TO_HIRES || CORRECTING_ASPECT)))
      {
        I_ReadScreen(screens[2]);
        screens[0] = screens[2];
        screens[2] = swap;
-       if(compat480 && APPLIES_WIDESCREEN)
+       if(compat480 && APPLIES_WIDESCREEN && CORRECTING_ASPECT)
        {
           byte * swap2 = screens[0];
           blitScreenAspectCorrected(screens[3]);          
           screens[0] = screens[3];
           screens[3] = swap2;
-       }
+       } 
      }
 
    if (in_page_flip)
@@ -440,7 +442,7 @@ void I_FinishUpdate(void)
           }
           clearscreen = 0;
       }
-
+         
       if (current_mode>255)
          dascreen = (byte *) screen_base_addr + scroll_offset*mode_BPS + effective_band*mode_BPS; // VESA LFB access
 #ifdef INTELHACK
@@ -709,19 +711,11 @@ void I_ReadScreen(byte *scr)
     {
       blitScreenAspectScaled(scr, SCALING_TO_HIRES);
     }
-  else if (APPLIES_WIDESCREEN && SCALING_TO_HIRES)
-    {
-      blitScreenAspectScaled(scr, SCALING_TO_HIRES);
-    }
   else if (SCALING_TO_HIRES)
     {
       blitScreenScaled(scr, SCALING_TO_HIRES);
     }
   else if (CORRECTING_ASPECT)
-    {
-      blitScreenAspectCorrected(scr);
-    }
-  else if (APPLIES_WIDESCREEN)
     {
       blitScreenAspectCorrected(scr);
     }
@@ -1015,6 +1009,7 @@ static void I_InitGraphicsMode(void)
   in_textmode = false;
   in_page_flip = page_flip && !safeparm;
   in_hires = RESULTING_SCALE;
+  if(!in_hires) scale_aspect = 0;
   setsizeneeded = true;
   //if (!safeparm) I_InitDiskFlash(); // Initialize disk icon
   I_ResetPalette();
@@ -1022,6 +1017,11 @@ static void I_InitGraphicsMode(void)
   modeswitched=1; 
   if (current_mode==0x12) sprintf(mode_string,"%sMODE:X SIZE:%dx%d LFB:%s CPU:%d VBE:%d",  safestring,               screen_w, screen_h, linear ? "true" : "false", cpu_family, vesa_version);  
   else                    sprintf(mode_string,"%sMODE:%xh SIZE:%dx%d LFB:%s CPU:%d VBE:%d",safestring, current_mode, screen_w, screen_h, linear ? "true" : "false", cpu_family, vesa_version);
+}
+
+void I_EraseScreen(void)
+{
+  clearscreen = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1138,7 +1138,13 @@ CONSOLE_VARIABLE(v_scale_hi, scale_to_hires, 0)
 
 CONSOLE_VARIABLE(v_scale_aspect, scale_aspect, 0)
 {
-  V_ResetMode();
+  if(!in_hires) {
+    scale_aspect = 0;
+    MN_ErrorMsg(BADOPT);
+  }
+  else {
+    V_ResetMode();
+  }
 }
 
 CONSOLE_VARIABLE(v_show_fps, show_fps, 0) {}
