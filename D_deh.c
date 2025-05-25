@@ -1758,10 +1758,10 @@ void ProcessDehFile(char *filename, char *outfilename, int lumpnum)
 //
 void deh_procBexCodePointers(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   int indexnum;
-  char mnemonic[DEH_MAXKEYLEN];  // to hold the codepointer mnemonic
+  char mnemonic[DEH_MAXKEYLEN+1];  // to hold the codepointer mnemonic
   state_t *local_states = EXTRA_STATES_TABLE(extra);
   int i; // looper
   boolean found; // know if we found this one during lookup or not
@@ -1837,7 +1837,7 @@ void deh_procBexCodePointers(DEHFILE *fpin, FILE* fpout, char *line, extra_file_
 
 void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
@@ -1969,12 +1969,12 @@ void deh_procThing(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 //
 void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
   state_t *local_states = EXTRA_STATES_TABLE(extra);
-  
+
   strncpy(inbuffer,line,DEH_BUFFERMAX);
 
   // killough 8/98: allow hex numbers in input:
@@ -2052,7 +2052,7 @@ void deh_procFrame(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 //
 void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // done
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
@@ -2134,7 +2134,7 @@ void deh_procPointer(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 //
 void deh_procSounds(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
@@ -2205,7 +2205,7 @@ void deh_procSounds(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 //
 void deh_procAmmo(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
@@ -2253,7 +2253,7 @@ void deh_procAmmo(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 //
 void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   int indexnum;
@@ -2314,7 +2314,7 @@ void deh_procWeapon(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 //
 void deh_procSprite(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // Not supported
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   int indexnum;
 
@@ -2348,7 +2348,7 @@ void deh_procSprite(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) 
 //
 void deh_procPars(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // extension
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   int indexnum;
   int episode, level, partime, oldpar;
@@ -2437,7 +2437,7 @@ void deh_procPars(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) //
 //
 void deh_procCheat(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // done
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
   char *strval = "";  // pointer to the value area
@@ -2513,7 +2513,7 @@ void deh_procCheat(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) /
 //
 void deh_procMisc(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) // done
 {
-   char key[DEH_MAXKEYLEN];
+   char key[DEH_MAXKEYLEN+1];
    char inbuffer[DEH_BUFFERMAX];
    long value;      // All deh values are ints or longs
 
@@ -2590,7 +2590,7 @@ void deh_procMisc(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra) //
 //
 void deh_procText(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX*2];  // can't use line -- double size buffer too.
   int i; // loop variable
   int fromlen, tolen;  // as specified on the text block line
@@ -2748,7 +2748,7 @@ void deh_procError(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 //
 void deh_procStrings(DEHFILE *fpin, FILE* fpout, char *line, extra_file_t extra)
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   long value;    // All deh values are ints or longs
   char *strval;      // holds the string value of the line
@@ -2906,7 +2906,7 @@ boolean deh_procStringSub(char *key, char *lookfor, char *newstring, FILE *fpout
 
 void deh_procHelperThing(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t extra)
 {
-  char key[DEH_MAXKEYLEN];
+  char key[DEH_MAXKEYLEN+1];
   char inbuffer[DEH_BUFFERMAX];
   long value;      // All deh values are ints or longs
 
@@ -2943,7 +2943,7 @@ void deh_procHelperThing(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t ex
 //
 void deh_procBexSprites(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t extra)
 {
-   char key[DEH_MAXKEYLEN];
+   char key[DEH_MAXKEYLEN+1];
    char inbuffer[DEH_BUFFERMAX];
    long value;    // All deh values are ints or longs
    char *strval;  // holds the string value of the line
@@ -3003,7 +3003,7 @@ void deh_procBexSprites(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t ext
 // ditto for sound names
 void deh_procBexSounds(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t extra)
 {
-   char key[DEH_MAXKEYLEN];
+   char key[DEH_MAXKEYLEN+1];
    char inbuffer[DEH_BUFFERMAX];
    long value;    // All deh values are ints or longs
    char *strval;  // holds the string value of the line
@@ -3064,7 +3064,7 @@ void deh_procBexSounds(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t extr
 // ditto for music names
 void deh_procBexMusic(DEHFILE *fpin, FILE *fpout, char *line, extra_file_t extra)
 {
-   char key[DEH_MAXKEYLEN];
+   char key[DEH_MAXKEYLEN+1];
    char inbuffer[DEH_BUFFERMAX];
    long value;    // All deh values are ints or longs
    char *strval;  // holds the string value of the line
@@ -3214,7 +3214,7 @@ boolean deh_GetData(char *s, char *k, long *l, char **strval, FILE *fpout)
 {
   char *t;  // current char
   long val; // to hold value of pair
-  char buffer[DEH_MAXKEYLEN];  // to hold key in progress
+  char buffer[DEH_MAXKEYLEN + 1];  // to hold key in progress
   boolean okrc = TRUE;  // assume good unless we have problems
   int i;  // iterator
 
@@ -3226,17 +3226,18 @@ boolean deh_GetData(char *s, char *k, long *l, char **strval, FILE *fpout)
       buffer[i] = *t;  // copy it
     }
   buffer[i] = '\0';  // terminate the key at the '='
-  if (!*t)  // end of string with no equal sign
+  if (!*t || i >= DEH_MAXKEYLEN)  // end of string with no equal sign
     {
       okrc = FALSE;
     }
   else
-    {
+    {       
       if (!*++t)
         {
           val = 0;  // in case "thiskey =" with no value
           okrc = FALSE;
         }
+      else
       // we've incremented t
       val = strtol(t,NULL,0);  // killough 8/9/98: allow hex or octal input
     }

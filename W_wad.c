@@ -636,6 +636,8 @@ void W_InitResources()          // sf
   // killough 4/4/98: add colormap markers
   W_CoalesceMarkedResource("C_START", "C_END", ns_colormaps);
 
+  W_CoalesceMarkedResource("HI_START", "HI_END", ns_hires);
+
   // set up caching
         // sf: caching now done in the lumpinfo_t's
 

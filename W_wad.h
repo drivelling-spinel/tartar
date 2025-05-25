@@ -67,7 +67,8 @@ typedef struct
     ns_global=0,
     ns_sprites,
     ns_flats,
-    ns_colormaps
+    ns_colormaps,
+    ns_hires
   } namespace;
 
   int handle;
