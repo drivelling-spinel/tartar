@@ -24,7 +24,7 @@ PLATFORM = djgpp
 
 STUB = $(O)\stub.exe
 
-UPXOPT=--ultra-brute
+UPXOPT=--ultra-brute --lzma
 #For older versions of UPX or less powerful PCs
 #UPXOPT=-9
 

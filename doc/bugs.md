@@ -16,8 +16,14 @@
   is loaded
 - Time spent in level is cut off in automap for WAD-s with wider fonts (e.g. 
   Eviternity).
-- When PWAD defining custom episodes via EPISINFO is loaded with CHEX.WAD IWAD,
+- When PWAD defining custom episodes via EPISINFO is loaded with CHEX.WAD IWAD, 
   episode selection menu shows 4 built-in episodes, instead of 1
+- When game mode is shareware, registered or retail, 
+  episode is set to end after map 8, regardless of MAPINFO details
+- Tartar only uses _standard named_ lumps for level name graphics 
+  when displaying map name below "Entering" in the tally screen. 
+  This is in contrast to displaying MAPINFO-defined graphic above 
+  "Finished".
 - Aspect ratio correction malfunctions in VGA Mode X, so this feature is disabled 
-  unless one of high resolution options is chosen 
+  unless one of high resolution options is chosen
 

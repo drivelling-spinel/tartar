@@ -118,8 +118,8 @@ static void P_TryStoreEpisodeInfo(void);
 
 int info_enterpictime;
 
-void P_LowerCase(char *line);
-void P_StripSpaces(char *line);
+static void P_LowerCase(char *line);
+static void P_StripSpaces(char *line);
 static void P_RemoveEqualses(char *line);
 static void P_RemoveComments(char *line);
 
@@ -186,7 +186,6 @@ void P_ParseInfoCmd(char *line)
    if(readtype != RT_SCRIPT)       // not for scripts
    {
       P_StripSpaces(line);
-      P_LowerCase(line);
       
       while(*line == ' ') 
 	 line++;
@@ -200,6 +199,8 @@ void P_ParseInfoCmd(char *line)
   
    if(*line == '[')                // a new section seperator
    {
+      P_LowerCase(line);
+
       line++;
 #ifdef EPISINFO
       if(!strncmp(line, "episode info", 12))
@@ -333,12 +334,14 @@ void P_ParseLevelVar(char *cmd, boolean epis)
   levelvar_t* current;
   
   if(!*cmd) return;
-  
+
   P_RemoveEqualses(cmd);
   
   // right, first find the variable name
   
+  *varname = 0;
   sscanf(cmd, "%s", varname);
+  P_LowerCase(varname);
   
   // find what it equals
   equals = cmd+strlen(varname);
@@ -356,6 +359,7 @@ void P_ParseLevelVar(char *cmd, boolean epis)
 	      *(char**)current->variable         // +5 for safety
                 = Z_Malloc(strlen(equals)+5, epis ? PU_STATIC : PU_LEVEL, NULL);
 	      strcpy(*(char**)current->variable, equals);
+              if(!epis) P_LowerCase(*(char**)current->variable);
 	      break;
 	      
 	    case IVT_INT:
